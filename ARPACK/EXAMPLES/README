@@ -1,0 +1,115 @@
+1. Purpose 
+   -------
+   This directory contains example drivers that call ARPACK subroutines
+   __aupd.f and __eupd.f to solve various eigenvalue problems using regular, 
+   shift-invert or other special modes (such as Cayley, Bucking etc.)  
+   These drivers illustrate how to set various ARPACK parameters to solve 
+   different problems in different modes.  They provide a guideline on how 
+   to use ARPACK's reverse communication interface.  The user may modify
+   any one of these drivers, and supply his/her own matrix vector
+   multiplication routine to solve the problem of his/her own interest.
+   These drivers are installed in the following subdirectories.
+
+   SIMPLE  ---   simple drivers for beginners.
+   SYM     ---   drivers for symmetric eigenvalue problems
+   NONSYM  ---   drivers for nonsymmetric eigenvalue problems
+   COMPLEX ---   drivers for eigenvalue problem with complex matrices
+   BAND    ---   drivers for eigenvalue problem with BANDED matrices 
+   SVD     ---   drivers for computing singular values and vectors
+                 of a m by n matrix.
+
+
+2. Getting started
+   ---------------
+   If you have never used ARPACK before, it might be a good idea
+   to go into the subdirectory SIMPLE, and read one of the
+   simple drivers [s,d]ssimp.f, [s,d]nsimp.f [c,z]nsimp.f
+   first.  The documentation explains how to use ARPACK in 
+   considerable detail.  To run these drivers, you may use the 
+   makefile in that directory and issue, for example, 
+   "make sssimp", and then execute using "sssimp"
+
+   The output should look like: 
+
+   _saupd: number of update iterations taken
+   -----------------------------------------
+      1 -    1:     5
+
+
+   _saupd: number of "converged" Ritz values
+   -----------------------------------------
+      1 -    1:     4
+  
+  
+   _saupd: final Ritz values
+   -------------------------
+      1 -    4:   8.912E+02   9.198E+02   9.198E+02   9.484E+02
+
+
+   _saupd: corresponding error bounds
+   ----------------------------------
+      1 -    4:   4.686E-11   1.905E-08   1.050E-10   5.700E-19
+
+
+
+     ==========================================
+     = Symmetric implicit Arnoldi update code =
+     = Version Number: 2.1                    =
+     = Version Date:   11/15/95               =
+     ==========================================
+     = Summary of timing statistics           =
+     ==========================================
+
+
+     Total number update iterations             =     5
+     Total number of OP*x operations            =    78
+     Total number of B*x operations             =     0
+     Total number of reorthogonalization steps  =    78
+     Total number of iterative refinement steps =     0
+     Total number of restart steps              =     0
+     Total time in user OP*x operation          =     0.066667
+     Total time in user B*x operation           =     0.000000
+     Total time in Arnoldi update routine       =     1.166667
+     Total time in ssaup2 routine               =     1.166667
+     Total time in basic Arnoldi iteration loop =     0.216667
+     Total time in reorthogonalization phase    =     0.066667
+     Total time in (re)start vector generation  =     0.000000
+     Total time in trid eigenvalue subproblem   =     0.050000
+     Total time in getting the shifts           =     0.000000
+     Total time in applying the shifts          =     0.900000
+     Total time in convergence testing          =     0.000000
+
+   Ritz values and relative residuals
+   ----------------------------------
+               Col   1       Col   2
+    Row   1:    8.91167E+02   6.95597E-07
+    Row   2:    9.19781E+02   3.30156E-07
+    Row   3:    9.19781E+02   4.25717E-07
+    Row   4:    9.48395E+02   3.20519E-07
+
+
+    _SSIMP
+    ======
+
+    Size of the matrix is   100
+    The number of Ritz values requested is   4
+    The number of Arnoldi vectors generated (NCV) is   20
+    What portion of the spectrum: LM
+    The number of converged Ritz values is   4
+    The number of Implicit Arnoldi update iterations taken is   5
+    The number of OP*x is   78
+    The convergence criterion is     5.96046E-08
+
+  
+3. Convention 
+   ----------
+   The naming convention for each driver is explained in
+   the README file in each subdirectory. 
+
+4. LAPACK & BLAS routines
+   ----------------------
+   All ARPACK codes assume the use of LAPACK version 2.0 codes.
+   LAPACK and BLAS routines needed for each driver program are
+   listed at the beginning of the documentation in each driver 
+   program.
+

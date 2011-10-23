@@ -1,0 +1,5 @@
+      subroutine second(t)
+      real t
+      t = rtc()*6.67E-09
+      return
+      end
