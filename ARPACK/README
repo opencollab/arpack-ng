@@ -2,10 +2,9 @@
    directory that was created for you.
 
 2. Recent bug fixes are included in patch.tar.gz and ppatch.tar.gz 
-   (only needed if you are using PARPACK also.)  If you have not
-   retrieved these files, please do so and place them in the 
-   directory right above the current directory.  (They should
-   be in the same directory where arpack96.tar reside).
+   If you have not retrieved these files, please do so and place them in 
+   the directory right above the current directory.  (They should
+   be in the same directory where arpack96.tar and parpack96.tar reside).
    Use uncompress or gunzip to unzip the tar files, and use 'tar -xvf '
    to unbundle these patches.  The source codes in these patches will 
    overwrite those contained in arpack96.tar and parpack96.tar.
@@ -22,23 +21,26 @@
       Makefile
       ARmake.inc
       ARMAKES
+      PARPACK
 
    The following entries are directories:
 
-      ARMAKES, BLAS, DOCUMENTS, EXAMPLES, LAPACK, SRC, UTIL
+      ARMAKES, BLAS, DOCUMENTS, EXAMPLES, LAPACK, SRC, UTIL, PARPACK
 
    The directory SRC contains the top level routines including 
    the highest level reverse communication interface routines
 
       ssaupd, dsaupd - symmetric single and double precision
       snaupd, dnaupd - non-symmetric single and double precision
-      cnaupd, cnaupd - complex non-symmetric single and double precision
+      cnaupd, znaupd - complex non-symmetric single and double precision
 
    The headers of these routines contain full documentation of calling
    sequence and usage.  Additional information is in the DOCUMENTS directory.
 
+   The directory PARPACK contains the Parallel ARPACK routines.
+     
 
-4. Example driver programs that illustrate all the computational modes,
+3. Example driver programs that illustrate all the computational modes,
    data types and precisions may be found in the EXAMPLES directory.
    Upon executing the 'ls EXAMPLES | more ' command you should see
 
@@ -58,11 +60,17 @@
    the simplest modes of operation for the most commonly posed 
    standard eigenvalue problems.  
 
+
+   Example programs for Parallel ARPACK may be found in the directory
+   PARPACK/EXAMPLES. Look at the README file for further information.
+
    The following instructions explain how to make the ARPACK library.
 
-
-5. Before you can compile anything, you must first edit and correct the file
+4. Before you can compile anything, you must first edit and correct the file
    ARmake.inc. Sample ARmake.inc's can be found in the ARMAKES directory.
+   If you plan on using Parallel ARPACK you will need to use those sample
+   files which contain either BLACS or MPI in their name. For example,
+   ARmake.MPI-$(PLAT) or ARmake.BLACS-$(PLAT).
    Edit "ARmake.inc" and change the definition "home" to the root of the
    source tree (Top level of ARPACK directory)
 
@@ -77,17 +85,22 @@
    to the subset of LAPACK included here. 
 
 
-6. You will also need to change the file "second.f" in the UTIL directory
+5. You will also need to change the file "second.f" in the UTIL directory
    to whatever is appropriate for timing on your system.  The "second" routine
    provided works on most workstations.  If you are running on a Cray,
-   you can just edit the makefile in UTIL and take out the reference to
-  "second.o" to use the system second routine.
+   copy the file "second.f.CRAYT3D" to "second.f"  to use the rtf system 
+   function. 
 
 
-7. Do "make lib" in the current directory to build the standard library 
-   "libarpack_$(PLAT).a" 
+6. Do "make lib" in the current directory to build the standard library 
+   "libarpack_$(PLAT).a" (serial code)
+ 
+   To build the the parallel library, "parpack_$(COMMLIB)-$(PLAT).a",
+   type "make plib". When using the parallel routines you must link to 
+   both the serial library and the parallel library.
 
-8. Within DOCUMENTS directory there are three files 
+
+7. Within DOCUMENTS directory there are three files 
 
    ex-sym.doc 
    ex-nonsym.doc and
@@ -102,9 +115,6 @@
    Richard Lehoucq  at  rblehou@sandia.gov
    Chao Yang        at  cyang@lbl.gov
    Kristi Maschhoff at  kristyn@tera.com
-
-If you have questions regarding using ARPACK, please send email 
-to arpack@caam.rice.edu.
 
  Good luck and enjoy.
 
