@@ -7,3 +7,4 @@ libarpack_la_LIBADD = \
 	$(top_builddir)/UTIL/libarpackutil.la \
 	$(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS)
 EXTRA_DIST = README
+ACLOCAL_AMFLAGS = -I m4/

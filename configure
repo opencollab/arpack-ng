@@ -7861,6 +7861,10 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 
 
+## CAVEAT EMPTOR:
+## There is no encapsulation within the following macros, do not change
+## the running order or otherwise move them around unless you know exactly
+## what you are doing...
 if test -n "$compiler"; then
 
 lt_prog_compiler_no_builtin_flag=
@@ -14140,92 +14144,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-# ===========================================================================
-#          http://www.gnu.org/software/autoconf-archive/ax_blas.html
-# ===========================================================================
-#
-# SYNOPSIS
-#
-#   AX_BLAS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#
-# DESCRIPTION
-#
-#   This macro looks for a library that implements the BLAS linear-algebra
-#   interface (see http://www.netlib.org/blas/). On success, it sets the
-#   BLAS_LIBS output variable to hold the requisite library linkages.
-#
-#   To link with BLAS, you should link with:
-#
-#     $BLAS_LIBS $LIBS $FLIBS
-#
-#   in that order. FLIBS is the output variable of the
-#   AC_F77_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
-#   sometimes necessary in order to link with F77 libraries. Users will also
-#   need to use AC_F77_DUMMY_MAIN (see the autoconf manual), for the same
-#   reason.
-#
-#   Many libraries are searched for, from ATLAS to CXML to ESSL. The user
-#   may also use --with-blas=<lib> in order to use some specific BLAS
-#   library <lib>. In order to link successfully, however, be aware that you
-#   will probably need to use the same Fortran compiler (which can be set
-#   via the F77 env. var.) as was used to compile the BLAS library.
-#
-#   ACTION-IF-FOUND is a list of shell commands to run if a BLAS library is
-#   found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it is
-#   not found. If ACTION-IF-FOUND is not specified, the default action will
-#   define HAVE_BLAS.
-#
-# LICENSE
-#
-#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
-#
-#   This program is free software: you can redistribute it and/or modify it
-#   under the terms of the GNU General Public License as published by the
-#   Free Software Foundation, either version 3 of the License, or (at your
-#   option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
-#
-#   As a special exception, the respective Autoconf Macro's copyright owner
-#   gives unlimited permission to copy, distribute and modify the configure
-#   scripts that are the output of Autoconf when processing the Macro. You
-#   need not follow the terms of the GNU General Public License when using
-#   or distributing such scripts, even though portions of the text of the
-#   Macro appear in them. The GNU General Public License (GPL) does govern
-#   all other use of the material that constitutes the Autoconf Macro.
-#
-#   This special exception to the GPL applies to versions of the Autoconf
-#   Macro released by the Autoconf Archive. When you make and distribute a
-#   modified version of the Autoconf Macro, you may extend this special
-#   exception to the GPL to apply to your modified version as well.
-
-#serial 11
-
-# This is what autoupdate's m4 run will expand.  It fires
-# the warning (with _au_warn_XXX), outputs it into the
-# updated configure.ac (with AC_DIAGNOSE), and then outputs
-# the replacement expansion.
-
-
-# This is an auxiliary macro that is also run when
-# autoupdate runs m4.  It simply calls m4_warning, but
-# we need a wrapper so that each warning is emitted only
-# once.  We break the quoting in m4_warning's argument in
-# order to expand this macro's arguments, not AU_DEFUN's.
-
-
-# Finally, this is the expansion that is picked up by
-# autoconf.  It tells the user to run autoupdate, and
-# then outputs the replacement expansion.  We do not care
-# about autoupdate's warning because that contains
-# information on what to do *after* running autoupdate.
-
 
 ac_ext=f
 ac_compile='$F77 -c $FFLAGS conftest.$ac_ext >&5'
@@ -15855,93 +15773,6 @@ if test x"$BLAS_LIBS" = x; then
    as_fn_error $? "Cannot find blas libraries" "$LINENO" 5
 fi
 
-# ===========================================================================
-#         http://www.gnu.org/software/autoconf-archive/ax_lapack.html
-# ===========================================================================
-#
-# SYNOPSIS
-#
-#   AX_LAPACK([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#
-# DESCRIPTION
-#
-#   This macro looks for a library that implements the LAPACK linear-algebra
-#   interface (see http://www.netlib.org/lapack/). On success, it sets the
-#   LAPACK_LIBS output variable to hold the requisite library linkages.
-#
-#   To link with LAPACK, you should link with:
-#
-#     $LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS
-#
-#   in that order. BLAS_LIBS is the output variable of the AX_BLAS macro,
-#   called automatically. FLIBS is the output variable of the
-#   AC_F77_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
-#   sometimes necessary in order to link with F77 libraries. Users will also
-#   need to use AC_F77_DUMMY_MAIN (see the autoconf manual), for the same
-#   reason.
-#
-#   The user may also use --with-lapack=<lib> in order to use some specific
-#   LAPACK library <lib>. In order to link successfully, however, be aware
-#   that you will probably need to use the same Fortran compiler (which can
-#   be set via the F77 env. var.) as was used to compile the LAPACK and BLAS
-#   libraries.
-#
-#   ACTION-IF-FOUND is a list of shell commands to run if a LAPACK library
-#   is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
-#   is not found. If ACTION-IF-FOUND is not specified, the default action
-#   will define HAVE_LAPACK.
-#
-# LICENSE
-#
-#   Copyright (c) 2009 Steven G. Johnson <stevenj@alum.mit.edu>
-#
-#   This program is free software: you can redistribute it and/or modify it
-#   under the terms of the GNU General Public License as published by the
-#   Free Software Foundation, either version 3 of the License, or (at your
-#   option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
-#
-#   As a special exception, the respective Autoconf Macro's copyright owner
-#   gives unlimited permission to copy, distribute and modify the configure
-#   scripts that are the output of Autoconf when processing the Macro. You
-#   need not follow the terms of the GNU General Public License when using
-#   or distributing such scripts, even though portions of the text of the
-#   Macro appear in them. The GNU General Public License (GPL) does govern
-#   all other use of the material that constitutes the Autoconf Macro.
-#
-#   This special exception to the GPL applies to versions of the Autoconf
-#   Macro released by the Autoconf Archive. When you make and distribute a
-#   modified version of the Autoconf Macro, you may extend this special
-#   exception to the GPL to apply to your modified version as well.
-
-#serial 7
-
-# This is what autoupdate's m4 run will expand.  It fires
-# the warning (with _au_warn_XXX), outputs it into the
-# updated configure.ac (with AC_DIAGNOSE), and then outputs
-# the replacement expansion.
-
-
-# This is an auxiliary macro that is also run when
-# autoupdate runs m4.  It simply calls m4_warning, but
-# we need a wrapper so that each warning is emitted only
-# once.  We break the quoting in m4_warning's argument in
-# order to expand this macro's arguments, not AU_DEFUN's.
-
-
-# Finally, this is the expansion that is picked up by
-# autoconf.  It tells the user to run autoupdate, and
-# then outputs the replacement expansion.  We do not care
-# about autoupdate's warning because that contains
-# information on what to do *after* running autoupdate.
-
 
 
 
@@ -16128,105 +15959,6 @@ if test "${enable_mpi+set}" = set; then :
 else
   enable_mpi=no
 fi
-
-# ===========================================================================
-#          http://www.gnu.org/software/autoconf-archive/ax_mpi.html
-# ===========================================================================
-#
-# SYNOPSIS
-#
-#   AX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#
-# DESCRIPTION
-#
-#   This macro tries to find out how to compile programs that use MPI
-#   (Message Passing Interface), a standard API for parallel process
-#   communication (see http://www-unix.mcs.anl.gov/mpi/)
-#
-#   On success, it sets the MPICC, MPICXX, MPIF77, or MPIFC output variable
-#   to the name of the MPI compiler, depending upon the current language.
-#   (This may just be $CC/$CXX/$F77/$FC, but is more often something like
-#   mpicc/mpiCC/mpif77/mpif90.) It also sets MPILIBS to any libraries that
-#   are needed for linking MPI (e.g. -lmpi or -lfmpi, if a special
-#   MPICC/MPICXX/MPIF77/MPIFC was not found).
-#
-#   If you want to compile everything with MPI, you should use something
-#   like this for C:
-#
-#     if test -z "$CC" && test -n "$MPICC"; then
-#       CC="$MPICC"
-#     fi
-#     AC_PROG_CC
-#     AX_MPI
-#     CC="$MPICC"
-#     LIBS="$MPILIBS $LIBS"
-#
-#   and similar for C++ (change all instances of CC to CXX), Fortran 77
-#   (with F77 instead of CC) or Fortran (with FC instead of CC).
-#
-#   NOTE: The above assumes that you will use $CC (or whatever) for linking
-#   as well as for compiling. (This is the default for automake and most
-#   Makefiles.)
-#
-#   The user can force a particular library/compiler by setting the
-#   MPICC/MPICXX/MPIF77/MPIFC and/or MPILIBS environment variables.
-#
-#   ACTION-IF-FOUND is a list of shell commands to run if an MPI library is
-#   found, and ACTION-IF-NOT-FOUND is a list of commands to run if it is not
-#   found. If ACTION-IF-FOUND is not specified, the default action will
-#   define HAVE_MPI.
-#
-# LICENSE
-#
-#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
-#   Copyright (c) 2008 Julian C. Cummings <cummings@cacr.caltech.edu>
-#
-#   This program is free software: you can redistribute it and/or modify it
-#   under the terms of the GNU General Public License as published by the
-#   Free Software Foundation, either version 3 of the License, or (at your
-#   option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
-#
-#   As a special exception, the respective Autoconf Macro's copyright owner
-#   gives unlimited permission to copy, distribute and modify the configure
-#   scripts that are the output of Autoconf when processing the Macro. You
-#   need not follow the terms of the GNU General Public License when using
-#   or distributing such scripts, even though portions of the text of the
-#   Macro appear in them. The GNU General Public License (GPL) does govern
-#   all other use of the material that constitutes the Autoconf Macro.
-#
-#   This special exception to the GPL applies to versions of the Autoconf
-#   Macro released by the Autoconf Archive. When you make and distribute a
-#   modified version of the Autoconf Macro, you may extend this special
-#   exception to the GPL to apply to your modified version as well.
-
-#serial 7
-
-# This is what autoupdate's m4 run will expand.  It fires
-# the warning (with _au_warn_XXX), outputs it into the
-# updated configure.ac (with AC_DIAGNOSE), and then outputs
-# the replacement expansion.
-
-
-# This is an auxiliary macro that is also run when
-# autoupdate runs m4.  It simply calls m4_warning, but
-# we need a wrapper so that each warning is emitted only
-# once.  We break the quoting in m4_warning's argument in
-# order to expand this macro's arguments, not AU_DEFUN's.
-
-
-# Finally, this is the expansion that is picked up by
-# autoconf.  It tells the user to run autoupdate, and
-# then outputs the replacement expansion.  We do not care
-# about autoupdate's warning because that contains
-# information on what to do *after* running autoupdate.
 
 
 if test x"$enable_mpi" != x"no"; then
