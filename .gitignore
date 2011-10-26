@@ -9,4 +9,7 @@ autom4te.cache/
 config.log
 config.status
 libtool
-
+*.lib
+*.def
+*.dll
+*.bak
