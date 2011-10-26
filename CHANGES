@@ -5,3 +5,6 @@ second_NONE works with all fortrans compilers (used by default with Scilab)
 
 sneupd.f, cneupd.f: modified for scilab add a check on nconv value (Scilab bug fix without history)
 dnaupd.f: modified  NEV Integer: INPUT/OUTPUT before only INPUT (Scilab bug fix without history) 
+
+
+Build system updated to build with Visual Studio 2010 + Intel fortran 2011 compiles on Windows.

@@ -1,0 +1,48 @@
+LIBRARY    arpack-ng.dll
+
+
+EXPORTS
+	cmout_
+	cvout_
+	dgetv0_
+	dlaqrb_
+	dmout_
+	dnaitr_
+	dnapps_
+	dnaup2_
+	dnaupd_
+	dnconv_
+	dneigh_
+	dneupd_
+	dngets_
+	dsaitr_
+	dsapps_
+	dsaup2_
+	dsaupd_
+	dsconv_
+	dseigt_
+	dsesrt_
+	dseupd_
+	dsgets_
+	dsortc_
+	dsortr_
+	dstatn_
+	dstats_
+	dstqrb_
+	dvout_
+	icnteq_
+	iswap_
+	ivout_
+	arscnd_
+	smout_
+	zgetv0_
+	znaitr_
+	znapps_
+	znaup2_
+	znaupd_
+	zneigh_
+	zneupd_
+	zngets_
+	zsortc_
+	zstatn_
+

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{34F953E3-9A2C-4359-A8C5-41CEBD0ECE45}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" OutputDirectory="$(InputDir)$(ConfigurationName)" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/arch:IA32" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" F77RuntimeCompatibility="true" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x86/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" GenerateDebugInformation="true" SubSystem="subSystemWindows" ImportLibrary="./bin/x86/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blas.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blas_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)blas.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blas.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32" OutputDirectory="$(InputDir)$(ConfigurationName)" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/arch:IA32" SuppressStartupBanner="true" Parallelization="true" AlternateParameterSyntax="false" F77RuntimeCompatibility="true" BackslashAsNormalCharacter="false" FPS4Libs="false" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x86/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" SubSystem="subSystemWindows" SupportUnloadOfDelayLoadedDLL="true" ImportLibrary="./bin/x86/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blas.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blas_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)blas.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blas.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64" OutputDirectory="$(InputDir)$(ConfigurationName)" IntermediateDirectory="$(ConfigurationName)" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" F77RuntimeCompatibility="true" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x64/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" GenerateDebugInformation="true" SubSystem="subSystemWindows" ImportLibrary="./bin/x64/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blas.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blas_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)blas.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blas.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64" OutputDirectory="$(InputDir)$(ConfigurationName)" IntermediateDirectory="$(ConfigurationName)" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Parallelization="true" AlternateParameterSyntax="false" F77RuntimeCompatibility="true" BackslashAsNormalCharacter="false" FPS4Libs="false" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x64/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" SubSystem="subSystemWindows" SupportUnloadOfDelayLoadedDLL="true" ImportLibrary="./bin/x64/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blas.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blas_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)blas.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blas.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release MKL|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/arch:IA32" SuppressStartupBanner="true" Parallelization="true" AlternateParameterSyntax="false" F77RuntimeCompatibility="true" BackslashAsNormalCharacter="false" FPS4Libs="false" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x86/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" SubSystem="subSystemWindows" SupportUnloadOfDelayLoadedDLL="true" ImportLibrary="./bin/x86/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blasplus.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blasplus_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)blasplus.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blasplus.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release MKL|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Parallelization="true" AlternateParameterSyntax="false" F77RuntimeCompatibility="true" BackslashAsNormalCharacter="false" FPS4Libs="false" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x64/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" SubSystem="subSystemWindows" SupportUnloadOfDelayLoadedDLL="true" ImportLibrary="./bin/x64/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blasplus.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blasplus_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)blasplus.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blasplus.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug MKL|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/arch:IA32" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" F77RuntimeCompatibility="true" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x86/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" GenerateDebugInformation="true" SubSystem="subSystemWindows" ImportLibrary="./bin/x86/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blasplus.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blasplus_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)blasplus.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X86 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blasplus.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug MKL|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.dll;$(TargetPath)" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" F77RuntimeCompatibility="true" CallingConvention="callConventionCRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" OutputFile="./bin/x64/arpack-ng.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ModuleDefinitionFile="arpack-ng_exports.def" GenerateDebugInformation="true" SubSystem="subSystemWindows" ImportLibrary="./bin/x64/arpack-ng.lib" LinkDLL="true" AdditionalDependencies="blasplus.lib lapack.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool" CommandLine="lib /DEF:&quot;$(InputDir)blasplus_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)blasplus.lib&quot; 1&gt;NUL 2&gt;NUL
+lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X64 /OUT:&quot;$(InputDir)lapack.lib&quot; 1&gt;NUL 2&gt;NUL" Description="Build blasplus.lib lapack.lib (imports)"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<File RelativePath=".\arpack-ng.rc"/></Filter>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<File RelativePath="..\SRC\cgetv0.f"/>
+		<File RelativePath="..\UTIL\cmout.f"/>
+		<File RelativePath="..\SRC\cnaitr.f"/>
+		<File RelativePath="..\SRC\cnapps.f"/>
+		<File RelativePath="..\SRC\cnaup2.f"/>
+		<File RelativePath="..\SRC\cnaupd.f"/>
+		<File RelativePath="..\SRC\cneigh.f"/>
+		<File RelativePath="..\SRC\cneupd.f"/>
+		<File RelativePath="..\SRC\cngets.f"/>
+		<File RelativePath="..\SRC\csortc.f"/>
+		<File RelativePath="..\SRC\cstatn.f"/>
+		<File RelativePath="..\UTIL\cvout.f"/>
+		<File RelativePath="..\SRC\dgetv0.f"/>
+		<File RelativePath="..\SRC\dlaqrb.f"/>
+		<File RelativePath="..\UTIL\dmout.f"/>
+		<File RelativePath="..\SRC\dnaitr.f"/>
+		<File RelativePath="..\SRC\dnapps.f"/>
+		<File RelativePath="..\SRC\dnaup2.f"/>
+		<File RelativePath="..\SRC\dnaupd.f"/>
+		<File RelativePath="..\SRC\dnconv.f"/>
+		<File RelativePath="..\SRC\dneigh.f"/>
+		<File RelativePath="..\SRC\dneupd.f"/>
+		<File RelativePath="..\SRC\dngets.f"/>
+		<File RelativePath="..\SRC\dsaitr.f"/>
+		<File RelativePath="..\SRC\dsapps.f"/>
+		<File RelativePath="..\SRC\dsaup2.f"/>
+		<File RelativePath="..\SRC\dsaupd.f"/>
+		<File RelativePath="..\SRC\dsconv.f"/>
+		<File RelativePath="..\SRC\dseigt.f"/>
+		<File RelativePath="..\SRC\dsesrt.f"/>
+		<File RelativePath="..\SRC\dseupd.f"/>
+		<File RelativePath="..\SRC\dsgets.f"/>
+		<File RelativePath="..\SRC\dsortc.f"/>
+		<File RelativePath="..\SRC\dsortr.f"/>
+		<File RelativePath="..\SRC\dstatn.f"/>
+		<File RelativePath="..\SRC\dstats.f"/>
+		<File RelativePath="..\SRC\dstqrb.f"/>
+		<File RelativePath="..\UTIL\dvout.f"/>
+		<File RelativePath="..\UTIL\icnteq.f"/>
+		<File RelativePath="..\UTIL\icopy.f"/>
+		<File RelativePath="..\UTIL\iset.f"/>
+		<File RelativePath="..\UTIL\iswap.f"/>
+		<File RelativePath="..\UTIL\ivout.f"/>
+		<File RelativePath="..\UTIL\scilab_second.f"/>
+		<File RelativePath="..\UTIL\second.f">
+			<FileConfiguration Name="Debug MKL|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug MKL|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release MKL|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release MKL|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\SRC\sgetv0.f"/>
+		<File RelativePath="..\SRC\slaqrb.f"/>
+		<File RelativePath="..\UTIL\smout.f"/>
+		<File RelativePath="..\SRC\snaitr.f"/>
+		<File RelativePath="..\SRC\snapps.f"/>
+		<File RelativePath="..\SRC\snaup2.f"/>
+		<File RelativePath="..\SRC\snaupd.f"/>
+		<File RelativePath="..\SRC\snconv.f"/>
+		<File RelativePath="..\SRC\sneigh.f"/>
+		<File RelativePath="..\SRC\sneupd.f"/>
+		<File RelativePath="..\SRC\sngets.f"/>
+		<File RelativePath="..\SRC\ssaitr.f"/>
+		<File RelativePath="..\SRC\ssapps.f"/>
+		<File RelativePath="..\SRC\ssaup2.f"/>
+		<File RelativePath="..\SRC\ssaupd.f"/>
+		<File RelativePath="..\SRC\ssconv.f"/>
+		<File RelativePath="..\SRC\sseigt.f"/>
+		<File RelativePath="..\SRC\ssesrt.f"/>
+		<File RelativePath="..\SRC\sseupd.f"/>
+		<File RelativePath="..\SRC\ssgets.f"/>
+		<File RelativePath="..\SRC\ssortc.f"/>
+		<File RelativePath="..\SRC\ssortr.f"/>
+		<File RelativePath="..\SRC\sstatn.f"/>
+		<File RelativePath="..\SRC\sstats.f"/>
+		<File RelativePath="..\SRC\sstqrb.f"/>
+		<File RelativePath="..\UTIL\svout.f"/>
+		<File RelativePath="..\SRC\zgetv0.f"/>
+		<File RelativePath="..\UTIL\zmout.f"/>
+		<File RelativePath="..\SRC\znaitr.f"/>
+		<File RelativePath="..\SRC\znapps.f"/>
+		<File RelativePath="..\SRC\znaup2.f"/>
+		<File RelativePath="..\SRC\znaupd.f"/>
+		<File RelativePath="..\SRC\zneigh.f"/>
+		<File RelativePath="..\SRC\zneupd.f"/>
+		<File RelativePath="..\SRC\zngets.f"/>
+		<File RelativePath="..\SRC\zsortc.f"/>
+		<File RelativePath="..\SRC\zstatn.f"/>
+		<File RelativePath="..\UTIL\zvout.f"/></Filter>
+		<File RelativePath=".\arpack-ng_exports.def"/>
+		<File RelativePath=".\blas_imports.def">
+			<FileConfiguration Name="Debug MKL|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug MKL|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release MKL|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release MKL|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath=".\blasplus_imports.def"/>
+		<File RelativePath=".\lapack_imports.def"/></Files>
+	<Globals/></VisualStudioProject>

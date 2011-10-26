@@ -1,0 +1,144 @@
+LIBRARY    blas.dll
+
+EXPORTS
+ dasum_
+ dasum = dasum_
+ daxpy_
+ daxpy = daxpy_
+ dcopy_
+ dcopy = dcopy_
+ ddot_
+ ddot = ddot_
+ dgbmv_
+ dgbmv = dgbmv_
+ dgemm_
+ dgemm = dgemm_
+ dgemv_
+ dgemv = dgemv_
+ dger_
+ dger = dger_
+ dnrm2_
+ dnrm2 = dnrm2_
+ drot_
+ drot = drot_
+ drotg_
+ drotg = drotg_
+ dsbmv_
+ dsbmv = dsbmv_
+ dscal_
+ dscal = dscal_
+ dspmv_
+ dspmv = dspmv_
+ dspr_
+ dspr = dspr_
+ dspr2_
+ dspr2 = dspr2_
+ dswap_
+ dswap = dswap_
+ dsymm_
+ dsymm = dsymm_
+ dsymv_
+ dsymv = dsymv_
+ dsyr_
+ dsyr = dsyr_
+ dsyr2_
+ dsyr2 = dsyr2_
+ dsyr2k_
+ dsyr2k = dsyr2k_
+ dsyrk_
+ dsyrk = dsyrk_
+ dtbmv_
+ dtbmv = dtbmv_
+ dtbsv_
+ dtbsv = dtbsv_
+ dtpmv_
+ dtpmv = dtpmv_
+ dtpsv_
+ dtpsv = dtpsv_
+ dtrmm_
+ dtrmm = dtrmm_
+ dtrmv_
+ dtrmv = dtrmv_
+ dtrsm_
+ dtrsm = dtrsm_
+ dtrsv_
+ dtrsv = dtrsv_
+ dzasum_
+ dzasum = dzasum_
+ dznrm2_
+ dznrm2 = dznrm2_
+ idamax_
+ idamax = idamax_
+ izamax_
+ izamax = izamax_
+ zaxpy_
+ zaxpy = zaxpy_
+ zcopy_
+ zcopy = zcopy_
+ zdotc_
+ zdotc = zdotc_
+ zdotu_
+ zdotu = zdotu_
+ zdscal_
+ zdscal = zdscal_
+ zgbmv_ 
+ zgbmv = zgbmv_
+ zgemm_
+ zgemm = zgemm_
+ zgemv_
+ zgemv = zgemv_
+ zgerc_
+ zgerc = zgerc_
+ zgeru_
+ zgeru = zgeru_
+ zhbmv_
+ zhbmv = zhbmv_
+ zhemm_
+ zhemm = zhemm_
+ zhemv_
+ zhemv = zhemv_
+ zher_
+ zher = zher_
+ zher2_
+ zher2 = zher2_
+ zher2k_
+ zher2k = zher2k_
+ zherk_
+ zherk = zherk_
+ zhpmv_
+ zhpmv = zhpmv_
+ zhpr_
+ zhpr = zhpr_
+ zhpr2_
+ zhpr2 = zhpr2_
+ zrotg_
+ zrotg = zrotg_
+ zscal_
+ zscal = zscal_
+ zswap_
+ zswap = zswap_
+ zsymm_
+ zsymm = zsymm_
+ zsyr2k_
+ zsyr2k = zsyr2k_
+ zsyrk_
+ zsyrk = zsyrk_
+ ztbmv_
+ ztbmv = ztbmv_
+ ztbsv_
+ ztbsv = ztbsv_
+ ztpmv_
+ ztpmv = ztpmv_
+ ztpsv_
+ ztpsv = ztpsv_
+ ztrmm_
+ ztrmm =ztrmm_
+ ztrmv_
+ ztrmv = ztrmv_
+ ztrsm_
+ ztrsm = ztrsm_
+ ztrsv_
+ ztrsv = ztrsv_
+ xerbla_
+ xerbla = xerbla_
+ 
