@@ -2,3 +2,6 @@
 Modifications:
 second_NONE used by default (TO DO replace by second in LAPACK)
 second_NONE works with all fortrans compilers (used by default with Scilab)
+
+sneupd.f, cneupd.f: modified for scilab add a check on nconv value (Scilab bug fix without history)
+dnaupd.f: modified  NEV Integer: INPUT/OUTPUT before only INPUT (Scilab bug fix without history) 

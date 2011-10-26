@@ -110,7 +110,7 @@ c          'SR' -> want the NEV eigenvalues of smallest real part.
 c          'LI' -> want the NEV eigenvalues of largest imaginary part.
 c          'SI' -> want the NEV eigenvalues of smallest imaginary part.
 c
-c  NEV     Integer.  (INPUT)
+c  NEV     Integer.  (INPUT/OUTPUT)
 c          Number of eigenvalues of OP to be computed. 0 < NEV < N-1.
 c
 c  TOL     Double precision  scalar.  (INPUT)
@@ -427,7 +427,7 @@ c     %-----------------%
 c     | Array Arguments |
 c     %-----------------%
 c
-      integer    iparam(11), ipntr(14)
+      integer    iparam(11), ipntr(*)
       Double precision
      &           resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
 c
