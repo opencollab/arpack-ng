@@ -1,0 +1,4 @@
+
+Modifications:
+second_NONE used by default (TO DO replace by second in LAPACK)
+second_NONE works with all fortrans compilers (used by default with Scilab)

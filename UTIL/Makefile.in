@@ -50,7 +50,7 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libarpackutil_la_LIBADD =
 am_libarpackutil_la_OBJECTS = icnteq.lo icopy.lo iset.lo iswap.lo \
-	ivout.lo second.lo svout.lo smout.lo dvout.lo dmout.lo \
+	ivout.lo second_NONE.lo svout.lo smout.lo dvout.lo dmout.lo \
 	cvout.lo cmout.lo zvout.lo zmout.lo
 libarpackutil_la_OBJECTS = $(am_libarpackutil_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -190,7 +190,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = libarpackutil.la
 libarpackutil_la_SOURCES = \
-	icnteq.f icopy.f iset.f iswap.f ivout.f second.f \
+	icnteq.f icopy.f iset.f iswap.f ivout.f second_NONE.f \
 	svout.f  smout.f dvout.f  dmout.f cvout.f  cmout.f \
 	zvout.f  zmout.f
 
