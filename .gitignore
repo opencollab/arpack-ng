@@ -2,3 +2,11 @@
 *.lo
 Makefile
 *.la
+.libs/
+SRC/.libs/
+UTIL/.libs/
+autom4te.cache/
+config.log
+config.status
+libtool
+
