@@ -140,16 +140,16 @@ lib /DEF:&quot;$(InputDir)lapack_imports.def&quot; /SUBSYSTEM:WINDOWS /MACHINE:X
 		<File RelativePath="..\UTIL\iset.f"/>
 		<File RelativePath="..\UTIL\iswap.f"/>
 		<File RelativePath="..\UTIL\ivout.f"/>
-		<File RelativePath="..\UTIL\scilab_second.f"/>
 		<File RelativePath="..\UTIL\second.f">
 			<FileConfiguration Name="Debug MKL|Win32" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug MKL|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug MKL|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Release MKL|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Release MKL|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\UTIL\second_NONE.f"/>
 		<File RelativePath="..\SRC\sgetv0.f"/>
 		<File RelativePath="..\SRC\slaqrb.f"/>
 		<File RelativePath="..\UTIL\smout.f"/>
