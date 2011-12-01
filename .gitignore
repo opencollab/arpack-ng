@@ -13,3 +13,8 @@ libtool
 *.def
 *.dll
 *.bak
+*.exp
+*.u2d
+*.suo
+VISUAL_STUDIO/Release MKL/
+VISUAL_STUDIO/bin/
