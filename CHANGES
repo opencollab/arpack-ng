@@ -5,6 +5,12 @@ second_NONE works with all fortrans compilers (used by default with Scilab)
 
 sneupd.f, cneupd.f: modified for scilab add a check on nconv value (Scilab bug fix without history)
 dnaupd.f: modified  NEV Integer: INPUT/OUTPUT before only INPUT (Scilab bug fix without history) 
+ 
+Patch from Octave: (Thanks to John W. EATON)
+dneupd.f: Restore value of nconv
+dseupd.f: Restore value of nconv
+sseupd.f: Change GOTO target to eliminate warning about landing on end if.
+zneupd.f: Restore value of nconv
 
 
 Build system updated to build with Visual Studio 2010 + Intel fortran 2011 compiles on Windows.
