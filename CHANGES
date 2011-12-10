@@ -16,5 +16,6 @@ arpack-ng - 3.0
    * Compilation
      Apply gentoo patches to use an autotools build system
      Build system updated to build with Visual Studio 2010 + Intel fortran 2011 compiles on Windows.
+     Specify the SONAME to libarpack.so.2 (no API/ABI changes compare to version 2.0)
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Sat, 10 Dec 2011 20:32:45 +0100
