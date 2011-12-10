@@ -1385,7 +1385,7 @@ Optional Features:
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
-  --enable-mpi            build parallel version of arpack with mpi
+  --enable-mpi            build parallel version of arpack with MPI
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3148,8 +3148,8 @@ esac
 
 
 
-macro_version='2.4'
-macro_revision='1.3293'
+macro_version='2.4.2'
+macro_revision='1.3337'
 
 
 
@@ -15960,7 +15960,6 @@ else
   enable_mpi=no
 fi
 
-
 if test x"$enable_mpi" != x"no"; then
   ac_ext=f
 ac_compile='$F77 -c $FFLAGS conftest.$ac_ext >&5'
@@ -16183,7 +16182,7 @@ F77="$ax_mpi_save_F77"
 
 # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 if test x = x"$MPILIBS"; then
-        as_fn_error $? "could not compile an mpi test program" "$LINENO" 5
+        as_fn_error $? "could not compile a MPI test program" "$LINENO" 5
         :
 else
 

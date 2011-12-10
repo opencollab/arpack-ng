@@ -2,7 +2,7 @@ AC_PREREQ(2.59)
 AC_INIT([arpack], [96], [arpack@caam.rice.edu])
 AM_INIT_AUTOMAKE([foreign])
 
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([m4/])
 
 dnl Checks for standard programs.
 AC_PROG_F77
@@ -26,13 +26,12 @@ dnl See if compiling parpack
 AC_MSG_CHECKING([for MPI mode])
 AC_ARG_ENABLE(mpi,
 	      AC_HELP_STRING([--enable-mpi],
-			     [build parallel version of arpack with mpi]),
+			     [build parallel version of arpack with MPI]),
 	      [enable_mpi=$enableval],
 	      [enable_mpi=no])
-sinclude(ax_mpi.m4)
 if test x"$enable_mpi" != x"no"; then
   AC_LANG_PUSH([Fortran 77])
-  AX_MPI([], AC_MSG_ERROR([could not compile an mpi test program]))
+  AX_MPI([], AC_MSG_ERROR([could not compile a MPI test program]))
   AC_LANG_POP([Fortran 77])
 fi
 
