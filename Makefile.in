@@ -36,7 +36,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure TODO \
+	$(srcdir)/Makefile.in $(top_srcdir)/configure COPYING TODO \
 	config.guess config.sub install-sh ltmain.sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_blas.m4 \
