@@ -1,6 +1,8 @@
 arpack-ng - 3.0.1
 
    * libtool was missing (Closes: #615)
+   * Missing license information (Closes: #614)
+   * TODO added
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Tue, 13 Dec 2011 16:33:25 +0100
 
