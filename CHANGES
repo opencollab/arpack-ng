@@ -1,3 +1,9 @@
+arpack-ng - 3.0.1
+
+   * libtool was missing (Closes: #615)
+
+ -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Tue, 13 Dec 2011 16:33:25 +0100
+
 arpack-ng - 3.0
 
    * Patches from Scilab
