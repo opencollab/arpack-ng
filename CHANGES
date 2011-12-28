@@ -2,6 +2,9 @@ arpack-ng - 3.0.2
 
    * Fix a long line in pznaup2.f which was showing some wrong symbols
      (Closes: #620)
+   * README content updated regarding ARPACK-NG
+   * arpack.pc (pkg-config) file added
+   * Update the title & version in the configure.ac
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Wed, 28 Dec 2011 13:45:53 +0100
 
