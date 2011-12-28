@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([arpack], [96], [arpack@caam.rice.edu])
+AC_INIT([arpack-ng], [3], [arpack@caam.rice.edu])
 AM_INIT_AUTOMAKE([foreign])
 
 AC_CONFIG_MACRO_DIR([m4/])
@@ -12,7 +12,7 @@ dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
 AX_BLAS
 if test x"$BLAS_LIBS" = x; then
-   AC_MSG_ERROR([Cannot find blas libraries])
+   AC_MSG_ERROR([Cannot find BLAS libraries])
 fi
 
 dnl Check for LAPACK libraries
