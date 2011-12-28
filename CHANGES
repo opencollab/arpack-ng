@@ -1,3 +1,10 @@
+arpack-ng - 3.0.2
+
+   * Fix a long line in pznaup2.f which was showing some wrong symbols
+     (Closes: #620)
+
+ -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Wed, 28 Dec 2011 13:45:53 +0100
+
 arpack-ng - 3.0.1
 
    * libtool was missing (Closes: #615)
