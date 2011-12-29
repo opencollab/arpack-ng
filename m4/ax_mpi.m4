@@ -119,7 +119,7 @@ if test x = x"$MPILIBS"; then
 	AC_LANG_CASE([C], [AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])],
 		[C++], [AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])],
 		[Fortran 77], [AC_MSG_CHECKING([for MPI_Init])
-			AC_LINK_IFELSE([AC_LANG_PROGRAM([],[      call MPI_Init])],[MPILIBS=" "
+			AC_LINK_IFELSE([AC_LANG_PROGRAM([],[      call MPI_Init])],[MPILIBS=""
 				AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])],
 		[Fortran], [AC_MSG_CHECKING([for MPI_Init])
 			AC_LINK_IFELSE([AC_LANG_PROGRAM([],[      call MPI_Init])],[MPILIBS=" "
@@ -131,6 +131,9 @@ AC_LANG_CASE([Fortran 77], [
 	fi
 	if test x = x"$MPILIBS"; then
 		AC_CHECK_LIB(fmpich, MPI_Init, [MPILIBS="-lfmpich"])
+	fi
+	if test x = x"$MPILIBS"; then
+		AC_CHECK_LIB(mpif77, MPI_Init, [MPILIBS="-lmpif77"])
 	fi
 ],
 [Fortran], [

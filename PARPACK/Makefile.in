@@ -76,7 +76,7 @@ libparpack_la_DEPENDENCIES = $(top_builddir)/SRC/libarpacksrc.la \
 	$(top_builddir)/PARPACK/SRC/MPI/libparpacksrcmpi.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutilmpi.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libparpack_la_OBJECTS =
 libparpack_la_OBJECTS = $(am_libparpack_la_OBJECTS)
 libparpack_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -266,7 +266,7 @@ libparpack_la_LIBADD = \
 	$(top_builddir)/UTIL/libarpackutil.la \
 	$(top_builddir)/PARPACK/SRC/MPI/libparpacksrcmpi.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutilmpi.la \
-	$(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS)
+	$(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS) $(MPILIBS)
 
 all: all-recursive
 

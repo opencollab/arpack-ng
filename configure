@@ -16028,7 +16028,7 @@ $as_echo_n "checking for MPI_Init... " >&6; }
       end
 _ACEOF
 if ac_fn_f77_try_link "$LINENO"; then :
-  MPILIBS=" "
+  MPILIBS=""
 				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 else
@@ -16094,6 +16094,35 @@ fi
 $as_echo "$ac_cv_lib_fmpich_MPI_Init" >&6; }
 if test "x$ac_cv_lib_fmpich_MPI_Init" = xyes; then :
   MPILIBS="-lfmpich"
+fi
+
+	fi
+	if test x = x"$MPILIBS"; then
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MPI_Init in -lmpif77" >&5
+$as_echo_n "checking for MPI_Init in -lmpif77... " >&6; }
+if ${ac_cv_lib_mpif77_MPI_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmpif77  $LIBS"
+cat > conftest.$ac_ext <<_ACEOF
+      program main
+      call MPI_Init
+      end
+_ACEOF
+if ac_fn_f77_try_link "$LINENO"; then :
+  ac_cv_lib_mpif77_MPI_Init=yes
+else
+  ac_cv_lib_mpif77_MPI_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpif77_MPI_Init" >&5
+$as_echo "$ac_cv_lib_mpif77_MPI_Init" >&6; }
+if test "x$ac_cv_lib_mpif77_MPI_Init" = xyes; then :
+  MPILIBS="-lmpif77"
 fi
 
 	fi
