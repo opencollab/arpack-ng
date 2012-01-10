@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([arpack-ng], [3], [arpack@caam.rice.edu])
+AC_INIT([arpack-ng], [3.0.3], [http://forge.scilab.org/index.php/p/arpack-ng/issues/])
 AM_INIT_AUTOMAKE([foreign])
 
 AC_CONFIG_MACRO_DIR([m4/])
