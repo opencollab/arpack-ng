@@ -127,7 +127,7 @@ c\Revision history:
 c     Starting Point: Serial Complex Code FILE: napps.F   SID: 2.1
 c
 c\SCCS Information:
-c FILE: napps.F   SID: 1.3   DATE OF SID: 06/04/98
+c FILE: napps.F   SID: 1.4   DATE OF SID: 10/25/03
 c
 c\Remarks
 c  1. In this version, each shift is applied to all the sublocks of
@@ -243,7 +243,7 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine zlahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = dlamch( 'safe minimum' )
+         unfl = pdlamch( 'safe minimum' )
          ovfl = dble(one / unfl)
          call dlabad( unfl, ovfl )
          ulp = dlamch( 'precision' )

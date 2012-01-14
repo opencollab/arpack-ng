@@ -1,5 +1,8 @@
-arpack-ng - 3.0.3
+arpack-ng - 3.1.0
 
+   * Many bug fixes in the parpack lib. It is an old patch from upstream.
+     Thanks to Viral Shah for pinging us on this subject.
+     See the PARPACK_CHANGES file for the details.
    * Change the bug report from arpack@caam.rice.edu to 
      http://forge.scilab.org/index.php/p/arpack-ng/issues/
    * Provide a M4 macro (detect_arpack_bug.m4) to check if the underlying

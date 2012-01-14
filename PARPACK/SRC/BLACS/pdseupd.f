@@ -1,8 +1,8 @@
 c\BeginDoc
 c
-c\Name: pdseupd 
+c\Name: pdseupd
 c
-c Message Passing Layer: BLACS 
+c Message Passing Layer: BLACS
 c
 c\Description: 
 c
@@ -41,12 +41,12 @@ c  There is also the option of computing a selected set of these vectors
 c  with a single call.
 c
 c\Usage:
-c  call pdseupd  
+c  call pdseupd 
 c     ( COMM, RVEC, HOWMNY, SELECT, D, Z, LDZ, SIGMA, BMAT, N, WHICH, NEV, TOL,
 c       RESID, NCV, V, LDV, IPARAM, IPNTR, WORKD, WORKL, LWORKL, INFO )
 c
 c\Arguments
-c  COMM    BLACS  Communicator for the processor grid.  (INPUT)
+c  COMM    BLACS Communicator for the processor grid.  (INPUT)
 c
 c  RVEC    LOGICAL  (INPUT) 
 c          Specifies whether Ritz vectors corresponding to the Ritz value 
@@ -69,16 +69,16 @@ c          computed. To select the Ritz vector corresponding to a
 c          Ritz value D(j), SELECT(j) must be set to .TRUE.. 
 c          If HOWMNY = 'A' , SELECT is used as workspace.
 c
-c  D       Double precision  array of dimension NEV.  (OUTPUT)
+c  D       Double precision array of dimension NEV.  (OUTPUT)
 c          On exit, D contains the Ritz value approximations to the
 c          eigenvalues of A*z = lambda*B*z. The values are returned
 c          in ascending order. If IPARAM(7) = 3,4,5 then D represents
-c          the Ritz values of OP computed by pdsaupd  transformed to
+c          the Ritz values of OP computed by pdsaupd transformed to
 c          those of the original eigensystem A*z = lambda*B*z. If 
 c          IPARAM(7) = 1,2 then the Ritz values of OP are the same 
 c          as the those of A*z = lambda*B*z.
 c
-c  Z       Double precision  N by NEV array if HOWMNY = 'A'.  (OUTPUT)
+c  Z       Double precision N by NEV array if HOWMNY = 'A'.  (OUTPUT)
 c          On exit, Z contains the B-orthonormal Ritz vectors of the
 c          eigensystem A*z = lambda*B*z corresponding to the Ritz
 c          value approximations.
@@ -90,13 +90,13 @@ c  LDZ     Integer.  (INPUT)
 c          The leading dimension of the array Z.  If Ritz vectors are
 c          desired, then  LDZ .ge.  max( 1, N ).  In any case,  LDZ .ge. 1.
 c
-c  SIGMA   Double precision   (INPUT)
+c  SIGMA   Double precision  (INPUT)
 c          If IPARAM(7) = 3,4,5 represents the shift. Not referenced if
 c          IPARAM(7) = 1 or 2.
 c
 c
 c  **** The remaining arguments MUST be the same as for the   ****
-c  **** call to PDNAUPD  that was just completed.               ****
+c  **** call to PDNAUPD that was just completed.               ****
 c
 c  NOTE: The remaining arguments
 c
@@ -109,7 +109,7 @@ c         the the last call to PSSAUPD and the call to PSSEUPD.
 c
 c  Two of these parameters (WORKL, INFO) are also output parameters:
 c
-c  WORKL   Double precision  work array of length LWORKL.  (OUTPUT/WORKSPACE)
+c  WORKL   Double precision work array of length LWORKL.  (OUTPUT/WORKSPACE)
 c          WORKL(1:4*ncv) contains information obtained in
 c          PSSAUPD. They are not changed by PSSEUPD.
 c          WORKL(4*ncv+1:ncv*ncv+8*ncv) holds the
@@ -136,7 +136,7 @@ c          = -5: WHICH must be one of 'LM', 'SM', 'LA', 'SA' or 'BE'.
 c          = -6: BMAT must be one of 'I' or 'G'.
 c          = -7: Length of private work WORKL array is not sufficient.
 c          = -8: Error return from trid. eigenvalue calculation;
-c                Information error from LAPACK routine dsteqr .
+c                Information error from LAPACK routine dsteqr.
 c          = -9: Starting vector is zero.
 c          = -10: IPARAM(7) must be 1,2,3,4,5.
 c          = -11: IPARAM(7) = 1 and BMAT = 'G' are incompatible.
@@ -145,11 +145,11 @@ c          = -14: PSSAUPD did not find any eigenvalues to sufficient
 c                 accuracy.
 c          = -15: HOWMNY must be one of 'A' or 'S' if RVEC = .true.
 c          = -16: HOWMNY = 'S' not yet implemented
-c          = -17: DSEUPD  got a different count of the number of converged
-c                 Ritz values than DSAUPD  got.  This indicates the user
-c                 probably made an error in passing data from DSAUPD  to
-c                 DSEUPD  or that the data was modified before entering
-c                 DSEUPD .
+c          = -17: DSEUPD got a different count of the number of converged
+c                 Ritz values than DSAUPD got.  This indicates the user
+c                 probably made an error in passing data from DSAUPD to
+c                 DSEUPD or that the data was modified before entering
+c                 DSEUPD.
 c
 c\BeginLib
 c
@@ -182,24 +182,24 @@ c  2. Currently only HOWMNY = 'A' is implemented. It is included at this
 c     stage for the user who wants to incorporate it. 
 c
 c\Routines called:
-c     dsesrt   ARPACK routine that sorts an array X, and applies the
+c     dsesrt  ARPACK routine that sorts an array X, and applies the
 c             corresponding permutation to a matrix A.
-c     dsortr   dsortr   ARPACK sorting routine.
-c     pdnorm2  Parallel ARPACK routine that computes the 2-norm of a vector.
+c     dsortr  dsortr  ARPACK sorting routine.
+c     pdnorm2 Parallel ARPACK routine that computes the 2-norm of a vector.
 c     pivout  Parallel ARPACK utility routine that prints integers.
-c     pdvout   Parallel ARPACK utility routine that prints vectors.
-c     dgeqr2   LAPACK routine that computes the QR factorization of
+c     pdvout  Parallel ARPACK utility routine that prints vectors.
+c     dgeqr2  LAPACK routine that computes the QR factorization of
 c             a matrix.
-c     dlacpy   LAPACK matrix copy routine.
-c     pdlamch  ScaLAPACK routine that determines machine constants.
-c     dorm2r   LAPACK routine that applies an orthogonal matrix in
+c     dlacpy  LAPACK matrix copy routine.
+c     pdlamch ScaLAPACK routine that determines machine constants.
+c     dorm2r  LAPACK routine that applies an orthogonal matrix in
 c             factored form.
-c     dsteqr   LAPACK routine that computes eigenvalues and eigenvectors
+c     dsteqr  LAPACK routine that computes eigenvalues and eigenvectors
 c             of a tridiagonal matrix.
-c     dger     Level 2 BLAS rank one update to a matrix.
-c     dcopy    Level 1 BLAS that copies one vector to another .
-c     dscal    Level 1 BLAS that scales a vector.
-c     dswap    Level 1 BLAS that swaps the contents of two vectors.
+c     dger    Level 2 BLAS rank one update to a matrix.
+c     dcopy   Level 1 BLAS that copies one vector to another .
+c     dscal   Level 1 BLAS that scales a vector.
+c     dswap   Level 1 BLAS that swaps the contents of two vectors.
 c\Authors
 c     Danny Sorensen               Phuong Vu
 c     Richard Lehoucq              CRPC / Rice University
@@ -216,12 +216,12 @@ c\Revision history:
 c     Starting Point: Serial Code FILE: seupd.F   SID: 2.4
 c
 c\SCCS Information:
-c FILE: seupd.F   SID: 1.10   DATE OF SID: 04/10/01
+c FILE: seupd.F   SID: 1.11   DATE OF SID: 10/25/03
 c
 c\EndLib
 c
 c-----------------------------------------------------------------------
-      subroutine pdseupd  
+      subroutine pdseupd 
      &    (comm  , rvec  , howmny, select, d    ,
      &     z     , ldz   , sigma , bmat  , n    ,
      &     which , nev   , tol   , resid , ncv  ,
@@ -229,7 +229,7 @@ c-----------------------------------------------------------------------
      &     workl , lworkl, info )
 c
 c     %--------------------%
-c     | BLACS  Communicator |
+c     | BLACS Communicator |
 c     %--------------------%
 c
       integer   comm
@@ -248,7 +248,7 @@ c
       character  bmat, howmny, which*2
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
-      Double precision      
+      Double precision     
      &           sigma, tol
 c
 c     %-----------------%
@@ -257,7 +257,7 @@ c     %-----------------%
 c
       integer    iparam(7), ipntr(11)
       logical    select(ncv)
-      Double precision 
+      Double precision
      &           d(nev), resid(n), v(ldv,ncv), z(ldz, nev), 
      &           workd(2*n), workl(lworkl)
 c
@@ -265,9 +265,9 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision 
+      Double precision
      &           one, zero
-      parameter (one = 1.0 , zero = 0.0 )
+      parameter (one = 1.0, zero = 0.0)
 c
 c     %---------------%
 c     | Local Scalars |
@@ -279,7 +279,7 @@ c
      &           ldq    , mode   , msglvl, nconv , next  ,
      &           ritz   , irz    , ibd   , np    , ishift,
      &           leftptr, rghtptr, numcnv, jj
-      Double precision 
+      Double precision
      &           bnorm2, rnorm, temp, temp1, eps23
       logical    reord
 c
@@ -287,16 +287,16 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   dcopy  , dger   , dgeqr2 , dlacpy , dorm2r , dscal , 
-     &           dsesrt , dsteqr , dswap  , pdvout , pivout, dsortr 
+      external   dcopy , dger  , dgeqr2, dlacpy, dorm2r, dscal, 
+     &           dsesrt, dsteqr, dswap , pdvout, pivout, dsortr
 c
 c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Double precision 
-     &           pdnorm2 , pdlamch 
-      external   pdnorm2 , pdlamch 
+      Double precision
+     &           pdnorm2, pdlamch
+      external   pdnorm2, pdlamch
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -373,18 +373,18 @@ c     | Memory is laid out as follows:                        |
 c     | workl(1:2*ncv) := generated tridiagonal matrix H      |
 c     |       The subdiagonal is stored in workl(2:ncv).      |
 c     |       The dead spot is workl(1) but upon exiting      |
-c     |       pdsaupd  stores the B-norm of the last residual  |
+c     |       pdsaupd stores the B-norm of the last residual  |
 c     |       vector in workl(1). We use this !!!             |
 c     | workl(2*ncv+1:2*ncv+ncv) := ritz values               |
 c     |       The wanted values are in the first NCONV spots. |
 c     | workl(3*ncv+1:3*ncv+ncv) := computed Ritz estimates   |
 c     |       The wanted values are in the first NCONV spots. |
-c     | NOTE: workl(1:4*ncv) is set by pdsaupd  and is not     |
-c     |       modified by pdseupd .                            |
+c     | NOTE: workl(1:4*ncv) is set by pdsaupd and is not     |
+c     |       modified by pdseupd.                            |
 c     %-------------------------------------------------------%
 c
 c     %-------------------------------------------------------%
-c     | The following is used and set by pdseupd .             |
+c     | The following is used and set by pdseupd.             |
 c     | workl(4*ncv+1:4*ncv+ncv) := used as workspace during  |
 c     |       computation of the eigenvectors of H. Stores    |
 c     |       the diagonal of H. Upon EXIT contains the NCV   |
@@ -400,10 +400,10 @@ c     |       wanted values. If MODE = 1,2 then will equal    |
 c     |       workl(3*ncv+1:4*ncv).                           |
 c     | workl(6*ncv+1:6*ncv+ncv*ncv) := orthogonal Q that is  |
 c     |       the eigenvector matrix for H as returned by     |
-c     |       dsteqr . Not referenced if RVEC = .False.        |
+c     |       dsteqr. Not referenced if RVEC = .False.        |
 c     |       Ordering follows that of workl(4*ncv+1:5*ncv)   |
 c     | workl(6*ncv+ncv*ncv+1:6*ncv+ncv*ncv+2*ncv) :=         |
-c     |       Workspace. Needed by dsteqr  and by pdseupd .    |
+c     |       Workspace. Needed by dsteqr and by pdseupd.    |
 c     | GRAND total of NCV*(NCV+8) locations.                 |
 c     %-------------------------------------------------------%
 c
@@ -439,13 +439,13 @@ c     %---------------------------------%
 c     | Set machine dependent constant. |
 c     %---------------------------------%
 c
-      eps23 = pdlamch (comm, 'Epsilon-Machine') 
-      eps23 = eps23**(2.0  / 3.0 )
+      eps23 = pdlamch(comm, 'Epsilon-Machine') 
+      eps23 = eps23**(2.0 / 3.0)
 c
 c     %---------------------------------------%
 c     | RNORM is B-norm of the RESID(1:N).    |
 c     | BNORM2 is the 2 norm of B*RESID(1:N). |
-c     | Upon exit of pdsaupd  WORKD(1:N) has   |
+c     | Upon exit of pdsaupd WORKD(1:N) has   |
 c     | B*RESID(1:N).                         |
 c     %---------------------------------------%
 c
@@ -453,13 +453,13 @@ c
       if (bmat .eq. 'I') then
          bnorm2 = rnorm
       else if (bmat .eq. 'G') then
-         bnorm2 = pdnorm2 (comm, n, workd, 1)
+         bnorm2 = pdnorm2(comm, n, workd, 1)
       end if
 c
       if (msglvl .gt. 2) then
-         call pdvout (comm, logfil, ncv, workl(irz), ndigit,
+         call pdvout(comm, logfil, ncv, workl(irz), ndigit,
      &   '_seupd: Ritz values passed in from _SAUPD.')
-         call pdvout (comm, logfil, ncv, workl(ibd), ndigit,
+         call pdvout(comm, logfil, ncv, workl(ibd), ndigit,
      &   '_seupd: Ritz estimates passed in from _SAUPD.')
       end if
       if (rvec) then
@@ -487,14 +487,14 @@ c        %-------------------------------------%
 c
          np     = ncv - nev
          ishift = 0
-         call pdsgets (comm         , ishift, which     , 
+         call pdsgets(comm         , ishift, which     , 
      &                nev          , np    , workl(irz),
-     &                workl(bounds), workl , workl(np+1))
+     &                workl(bounds), workl)
 c
          if (msglvl .gt. 2) then
-            call pdvout (comm, logfil, ncv, workl(irz), ndigit,
+            call pdvout(comm, logfil, ncv, workl(irz), ndigit,
      &      '_seupd: Ritz values after calling _SGETS.')
-            call pdvout (comm, logfil, ncv, workl(bounds), ndigit,
+            call pdvout(comm, logfil, ncv, workl(bounds), ndigit,
      &      '_seupd: Ritz value indices after calling _SGETS.')
          end if
 c
@@ -540,10 +540,10 @@ c        | eigenvectors of the final symmetric tridiagonal matrix H. |
 c        | Initialize the eigenvector matrix Q to the identity.      |
 c        %-----------------------------------------------------------%
 c
-         call dcopy  (ncv-1, workl(ih+1)  , 1, workl(ihb), 1)
-         call dcopy  (ncv  , workl(ih+ldh), 1, workl(ihd), 1)
+         call dcopy (ncv-1, workl(ih+1)  , 1, workl(ihb), 1)
+         call dcopy (ncv  , workl(ih+ldh), 1, workl(ihd), 1)
 c
-         call dsteqr ('Identity', ncv      , workl(ihd),
+         call dsteqr('Identity', ncv      , workl(ihd),
      &               workl(ihb), workl(iq), ldq       ,
      &               workl(iw) , ierr)
 c
@@ -553,10 +553,10 @@ c
          end if
 c
          if (msglvl .gt. 1) then
-            call dcopy  (ncv, workl(iq+ncv-1), ldq, workl(iw), 1)
-            call pdvout  (comm, logfil, ncv, workl(ihd), ndigit,
+            call dcopy (ncv, workl(iq+ncv-1), ldq, workl(iw), 1)
+            call pdvout (comm, logfil, ncv, workl(ihd), ndigit,
      &          '_seupd: NCV Ritz values of the final H matrix')
-            call pdvout  (comm, logfil, ncv, workl(iw), ndigit,
+            call pdvout (comm, logfil, ncv, workl(iw), ndigit,
      &           '_seupd: last row of the eigenvector matrix for H')
          end if
 c
@@ -607,11 +607,11 @@ c
                temp = workl(ihd+leftptr-1)
                workl(ihd+leftptr-1) = workl(ihd+rghtptr-1)
                workl(ihd+rghtptr-1) = temp
-               call dcopy (ncv, workl(iq+ncv*(leftptr-1)), 1,
+               call dcopy(ncv, workl(iq+ncv*(leftptr-1)), 1,
      &                    workl(iw), 1)
-               call dcopy (ncv, workl(iq+ncv*(rghtptr-1)), 1,
+               call dcopy(ncv, workl(iq+ncv*(rghtptr-1)), 1,
      &                    workl(iq+ncv*(leftptr-1)), 1)
-               call dcopy (ncv, workl(iw), 1,
+               call dcopy(ncv, workl(iw), 1,
      &                    workl(iq+ncv*(rghtptr-1)), 1)
                leftptr = leftptr + 1
                rghtptr = rghtptr - 1
@@ -623,7 +623,7 @@ c
  30      end if
 c
          if (msglvl .gt. 2) then
-             call pdvout  (comm, logfil, ncv, workl(ihd), ndigit,
+             call pdvout (comm, logfil, ncv, workl(ihd), ndigit,
      &       '_seupd: The eigenvalues of H--reordered')
          end if
 c
@@ -631,7 +631,7 @@ c        %----------------------------------------%
 c        | Load the converged Ritz values into D. |
 c        %----------------------------------------%
 c
-         call dcopy (nconv, workl(ihd), 1, d, 1)
+         call dcopy(nconv, workl(ihd), 1, d, 1)
 c
       else
 c
@@ -639,8 +639,8 @@ c        %-----------------------------------------------------%
 c        | Ritz vectors not required. Load Ritz values into D. |
 c        %-----------------------------------------------------%
 c
-         call dcopy (nconv, workl(ritz), 1, d, 1)
-         call dcopy (ncv, workl(ritz), 1, workl(ihd), 1)
+         call dcopy(nconv, workl(ritz), 1, d, 1)
+         call dcopy(ncv, workl(ritz), 1, workl(ihd), 1)
 c
       end if
 c
@@ -658,9 +658,9 @@ c        | bounds. Not necessary if only Ritz values are desired.  |
 c        %---------------------------------------------------------%
 c
          if (rvec) then
-            call dsesrt ('LA', rvec , nconv, d, ncv, workl(iq), ldq)
+            call dsesrt('LA', rvec , nconv, d, ncv, workl(iq), ldq)
          else
-            call dcopy (ncv, workl(bounds), 1, workl(ihb), 1)
+            call dcopy(ncv, workl(bounds), 1, workl(ihb), 1)
          end if
 c
       else 
@@ -674,13 +674,13 @@ c        |    For TYPE = 'BUCKLE' the transformation is                |
 c        |             lambda = sigma * theta / ( theta - 1 )          |
 c        |    For TYPE = 'CAYLEY' the transformation is                |
 c        |             lambda = sigma * (theta + 1) / (theta - 1 )     |
-c        |    where the theta are the Ritz values returned by pdsaupd . |
+c        |    where the theta are the Ritz values returned by pdsaupd. |
 c        | NOTES:                                                      |
 c        | *The Ritz vectors are not affected by the transformation.   |
 c        |  They are only reordered.                                   |
 c        %-------------------------------------------------------------%
 c
-         call dcopy  (ncv, workl(ihd), 1, workl(iw), 1)
+         call dcopy (ncv, workl(ihd), 1, workl(iw), 1)
          if (type .eq. 'SHIFTI') then 
             do 40 k=1, ncv
                workl(ihd+k-1) = one / workl(ihd+k-1) + sigma
@@ -712,14 +712,14 @@ c        |  match the ordering of the lambda. We`ll use them again for |
 c        |  Ritz vector purification.                                  |
 c        %-------------------------------------------------------------%
 c
-         call dcopy  (nconv, workl(ihd), 1, d, 1)
-         call dsortr ('LA', .true., nconv, workl(ihd), workl(iw))
+         call dcopy (nconv, workl(ihd), 1, d, 1)
+         call dsortr('LA', .true., nconv, workl(ihd), workl(iw))
          if (rvec) then
-            call dsesrt ('LA', rvec , nconv, d, ncv, workl(iq), ldq)
+            call dsesrt('LA', rvec , nconv, d, ncv, workl(iq), ldq)
          else
-            call dcopy (ncv, workl(bounds), 1, workl(ihb), 1)
-            call dscal (ncv, bnorm2/rnorm, workl(ihb), 1)
-            call dsortr ('LA', .true., nconv, d, workl(ihb))
+            call dcopy(ncv, workl(bounds), 1, workl(ihb), 1)
+            call dscal(ncv, bnorm2/rnorm, workl(ihb), 1)
+            call dsortr('LA', .true., nconv, d, workl(ihb))
          end if
 c
       end if 
@@ -738,7 +738,7 @@ c        | the wanted invariant subspace located in the first NCONV |
 c        | columns of workl(iq,ldq).                                |
 c        %----------------------------------------------------------%
 c     
-         call dgeqr2 (ncv, nconv        , workl(iq) ,
+         call dgeqr2(ncv, nconv        , workl(iq) ,
      &               ldq, workl(iw+ncv), workl(ihb),
      &               ierr)
 c     
@@ -750,11 +750,11 @@ c        | of the approximate invariant subspace associated with  |
 c        | the Ritz values in workl(ihd).                         |
 c        %--------------------------------------------------------%
 c     
-         call dorm2r ('Right'      , 'Notranspose', n        ,
+         call dorm2r('Right'      , 'Notranspose', n        ,
      &                ncv          , nconv        , workl(iq),
      &                ldq          , workl(iw+ncv), v        ,
      &                ldv          , workd(n+1)   , ierr     )
-         call dlacpy ('All', n, nconv, v, ldv, z, ldz)
+         call dlacpy('All', n, nconv, v, ldv, z, ldz)
 c
 c        %-----------------------------------------------------%
 c        | In order to compute the Ritz estimates for the Ritz |
@@ -766,7 +766,7 @@ c
             workl(ihb+j-1) = zero
   65     continue
          workl(ihb+ncv-1) = one
-         call dorm2r ('Left', 'Transpose'  , ncv       ,
+         call dorm2r('Left', 'Transpose'  , ncv       ,
      &                1     , nconv        , workl(iq) ,
      &                ldq   , workl(iw+ncv), workl(ihb),
      &                ncv   , temp         , ierr      )
@@ -790,11 +790,11 @@ c        | *  Determine Ritz estimates of the theta.       |
 c        |    If RVEC = .true. then compute Ritz estimates |
 c        |               of the theta.                     |
 c        |    If RVEC = .false. then copy Ritz estimates   |
-c        |              as computed by pdsaupd .            |
+c        |              as computed by pdsaupd.            |
 c        | *  Determine Ritz estimates of the lambda.      |
 c        %-------------------------------------------------%
 c
-         call dscal  (ncv, bnorm2, workl(ihb), 1)
+         call dscal (ncv, bnorm2, workl(ihb), 1)
          if (type .eq. 'SHIFTI') then 
 c
             do 80 k=1, ncv
@@ -821,14 +821,14 @@ c
       end if
 c
       if (type .ne. 'REGULR' .and. msglvl .gt. 1) then
-         call pdvout  (comm, logfil, nconv, d, ndigit,
+         call pdvout (comm, logfil, nconv, d, ndigit,
      &          '_seupd: Untransformed converged Ritz values')
-         call pdvout  (comm, logfil, nconv, workl(ihb), ndigit, 
+         call pdvout (comm, logfil, nconv, workl(ihb), ndigit, 
      &     '_seupd: Ritz estimates of the untransformed Ritz values')
       else if (msglvl .gt. 1) then
-         call pdvout  (comm, logfil, nconv, d, ndigit,
+         call pdvout (comm, logfil, nconv, d, ndigit,
      &          '_seupd: Converged Ritz values')
-         call pdvout  (comm, logfil, nconv, workl(ihb), ndigit, 
+         call pdvout (comm, logfil, nconv, workl(ihb), ndigit, 
      &     '_seupd: Associated Ritz estimates')
       end if
 c 
@@ -855,14 +855,14 @@ c
       end if 
 c
       if (type .ne. 'REGULR')
-     &   call dger (n, nconv, one, resid, 1, workl(iw), 1, z, ldz)
+     &   call dger(n, nconv, one, resid, 1, workl(iw), 1, z, ldz)
 c
  9000 continue
 c
       return
 c
 c     %----------------%
-c     | End of pdseupd  |
+c     | End of pdseupd |
 c     %----------------%
 c
       end

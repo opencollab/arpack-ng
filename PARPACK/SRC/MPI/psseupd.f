@@ -2,7 +2,7 @@ c\BeginDoc
 c
 c\Name: psseupd
 c
-c Message Passing Layer: MPI 
+c Message Passing Layer: MPI
 c
 c\Description: 
 c
@@ -46,7 +46,7 @@ c     ( COMM, RVEC, HOWMNY, SELECT, D, Z, LDZ, SIGMA, BMAT, N, WHICH, NEV, TOL,
 c       RESID, NCV, V, LDV, IPARAM, IPNTR, WORKD, WORKL, LWORKL, INFO )
 c
 c\Arguments
-c  COMM    MPI  Communicator for the processor grid.  (INPUT)
+c  COMM    MPI Communicator for the processor grid.  (INPUT)
 c
 c  RVEC    LOGICAL  (INPUT) 
 c          Specifies whether Ritz vectors corresponding to the Ritz value 
@@ -69,7 +69,7 @@ c          computed. To select the Ritz vector corresponding to a
 c          Ritz value D(j), SELECT(j) must be set to .TRUE.. 
 c          If HOWMNY = 'A' , SELECT is used as workspace.
 c
-c  D       Real  array of dimension NEV.  (OUTPUT)
+c  D       Real array of dimension NEV.  (OUTPUT)
 c          On exit, D contains the Ritz value approximations to the
 c          eigenvalues of A*z = lambda*B*z. The values are returned
 c          in ascending order. If IPARAM(7) = 3,4,5 then D represents
@@ -78,7 +78,7 @@ c          those of the original eigensystem A*z = lambda*B*z. If
 c          IPARAM(7) = 1,2 then the Ritz values of OP are the same 
 c          as the those of A*z = lambda*B*z.
 c
-c  Z       Real  N by NEV array if HOWMNY = 'A'.  (OUTPUT)
+c  Z       Real N by NEV array if HOWMNY = 'A'.  (OUTPUT)
 c          On exit, Z contains the B-orthonormal Ritz vectors of the
 c          eigensystem A*z = lambda*B*z corresponding to the Ritz
 c          value approximations.
@@ -90,7 +90,7 @@ c  LDZ     Integer.  (INPUT)
 c          The leading dimension of the array Z.  If Ritz vectors are
 c          desired, then  LDZ .ge.  max( 1, N ).  In any case,  LDZ .ge. 1.
 c
-c  SIGMA   Real   (INPUT)
+c  SIGMA   Real  (INPUT)
 c          If IPARAM(7) = 3,4,5 represents the shift. Not referenced if
 c          IPARAM(7) = 1 or 2.
 c
@@ -109,7 +109,7 @@ c         the the last call to PSSAUPD and the call to PSSEUPD.
 c
 c  Two of these parameters (WORKL, INFO) are also output parameters:
 c
-c  WORKL   Real  work array of length LWORKL.  (OUTPUT/WORKSPACE)
+c  WORKL   Real work array of length LWORKL.  (OUTPUT/WORKSPACE)
 c          WORKL(1:4*ncv) contains information obtained in
 c          PSSAUPD. They are not changed by PSSEUPD.
 c          WORKL(4*ncv+1:ncv*ncv+8*ncv) holds the
@@ -216,7 +216,7 @@ c\Revision history:
 c     Starting Point: Serial Code FILE: seupd.F   SID: 2.4
 c
 c\SCCS Information:
-c FILE: seupd.F   SID: 1.10   DATE OF SID: 04/10/01
+c FILE: seupd.F   SID: 1.11   DATE OF SID: 10/25/03
 c
 c\EndLib
 c
@@ -229,7 +229,7 @@ c-----------------------------------------------------------------------
      &     workl , lworkl, info )
 c
 c     %--------------------%
-c     | MPI  Communicator |
+c     | MPI Communicator |
 c     %--------------------%
 c
       integer   comm
@@ -248,7 +248,7 @@ c
       character  bmat, howmny, which*2
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
-      Real      
+      Real     
      &           sigma, tol
 c
 c     %-----------------%
@@ -257,7 +257,7 @@ c     %-----------------%
 c
       integer    iparam(7), ipntr(11)
       logical    select(ncv)
-      Real 
+      Real
      &           d(nev), resid(n), v(ldv,ncv), z(ldz, nev), 
      &           workd(2*n), workl(lworkl)
 c
@@ -265,9 +265,9 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Real 
+      Real
      &           one, zero
-      parameter (one = 1.0 , zero = 0.0 )
+      parameter (one = 1.0, zero = 0.0)
 c
 c     %---------------%
 c     | Local Scalars |
@@ -279,7 +279,7 @@ c
      &           ldq    , mode   , msglvl, nconv , next  ,
      &           ritz   , irz    , ibd   , np    , ishift,
      &           leftptr, rghtptr, numcnv, jj
-      Real 
+      Real
      &           bnorm2, rnorm, temp, temp1, eps23
       logical    reord
 c
@@ -294,7 +294,7 @@ c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Real 
+      Real
      &           psnorm2, pslamch
       external   psnorm2, pslamch
 c
@@ -440,7 +440,7 @@ c     | Set machine dependent constant. |
 c     %---------------------------------%
 c
       eps23 = pslamch(comm, 'Epsilon-Machine') 
-      eps23 = eps23**(2.0  / 3.0 )
+      eps23 = eps23**(2.0 / 3.0)
 c
 c     %---------------------------------------%
 c     | RNORM is B-norm of the RESID(1:N).    |
@@ -489,7 +489,7 @@ c
          ishift = 0
          call pssgets(comm         , ishift, which     , 
      &                nev          , np    , workl(irz),
-     &                workl(bounds), workl , workl(np+1))
+     &                workl(bounds), workl)
 c
          if (msglvl .gt. 2) then
             call psvout(comm, logfil, ncv, workl(irz), ndigit,

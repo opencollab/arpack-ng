@@ -1,0 +1,334 @@
+This file describes list of changes done by Chao Yang on parpack.
+This fixes many issues in parpack libs.
+
+Theses changes were released under the "ppatch.tar.gz" filename.
+
+---------------------------------------------------------------------
+1. 01/27/97:
+
+   [s,d]sapps.f: Loop 50 (line 375) has an incorrect upper bound:
+                 replace
+                    do 50 j = 1, min( j+jj, kplusp )
+                                     ^^^ 
+                 with
+                    do 50 j = 1, min( i+jj, kplusp )
+                                     ^^^
+
+
+   [s,d]napps.f: Loop 70 (line 433) has an incorrect upper bound:
+                 replace
+                    do 70 j = 1, min( j+jj, kplusp )
+                                     ^^^
+                 with
+                    do 70 j = 1, min( i+jj, kplusp )
+                                     ^^^
+
+   [c,z]napps.f: Loop 70 (line 365) has an incorrect upper bound:
+                 replace
+                    do 70 j = 1, min( j+jj, kplusp )
+                                     ^^^
+                 with
+                    do 70 j = 1, min( i+jj, kplusp )
+                                     ^^^
+
+   Without the change the code will not compile on NEC.
+   The parallel version of these routine needs to be modified 
+   as well.
+
+2. 03/28/97:
+
+   In [s,d]ndrv4.f [s,d]ndrv5.f [s,d]ndrv6.f, the array SELECT
+   is delecared as 
+
+            select(maxnev)
+
+   It should be changed to 
+
+            select(maxncv)
+
+
+3. 03/28/97:
+
+   There are two empty files [s,d]naupe.f in the SRC directory.
+   They are not part of the ARPACK.  The user should ignore
+   them.
+
+
+4. 03/28/97:
+
+   In [s,d]seupd.f, select(ncv) is declared before ncv is declared.
+
+   Should move the declaration of select(ncv) after
+
+c     %-----------------%
+c     | Array Arguments |
+c     %-----------------%
+
+
+5. 03/28/97:
+
+   all banded drivers in EXAMPLES/BAND directory have not been
+   checked in.  Although these are the current version, the SCCS 
+   infomartion do not show the correct version number and dates.
+
+6. 03/28/97:
+
+   In [s,d]naupd.f the following check:
+
+            else if (mode .lt. 1 .or. mode .gt. 5) then
+                                                ^^
+                                                ierr = -10
+
+   should be changed to
+
+            else if (mode .lt. 1 .or. mode .gt. 4) then
+                                                ^^
+                                                ierr = -10
+
+
+   In [c,z]naupd.f the following check:
+
+         else if (mode .lt. 1 .or. mode .gt. 5) then
+                                            ^^
+                                                ierr = -10
+   
+   should be changed to
+
+         else if (mode .lt. 1 .or. mode .gt. 3) then
+                                            ^^
+                                                ierr = -10
+
+7. 04/02/97:
+
+   The mass matrix in the drivers 
+
+                [s,d]ndrv4.f (NONSYM)
+                [s,d]nbdr4.f (BAND)
+                [c,z]ndrv4.f (COMPLEX)
+                [c,z]nbdr4.f (BAND)
+
+   needs to be scaled by 1/6 to match the piecewise 
+   linear finite element discretization of the 1-d 
+   convection-diffusion operator as explained in the
+   documentation.
+
+8. 04/03/97:
+ 
+   The documentation for the SELECT array in [s,d]seupd.f should
+   say:
+
+c  SELECT  Logical array of dimension NCV.  (INPUT/WORKSPACE)
+                                      ^^^^         ^^^^^^^^^^
+
+9. 06/04/98:
+
+   p[s,d,c,z]larnv.f  The integer arguement IDIST is not declared.
+
+10. 06/04/98:
+   In p[s,d]neupd.f, the declaration of p[s,d]norm2 is missing.
+   The declaration of [s,d]nrm2 is not necessary since it is not
+   used.
+
+11. 08/03/98:
+   In [c,z]nband.f, the documentation:
+   c   call znband
+   c      ( RVEC, HOWMNY, SELECT, D , Z, LDZ, SIGMA, WORKEV, N, AB,
+   c        MB, LDA, FAC, KL, LU, WHICH, BMAT, NEV, TOL, RESID, NCV,
+                             ^^^^
+   c        V, LDV, IPARAM, WORKD, WORKL, LWORKL, RWORK, IWORK, INFO )
+
+   should read
+
+   c   call znband
+   c      ( RVEC, HOWMNY, SELECT, D , Z, LDZ, SIGMA, WORKEV, N, AB,
+   c        MB, LDA, FAC, KL, KU, WHICH, BMAT, NEV, TOL, RESID, NCV,
+                             ^^^^
+   c        V, LDV, IPARAM, WORKD, WORKL, LWORKL, RWORK, IWORK, INFO )
+
+12. 03/18/99
+   _getv0.f failed to generate a starting vector after 2 steps of classical
+   Gram Schmidt correction step.  Fixed by increasing the maximum Gram-Schmidt
+   correction steps to 5.
+
+13. 04/16/99
+   A print statement (*mout) in p*neupd.f went over the 72nd column.
+
+14. 04/17/99
+   Modified p*larnv.f and p*getv0.f in PARPACK to fix a bug in 
+   generating a random starting vector in parallel.  Now each processor
+   generates its portion of the starting vector using a different seed.
+
+15. 11/05/99
+   The do 10 loop in [c,z]neupd.f and p[c,z]neupd.f had incorrect index 
+   to workl(irz).  Since the loop count j starts from 0, the reference to 
+   workl(irz) should be expressed by workl(irz+j) instead of workl(irz+j-1).
+
+16. 06/01/2000
+   Variables 'rnorm' and 'eps23' are missing from the save statement list
+   in all __naup2 routines (both serial and parallel).
+
+17. 07/20/2000 (all eupd, both serial and parallel)
+   Changed the code segment used to determine whether
+   reordering is necessary to move the desired and converged
+   Ritz values into the leading portion of the Schur form.
+   The previous versions used the technique to mark Ritz values that
+   must be put in the leading portion of the Schur form:
+
+   1. Determine which eigenvalues returned by dense eigenvalue
+      calculation routine are desired.  This is done in two steps:
+      a) find a threshold value from the sorted Ritz value array
+      b) compare all eigenvalues returned directly from dense eigenvalue
+         calculation routine against this threshold value.
+   2. For each desired Ritz value, check the Ritz estimate. 
+      Mark the j-th element of the select array if the j-th eigenvalue 
+      satisfies the convergence criteria.
+
+
+18. 08/08/2000
+   In _saitr.f and _naitr.f, add a check for NP = 0 at the very begining of 
+   this routine 
+
+19. 09/21/2000
+   In [c,z]neupd.f, the IF statement:
+            if (numcnv .lt. nev .and.                   
+                            ^^^                         
+     &          slapy2( m_real(workl(ibd+jj-1)),        
+     &          aimag(workl(ibd+jj-1)) )                
+     &          .le. tol*rtemp) then                    
+
+   is changed to                                           
+            if (numcnv .lt. nconv .and.                 
+                            ^^^^^                       
+     &          slapy2( m_real(workl(ibd+jj-1)),        
+     &          aimag(workl(ibd+jj-1)) )                
+     &          .le. tol*rtemp) then                    
+
+    NEV is the number of eigenvalues requested;             
+    NCONV is the number of converged eigenvalues;           
+    NUMCNV counts the number of converged eigenvalues;      
+                                                        
+    The original IF statement will cause NUMCNV to be       
+    inconsistent with NCONV, when fewer than NEV wanted     
+    eigenvalues have converged but there are many converged 
+    but unwanted Ritz values. 
+
+20. In [s,d][s,n]eupd.f, the IF statement
+            if (numcnv .lt. nev .and.                   
+                            ^^^                         
+     &          workl(ibd+jj-1) .le. tol*temp1) then    
+    is changed to                                           
+            if (numcnv .lt. nconv .and.                 
+                            ^^^^^                       
+     &          workl(ibd+jj-1) .le. tol*temp1) then    
+    NEV is the number of eigenvalues requested;             
+    NCONV is the number of converged eigenvalues;           
+    NUMCNV counts the number of converged eigenvalues;      
+                                                        
+    The original IF statement will cause NUMCNV to be       
+    inconsistent with NCONV, when fewer than NEV wanted     
+    eigenvalues have converged but there are many converged 
+    but unwanted Ritz values.
+
+21. 10/16/2000
+   Line 238 of [s,d]naup2.f went past the 72nd column.  This
+   was caused by the extra space inserted by new Solaris cpp 
+   when ARPACK single and double precision source codes are generate 
+   from the naup2.F code.  This line is fixed by wrapping it around 
+   the next line.
+   
+22. 10/20/2000
+   Updated SCCS information for drivers in BAND, SIMPLE.
+   Fixed miscellaneous minor problems caused by cpp.
+
+23. 04/10/2001
+   Problems reported in items 19 & 20 above exist in the
+   parallel codes also.  The same changes have been made
+   in p[s,d,c,n][s,n]eupd.f
+
+24. 04/10/2001 (reported by David Day, SNL)
+   There was a mistake in the orthogonalization step in 
+   the MPI version of p[c,z]getv0.f.  The original code had
+
+          call zgemv ('N', n, j-1, -one, v, ldv, workd(n+1), 1,
+                                                 ^^^^^^^^^^
+         &            one, resid, 1)
+
+   It has been changed to
+
+          call zgemv ('N', n, j-1, -one, v, ldv, workl, 1, one, resid, 1)
+                                                 ^^^^^
+
+   Also, p[c,z]vout() was used to print out `rnorm', which
+   is potential problematic.  The following code has been 
+   added to correct that.
+
+         cnorm2 = cmplx(rnorm,rzero)
+         call pcvout (comm, logfil, 1, cnorm2, ndigit,
+     &        '_getv0: B-norm of initial / restarted starting vector')
+
+25. 04/10/2001
+   In all _aupd.f codes, iparam(2) and/or iparam(4) are used to
+   define NB or LEVEC.  Since NB=1 is the only block size and since
+   LEVEC is no longer used, the statements
+   
+       levec = iparam(2)
+       nb    = iparam(4)
+
+   have been commented out.  NB=1 has been added to avoid potential
+   confusion.
+
+26. 04/10/2001
+   In all _seupd codes (both serial and parallel) the call to
+   _sgets had an extra arguement:
+
+            call dsgets (ishift, which       , nev          ,
+     &                np    , workl(irz)  , workl(bounds),
+     &                workl , workl(np+1))
+                              ^^^^^^^^^^^
+
+   they have been changed to
+
+            call dsgets (ishift, which       , nev          ,
+     &                   np    , workl(irz)  , workl(bounds),
+     &                   workl)
+
+27. 07/21/2002
+
+    In pzneupd.f, loop 11, the intrinsic precision conversion 
+    function  'real' should be changed to 'dble'
+
+
+28. 07/21/2002
+    modified the comments in [c,z]neupd regarding the size of
+    NCV.  NCV is only required to be at least NEV+1 (instead of
+    NEV+2) in the complex version.  Changed the error testing
+    from
+                    else if (ncv .le. nev+1 .or.  ncv .gt. n) then
+               ierr = -3
+    to
+                  else if (ncv .le. nev .or.  ncv .gt. n) then
+               ierr = -3
+
+
+29. 07/21/2002
+    modified the comment in [c,z]naupd regarding the size of
+    NCV.  NCV is only required to be at least NEV+1 (instead of
+    NEV+2) in the complex version. 
+   
+30. 07/21/2002
+    In [s,d]sbdr2.f, lworkl is incorrectly set to ncv*ncv+6*ncv.  
+    Changed it to ncv*ncv+8*ncv. 
+
+31. 10/24/2003
+    There was a typo in p[c,z]neupd.  The call to '[c,z]ngets' is
+    replaced by a call to 'p[c,z]ngets' instead.
+
+32. 10/24/2003 fixing lines that go beyond the 72nd column in p[c,z]naup2.f.
+
+33. 10/24/2003 replace 'slamch' with 'pslamch' in p[c,z]napps.f
+
+34. 10/24/2003 removed an extra arguement to the p[s,d]sgets() call.
+
+35. 10/24/2003 p[c,z]naup2.f contain some lines that were incorrectly
+    generated by cpp.  These lines have been removed in the new patch.
+    

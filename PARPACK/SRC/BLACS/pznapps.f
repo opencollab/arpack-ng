@@ -127,7 +127,7 @@ c\Revision history:
 c     Starting Point: Serial Complex Code FILE: napps.F   SID: 2.1
 c
 c\SCCS Information:
-c FILE: napps.F   SID: 1.3   DATE OF SID: 06/04/98
+c FILE: napps.F   SID: 1.4   DATE OF SID: 10/25/03
 c
 c\Remarks
 c  1. In this version, each shift is applied to all the sublocks of
@@ -243,7 +243,7 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine zlahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = dlamch( 'safe minimum' )
+         unfl = pdlamch( 'safe minimum' )
          ovfl = dble(one / unfl)
          call dlabad( unfl, ovfl )
          ulp = dlamch( 'precision' )
@@ -283,6 +283,13 @@ c
       do 110 jj = 1, np
          sigma = shift(jj)
 c
+         if (msglvl .gt. 2 ) then
+            call pivout (comm, logfil, 1, jj, ndigit, 
+     &               '_napps: shift number.')
+            call pzvout (comm, logfil, 1, sigma, ndigit, 
+     &               '_napps: Value of the shift ')
+         end if
+c
          istart = 1
    20    continue
 c
@@ -299,6 +306,14 @@ c
      &         tst1 = zlanhs( '1', kplusp-jj+1, h, ldh, workl )
             if ( abs(dble(h(i+1,i))) 
      &           .le. max(ulp*tst1, smlnum) )  then
+               if (msglvl .gt. 0) then
+                  call pivout (comm, logfil, 1, i, ndigit, 
+     &                 '_napps: matrix splitting at row/column no.')
+                  call pivout (comm, logfil, 1, jj, ndigit, 
+     &                 '_napps: matrix splitting with shift number.')
+                  call pzvout (comm, logfil, 1, h(i+1,i), ndigit, 
+     &                 '_napps: off diagonal element.')
+               end if
                iend = i
                h(i+1,i) = zero
                go to 40
@@ -307,6 +322,12 @@ c
          iend = kplusp
    40    continue
 c
+         if (msglvl .gt. 2) then
+             call pivout (comm, logfil, 1, istart, ndigit, 
+     &                   '_napps: Start of current block ')
+             call pivout (comm, logfil, 1, iend, ndigit, 
+     &                   '_napps: End of current block ')
+         end if
 c
 c        %------------------------------------------------%
 c        | No reason to apply a shift to block of order 1 |
@@ -474,6 +495,20 @@ c
       call zscal (n, q(kplusp,kev), resid, 1)
       if ( dble( h(kev+1,kev) ) .gt. rzero )
      &   call zaxpy (n, h(kev+1,kev), v(1,kev+1), 1, resid, 1)
+c
+      if (msglvl .gt. 1) then
+         call pzvout (comm, logfil, 1, q(kplusp,kev), ndigit,
+     &        '_napps: sigmak = (e_{kev+p}^T*Q)*e_{kev}')
+         call pzvout (comm, logfil, 1, h(kev+1,kev), ndigit,
+     &        '_napps: betak = e_{kev+1}^T*H*e_{kev}')
+         call pivout (comm, logfil, 1, kev, ndigit, 
+     &               '_napps: Order of the final Hessenberg matrix ')
+         if (msglvl .gt. 2) then
+            call pzmout (comm, logfil, kev, kev, h, ldh, ndigit,
+     &      '_napps: updated Hessenberg matrix H for next iteration')
+         end if
+c
+      end if
 c
  9000 continue
       call second (t1)

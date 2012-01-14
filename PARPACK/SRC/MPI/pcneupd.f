@@ -2,7 +2,7 @@ c\BeginDoc
 c 
 c\Name: pcneupd 
 c
-c Message Passing Layer: MPI 
+c Message Passing Layer: MPI
 c
 c\Description: 
 c  This subroutine returns the converged approximations to eigenvalues 
@@ -42,7 +42,7 @@ c       N, WHICH, NEV, TOL, RESID, NCV, V, LDV, IPARAM, IPNTR, WORKD,
 c       WORKL, LWORKL, RWORK, INFO )
 c
 c\Arguments
-c  COMM    MPI  Communicator for the processor grid.  (INPUT)
+c  COMM    MPI Communicator for the processor grid.  (INPUT)
 c
 c  RVEC    LOGICAL  (INPUT)
 c          Specifies whether a basis for the invariant subspace corresponding
@@ -70,11 +70,11 @@ c          Ritz value D(j), SELECT(j) must be set to .TRUE..
 c          If HOWMNY = 'A' or 'P', SELECT need not be initialized 
 c          but it is used as internal workspace.
 c
-c  D       Complex  array of dimension NEV+1.  (OUTPUT)
+c  D       Complex array of dimension NEV+1.  (OUTPUT)
 c          On exit, D contains the  Ritz  approximations 
 c          to the eigenvalues lambda for A*z = lambda*B*z.
 c
-c  Z       Complex  N by NEV array    (OUTPUT)
+c  Z       Complex N by NEV array    (OUTPUT)
 c          On exit, if RVEC = .TRUE. and HOWMNY = 'A', then the columns of 
 c          Z represents approximate eigenvectors (Ritz vectors) corresponding 
 c          to the NCONV=IPARAM(5) Ritz values for eigensystem
@@ -92,11 +92,11 @@ c          The leading dimension of the array Z.  If Ritz vectors are
 c          desired, then  LDZ .ge.  max( 1, N ) is required.  
 c          In any case,  LDZ .ge. 1 is required.
 c
-c  SIGMA   Complex   (INPUT)
+c  SIGMA   Complex  (INPUT)
 c          If IPARAM(7) = 3 then SIGMA represents the shift. 
 c          Not referenced if IPARAM(7) = 1 or 2.
 c
-c  WORKEV  Complex  work array of dimension 2*NCV.  (WORKSPACE)
+c  WORKEV  Complex work array of dimension 2*NCV.  (WORKSPACE)
 c
 c  **** The remaining arguments MUST be the same as for the   ****
 c  **** call to PCNAUPD that was just completed.               ****
@@ -112,7 +112,7 @@ c         the the last call to PCNAUPD and the call to CNEUPD.
 c
 c  Three of these parameters (V, WORKL and INFO) are also output parameters:
 c
-c  V       Complex  N by NCV array.  (INPUT/OUTPUT)
+c  V       Complex N by NCV array.  (INPUT/OUTPUT)
 c
 c          Upon INPUT: the NCV columns of V contain the Arnoldi basis
 c                      vectors for OP as constructed by PCNAUPD .
@@ -128,7 +128,7 @@ c          Ritz vectors.  If a separate array Z has been passed then
 c          the first NCONV=IPARAM(5) columns of V will contain approximate
 c          Schur vectors that span the desired invariant subspace.
 c
-c  WORKL   Real  work array of length LWORKL.  (OUTPUT/WORKSPACE)
+c  WORKL   Real work array of length LWORKL.  (OUTPUT/WORKSPACE)
 c          WORKL(1:ncv*ncv+2*ncv) contains information obtained in
 c          PCNAUPD.  They are not changed by PCNEUPD.
 c          WORKL(ncv*ncv+2*ncv+1:3*ncv*ncv+4*ncv) holds the
@@ -249,7 +249,7 @@ c\Revision history:
 c     Starting Point: Complex Serial Code FILE: neupd.F   SID: 2.2
 c
 c\SCCS Information:
-c FILE: neupd.F   SID: 1.6   DATE OF SID: 04/10/01
+c FILE: neupd.F   SID: 1.9   DATE OF SID: 10/25/03
 c
 c\EndLib
 c
@@ -262,7 +262,7 @@ c-----------------------------------------------------------------------
      &           workd, workl , lworkl, rwork , info )
 c
 c     %--------------------%
-c     | MPI  Communicator |
+c     | MPI Communicator |
 c     %--------------------%
 c
       integer   comm
@@ -281,9 +281,9 @@ c
       character  bmat, howmny, which*2
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
-      Complex      
+      Complex     
      &           sigma
-      Real  
+      Real 
      &           tol
 c
 c     %-----------------%
@@ -292,9 +292,9 @@ c     %-----------------%
 c
       integer    iparam(11), ipntr(14)
       logical    select(ncv)
-      Real 
+      Real
      &           rwork(ncv)
-      Complex 
+      Complex
      &           d(nev)     , resid(n)  , v(ldv,ncv)   ,
      &           z(ldz, nev), workd(3*n), workl(lworkl),
      &           workev(2*ncv)
@@ -303,9 +303,9 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex 
+      Complex
      &           one, zero
-      parameter  (one = (1.0, 0.0) , zero = (0.0, 0.0) )
+      parameter  (one = (1.0, 0.0), zero = (0.0, 0.0))
 c
 c     %---------------%
 c     | Local Scalars |
@@ -317,9 +317,9 @@ c
      &           mode  , msglvl, ritz  , wr   , k     , irz   ,
      &           ibd   , outncv, iq    , np   , numcnv, jj    ,
      &           ishift
-      Complex 
+      Complex
      &           rnorm, temp, vl(1)
-      Real 
+      Real
      &           conds, sep, rtemp, eps23
       logical    reord
 c
@@ -335,11 +335,11 @@ c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Real 
+      Real
      &           scnrm2,pslamch,slapy2
       external   scnrm2,pslamch,slapy2
 c
-      Complex 
+      Complex
      &           cdotc
       external   cdotc
 c
@@ -368,7 +368,7 @@ c     | Get machine dependent constant. |
 c     %---------------------------------%
 c
       eps23 = pslamch(comm, 'Epsilon-Machine')
-      eps23 = eps23**(2.0  / 3.0 )
+      eps23 = eps23**(2.0 / 3.0)
 c
 c     %-------------------------------%
 c     | Quick return                  |
@@ -518,9 +518,9 @@ c        %-------------------------------------%
 c
          np     = ncv - nev
          ishift = 0
-         call cngets(comm, ishift, which     ,
-     &               nev , np    , workl(irz),
-     &               workl(bounds))
+         call pcngets(comm, ishift, which     ,
+     &                nev , np    , workl(irz),
+     &                workl(bounds))
 c
          if (msglvl .gt. 2) then
             call pcvout(comm,logfil, ncv, workl(irz), ndigit,
@@ -686,8 +686,8 @@ c           | Note that since Q is orthogonal, R is a diagonal  |
 c           | matrix consisting of plus or minus ones.          |
 c           %---------------------------------------------------%
 c
-            if ( real ( workl(invsub+(j-1)*ldq+j-1) ) .lt. 
-     &                  real (zero) ) then
+            if ( real( workl(invsub+(j-1)*ldq+j-1) ) .lt. 
+     &                  real(zero) ) then
                call cscal(nconv, -one, workl(iuptri+j-1), ldq)
                call cscal(nconv, -one, workl(iuptri+(j-1)*ldq), 1)
             end if
@@ -730,7 +730,7 @@ c           %------------------------------------------------%
 c
             do 40 j=1, nconv
                   rtemp = scnrm2(ncv, workl(invsub+(j-1)*ldq), 1)
-                  rtemp = real (one) / rtemp
+                  rtemp = real(one) / rtemp
                   call csscal ( ncv, rtemp,
      &                 workl(invsub+(j-1)*ldq), 1 )
 c
