@@ -113,7 +113,7 @@ c
 c  NEV     Integer.  (INPUT)
 c          Number of eigenvalues of OP to be computed. 0 < NEV < N-1.
 c
-c  TOL     Double precision  scalar.  (INPUT)
+c  TOL     Double precision  scalar.  (INPUT/OUTPUT)
 c          Stopping criterion: the relative accuracy of the Ritz value
 c          is considered acceptable if BOUNDS(I) .LE. TOL*ABS(RITZ(I))
 c          where ABS(RITZ(I)) is the magnitude when RITZ(I) is complex.
