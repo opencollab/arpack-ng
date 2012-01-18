@@ -8,6 +8,9 @@ arpack-ng - 3.1.0
    * Provide a M4 macro (detect_arpack_bug.m4) to check if the underlying
      arpack is buggy (ie not arpack-ng). This allows developper applications
      to perform the check in their autotools build system (configure).
+   * ARPACK routines (at least dnaupd) modifieD its argument TOL, which 
+     is listed in the documentation as input-only. Thanks to Pauli Virtanen
+     for the patch (Closes: #632)
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Mon, 09 Jan 2012 12:10:39 +0100
 
