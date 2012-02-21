@@ -501,7 +501,7 @@ c
      &          workl(ibd+jj-1) .le. tol*temp1) then
                select(jj) = .true.
                numcnv = numcnv + 1
-               if (jj .gt. nev) reord = .true.
+               if (jj .gt. nconv) reord = .true.
             endif
    11    continue
 c
