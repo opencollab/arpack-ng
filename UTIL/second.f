@@ -10,7 +10,7 @@
 *  Purpose
 *  =======
 *
-*  SECOND returns the user time for a process in arscnds.
+*  SECOND returns the user time for a process in seconds.
 *  This version gets the time from the system function ETIME.
 *
 *     .. Local Scalars ..
