@@ -4,3 +4,4 @@ libparpackutilmpi_la_SOURCES = \
 	pivout.f psvout.f  psmout.f pdvout.f \
 	pdmout.f  pcvout.f  pcmout.f pzvout.f  pzmout.f
 
+EXTRA_DIST = mpif.h

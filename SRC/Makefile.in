@@ -212,6 +212,7 @@ libarpacksrc_la_SOURCES = \
 	znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f \
         zgetv0.f zsortc.f zstatn.f
 
+EXTRA_DIST = debug.h stat.h version.h
 all: all-am
 
 .SUFFIXES:

@@ -12,3 +12,5 @@ libarpacksrc_la_SOURCES = \
         cgetv0.f csortc.f cstatn.f \
 	znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f \
         zgetv0.f zsortc.f zstatn.f
+
+EXTRA_DIST = debug.h stat.h version.h

@@ -21,3 +21,5 @@ libparpacksrcmpi_la_SOURCES = \
 
 libparpacksrcmpi_la_FFLAGS = $(FFLAGS_SAV)
 libparpacksrcmpi_la_LIBADD = libparpack_noopt.la
+
+EXTRA_DIST = debug.h stat.h mpif.h
