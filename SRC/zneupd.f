@@ -301,8 +301,8 @@ c
      &           invsub, iuptri, iwev  , j    , ldh   , ldq   ,
      &           mode  , msglvl, ritz  , wr   , k     , irz   ,
      &           ibd   , outncv, iq    , np   , numcnv, jj    ,
-     &           ishift
-      Complex*16
+     &           ishift, nconv2
+      Complex*16 
      &           rnorm, temp, vl(1)
       Double precision
      &           conds, sep, rtemp, eps23
@@ -362,7 +362,7 @@ c
          ierr = -1
       else if (nev .le. 0) then
          ierr = -2
-      else if (ncv .le. nev .or.  ncv .gt. n) then
+      else if (ncv .le. nev+1 .or.  ncv .gt. n) then
          ierr = -3
       else if (which .ne. 'LM' .and.
      &        which .ne. 'SM' .and.
@@ -524,7 +524,7 @@ c
      &          .le. tol*rtemp) then
                select(jj) = .true.
                numcnv = numcnv + 1
-               if (jj .gt. nconv) reord = .true.
+               if (jj .gt. nev) reord = .true.
             endif
    11    continue
 c
@@ -592,9 +592,13 @@ c
             call ztrsen('None'       , 'V'          , select      ,
      &                   ncv          , workl(iuptri), ldh         ,
      &                   workl(invsub), ldq          , workl(iheig),
-     &                   nconv        , conds        , sep         , 
+     &                   nconv2        , conds        , sep         , 
      &                   workev       , ncv          , ierr)
 c
+            if (nconv2 .lt. nconv) then
+               nconv = nconv2
+            end if
+
             if (ierr .eq. 1) then
                info = 1
                go to 9000
