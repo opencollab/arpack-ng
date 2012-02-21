@@ -46,6 +46,7 @@ AC_CONFIG_FILES([
 	Makefile
 	SRC/Makefile
 	UTIL/Makefile
+	TESTS/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
