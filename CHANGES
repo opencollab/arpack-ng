@@ -11,6 +11,10 @@ arpack-ng - 3.1.0
    * Fixed a lack of appropriate bounds check in DNAUP2. Thanks to Pauli Virtanen
      for the patch (Closes: #632)
    * Update of the doc about TOL in dnaupd.
+   * Reorder bug fixed when eigenvectors are requested and the resulting
+     number of converged eigenvalues is less than the number requested.
+     Patches from Tim Mitchell. (Closes: #664)
+   * TESTS/ directory added and built.
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Mon, 09 Jan 2012 12:10:39 +0100
 
