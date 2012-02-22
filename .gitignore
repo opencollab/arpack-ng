@@ -18,3 +18,5 @@ libtool
 *.suo
 VISUAL_STUDIO/Release MKL/
 VISUAL_STUDIO/bin/
+TESTS/dnsimp
+
