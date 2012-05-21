@@ -1,5 +1,8 @@
-SUBDIRS = UTIL SRC PARPACK . TESTS 
+SUBDIRS = UTIL SRC . TESTS 
 
+if MPI
+SUBDIRS += PARPACK
+endif
 
 lib_LTLIBRARIES = libarpack.la
 

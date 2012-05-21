@@ -1,6 +1,7 @@
 AC_PREREQ(2.59)
 AC_INIT([arpack-ng], [3.1.0], [http://forge.scilab.org/index.php/p/arpack-ng/issues/])
 AM_INIT_AUTOMAKE([foreign])
+AM_MAINTAINER_MODE
 
 AC_CONFIG_MACRO_DIR([m4/])
 
@@ -35,10 +36,8 @@ if test x"$enable_mpi" != x"no"; then
   AC_LANG_POP([Fortran 77])
 fi
 
-if test x"$enable_mpi" = x"yes"; then
-   MPIDIR=PARPACK
-fi
-AC_SUBST(MPIDIR)
+AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
+
 
 #	LAPACK/Makefile
 
