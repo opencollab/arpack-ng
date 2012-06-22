@@ -243,7 +243,7 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine zlahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = pdlamch( 'safe minimum' )
+         unfl = pdlamch( comm, 'safe minimum' )
          ovfl = dble(one / unfl)
          call dlabad( unfl, ovfl )
          ulp = dlamch( 'precision' )

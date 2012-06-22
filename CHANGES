@@ -1,3 +1,10 @@
+arpack-ng - 3.1.2
+
+   * Wrong call to pdlamch was causing segfaults 
+     Thanks to Kyrre Sjøbæk for finding the bug and the fix.
+
+ -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Mon, 21 May 2012 09:08:41 +0200
+
 arpack-ng - 3.1.1
 
    * Option --enable-maintainer-mode added to the configure
