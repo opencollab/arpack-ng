@@ -1,7 +1,7 @@
-SUBDIRS = UTIL SRC
+SUBDIRS = UTIL SRC . EXAMPLES/MPI
 
 lib_LTLIBRARIES = libparpack.la
-libparpack_la_SOURCES = 
+libparpack_la_SOURCES =
 libparpack_la_LDFLAGS = -version-info 2:0
 libparpack_la_LIBADD = \
 	$(top_builddir)/SRC/libarpacksrc.la \
