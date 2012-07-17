@@ -4,6 +4,8 @@ arpack-ng - 3.1.2
      Thanks to Kyrre Sjøbæk for finding the bug and the fix.
    * Get rid of the mpif.h occurences in the source code (Closes: #782)
    * Compile also PARPACK / MPI example (Closes: #783)
+   * Configure detected built-in LAPACK and BLAS, but refused to use them
+     (Closes: #784)
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Fri, 22 Jun 2012 22:05:41 +0200
 

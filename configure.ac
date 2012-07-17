@@ -12,14 +12,14 @@ AC_PROG_LIBTOOL
 dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
 AX_BLAS
-if test x"$BLAS_LIBS" = x; then
+if test "$ax_blas_ok" = "no"; then
    AC_MSG_ERROR([Cannot find BLAS libraries])
 fi
 
 dnl Check for LAPACK libraries
 sinclude(ax_lapack.m4)
 AX_LAPACK
-if test x"$LAPACK_LIBS" = x; then
+if test "$ax_lapack_ok" = "no"; then
    AC_MSG_ERROR([Cannot find LAPACK libraries])
 fi
 
