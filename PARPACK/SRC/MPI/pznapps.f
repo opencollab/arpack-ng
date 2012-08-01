@@ -246,7 +246,7 @@ c
          unfl = pdlamch( comm, 'safe minimum' )
          ovfl = dble(one / unfl)
          call dlabad( unfl, ovfl )
-         ulp = dlamch( 'precision' )
+         ulp = pdlamch( comm, 'precision' )
          smlnum = unfl*( n / ulp )
          first = .false.
       end if

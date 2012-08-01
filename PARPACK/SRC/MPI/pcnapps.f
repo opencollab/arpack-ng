@@ -243,10 +243,10 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine clahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = pslamch( 'safe minimum' )
+         unfl = pslamch( comm, 'safe minimum' )
          ovfl = real(one / unfl)
          call slabad( unfl, ovfl )
-         ulp = slamch( 'precision' )
+         ulp = pslamch( comm,  'precision' )
          smlnum = unfl*( n / ulp )
          first = .false.
       end if
