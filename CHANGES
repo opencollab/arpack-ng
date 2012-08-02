@@ -6,6 +6,8 @@ arpack-ng - 3.1.2
    * Compile also PARPACK / MPI example (Closes: #783)
    * Configure detected built-in LAPACK and BLAS, but refused to use them
      (Closes: #784)
+   * Fixed division by zero in smlnum by usind p[d,s]lamch instead of the
+     serial. Thanks to Umberto De Giovannini.
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Fri, 22 Jun 2012 22:05:41 +0200
 
