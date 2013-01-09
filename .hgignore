@@ -1,12 +1,14 @@
-.hgignore
-.deps
-*.o
-*.lo
+syntax: glob
+
+.gitignore
+
 Makefile
 Makefile.in
 configure
-autom4te.cache/
 aclocal.m4
+
+*.o
+*.lo
 *.la
 .libs/
 SRC/.libs/
@@ -32,4 +34,3 @@ PARPACK/EXAMPLES/MPI/pdsdrv1
 PARPACK/EXAMPLES/MPI/psndrv3
 PARPACK/EXAMPLES/MPI/pssdrv1
 PARPACK/EXAMPLES/MPI/pzndrv1
-
