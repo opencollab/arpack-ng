@@ -7,7 +7,14 @@ AC_CONFIG_MACRO_DIR([m4/])
 
 dnl Checks for standard programs.
 AC_PROG_F77
-AC_PROG_LIBTOOL
+
+ifdef([LT_INIT], [], [
+  errprint([error: you must have libtool 2.2.2 or a more recent version
+])
+  m4exit([1])])
+
+LT_PREREQ([2.2.2])
+LT_INIT([win32-dll])
 
 dnl Check for BLAS libraries
 sinclude(ax_blas.m4)

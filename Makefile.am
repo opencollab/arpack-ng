@@ -10,12 +10,16 @@ ACLOCAL_AMFLAGS = -I m4/
 
 libarpack_la_SOURCES =
 
-libarpack_la_LDFLAGS = -version-info 2:0
+# Force libarpack to be linked with the Fortran compiler.
+# The file dummy.f does not need to exist in the source tree.
+nodist_EXTRA_libarpack_la_SOURCES = dummy.f
+
+libarpack_la_LDFLAGS = -no-undefined -version-info 2:0
 
 libarpack_la_LIBADD = \
 	$(top_builddir)/SRC/libarpacksrc.la \
 	$(top_builddir)/UTIL/libarpackutil.la \
-	$(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS)
+	$(BLAS_LIBS) $(LAPACK_LIBS)
 
 EXTRA_DIST = README CHANGES
 
