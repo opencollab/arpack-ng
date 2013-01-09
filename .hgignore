@@ -13,6 +13,7 @@ aclocal.m4
 .libs/
 SRC/.libs/
 UTIL/.libs/
+arpack.pc
 autom4te.cache/
 config.log
 config.status

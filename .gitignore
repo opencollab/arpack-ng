@@ -5,6 +5,7 @@
 Makefile
 Makefile.in
 configure
+arpack.pc
 autom4te.cache/
 aclocal.m4
 *.la

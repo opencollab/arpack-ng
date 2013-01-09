@@ -49,6 +49,7 @@ AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
 #	LAPACK/Makefile
 
 AC_CONFIG_FILES([
+	arpack.pc
 	Makefile
 	SRC/Makefile
 	UTIL/Makefile
