@@ -202,6 +202,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 dnsimp_LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+EXTRA_DIST = testA.mtx
 all: all-am
 
 .SUFFIXES:

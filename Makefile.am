@@ -21,10 +21,11 @@ libarpack_la_LIBADD = \
 	$(top_builddir)/UTIL/libarpackutil.la \
 	$(BLAS_LIBS) $(LAPACK_LIBS)
 
-EXTRA_DIST = README CHANGES
+EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS EXAMPLES VISUAL_STUDIO
 
 # Pkgconfig directory
 pkgconfigdir = $(libdir)/pkgconfig
 
 # Files to install in Pkgconfig directory
 pkgconfig_DATA = arpack.pc
+
