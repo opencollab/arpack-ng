@@ -51,8 +51,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = dnsimp$(EXEEXT)
-subdir = TESTS
+subdir = PARPACK/SRC/BLACS
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_blas.m4 \
@@ -65,13 +64,21 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS)
-am_dnsimp_OBJECTS = dnsimp.$(OBJEXT) mmio.$(OBJEXT)
-dnsimp_OBJECTS = $(am_dnsimp_OBJECTS)
-am__DEPENDENCIES_1 =
-dnsimp_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+libparpacksrc_la_LIBADD =
+am_libparpacksrc_la_OBJECTS = pcgetv0.lo pdlamch.lo pdsaitr.lo \
+	pslamch.lo pssaitr.lo pznapps.lo pclarnv.lo pdlarnv.lo \
+	pdsapps.lo pslarnv.lo pssapps.lo pznaup2.lo pcnaitr.lo \
+	pdnaitr.lo pdsaup2.lo psnaitr.lo pssaup2.lo pznaupd.lo \
+	pcnapps.lo pdnapps.lo pdsaupd.lo psnapps.lo pssaupd.lo \
+	pzneigh.lo pcnaup2.lo pdnaup2.lo pdseigt.lo psnaup2.lo \
+	psseigt.lo pzneupd.lo pcnaupd.lo pdnaupd.lo pdseupd.lo \
+	psnaupd.lo psseupd.lo pzngets.lo pcneigh.lo pdneigh.lo \
+	pdsgets.lo psneigh.lo pssgets.lo pcneupd.lo pdneupd.lo \
+	pdznorm2.lo psneupd.lo pzgetv0.lo pcngets.lo pdngets.lo \
+	pscnorm2.lo psngets.lo pzlarnv.lo pdgetv0.lo pdnorm2.lo \
+	psgetv0.lo psnorm2.lo pznaitr.lo
+libparpacksrc_la_OBJECTS = $(am_libparpacksrc_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 LTF77COMPILE = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -80,17 +87,8 @@ F77LD = $(F77)
 F77LINK = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-SOURCES = $(dnsimp_SOURCES)
-DIST_SOURCES = $(dnsimp_SOURCES)
+SOURCES = $(libparpacksrc_la_SOURCES)
+DIST_SOURCES = $(libparpacksrc_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -222,9 +220,20 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dnsimp_SOURCES = dnsimp.f mmio.f debug.h
-dnsimp_LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-EXTRA_DIST = testA.mtx
+noinst_LTLIBRARIES = libparpacksrc.la
+libparpacksrc_la_SOURCES = \
+pcgetv0.f  pdlamch.f  pdsaitr.f   pslamch.f  pssaitr.f  pznapps.f \
+pclarnv.f  pdlarnv.f  pdsapps.f   pslarnv.f  pssapps.f  pznaup2.f \
+pcnaitr.f  pdnaitr.f  pdsaup2.f   psnaitr.f  pssaup2.f  pznaupd.f \
+pcnapps.f  pdnapps.f  pdsaupd.f   psnapps.f  pssaupd.f  pzneigh.f \
+pcnaup2.f  pdnaup2.f  pdseigt.f   psnaup2.f  psseigt.f  pzneupd.f \
+pcnaupd.f  pdnaupd.f  pdseupd.f   psnaupd.f  psseupd.f  pzngets.f \
+pcneigh.f  pdneigh.f  pdsgets.f   psneigh.f  pssgets.f  \
+pcneupd.f  pdneupd.f  pdznorm2.f  psneupd.f  pzgetv0.f  \
+pcngets.f  pdngets.f  pscnorm2.f  psngets.f  pzlarnv.f  \
+pdgetv0.f  pdnorm2.f  psgetv0.f   psnorm2.f  pznaitr.f
+
+EXTRA_DIST = debug.h stat.h
 all: all-am
 
 .SUFFIXES:
@@ -238,9 +247,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign TESTS/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign PARPACK/SRC/BLACS/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign TESTS/Makefile
+	  $(AUTOMAKE) --foreign PARPACK/SRC/BLACS/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -259,55 +268,17 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
-	fi; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
 
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-dnsimp$(EXEEXT): $(dnsimp_OBJECTS) $(dnsimp_DEPENDENCIES) $(EXTRA_dnsimp_DEPENDENCIES) 
-	@rm -f dnsimp$(EXEEXT)
-	$(F77LINK) $(dnsimp_OBJECTS) $(dnsimp_LDADD) $(LIBS)
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
+libparpacksrc.la: $(libparpacksrc_la_OBJECTS) $(libparpacksrc_la_DEPENDENCIES) $(EXTRA_libparpacksrc_la_DEPENDENCIES) 
+	$(F77LINK)  $(libparpacksrc_la_OBJECTS) $(libparpacksrc_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -414,11 +385,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -451,7 +419,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -476,7 +445,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am:
 
 install-html: install-html-am
 
@@ -515,23 +484,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am:
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS
+	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

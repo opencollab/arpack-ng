@@ -51,8 +51,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = dnsimp$(EXEEXT)
-subdir = TESTS
+bin_PROGRAMS = pzndrv1$(EXEEXT) psndrv3$(EXEEXT) pdndrv1$(EXEEXT) \
+	pdndrv3$(EXEEXT) pssdrv1$(EXEEXT) pdsdrv1$(EXEEXT) \
+	pcndrv1$(EXEEXT)
+subdir = PARPACK/EXAMPLES/BLACS
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_blas.m4 \
@@ -67,11 +69,35 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_dnsimp_OBJECTS = dnsimp.$(OBJEXT) mmio.$(OBJEXT)
-dnsimp_OBJECTS = $(am_dnsimp_OBJECTS)
+am_pcndrv1_OBJECTS = pcndrv1.$(OBJEXT)
+pcndrv1_OBJECTS = $(am_pcndrv1_OBJECTS)
 am__DEPENDENCIES_1 =
-dnsimp_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+pcndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_pdndrv1_OBJECTS = pdndrv1.$(OBJEXT)
+pdndrv1_OBJECTS = $(am_pdndrv1_OBJECTS)
+pdndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_pdndrv3_OBJECTS = pdndrv3.$(OBJEXT)
+pdndrv3_OBJECTS = $(am_pdndrv3_OBJECTS)
+pdndrv3_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_pdsdrv1_OBJECTS = pdsdrv1.$(OBJEXT)
+pdsdrv1_OBJECTS = $(am_pdsdrv1_OBJECTS)
+pdsdrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_psndrv3_OBJECTS = psndrv3.$(OBJEXT)
+psndrv3_OBJECTS = $(am_psndrv3_OBJECTS)
+psndrv3_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_pssdrv1_OBJECTS = pssdrv1.$(OBJEXT)
+pssdrv1_OBJECTS = $(am_pssdrv1_OBJECTS)
+pssdrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_pzndrv1_OBJECTS = pzndrv1.$(OBJEXT)
+pzndrv1_OBJECTS = $(am_pzndrv1_OBJECTS)
+pzndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 LTF77COMPILE = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -80,17 +106,12 @@ F77LD = $(F77)
 F77LINK = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-SOURCES = $(dnsimp_SOURCES)
-DIST_SOURCES = $(dnsimp_SOURCES)
+SOURCES = $(pcndrv1_SOURCES) $(pdndrv1_SOURCES) $(pdndrv3_SOURCES) \
+	$(pdsdrv1_SOURCES) $(psndrv3_SOURCES) $(pssdrv1_SOURCES) \
+	$(pzndrv1_SOURCES)
+DIST_SOURCES = $(pcndrv1_SOURCES) $(pdndrv1_SOURCES) \
+	$(pdndrv3_SOURCES) $(pdsdrv1_SOURCES) $(psndrv3_SOURCES) \
+	$(pssdrv1_SOURCES) $(pzndrv1_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -222,9 +243,20 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dnsimp_SOURCES = dnsimp.f mmio.f debug.h
-dnsimp_LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-EXTRA_DIST = testA.mtx
+pzndrv1_SOURCES = pzndrv1.f
+pzndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+psndrv3_SOURCES = psndrv3.f
+psndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdndrv1_SOURCES = pdndrv1.f
+pdndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdndrv3_SOURCES = pdndrv3.f
+pdndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pssdrv1_SOURCES = pssdrv1.f
+pssdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdsdrv1_SOURCES = pdsdrv1.f
+pdsdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pcndrv1_SOURCES = pcndrv1.f
+pcndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -238,9 +270,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign TESTS/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign PARPACK/EXAMPLES/BLACS/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign TESTS/Makefile
+	  $(AUTOMAKE) --foreign PARPACK/EXAMPLES/BLACS/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -305,9 +337,27 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-dnsimp$(EXEEXT): $(dnsimp_OBJECTS) $(dnsimp_DEPENDENCIES) $(EXTRA_dnsimp_DEPENDENCIES) 
-	@rm -f dnsimp$(EXEEXT)
-	$(F77LINK) $(dnsimp_OBJECTS) $(dnsimp_LDADD) $(LIBS)
+pcndrv1$(EXEEXT): $(pcndrv1_OBJECTS) $(pcndrv1_DEPENDENCIES) $(EXTRA_pcndrv1_DEPENDENCIES) 
+	@rm -f pcndrv1$(EXEEXT)
+	$(F77LINK) $(pcndrv1_OBJECTS) $(pcndrv1_LDADD) $(LIBS)
+pdndrv1$(EXEEXT): $(pdndrv1_OBJECTS) $(pdndrv1_DEPENDENCIES) $(EXTRA_pdndrv1_DEPENDENCIES) 
+	@rm -f pdndrv1$(EXEEXT)
+	$(F77LINK) $(pdndrv1_OBJECTS) $(pdndrv1_LDADD) $(LIBS)
+pdndrv3$(EXEEXT): $(pdndrv3_OBJECTS) $(pdndrv3_DEPENDENCIES) $(EXTRA_pdndrv3_DEPENDENCIES) 
+	@rm -f pdndrv3$(EXEEXT)
+	$(F77LINK) $(pdndrv3_OBJECTS) $(pdndrv3_LDADD) $(LIBS)
+pdsdrv1$(EXEEXT): $(pdsdrv1_OBJECTS) $(pdsdrv1_DEPENDENCIES) $(EXTRA_pdsdrv1_DEPENDENCIES) 
+	@rm -f pdsdrv1$(EXEEXT)
+	$(F77LINK) $(pdsdrv1_OBJECTS) $(pdsdrv1_LDADD) $(LIBS)
+psndrv3$(EXEEXT): $(psndrv3_OBJECTS) $(psndrv3_DEPENDENCIES) $(EXTRA_psndrv3_DEPENDENCIES) 
+	@rm -f psndrv3$(EXEEXT)
+	$(F77LINK) $(psndrv3_OBJECTS) $(psndrv3_LDADD) $(LIBS)
+pssdrv1$(EXEEXT): $(pssdrv1_OBJECTS) $(pssdrv1_DEPENDENCIES) $(EXTRA_pssdrv1_DEPENDENCIES) 
+	@rm -f pssdrv1$(EXEEXT)
+	$(F77LINK) $(pssdrv1_OBJECTS) $(pssdrv1_LDADD) $(LIBS)
+pzndrv1$(EXEEXT): $(pzndrv1_OBJECTS) $(pzndrv1_DEPENDENCIES) $(EXTRA_pzndrv1_DEPENDENCIES) 
+	@rm -f pzndrv1$(EXEEXT)
+	$(F77LINK) $(pzndrv1_OBJECTS) $(pzndrv1_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

@@ -1,4 +1,4 @@
-pkglibdirexec_PROGRAMS = dnsimp 
+bin_PROGRAMS = dnsimp
 
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 
