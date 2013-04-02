@@ -73,30 +73,37 @@ am_pcndrv1_OBJECTS = pcndrv1.$(OBJEXT)
 pcndrv1_OBJECTS = $(am_pcndrv1_OBJECTS)
 am__DEPENDENCIES_1 =
 pcndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pdndrv1_OBJECTS = pdndrv1.$(OBJEXT)
 pdndrv1_OBJECTS = $(am_pdndrv1_OBJECTS)
 pdndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pdndrv3_OBJECTS = pdndrv3.$(OBJEXT)
 pdndrv3_OBJECTS = $(am_pdndrv3_OBJECTS)
 pdndrv3_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pdsdrv1_OBJECTS = pdsdrv1.$(OBJEXT)
 pdsdrv1_OBJECTS = $(am_pdsdrv1_OBJECTS)
 pdsdrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_psndrv3_OBJECTS = psndrv3.$(OBJEXT)
 psndrv3_OBJECTS = $(am_psndrv3_OBJECTS)
 psndrv3_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pssdrv1_OBJECTS = pssdrv1.$(OBJEXT)
 pssdrv1_OBJECTS = $(am_pssdrv1_OBJECTS)
 pssdrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pzndrv1_OBJECTS = pzndrv1.$(OBJEXT)
 pzndrv1_OBJECTS = $(am_pzndrv1_OBJECTS)
 pzndrv1_DEPENDENCIES = ../../../PARPACK/SRC/BLACS/libparpacksrc.la \
+	../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
@@ -244,19 +251,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 pzndrv1_SOURCES = pzndrv1.f
-pzndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pzndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 psndrv3_SOURCES = psndrv3.f
-psndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+psndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pdndrv1_SOURCES = pdndrv1.f
-pdndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pdndrv3_SOURCES = pdndrv3.f
-pdndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdndrv3_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pssdrv1_SOURCES = pssdrv1.f
-pssdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pssdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pdsdrv1_SOURCES = pdsdrv1.f
-pdsdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pdsdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pcndrv1_SOURCES = pcndrv1.f
-pcndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+pcndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la ../../../PARPACK/UTIL/BLACS/libparpackutilblacs.la $(BLAS_LIBS) $(LAPACK_LIBS)
 EXTRA_DIST = debug.h \
 pdntest1.f \
 psndrv1.f \
