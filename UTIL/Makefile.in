@@ -217,6 +217,7 @@ libarpackutil_la_SOURCES = \
 	svout.f  smout.f dvout.f  dmout.f cvout.f  cmout.f \
 	zvout.f  zmout.f
 
+EXTRA_DIST = second.f second.t3d
 all: all-am
 
 .SUFFIXES:

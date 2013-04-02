@@ -145,7 +145,7 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-F77 = @F77@
+F77 = $(MPIF77)
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLIBS = @FLIBS@
@@ -257,6 +257,12 @@ pdsdrv1_SOURCES = pdsdrv1.f
 pdsdrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pcndrv1_SOURCES = pcndrv1.f
 pcndrv1_LDADD = ../../../PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
+EXTRA_DIST = debug.h \
+pdntest1.f \
+psndrv1.f \
+psntest1.f \
+stat.h
+
 all: all-am
 
 .SUFFIXES:

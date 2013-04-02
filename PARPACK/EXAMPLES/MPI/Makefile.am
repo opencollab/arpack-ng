@@ -29,3 +29,7 @@ pdsdrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 pcndrv1_SOURCES = pcndrv1.f
 
 pcndrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+
+EXTRA_DIST = debug.h \
+psndrv1.f \
+stat.h
