@@ -65,10 +65,10 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-libparpackblacssrc_la_LIBADD =
-am_libparpackblacssrc_la_OBJECTS = pcmout.lo pcvout.lo pdmout.lo \
+libparpackutilblacs_la_LIBADD =
+am_libparpackutilblacs_la_OBJECTS = pcmout.lo pcvout.lo pdmout.lo \
 	pdvout.lo pivout.lo psmout.lo psvout.lo pzmout.lo pzvout.lo
-libparpackblacssrc_la_OBJECTS = $(am_libparpackblacssrc_la_OBJECTS)
+libparpackutilblacs_la_OBJECTS = $(am_libparpackutilblacs_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 LTF77COMPILE = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -77,8 +77,8 @@ F77LD = $(F77)
 F77LINK = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libparpackblacssrc_la_SOURCES)
-DIST_SOURCES = $(libparpackblacssrc_la_SOURCES)
+SOURCES = $(libparpackutilblacs_la_SOURCES)
+DIST_SOURCES = $(libparpackutilblacs_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -210,8 +210,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LTLIBRARIES = libparpackblacssrc.la
-libparpackblacssrc_la_SOURCES = \
+noinst_LTLIBRARIES = libparpackutilblacs.la
+libparpackutilblacs_la_SOURCES = \
 pcmout.f  pcvout.f  pdmout.f  pdvout.f  \
 pivout.f  psmout.f  psvout.f  pzmout.f  pzvout.f
 
@@ -258,8 +258,8 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libparpackblacssrc.la: $(libparpackblacssrc_la_OBJECTS) $(libparpackblacssrc_la_DEPENDENCIES) $(EXTRA_libparpackblacssrc_la_DEPENDENCIES) 
-	$(F77LINK)  $(libparpackblacssrc_la_OBJECTS) $(libparpackblacssrc_la_LIBADD) $(LIBS)
+libparpackutilblacs.la: $(libparpackutilblacs_la_OBJECTS) $(libparpackutilblacs_la_DEPENDENCIES) $(EXTRA_libparpackutilblacs_la_DEPENDENCIES) 
+	$(F77LINK)  $(libparpackutilblacs_la_OBJECTS) $(libparpackutilblacs_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

@@ -7,7 +7,7 @@ arpack-ng - 3.1.3
   * Add debug.h to TESTS/Makefile.am sources
 
   * "make dist" is functionnal
-  * Also build the library "libparpackblacssrc" (PARPACK/UTIL/BLACS/)
+  * Also build the library "libparpacksrcblacs" (PARPACK/UTIL/BLACS/)
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Tue, 02 Apr 2013 10:53:08 +0200
 
