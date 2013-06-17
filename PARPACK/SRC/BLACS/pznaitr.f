@@ -137,7 +137,7 @@ c
 c\Routines called:
 c     pzgetv0   Parallel ARPACK routine to generate the initial vector.
 c     pivout    Parallel ARPACK utility routine that prints integers.
-c     second    ARPACK utility routine for timing.
+c     arscnd    ARPACK utility routine for timing.
 c     pzmout    Parallel ARPACK utility routine that prints matrices
 c     pzvout    Parallel ARPACK utility routine that prints vectors.
 c     zlanhs    LAPACK routine that computes various norms of a matrix.
@@ -296,7 +296,7 @@ c     | External Subroutines |
 c     %----------------------%
 c
       external   zaxpy, zcopy, zscal, zgemv, pzgetv0, dlabad, 
-     &           zdscal, pzvout, pzmout, pivout, second
+     &           zdscal, pzvout, pzmout, pivout, arscnd
 c
 c     %--------------------%
 c     | External Functions |
@@ -349,7 +349,7 @@ c        | Initialize timing statistics  |
 c        | & message level for debugging |
 c        %-------------------------------%
 c
-         call second (t0)
+         call arscnd (t0)
          msglvl = mcaitr
 c 
 c        %------------------------------%
@@ -460,7 +460,7 @@ c              | which spans OP and exit.                       |
 c              %------------------------------------------------%
 c
                info = j - 1
-               call second (t1)
+               call arscnd (t1)
                tcaitr = tcaitr + (t1 - t0)
                ido = 99
                go to 9000
@@ -500,7 +500,7 @@ c        %------------------------------------------------------%
 c
          step3 = .true.
          nopx  = nopx + 1
-         call second (t2)
+         call arscnd (t2)
          call zcopy (n, v(1,j), 1, workd(ivj), 1)
          ipntr(1) = ivj
          ipntr(2) = irj
@@ -520,7 +520,7 @@ c        | WORKD(IRJ:IRJ+N-1) := OP*v_{j}   |
 c        | if step3 = .true.                |
 c        %----------------------------------%
 c
-         call second (t3)
+         call arscnd (t3)
          tmvopx = tmvopx + (t3 - t2)
  
          step3 = .false.
@@ -536,7 +536,7 @@ c        | STEP 4:  Finish extending the Arnoldi |
 c        |          factorization to length j.   |
 c        %---------------------------------------%
 c
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
             step4 = .true.
@@ -561,7 +561,7 @@ c        | if step4 = .true.                |
 c        %----------------------------------%
 c
          if (bmat .eq. 'G') then
-            call second (t3)
+            call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
 c 
@@ -608,11 +608,11 @@ c
 c
          if (j .gt. 1) h(j,j-1) = dcmplx(betaj, rzero)
 c
-         call second (t4)
+         call arscnd (t4)
 c 
          orth1 = .true.
 c 
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
             call zcopy (n, resid, 1, workd(irj), 1)
@@ -636,7 +636,7 @@ c        | WORKD(IPJ:IPJ+N-1) := B*r_{j}.                    |
 c        %---------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-            call second (t3)
+            call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
 c 
@@ -716,7 +716,7 @@ c
          call zaxpy (j, one, workl(1), 1, h(1,j), 1)
 c 
          orth2 = .true.
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
             call zcopy (n, resid, 1, workd(irj), 1)
@@ -740,7 +740,7 @@ c        | Back from reverse communication if ORTH2 = .true. |
 c        %---------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-            call second (t3)
+            call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if 
 c
@@ -819,7 +819,7 @@ c
          rstart = .false.
          orth2  = .false.
 c 
-         call second (t5)
+         call arscnd (t5)
          titref = titref + (t5 - t4)
 c 
 c        %------------------------------------%
@@ -828,7 +828,7 @@ c        %------------------------------------%
 c
          j = j + 1
          if (j .gt. k+np) then
-            call second (t1)
+            call arscnd (t1)
             tcaitr = tcaitr + (t1 - t0)
             ido = 99
             do 110 i = max(1,k), k+np-1

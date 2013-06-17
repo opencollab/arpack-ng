@@ -93,7 +93,7 @@ c     TR95-13, Department of Computational and Applied Mathematics.
 c
 c\Routines called:
 c     pivout  Parallel ARPACK utility routine that prints integers. 
-c     second  ARPACK utility routine for timing.
+c     arscnd  ARPACK utility routine for timing.
 c     pdvout  Parallel ARPACK utility routine that prints vectors.
 c     pdlamch ScaLAPACK routine that determines machine constants.
 c     dlartg  LAPACK Givens rotation construction routine.
@@ -187,7 +187,7 @@ c     | External Subroutines |
 c     %----------------------%
 c
       external   daxpy, dcopy, dscal, dlacpy, dlartg, dlaset, pdvout, 
-     &           pivout, second, dgemv
+     &           pivout, arscnd, dgemv
 c
 c     %--------------------%
 c     | External Functions |
@@ -224,7 +224,7 @@ c     | Initialize timing statistics  |
 c     | & message level for debugging |
 c     %-------------------------------%
 c
-      call second (t0)
+      call arscnd (t0)
       msglvl = msapps
 c 
       kplusp = kev + np 
@@ -514,7 +514,7 @@ c
          end if
       end if
 c
-      call second (t1)
+      call arscnd (t1)
       tsapps = tsapps + (t1 - t0)
 c 
  9000 continue 

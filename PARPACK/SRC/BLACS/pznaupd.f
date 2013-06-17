@@ -359,7 +359,7 @@ c              Arnoldi Iteration.
 c     zstatn    ARPACK routine that initializes the timing variables.
 c     pivout   Parallel ARPACK utility routine that prints integers.
 c     pzvout    Parallel ARPACK utility routine that prints vectors.
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     pdlamch   ScaLAPACK routine that determines machine constants.
 c
 c\Author
@@ -446,7 +446,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pznaup2 , pzvout , pivout, second, zstatn 
+      external   pznaup2 , pzvout , pivout, arscnd, zstatn 
 c
 c     %--------------------%
 c     | External Functions |
@@ -468,7 +468,7 @@ c        | & message level for debugging |
 c        %-------------------------------%
 c
          call zstatn 
-         call second (t0)
+         call arscnd (t0)
          msglvl = mcaupd
 c
 c        %----------------%
@@ -628,7 +628,7 @@ c
      &               '_naupd: Associated Ritz estimates')
       end if
 c
-      call second (t1)
+      call arscnd (t1)
       tcaupd = t1 - t0
 c
       if (msglvl .gt. 0) then

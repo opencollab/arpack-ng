@@ -96,7 +96,7 @@ c     pp 357-385.
 c
 c\Routines called:
 c     pivout  Parallel ARPACK utility routine that prints integers.
-c     second  ARPACK utility routine for timing.
+c     arscnd  ARPACK utility routine for timing.
 c     pzmout  Parallel ARPACK utility routine that prints matrices
 c     pzvout  Parallel ARPACK utility routine that prints vectors.
 c     zlacpy  LAPACK matrix copy routine.
@@ -200,7 +200,7 @@ c     | External Subroutines |
 c     %----------------------%
 c
       external   zaxpy, zcopy, zgemv, zscal, zlacpy, zlartg, 
-     &           pzvout, zlaset, dlabad, pzmout, second, pivout
+     &           pzvout, zlaset, dlabad, pzmout, arscnd, pivout
 c
 c     %--------------------%
 c     | External Functions |
@@ -256,7 +256,7 @@ c     | Initialize timing statistics  |
 c     | & message level for debugging |
 c     %-------------------------------%
 c
-      call second (t0)
+      call arscnd (t0)
       msglvl = mcapps
 c 
       kplusp = kev + np 
@@ -511,7 +511,7 @@ c
       end if
 c
  9000 continue
-      call second (t1)
+      call arscnd (t1)
       tcapps = tcapps + (t1 - t0)
 c 
       return

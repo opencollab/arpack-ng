@@ -384,7 +384,7 @@ c              Arnoldi Iteration.
 c     sstats   ARPACK routine that initializes timing and other statistics
 c              variables.
 c     pivout   Parallel ARPACK utility routine that prints integers.
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     psvout   Parallel ARPACK utility routine that prints vectors.
 c     pslamch  ScaLAPACK routine that determines machine constants.
 c
@@ -472,7 +472,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pssaup2, psvout, pivout, second, sstats
+      external   pssaup2, psvout, pivout, arscnd, sstats
 c
 c     %--------------------%
 c     | External Functions |
@@ -494,7 +494,7 @@ c        | & message level for debugging |
 c        %-------------------------------%
 c
          call sstats
-         call second (t0)
+         call arscnd (t0)
          msglvl = msaupd
 c
          ierr   = 0
@@ -654,7 +654,7 @@ c
      &               '_saupd: corresponding error bounds')
       end if 
 c
-      call second (t1)
+      call arscnd (t1)
       tsaupd = t1 - t0
 c 
       if (msglvl .gt. 0) then

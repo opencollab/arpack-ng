@@ -63,7 +63,7 @@ c\Routines called:
 c     dstqrb  ARPACK routine that computes the eigenvalues and the
 c             last components of the eigenvectors of a symmetric
 c             and tridiagonal matrix.
-c     second  ARPACK utility routine for timing.
+c     arscnd  ARPACK utility routine for timing.
 c     pdvout  Parallel ARPACK utility routine that prints vectors.
 c     dcopy   Level 1 BLAS that copies one vector to another.
 c     dscal   Level 1 BLAS that scales a vector.
@@ -141,7 +141,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   dcopy, dstqrb, pdvout, second
+      external   dcopy, dstqrb, pdvout, arscnd
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -158,7 +158,7 @@ c     | Initialize timing statistics  |
 c     | & message level for debugging |
 c     %-------------------------------% 
 c
-      call second (t0)
+      call arscnd (t0)
       msglvl = mseigt
 c
       if (msglvl .gt. 0) then
@@ -190,7 +190,7 @@ c
          bounds(k) = rnorm*abs(bounds(k))
    30 continue
 c 
-      call second (t1)
+      call arscnd (t1)
       tseigt = tseigt + (t1 - t0)
 c
  9000 continue

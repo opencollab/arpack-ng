@@ -145,7 +145,7 @@ c     pdneigh   Parallel ARPACK compute Ritz values and error bounds routine.
 c     pdngets   Parallel ARPACK reorder Ritz values and error bounds routine.
 c     dsortc    ARPACK sorting routine.
 c     pivout   Parallel ARPACK utility routine that prints integers.
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     pdmout    Parallel ARPACK utility routine that prints matrices
 c     pdvout    ARPACK utility routine that prints vectors.
 c     pdlamch   ScaLAPACK routine that determines machine constants.
@@ -255,7 +255,7 @@ c     %----------------------%
 c
       external   dcopy , pdgetv0 , pdnaitr , dnconv , 
      &           pdneigh , pdngets , pdnapps ,
-     &           pdvout , pivout, second
+     &           pdvout , pivout, arscnd
 c
 c     %--------------------%
 c     | External Functions |
@@ -277,7 +277,7 @@ c     %-----------------------%
 c
       if (ido .eq. 0) then
 c 
-         call second (t0)
+         call arscnd (t0)
 c 
          msglvl = mnaup2
 c 
@@ -779,7 +779,7 @@ c        | the first step of the next call to pdnaitr . |
 c        %---------------------------------------------%
 c
          cnorm = .true.
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
             call dcopy  (n, resid, 1, workd(n+1), 1)
@@ -804,7 +804,7 @@ c        | WORKD(1:N) := B*RESID            |
 c        %----------------------------------%
 c
          if (bmat .eq. 'G') then
-            call second (t3)
+            call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          endif
 c
@@ -845,7 +845,7 @@ c     %------------%
 c     | Error Exit |
 c     %------------%
 c
-      call second (t1)
+      call arscnd (t1)
       tnaup2 = t1 - t0
 c     
  9000 continue

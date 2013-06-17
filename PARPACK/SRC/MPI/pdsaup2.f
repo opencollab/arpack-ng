@@ -153,7 +153,7 @@ c     sstrqb   ARPACK routine that computes all eigenvalues and the
 c              last component of the eigenvectors of a symmetric
 c              tridiagonal matrix using the implicit QL or QR method.
 c     pivout   Parallel ARPACK utility routine that prints integers.
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     pdvout   Parallel ARPACK utility routine that prints vectors.
 c     pdlamch  ScaLAPACK routine that determines machine constants.
 c     dcopy    Level 1 BLAS that copies one vector to another.
@@ -256,7 +256,7 @@ c     %----------------------%
 c
       external   dcopy, pdgetv0, pdsaitr, dscal, dsconv, 
      &           pdseigt, pdsgets, pdsapps,
-     &           dsortr, pdvout, pivout, second
+     &           dsortr, pdvout, pivout, arscnd
 c
 c     %--------------------%
 c     | External Functions |
@@ -283,7 +283,7 @@ c        | Initialize timing statistics  |
 c        | & message level for debugging |
 c        %-------------------------------%
 c
-         call second (t0)
+         call arscnd (t0)
          msglvl = msaup2
 c
 c        %---------------------------------%
@@ -794,7 +794,7 @@ c        | the first step of the next call to pdsaitr. |
 c        %---------------------------------------------%
 c
          cnorm = .true.
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
             call dcopy (n, resid, 1, workd(n+1), 1)
@@ -819,7 +819,7 @@ c        | WORKD(1:N) := B*RESID            |
 c        %----------------------------------%
 c
          if (bmat .eq. 'G') then
-            call second (t3)
+            call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
 c 
@@ -863,7 +863,7 @@ c     %------------%
 c     | Error exit |
 c     %------------%
 c
-      call second (t1)
+      call arscnd (t1)
       tsaup2 = t1 - t0
 c 
  9000 continue

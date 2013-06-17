@@ -99,7 +99,7 @@ c     Restarted Arnoldi Iteration", Rice University Technical Report
 c     TR95-13, Department of Computational and Applied Mathematics.
 c
 c\Routines called:
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     pdvout   Parallel ARPACK utility routine for vector output.
 c     pdlarnv  Parallel wrapper for LAPACK routine dlarnv (generates a random vector).
 c     dgemv    Level 2 BLAS routine for matrix vector multiplication.
@@ -190,7 +190,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pdlarnv, pdvout, dcopy, dgemv, second
+      external   pdlarnv, pdvout, dcopy, dgemv, arscnd
 c
 c     %--------------------%
 c     | External Functions |
@@ -237,7 +237,7 @@ c        | Initialize timing statistics  |
 c        | & message level for debugging |
 c        %-------------------------------%
 c
-         call second (t0)
+         call arscnd (t0)
          msglvl = mgetv0
 c 
          ierr   = 0
@@ -264,7 +264,7 @@ c        | Force the starting vector into the range of OP to handle |
 c        | the generalized problem when B is possibly (singular).   |
 c        %----------------------------------------------------------%
 c
-         call second (t2)
+         call arscnd (t2)
          if (bmat .eq. 'G') then
             nopx = nopx + 1
             ipntr(1) = 1
@@ -287,7 +287,7 @@ c     %-----------------------------------------------%
 c
       if (orth)  go to 40
 c 
-      call second (t3)
+      call arscnd (t3)
       tmvopx = tmvopx + (t3 - t2)
 c 
 c     %------------------------------------------------------%
@@ -295,7 +295,7 @@ c     | Starting vector is now in the range of OP; r = OP*r; |
 c     | Compute B-norm of starting vector.                   |
 c     %------------------------------------------------------%
 c
-      call second (t2)
+      call arscnd (t2)
       first = .TRUE.
       if (bmat .eq. 'G') then
          nbx = nbx + 1
@@ -311,7 +311,7 @@ c
    20 continue
 c
       if (bmat .eq. 'G') then
-         call second (t3)
+         call arscnd (t3)
          tmvbx = tmvbx + (t3 - t2)
       endif
 c 
@@ -358,7 +358,7 @@ c     %----------------------------------------------------------%
 c     | Compute the B-norm of the orthogonalized starting vector |
 c     %----------------------------------------------------------%
 c
-      call second (t2)
+      call arscnd (t2)
       if (bmat .eq. 'G') then
          nbx = nbx + 1
          call dcopy (n, resid, 1, workd(n+1), 1)
@@ -373,7 +373,7 @@ c
    40 continue
 c
       if (bmat .eq. 'G') then
-         call second (t3)
+         call arscnd (t3)
          tmvbx = tmvbx + (t3 - t2)
       endif
 c
@@ -433,7 +433,7 @@ c
       end if
       ido = 99
 c 
-      call second (t1)
+      call arscnd (t1)
       tgetv0 = tgetv0 + (t1 - t0)
 c 
  9000 continue

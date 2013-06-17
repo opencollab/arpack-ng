@@ -198,7 +198,7 @@ c     | External Subroutines |
 c     %----------------------%
 c
       external   daxpy, dcopy, dscal, dlacpy, dlarf, dlarfg, dlartg, 
-     &           dlaset, dlabad, second, pivout, pdvout, pdmout
+     &           dlaset, dlabad, arscnd, pivout, pdvout, pdmout
 c
 c     %--------------------%
 c     | External Functions |
@@ -246,7 +246,7 @@ c     | Initialize timing statistics  |
 c     | & message level for debugging |
 c     %-------------------------------%
 c
-      call second (t0)
+      call arscnd (t0)
       msglvl = mnapps
 c 
       kplusp = kev + np 
@@ -645,7 +645,7 @@ c
       end if
 c 
  9000 continue
-      call second (t1)
+      call arscnd (t1)
       tnapps = tnapps + (t1 - t0)
 c 
       return

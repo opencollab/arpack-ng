@@ -382,7 +382,7 @@ c\Routines called:
 c     pdnaup2   Parallel ARPACK routine that implements the Implicitly Restarted
 c              Arnoldi Iteration.
 c     pivout   Parallel ARPACK utility routine that prints integers.
-c     second   ARPACK utility routine for timing.
+c     arscnd   ARPACK utility routine for timing.
 c     pdvout    Parallel ARPACK utility routine that prints vectors.
 c     pdlamch   ScaLAPACK routine that determines machine constants.
 c
@@ -468,7 +468,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pdnaup2 , pdvout , pivout, second, dstatn 
+      external   pdnaup2 , pdvout , pivout, arscnd, dstatn 
 c
 c     %--------------------%
 c     | External Functions |
@@ -490,7 +490,7 @@ c        | & message level for debugging |
 c        %-------------------------------%
 c
          call dstatn 
-         call second (t0)
+         call arscnd (t0)
          msglvl = mnaupd
 c
 c        %----------------%
@@ -654,7 +654,7 @@ c
      &               '_naupd: Associated Ritz estimates')
       end if
 c
-      call second (t1)
+      call arscnd (t1)
       tnaupd = t1 - t0
 c
       if (msglvl .gt. 0) then
