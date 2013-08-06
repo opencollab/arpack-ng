@@ -16,4 +16,4 @@ libparpack_la_LIBADD = \
 	$(top_builddir)/UTIL/libarpackutil.la \
 	$(top_builddir)/PARPACK/SRC/MPI/libparpacksrcmpi.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutilmpi.la \
-	$(BLAS_LIBS) $(LAPACK_LIBS)
+	$(BLAS_LIBS) $(LAPACK_LIBS) $(MPILIBS)
