@@ -1,3 +1,17 @@
+arpack-ng - 3.1.5
+
+ * Fix issue #1259 in DSEUPD and SSEUPD
+   The Ritz vector purification step assumes workl(iq) still contains the
+   original Q matrix. This is however overwritten by the call to xGEQR2
+   earlier.
+   .
+   This patch fixes the issue by making a copy of the last row of the
+   eigenvector matrix, after it is recomputed after QR by xORM2R. The work
+   space WORKL(IW+NCV:IW+2*NCV) is not used later in the routine, and can
+   be used for this.
+
+ -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Thu, 29 Aug 2013 10:53:03 +0200
+
 arpack-ng - 3.1.4
 
  * libparpack2: missing dependency on MPI:
