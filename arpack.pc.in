@@ -5,5 +5,5 @@ libdir=@libdir@
 Name: arpack
 Description: ARPACK-NG 
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -larpack -lblas -latlas
+Libs: -L${libdir} -larpack @BLAS_LIBS@ @LAPACK_LIBS@
 Cflags: 
