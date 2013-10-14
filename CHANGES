@@ -18,6 +18,9 @@ arpack-ng - 3.1.4
  * Use configure supplied blas and lapack in the pkg-config.
    Thanks to Ward Poelmans (Closes: #1320)
 
+ * Switch to automake 1.14 + libtool 2.4.2.
+   Thanks to Ward Poelmans (Closes: #1321)
+
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Mon, 07 Oct 2013 14:24:42 +0200
 
 arpack-ng - 3.1.3
