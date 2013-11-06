@@ -21,6 +21,9 @@ arpack-ng - 3.1.4
  * Switch to automake 1.14 + libtool 2.4.2.
    Thanks to Ward Poelmans (Closes: #1321)
 
+ * dseupd routine may lead to a segmentation fault
+   Thanks to Edouard Canot (Closes: #1323)
+
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Mon, 07 Oct 2013 14:24:42 +0200
 
 arpack-ng - 3.1.3
