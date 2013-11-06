@@ -22,7 +22,9 @@ libtool
 *.suo
 VISUAL_STUDIO/Release MKL/
 VISUAL_STUDIO/bin/
-TESTS/dnsimp
+TESTS/dnsimp*
+TESTS/bug_1323*
+TESTS/test-suite.log
 PARPACK/EXAMPLES/MPI/pcndrv1
 PARPACK/EXAMPLES/MPI/pdndrv1
 PARPACK/EXAMPLES/MPI/pdndrv3
