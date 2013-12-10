@@ -1,4 +1,4 @@
-bin_PROGRAMS = dnsimp  bug_1323
+check_PROGRAMS = dnsimp  bug_1323
 
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 
