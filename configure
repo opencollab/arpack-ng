@@ -16829,7 +16829,7 @@ fi
 
 #	LAPACK/Makefile
 
-ac_config_files="$ac_config_files arpack.pc Makefile SRC/Makefile UTIL/Makefile TESTS/Makefile PARPACK/Makefile PARPACK/SRC/Makefile PARPACK/SRC/MPI/Makefile PARPACK/UTIL/Makefile PARPACK/UTIL/MPI/Makefile PARPACK/UTIL/BLACS/Makefile PARPACK/EXAMPLES/MPI/Makefile PARPACK/EXAMPLES/BLACS/Makefile PARPACK/SRC/BLACS/Makefile"
+ac_config_files="$ac_config_files arpack.pc Makefile SRC/Makefile UTIL/Makefile TESTS/Makefile EXAMPLES/Makefile EXAMPLES/BAND/Makefile EXAMPLES/COMPLEX/Makefile EXAMPLES/NONSYM/Makefile EXAMPLES/SIMPLE/Makefile EXAMPLES/SVD/Makefile EXAMPLES/SYM/Makefile PARPACK/Makefile PARPACK/SRC/Makefile PARPACK/SRC/MPI/Makefile PARPACK/UTIL/Makefile PARPACK/UTIL/MPI/Makefile PARPACK/UTIL/BLACS/Makefile PARPACK/EXAMPLES/MPI/Makefile PARPACK/EXAMPLES/BLACS/Makefile PARPACK/SRC/BLACS/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -17940,6 +17940,13 @@ do
     "SRC/Makefile") CONFIG_FILES="$CONFIG_FILES SRC/Makefile" ;;
     "UTIL/Makefile") CONFIG_FILES="$CONFIG_FILES UTIL/Makefile" ;;
     "TESTS/Makefile") CONFIG_FILES="$CONFIG_FILES TESTS/Makefile" ;;
+    "EXAMPLES/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/Makefile" ;;
+    "EXAMPLES/BAND/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/BAND/Makefile" ;;
+    "EXAMPLES/COMPLEX/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/COMPLEX/Makefile" ;;
+    "EXAMPLES/NONSYM/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/NONSYM/Makefile" ;;
+    "EXAMPLES/SIMPLE/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/SIMPLE/Makefile" ;;
+    "EXAMPLES/SVD/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/SVD/Makefile" ;;
+    "EXAMPLES/SYM/Makefile") CONFIG_FILES="$CONFIG_FILES EXAMPLES/SYM/Makefile" ;;
     "PARPACK/Makefile") CONFIG_FILES="$CONFIG_FILES PARPACK/Makefile" ;;
     "PARPACK/SRC/Makefile") CONFIG_FILES="$CONFIG_FILES PARPACK/SRC/Makefile" ;;
     "PARPACK/SRC/MPI/Makefile") CONFIG_FILES="$CONFIG_FILES PARPACK/SRC/MPI/Makefile" ;;

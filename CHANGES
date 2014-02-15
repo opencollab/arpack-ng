@@ -1,5 +1,7 @@
 arpack-ng - 3.1.5
 
+ * Build all examples and run them as tests
+
  * Fix the version of arpack-ng itself
 
  * Switch to automake 1.14.1

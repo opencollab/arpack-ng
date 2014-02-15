@@ -54,6 +54,13 @@ AC_CONFIG_FILES([
 	SRC/Makefile
 	UTIL/Makefile
 	TESTS/Makefile
+	EXAMPLES/Makefile
+    EXAMPLES/BAND/Makefile
+    EXAMPLES/COMPLEX/Makefile
+    EXAMPLES/NONSYM/Makefile
+    EXAMPLES/SIMPLE/Makefile
+    EXAMPLES/SVD/Makefile
+    EXAMPLES/SYM/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
