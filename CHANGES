@@ -10,9 +10,9 @@ arpack-ng - 3.1.5
  * Do not install test binaries (Closes: #1348)
 
  [ Nikita Styopin ]
- * Fix the diagonal matrice example (dndrv5) (Closes: #1397)
+ * Fix the diagonal matrix example (dndrv5) (Closes: #1397)
 
- -- Sylvestre Ledru <sylvestre@debian.org>  Fri, 14 Feb 2014 14:24:42 +0200
+ -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 15 Feb 2014 14:24:42 +0200
 
 arpack-ng - 3.1.4
 
