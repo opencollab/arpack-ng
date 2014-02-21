@@ -8,9 +8,9 @@ c
 c\Example-5
 c
 c     ... Suppose we want to solve A*x = lambda*B*x in shift-invert mode
-c         The matrix A is the tridiagonal matrix with 2 on the diagonal,
-c         -2 on the subdiagonal and 3 on the superdiagonal.  The matrix M
-c         is the tridiagonal matrix with 4 on the diagonal and 1 on the
+c         The matrix A is the tridiagonal matrix with 2 on the diagonal, 
+c         -2 on the subdiagonal and 3 on the superdiagonal.  The matrix M 
+c         is the tridiagonal matrix with 4 on the diagonal and 1 on the 
 c         off-diagonals.
 c     ... The shift sigma is a complex number (sigmar, sigmai).
 c     ... OP = Real_Part{inv[A-(SIGMAR,SIGMAI)*M]*M and  B = M.
@@ -59,7 +59,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=98, maxncv=100,
+      parameter         (maxn=256, maxnev=10, maxncv=25, 
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -128,14 +128,14 @@ c     | to 'LM'.  The user can modify NEV, NCV, SIGMAR,    |
 c     | SIGMAI to solve problems of different sizes, and   |
 c     | to get different parts of the spectrum. However,   |
 c     | The following conditions must be satisfied:        |
-c     |                     N <= MAXN,                     |
+c     |                     N <= MAXN,                     | 
 c     |                   NEV <= MAXNEV,                   |
-c     |               NEV + 2 <= NCV <= MAXNCV             |
+c     |               NEV + 2 <= NCV <= MAXNCV             | 
 c     %----------------------------------------------------%
 c
-      n     = 100
-      nev   = 98
-      ncv   = 100
+      n     = 100 
+      nev   = 4 
+      ncv   = 20 
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV5: N is greater than MAXN '
          go to 9000
@@ -162,15 +162,16 @@ c     | symmetric tridiagonal matrix with 4 on the        |
 c     | diagonal and 1 on the off-diagonals.              |
 c     %---------------------------------------------------%
 c
-      c1 = dcmplx( 0.0D+0, 0.0D+0)
-      c3 = dcmplx( 0.0D+0, 0.0D+0)
+      c1 = dcmplx(-2.0D+0-sigmar, -sigmai)
+      c2 = dcmplx( 2.0D+0-4.0D+0*sigmar, -4.0D+0*sigmai)
+      c3 = dcmplx( 3.0D+0-sigmar, -sigmai)
 c
       do 10 j = 1, n-1
          cdl(j) = c1 
-         cdd(j) = dcmplx( j-sigmar, sigmai)
+         cdd(j) = c2
          cdu(j) = c3
   10  continue 
-      cdd(n) = dcmplx( n-sigmar, sigmai)
+      cdd(n) = c2 
 c 
       call zgttrf(n, cdl, cdd, cdu, cdu2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
@@ -567,6 +568,7 @@ c     | Done with program dndrv5. |
 c     %---------------------------%
 c
  9000 continue
+c
       end
 c 
 c==========================================================================
@@ -575,27 +577,37 @@ c     matrix vector multiplication subroutine
 c
       subroutine mv (n, v, w)
       integer           n, j
-      Double precision  v(n), w(n)
+      Double precision
+     &                  v(n), w(n), one, four 
+      parameter         (one = 1.0D+0, four = 4.0D+0)
 c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is a n by n diagonal matrix with 1 on thediagonal
+c     where M is a n by n symmetric tridiagonal matrix with 4 on the 
+c     diagonal, 1 on the subdiagonal and superdiagonal.
 c 
-      do 10 j = 1,n
-         w(j) = v(j)
+      w(1) =  four*v(1) + one*v(2)
+      do 10 j = 2,n-1
+         w(j) = one*v(j-1) + four*v(j) + one*v(j+1) 
  10   continue 
+      w(n) =  one*v(n-1) + four*v(n) 
       return
       end
 c------------------------------------------------------------------
       subroutine av (n, v, w)
       integer           n, j
-      Double precision  v(n), w(n)
+      Double precision            
+     &                  v(n), w(n), three, two 
+      parameter         (three = 3.0D+0, two = 2.0D+0)
 c
 c     Compute the matrix vector multiplication y<---A*x
-c     where A is a n by n diagonal matrix with j on the
-c     diagonal, where j is row's number
+c     where M is a n by n symmetric tridiagonal matrix with 2 on the
+c     diagonal, -2 on the subdiagonal and 3 on the superdiagonal.
 c
-      do 10 j = 1,n
-         w(j) = j*v(j)
+      w(1) =  two*v(1) + three*v(2)
+      do 10 j = 2,n-1
+         w(j) = -two*v(j-1) + two*v(j) + three*v(j+1)
  10   continue
+      w(n) =  -two*v(n-1) + two*v(n)
       return
       end
+
