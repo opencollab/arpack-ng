@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([arpack-ng], [3.1.5], [https://github.com/sylvestre/arpack-ng/issues/])
+AC_INIT([arpack-ng], [3.1.5], [https://github.com/opencollab/arpack-ng/issues/])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
