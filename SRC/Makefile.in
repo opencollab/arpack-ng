@@ -101,10 +101,10 @@ am_libarpacksrc_la_OBJECTS = sgetv0.lo slaqrb.lo sstqrb.lo ssortc.lo \
 	dsortr.lo dstatn.lo dstats.lo dnaitr.lo dnapps.lo dnaup2.lo \
 	dnaupd.lo dnconv.lo dneigh.lo dngets.lo dsaitr.lo dsapps.lo \
 	dsaup2.lo dsaupd.lo dsconv.lo dseigt.lo dsgets.lo dneupd.lo \
-	dseupd.lo dsesrt.lo cnaitr.lo cnapps.lo cnaup2.lo cnaupd.lo \
-	cneigh.lo cneupd.lo cngets.lo cgetv0.lo csortc.lo cstatn.lo \
-	znaitr.lo znapps.lo znaup2.lo znaupd.lo zneigh.lo zneupd.lo \
-	zngets.lo zgetv0.lo zsortc.lo zstatn.lo
+	dseupd.lo dsesrt.lo dlahqr2.lo slahqr2.lo cnaitr.lo cnapps.lo \
+	cnaup2.lo cnaupd.lo cneigh.lo cneupd.lo cngets.lo cgetv0.lo \
+	csortc.lo cstatn.lo znaitr.lo znapps.lo znaup2.lo znaupd.lo \
+	zneigh.lo zneupd.lo zngets.lo zgetv0.lo zsortc.lo zstatn.lo
 libarpacksrc_la_OBJECTS = $(am_libarpacksrc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -298,7 +298,7 @@ libarpacksrc_la_SOURCES = \
 	dgetv0.f dlaqrb.f dstqrb.f dsortc.f dsortr.f dstatn.f dstats.f \
 	dnaitr.f dnapps.f dnaup2.f dnaupd.f dnconv.f dneigh.f dngets.f \
 	dsaitr.f dsapps.f dsaup2.f dsaupd.f dsconv.f dseigt.f dsgets.f \
-	dneupd.f dseupd.f dsesrt.f \
+	dneupd.f dseupd.f dsesrt.f dlahqr2.f slahqr2.f \
 	cnaitr.f cnapps.f cnaup2.f cnaupd.f cneigh.f cneupd.f cngets.f \
         cgetv0.f csortc.f cstatn.f \
 	znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f \
