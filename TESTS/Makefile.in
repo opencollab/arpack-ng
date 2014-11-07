@@ -77,11 +77,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = dnsimp$(EXEEXT) bug_1323$(EXEEXT)
-TESTS = dnsimp$(EXEEXT) bug_1323$(EXEEXT)
+TESTS = dnsimp$(EXEEXT) bug_1323$(EXEEXT) bug_1315_single$(EXEEXT) \
+	bug_1315_double$(EXEEXT)
+check_PROGRAMS = $(am__EXEEXT_1)
 subdir = TESTS
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/test-driver
+	$(top_srcdir)/depcomp $(top_srcdir)/test-driver
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_blas.m4 \
 	$(top_srcdir)/m4/ax_lapack.m4 $(top_srcdir)/m4/ax_mpi.m4 \
@@ -93,17 +94,31 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_bug_1323_OBJECTS = bug_1323.$(OBJEXT)
-bug_1323_OBJECTS = $(am_bug_1323_OBJECTS)
+am__EXEEXT_1 = dnsimp$(EXEEXT) bug_1323$(EXEEXT) \
+	bug_1315_single$(EXEEXT) bug_1315_double$(EXEEXT)
+am_bug_1315_double_OBJECTS = bug_1315_double.$(OBJEXT)
+bug_1315_double_OBJECTS = $(am_bug_1315_double_OBJECTS)
+bug_1315_double_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-bug_1323_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
+bug_1315_double_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_bug_1315_single_OBJECTS = bug_1315_single.$(OBJEXT)
+bug_1315_single_OBJECTS = $(am_bug_1315_single_OBJECTS)
+bug_1315_single_LDADD = $(LDADD)
+bug_1315_single_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+bug_1323_SOURCES = bug_1323.f
+bug_1323_OBJECTS = bug_1323.$(OBJEXT)
+bug_1323_LDADD = $(LDADD)
+bug_1323_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_dnsimp_OBJECTS = dnsimp.$(OBJEXT) mmio.$(OBJEXT)
 dnsimp_OBJECTS = $(am_dnsimp_OBJECTS)
+dnsimp_LDADD = $(LDADD)
 dnsimp_DEPENDENCIES = ../libarpack.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -119,21 +134,9 @@ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
-F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
-LTF77COMPILE = $(LIBTOOL) $(AM_V_lt) --tag=F77 $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(F77) $(AM_FFLAGS) $(FFLAGS)
-AM_V_F77 = $(am__v_F77_@AM_V@)
-am__v_F77_ = $(am__v_F77_@AM_DEFAULT_V@)
-am__v_F77_0 = @echo "  F77     " $@;
-am__v_F77_1 = 
-F77LD = $(F77)
-F77LINK = $(LIBTOOL) $(AM_V_lt) --tag=F77 $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_F77LD = $(am__v_F77LD_@AM_V@)
-am__v_F77LD_ = $(am__v_F77LD_@AM_DEFAULT_V@)
-am__v_F77LD_0 = @echo "  F77LD   " $@;
-am__v_F77LD_1 = 
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -152,8 +155,25 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(bug_1323_SOURCES) $(dnsimp_SOURCES)
-DIST_SOURCES = $(bug_1323_SOURCES) $(dnsimp_SOURCES)
+F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
+LTF77COMPILE = $(LIBTOOL) $(AM_V_lt) --tag=F77 $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(F77) $(AM_FFLAGS) $(FFLAGS)
+AM_V_F77 = $(am__v_F77_@AM_V@)
+am__v_F77_ = $(am__v_F77_@AM_DEFAULT_V@)
+am__v_F77_0 = @echo "  F77     " $@;
+am__v_F77_1 = 
+F77LD = $(F77)
+F77LINK = $(LIBTOOL) $(AM_V_lt) --tag=F77 $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_F77LD = $(am__v_F77LD_@AM_V@)
+am__v_F77LD_ = $(am__v_F77LD_@AM_DEFAULT_V@)
+am__v_F77LD_0 = @echo "  F77LD   " $@;
+am__v_F77LD_1 = 
+SOURCES = $(bug_1315_double_SOURCES) $(bug_1315_single_SOURCES) \
+	bug_1323.f $(dnsimp_SOURCES)
+DIST_SOURCES = $(bug_1315_double_SOURCES) $(bug_1315_single_SOURCES) \
+	bug_1323.f $(dnsimp_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -507,15 +527,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AM_DEFAULT_SOURCE_EXT = .f
+LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
-dnsimp_LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+bug_1315_single_SOURCES = bug_1315_single.c
+bug_1315_double_SOURCES = bug_1315_double.c
 EXTRA_DIST = testA.mtx
-bug_1323_SOURCES = bug_1323.f
-bug_1323_LDADD = ../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .f .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .c .f .lo .log .o .obj .test .test$(EXEEXT) .trs
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -556,6 +577,14 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+bug_1315_double$(EXEEXT): $(bug_1315_double_OBJECTS) $(bug_1315_double_DEPENDENCIES) $(EXTRA_bug_1315_double_DEPENDENCIES) 
+	@rm -f bug_1315_double$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(bug_1315_double_OBJECTS) $(bug_1315_double_LDADD) $(LIBS)
+
+bug_1315_single$(EXEEXT): $(bug_1315_single_OBJECTS) $(bug_1315_single_DEPENDENCIES) $(EXTRA_bug_1315_single_DEPENDENCIES) 
+	@rm -f bug_1315_single$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(bug_1315_single_OBJECTS) $(bug_1315_single_LDADD) $(LIBS)
+
 bug_1323$(EXEEXT): $(bug_1323_OBJECTS) $(bug_1323_DEPENDENCIES) $(EXTRA_bug_1323_DEPENDENCIES) 
 	@rm -f bug_1323$(EXEEXT)
 	$(AM_V_F77LD)$(F77LINK) $(bug_1323_OBJECTS) $(bug_1323_LDADD) $(LIBS)
@@ -569,6 +598,30 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bug_1315_double.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bug_1315_single.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .f.o:
 	$(AM_V_F77)$(F77COMPILE) -c -o $@ $<
@@ -792,6 +845,20 @@ bug_1323.log: bug_1323$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+bug_1315_single.log: bug_1315_single$(EXEEXT)
+	@p='bug_1315_single$(EXEEXT)'; \
+	b='bug_1315_single'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+bug_1315_double.log: bug_1315_double$(EXEEXT)
+	@p='bug_1315_double$(EXEEXT)'; \
+	b='bug_1315_double'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -882,6 +949,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -927,6 +995,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -661,6 +661,18 @@ FGREP
 EGREP
 GREP
 SED
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
+LIBTOOL
+OBJDUMP
+DLLTOOL
+AS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
@@ -675,18 +687,6 @@ ac_ct_CC
 CPPFLAGS
 CFLAGS
 CC
-host_os
-host_vendor
-host_cpu
-host
-build_os
-build_vendor
-build_cpu
-build
-LIBTOOL
-OBJDUMP
-DLLTOOL
-AS
 OBJEXT
 EXEEXT
 ac_ct_F77
@@ -766,11 +766,11 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
+enable_dependency_tracking
 enable_shared
 enable_static
 with_pic
 enable_fast_install
-enable_dependency_tracking
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
@@ -1413,14 +1413,14 @@ Optional Features:
   --enable-maintainer-mode
                           enable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
-  --enable-shared[=PKGS]  build shared libraries [default=yes]
-  --enable-static[=PKGS]  build static libraries [default=yes]
-  --enable-fast-install[=PKGS]
-                          optimize for fast installation [default=yes]
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
                           speeds up one-time build
+  --enable-shared[=PKGS]  build shared libraries [default=yes]
+  --enable-static[=PKGS]  build static libraries [default=yes]
+  --enable-fast-install[=PKGS]
+                          optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-mpi            build parallel version of arpack with MPI
 
@@ -2832,7 +2832,6 @@ END
   fi
 fi
 
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -3300,238 +3299,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-
-
-
-case `pwd` in
-  *\ * | *\	*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
-$as_echo "$as_me: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&2;} ;;
-esac
-
-
-
-macro_version='2.4.2'
-macro_revision='1.3337'
-
-
-
-
-
-
-
-
-
-
-
-
-
-ltmain="$ac_aux_dir/ltmain.sh"
-
-# Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
-$as_echo_n "checking build system type... " >&6; }
-if ${ac_cv_build+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
-test "x$ac_build_alias" = x &&
-  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
-$as_echo "$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-$as_echo_n "checking host system type... " >&6; }
-if ${ac_cv_host+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-$as_echo "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
-
-# Backslashify metacharacters that are still active within
-# double-quoted strings.
-sed_quote_subst='s/\(["`$\\]\)/\\\1/g'
-
-# Same as above, but do not quote variable references.
-double_quote_subst='s/\(["`\\]\)/\\\1/g'
-
-# Sed substitution to delay expansion of an escaped shell variable in a
-# double_quote_subst'ed string.
-delay_variable_subst='s/\\\\\\\\\\\$/\\\\\\$/g'
-
-# Sed substitution to delay expansion of an escaped single quote.
-delay_single_quote_subst='s/'\''/'\'\\\\\\\'\''/g'
-
-# Sed substitution to avoid accidental globbing in evaled expressions
-no_glob_subst='s/\*/\\\*/g'
-
-ECHO='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
-ECHO=$ECHO$ECHO$ECHO$ECHO$ECHO
-ECHO=$ECHO$ECHO$ECHO$ECHO$ECHO$ECHO
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking how to print strings" >&5
-$as_echo_n "checking how to print strings... " >&6; }
-# Test print first, because it will be a builtin if present.
-if test "X`( print -r -- -n ) 2>/dev/null`" = X-n && \
-   test "X`print -r -- $ECHO 2>/dev/null`" = "X$ECHO"; then
-  ECHO='print -r --'
-elif test "X`printf %s $ECHO 2>/dev/null`" = "X$ECHO"; then
-  ECHO='printf %s\n'
-else
-  # Use this function as a fallback that always works.
-  func_fallback_echo ()
-  {
-    eval 'cat <<_LTECHO_EOF
-$1
-_LTECHO_EOF'
-  }
-  ECHO='func_fallback_echo'
-fi
-
-# func_echo_all arg...
-# Invoke $ECHO with all args, space-separated.
-func_echo_all ()
-{
-    $ECHO ""
-}
-
-case "$ECHO" in
-  printf*) { $as_echo "$as_me:${as_lineno-$LINENO}: result: printf" >&5
-$as_echo "printf" >&6; } ;;
-  print*) { $as_echo "$as_me:${as_lineno-$LINENO}: result: print -r" >&5
-$as_echo "print -r" >&6; } ;;
-  *) { $as_echo "$as_me:${as_lineno-$LINENO}: result: cat" >&5
-$as_echo "cat" >&6; } ;;
-esac
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-DEPDIR="${am__leading_dot}deps"
-
-ac_config_commands="$ac_config_commands depfiles"
-
-
-am_make=${MAKE-make}
-cat > confinc << 'END'
-am__doit:
-	@echo this is the am__doit target
-.PHONY: am__doit
-END
-# If we don't find an include directive, just comment out the code.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for style of include used by $am_make" >&5
-$as_echo_n "checking for style of include used by $am_make... " >&6; }
-am__include="#"
-am__quote=
-_am_result=none
-# First try GNU make style include.
-echo "include confinc" > confmf
-# Ignore all kinds of additional output from 'make'.
-case `$am_make -s -f confmf 2> /dev/null` in #(
-*the\ am__doit\ target*)
-  am__include=include
-  am__quote=
-  _am_result=GNU
-  ;;
-esac
-# Now try BSD make style include.
-if test "$am__include" = "#"; then
-   echo '.include "confinc"' > confmf
-   case `$am_make -s -f confmf 2> /dev/null` in #(
-   *the\ am__doit\ target*)
-     am__include=.include
-     am__quote="\""
-     _am_result=BSD
-     ;;
-   esac
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $_am_result" >&5
-$as_echo "$_am_result" >&6; }
-rm -f confinc confmf
-
-# Check whether --enable-dependency-tracking was given.
-if test "${enable_dependency_tracking+set}" = set; then :
-  enableval=$enable_dependency_tracking;
-fi
-
-if test "x$enable_dependency_tracking" != xno; then
-  am_depcomp="$ac_aux_dir/depcomp"
-  AMDEPBACKSLASH='\'
-  am__nodep='_no'
-fi
- if test "x$enable_dependency_tracking" != xno; then
-  AMDEP_TRUE=
-  AMDEP_FALSE='#'
-else
-  AMDEP_TRUE='#'
-  AMDEP_FALSE=
-fi
-
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -4130,6 +3897,69 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+DEPDIR="${am__leading_dot}deps"
+
+ac_config_commands="$ac_config_commands depfiles"
+
+
+am_make=${MAKE-make}
+cat > confinc << 'END'
+am__doit:
+	@echo this is the am__doit target
+.PHONY: am__doit
+END
+# If we don't find an include directive, just comment out the code.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for style of include used by $am_make" >&5
+$as_echo_n "checking for style of include used by $am_make... " >&6; }
+am__include="#"
+am__quote=
+_am_result=none
+# First try GNU make style include.
+echo "include confinc" > confmf
+# Ignore all kinds of additional output from 'make'.
+case `$am_make -s -f confmf 2> /dev/null` in #(
+*the\ am__doit\ target*)
+  am__include=include
+  am__quote=
+  _am_result=GNU
+  ;;
+esac
+# Now try BSD make style include.
+if test "$am__include" = "#"; then
+   echo '.include "confinc"' > confmf
+   case `$am_make -s -f confmf 2> /dev/null` in #(
+   *the\ am__doit\ target*)
+     am__include=.include
+     am__quote="\""
+     _am_result=BSD
+     ;;
+   esac
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $_am_result" >&5
+$as_echo "$_am_result" >&6; }
+rm -f confinc confmf
+
+# Check whether --enable-dependency-tracking was given.
+if test "${enable_dependency_tracking+set}" = set; then :
+  enableval=$enable_dependency_tracking;
+fi
+
+if test "x$enable_dependency_tracking" != xno; then
+  am_depcomp="$ac_aux_dir/depcomp"
+  AMDEPBACKSLASH='\'
+  am__nodep='_no'
+fi
+ if test "x$enable_dependency_tracking" != xno; then
+  AMDEP_TRUE=
+  AMDEP_FALSE='#'
+else
+  AMDEP_TRUE='#'
+  AMDEP_FALSE=
+fi
+
+
 
 depcc="$CC"   am_compiler_list=
 
@@ -4257,6 +4087,175 @@ else
   am__fastdepCC_TRUE='#'
   am__fastdepCC_FALSE=
 fi
+
+
+
+
+
+
+case `pwd` in
+  *\ * | *\	*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
+$as_echo "$as_me: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&2;} ;;
+esac
+
+
+
+macro_version='2.4.2'
+macro_revision='1.3337'
+
+
+
+
+
+
+
+
+
+
+
+
+
+ltmain="$ac_aux_dir/ltmain.sh"
+
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+# Backslashify metacharacters that are still active within
+# double-quoted strings.
+sed_quote_subst='s/\(["`$\\]\)/\\\1/g'
+
+# Same as above, but do not quote variable references.
+double_quote_subst='s/\(["`\\]\)/\\\1/g'
+
+# Sed substitution to delay expansion of an escaped shell variable in a
+# double_quote_subst'ed string.
+delay_variable_subst='s/\\\\\\\\\\\$/\\\\\\$/g'
+
+# Sed substitution to delay expansion of an escaped single quote.
+delay_single_quote_subst='s/'\''/'\'\\\\\\\'\''/g'
+
+# Sed substitution to avoid accidental globbing in evaled expressions
+no_glob_subst='s/\*/\\\*/g'
+
+ECHO='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
+ECHO=$ECHO$ECHO$ECHO$ECHO$ECHO
+ECHO=$ECHO$ECHO$ECHO$ECHO$ECHO$ECHO
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking how to print strings" >&5
+$as_echo_n "checking how to print strings... " >&6; }
+# Test print first, because it will be a builtin if present.
+if test "X`( print -r -- -n ) 2>/dev/null`" = X-n && \
+   test "X`print -r -- $ECHO 2>/dev/null`" = "X$ECHO"; then
+  ECHO='print -r --'
+elif test "X`printf %s $ECHO 2>/dev/null`" = "X$ECHO"; then
+  ECHO='printf %s\n'
+else
+  # Use this function as a fallback that always works.
+  func_fallback_echo ()
+  {
+    eval 'cat <<_LTECHO_EOF
+$1
+_LTECHO_EOF'
+  }
+  ECHO='func_fallback_echo'
+fi
+
+# func_echo_all arg...
+# Invoke $ECHO with all args, space-separated.
+func_echo_all ()
+{
+    $ECHO ""
+}
+
+case "$ECHO" in
+  printf*) { $as_echo "$as_me:${as_lineno-$LINENO}: result: printf" >&5
+$as_echo "printf" >&6; } ;;
+  print*) { $as_echo "$as_me:${as_lineno-$LINENO}: result: print -r" >&5
+$as_echo "print -r" >&6; } ;;
+  *) { $as_echo "$as_me:${as_lineno-$LINENO}: result: cat" >&5
+$as_echo "cat" >&6; } ;;
+esac
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a sed that does not truncate output" >&5
