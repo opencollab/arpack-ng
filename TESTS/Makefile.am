@@ -1,13 +1,16 @@
-check_PROGRAMS = dnsimp  bug_1323
+TESTS = dnsimp bug_1315_single bug_1315_double
+
+check_PROGRAMS = $(TESTS)
+
+AM_DEFAULT_SOURCE_EXT = .f
+
+LDADD=../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 
-dnsimp_LDADD=../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+bug_1315_single_SOURCES = bug_1315_single.c
+
+bug_1315_double_SOURCES = bug_1315_double.c
 
 EXTRA_DIST = testA.mtx
 
-bug_1323_SOURCES =  bug_1323.f
-
-bug_1323_LDADD=../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
-TESTS = dnsimp bug_1323

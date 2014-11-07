@@ -7,6 +7,7 @@ AC_CONFIG_MACRO_DIR([m4/])
 
 dnl Checks for standard programs.
 AC_PROG_F77
+AC_PROG_CC
 
 ifdef([LT_INIT], [], [
   errprint([error: you must have libtool 2.4.2 or a more recent version
