@@ -6,6 +6,9 @@
 *     Courant Institute, Argonne National Lab, and Rice University
 *     October 31, 1992
 *
+*     This is the original slahqr.f file with all instances of slahqr
+*     replaced with slahqr2 to prevent name clashes with lapack3
+*
 *     .. Scalar Arguments ..
       LOGICAL            WANTT, WANTZ
       INTEGER            IHI, IHIZ, ILO, ILOZ, INFO, LDH, LDZ, N
