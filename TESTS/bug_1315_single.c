@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-/* test program to solve for the 9 largest eigenvalues of 
+/* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
  * We're using the non symmetric routines dnaupd and dneupd.
@@ -12,10 +12,10 @@
 
 extern void snaupd_(int *, char *, int *, char *, int *,
 		   float *, float *, int *, float *,
-		   int *, int *, int *, float *, 
+		   int *, int *, int *, float *,
 		   float *, int *, int *);
 
-extern void sneupd_( int*, char*, int *, float *, float *, float *, int*, float *, 
+extern void sneupd_( int*, char*, int *, float *, float *, float *, int*, float *,
 		float *, float *, char *, int *, char *, int *, float *, float *, int *,
 		float *, int *, int *, int *, float *, float *, int *, int * );
 
@@ -51,10 +51,10 @@ int main() {
   float sigmai=0;
   float workev[3*ncv];
   int k;
-  for (k=0; k < 3*N; ++k ) 
+  for (k=0; k < 3*N; ++k )
     workd[k] = 0;
   float workl[3*(ncv*ncv) + 6*ncv];
-  for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k ) 
+  for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0;
   int lworkl = 3*(ncv*ncv) + 6*ncv;
   int info = 0;
@@ -63,28 +63,27 @@ int main() {
   iparam[2] = 10*N;
   iparam[3] = 1;
   iparam[6] = 1;
-  
-  snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr, 
+
+  snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
 
   while(ido == 1) {
 
-    int i;
     matVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
 
-    snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr, 
+    snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
   }
-  
+
   sneupd_( &rvec, howmny, select, dr,di, z, &ldz, &sigmar, &sigmai,workev,
-	   bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr, 
+	   bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	   workd, workl, &lworkl, &info);
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f\n", dr[i]);
     if(fabs(dr[i] - (float)(1000-i))>1e-2){
       exit(EXIT_FAILURE);
-    }	 
+    }
   }
-
+  return 0;
 }
