@@ -2,10 +2,11 @@ arpack-ng - 3.2.0
 
  * Switch to github - https://github.com/opencollab/arpack-ng/
 
- -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 17 May 2014 16:25:36 +0200
- 
  * Fix dsneupd select/calculate wrong eigenpairs if rvec = true
    by using dlahqr and slahqr from lapack2 (Closes: #3)
+
+
+ -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 14 Nov 2014 16:25:36 +0200
 
 arpack-ng - 3.1.5
 
