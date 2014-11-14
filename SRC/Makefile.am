@@ -7,7 +7,7 @@ libarpacksrc_la_SOURCES = \
 	dgetv0.f dlaqrb.f dstqrb.f dsortc.f dsortr.f dstatn.f dstats.f \
 	dnaitr.f dnapps.f dnaup2.f dnaupd.f dnconv.f dneigh.f dngets.f \
 	dsaitr.f dsapps.f dsaup2.f dsaupd.f dsconv.f dseigt.f dsgets.f \
-	dneupd.f dseupd.f dsesrt.f \
+	dneupd.f dseupd.f dsesrt.f dlahqr2.f slahqr2.f \
 	cnaitr.f cnapps.f cnaup2.f cnaupd.f cneigh.f cneupd.f cngets.f \
         cgetv0.f csortc.f cstatn.f \
 	znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f \
