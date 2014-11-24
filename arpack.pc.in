@@ -5,5 +5,6 @@ libdir=@libdir@
 Name: arpack
 Description: ARPACK-NG 
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -larpack @BLAS_LIBS@ @LAPACK_LIBS@
+Libs: -L${libdir} -larpack
+Libs.private: @LAPACK_LIBS@ @BLAS_LIBS@
 Cflags: 
