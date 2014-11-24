@@ -2,9 +2,9 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 
-Name: arpack
-Description: ARPACK-NG 
+Name: @PACKAGE_NAME@
+Description: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
 Version: @PACKAGE_VERSION@
+URL: @PACKAGE_URL@
 Libs: -L${libdir} -larpack
 Libs.private: @LAPACK_LIBS@ @BLAS_LIBS@
-Cflags: 
