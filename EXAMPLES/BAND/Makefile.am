@@ -81,11 +81,6 @@ dsbdr6_SOURCES = dsbdr6.f dsband.f
 dsbdr6_LDADD=../../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
 
-snband_SOURCES = snband.f
-
-snband_LDADD=../../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
-
 snbdr1_SOURCES = snbdr1.f snband.f
 
 snbdr1_LDADD=../../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
