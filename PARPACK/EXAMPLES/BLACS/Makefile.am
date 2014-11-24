@@ -1,6 +1,6 @@
 # F77 = $(MPIF77)
 
-# bin_PROGRAMS = pzndrv1 psndrv3 pdndrv1 pdndrv3 pssdrv1 pdsdrv1 pcndrv1
+# check_PROGRAMS = pzndrv1 psndrv3 pdndrv1 pdndrv3 pssdrv1 pdsdrv1 pcndrv1
 
 # pzndrv1_SOURCES = pzndrv1.f
 
