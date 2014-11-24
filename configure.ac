@@ -3,7 +3,7 @@ AC_INIT([ARPACK-NG],[3.2.0],[https://github.com/opencollab/arpack-ng/issues/],[a
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
-AC_CONFIG_MACRO_DIR([m4/])
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl Checks for standard programs.
 AC_PROG_F77

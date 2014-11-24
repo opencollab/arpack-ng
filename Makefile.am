@@ -6,7 +6,7 @@ endif
 
 lib_LTLIBRARIES = libarpack.la
 
-ACLOCAL_AMFLAGS = -I m4/
+ACLOCAL_AMFLAGS = -I m4
 
 libarpack_la_SOURCES =
 
