@@ -12,8 +12,7 @@ nodist_EXTRA_libparpack_la_SOURCES = dummy.f
 libparpack_la_LDFLAGS = -no-undefined -version-info 2:0
 
 libparpack_la_LIBADD = \
-	$(top_builddir)/SRC/libarpacksrc.la \
-	$(top_builddir)/UTIL/libarpackutil.la \
 	$(top_builddir)/PARPACK/SRC/MPI/libparpacksrcmpi.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutilmpi.la \
+	$(top_builddir)/libarpack.la \
 	$(BLAS_LIBS) $(LAPACK_LIBS) $(MPILIBS)
