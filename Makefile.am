@@ -2,6 +2,7 @@ SUBDIRS = UTIL SRC . TESTS EXAMPLES
 
 if MPI
 SUBDIRS += PARPACK
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-mpi
 endif
 
 lib_LTLIBRARIES = libarpack.la

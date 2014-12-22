@@ -12,3 +12,4 @@ script:
   - ./configure --enable-mpi
   - make all
   - make check
+  - make distcheck
