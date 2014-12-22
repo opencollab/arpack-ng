@@ -46,9 +46,6 @@ fi
 
 AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
 
-
-#	LAPACK/Makefile
-
 AC_CONFIG_FILES([
 	arpack.pc
 	Makefile
@@ -56,21 +53,20 @@ AC_CONFIG_FILES([
 	UTIL/Makefile
 	TESTS/Makefile
 	EXAMPLES/Makefile
-    EXAMPLES/BAND/Makefile
-    EXAMPLES/COMPLEX/Makefile
-    EXAMPLES/NONSYM/Makefile
-    EXAMPLES/SIMPLE/Makefile
-    EXAMPLES/SVD/Makefile
-    EXAMPLES/SYM/Makefile
+	EXAMPLES/BAND/Makefile
+	EXAMPLES/COMPLEX/Makefile
+	EXAMPLES/NONSYM/Makefile
+	EXAMPLES/SIMPLE/Makefile
+	EXAMPLES/SVD/Makefile
+	EXAMPLES/SYM/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
+	PARPACK/SRC/BLACS/Makefile
 	PARPACK/UTIL/Makefile
 	PARPACK/UTIL/MPI/Makefile
 	PARPACK/UTIL/BLACS/Makefile
-    PARPACK/EXAMPLES/MPI/Makefile
-    PARPACK/EXAMPLES/BLACS/Makefile
-    PARPACK/SRC/BLACS/Makefile
-
-    ])
+	PARPACK/EXAMPLES/MPI/Makefile
+	PARPACK/EXAMPLES/BLACS/Makefile
+	])
 AC_OUTPUT
