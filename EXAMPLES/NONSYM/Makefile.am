@@ -7,6 +7,8 @@ NONSYM = $(SNDRV) $(DNDRV)
 check_PROGRAMS = $(NONSYM)
 TESTS = $(check_PROGRAMS)
 
+EXTRA_DIST = README
+
 # Simple nonsymmetric problem using single precision
 sndrv1_SOURCES = sndrv1.f
 sndrv2_SOURCES = sndrv2.f

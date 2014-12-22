@@ -7,6 +7,8 @@ SYM = $(SSDRV) $(DSDRV)
 check_PROGRAMS = $(SYM)
 TESTS = $(check_PROGRAMS)
 
+EXTRA_DIST = README
+
 # simple symmetric problem using single precision
 ssdrv1_SOURCES = ssdrv1.f
 ssdrv2_SOURCES = ssdrv2.f

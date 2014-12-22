@@ -7,6 +7,8 @@ COMPLEX = $(CNDRV) $(ZNDRV)
 check_PROGRAMS = $(COMPLEX)
 TESTS = $(check_PROGRAMS)
 
+EXTRA_DIST = README
+
 # Complex problem using single complex
 cndrv1_SOURCES = cndrv1.f
 cndrv2_SOURCES = cndrv2.f
