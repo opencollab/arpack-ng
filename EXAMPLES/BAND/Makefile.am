@@ -11,6 +11,8 @@ BAND = $(SSBDR) $(DSBDR) $(SNBDR) $(DNBDR) $(CNBDR) $(ZNBDR)
 check_PROGRAMS = $(BAND)
 TESTS = $(check_PROGRAMS)
 
+EXTRA_DIST = README
+
 # Simple symetric problem using BAND solver (single precision)
 ssbdr1_SOURCES = ssbdr1.f ssband.f
 ssbdr2_SOURCES = ssbdr2.f ssband.f
