@@ -1,35 +1,32 @@
 F77 = $(MPIF77)
+LDADD = $(top_builddir)/PARPACK/libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
-check_PROGRAMS = pzndrv1 psndrv3 pdndrv1 pdndrv3 pssdrv1 pdsdrv1 pcndrv1
+SNDRV = psndrv3
+DNDRV = pdndrv1 pdndrv3
+SSDRV = pssdrv1
+DSDRV = pdsdrv1
+CNDRV = pcndrv1
+ZNDRV = pzndrv1
 
-pzndrv1_SOURCES = pzndrv1.f
+check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV)
 
-pzndrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+EXTRA_DIST = debug.h psndrv1.f stat.h
 
+# Simple nonsymmetric problem using single precision
 psndrv3_SOURCES = psndrv3.f
 
-psndrv3_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
+# Simple nonsymmetric problem using double precision
 pdndrv1_SOURCES = pdndrv1.f
-
-pdndrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
 pdndrv3_SOURCES = pdndrv3.f
 
-pdndrv3_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
+# Simple symmetric problem using single precision
 pssdrv1_SOURCES = pssdrv1.f
 
-pssdrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
+# Simple symmetric problem using double precision
 pdsdrv1_SOURCES = pdsdrv1.f
 
-pdsdrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
+# Complex problem using single complex
 pcndrv1_SOURCES = pcndrv1.f
 
-pcndrv1_LDADD=../../libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
-EXTRA_DIST = debug.h \
-psndrv1.f \
-stat.h
+# Complex problem using double complex
+pzndrv1_SOURCES = pzndrv1.f
