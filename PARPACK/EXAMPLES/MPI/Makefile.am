@@ -1,7 +1,7 @@
 F77 = $(MPIF77)
 LDADD = $(top_builddir)/PARPACK/libparpack.la
 
-SNDRV = psndrv3
+SNDRV = psndrv1 psndrv3
 DNDRV = pdndrv1 pdndrv3
 SSDRV = pssdrv1
 DSDRV = pdsdrv1
@@ -11,9 +11,10 @@ ZNDRV = pzndrv1
 check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV)
 TESTS = $(check_PROGRAMS)
 
-EXTRA_DIST = debug.h psndrv1.f stat.h
+EXTRA_DIST = debug.h stat.h
 
 # Simple nonsymmetric problem using single precision
+psndrv1_SOURCES = psndrv1.f
 psndrv3_SOURCES = psndrv3.f
 
 # Simple nonsymmetric problem using double precision
