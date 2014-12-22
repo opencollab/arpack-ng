@@ -1,15 +1,18 @@
-noinst_LTLIBRARIES = libparpacksrc.la
+SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
+       pssaitr.f pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
+       psgetv0.f pslamch.f pslarnv.f psnorm2.f
 
-libparpacksrc_la_SOURCES = \
-pcgetv0.f  pdlamch.f  pdsaitr.f   pslamch.f  pssaitr.f  pznapps.f \
-pclarnv.f  pdlarnv.f  pdsapps.f   pslarnv.f  pssapps.f  pznaup2.f \
-pcnaitr.f  pdnaitr.f  pdsaup2.f   psnaitr.f  pssaup2.f  pznaupd.f \
-pcnapps.f  pdnapps.f  pdsaupd.f   psnapps.f  pssaupd.f  pzneigh.f \
-pcnaup2.f  pdnaup2.f  pdseigt.f   psnaup2.f  psseigt.f  pzneupd.f \
-pcnaupd.f  pdnaupd.f  pdseupd.f   psnaupd.f  psseupd.f  pzngets.f \
-pcneigh.f  pdneigh.f  pdsgets.f   psneigh.f  pssgets.f  \
-pcneupd.f  pdneupd.f  pdznorm2.f  psneupd.f  pzgetv0.f  \
-pcngets.f  pdngets.f  pscnorm2.f  psngets.f  pzlarnv.f  \
-pdgetv0.f  pdnorm2.f  psgetv0.f   psnorm2.f  pznaitr.f
+DSRC = pdnaitr.f pdnapps.f pdnaup2.f pdnaupd.f pdneigh.f pdneupd.f pdngets.f \
+       pdsaitr.f pdsapps.f pdsaup2.f pdsaupd.f pdseigt.f pdseupd.f pdsgets.f \
+       pdgetv0.f pdlamch.f pdlarnv.f pdnorm2.f
+
+CSRC = pcnaitr.f pcnapps.f pcnaup2.f pcnaupd.f pcneigh.f pcneupd.f pcngets.f \
+       pcgetv0.f pclarnv.f pscnorm2.f
+
+ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
+       pzgetv0.f pzlarnv.f pdznorm2.f
 
 EXTRA_DIST = debug.h stat.h
+
+noinst_LTLIBRARIES = libparpacksrc.la
+libparpacksrc_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
