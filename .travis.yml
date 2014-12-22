@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get build-dep arpack
 
 script:
-  - autoreconf
+  - ./bootstrap
   - ./configure --enable-mpi
   - make all
   - make check
