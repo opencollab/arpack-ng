@@ -1,6 +1,6 @@
 #LDADD = $(top_builddir)/PARPACK/SRC/BLACS/libparpacksrc.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
-#SNDRV = psndrv3
+#SNDRV = psndrv1 psndrv3
 #DNDRV = pdndrv1 pdndrv3
 #SSDRV = pssdrv1
 #DSDRV = pdsdrv1
@@ -18,6 +18,7 @@ EXTRA_DIST = debug.h stat.h \
              psntest1.f pdntest1.f
 
 # Simple nonsymmetric problem using single precision
+#psndrv1_SOURCES = psndrv1.f
 #psndrv3_SOURCES = psndrv3.f
 
 # Simple nonsymmetric problem using double precision
