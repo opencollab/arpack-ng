@@ -19,7 +19,7 @@ libarpack_la_LDFLAGS = -no-undefined -version-info 2:0
 libarpack_la_LIBADD = \
 	$(top_builddir)/SRC/libarpacksrc.la \
 	$(top_builddir)/UTIL/libarpackutil.la \
-	$(BLAS_LIBS) $(LAPACK_LIBS)
+	$(LAPACK_LIBS) $(BLAS_LIBS)
 
 EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
 detect_arpack_bug.m4
