@@ -1,7 +1,12 @@
+language: c
+
+compiler:
+  - gcc
+
 before_install:
   - sudo apt-get build-dep arpack
 
-install:
+script:
   - autoreconf
   - ./configure --enable-mpi
   - make all
