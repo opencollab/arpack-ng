@@ -1,4 +1,9 @@
+SRCS = pivout.f
+
+SSRC = psmout.f psvout.f
+DSRC = pdmout.f pdvout.f
+CSRC = pcmout.f pcvout.f
+ZSRC = pzmout.f pzvout.f
+
 noinst_LTLIBRARIES = libparpackutilblacs.la
-libparpackutilblacs_la_SOURCES = \
-pcmout.f  pcvout.f  pdmout.f  pdvout.f  \
-pivout.f  psmout.f  psvout.f  pzmout.f  pzvout.f
+libparpackutilblacs_la_SOURCES = $(SRCS) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)

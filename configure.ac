@@ -1,9 +1,10 @@
 AC_PREREQ(2.59)
-AC_INIT([arpack-ng], [3.2.0], [https://github.com/opencollab/arpack-ng/issues/])
+AC_INIT([ARPACK-NG],[3.2.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
-AC_CONFIG_MACRO_DIR([m4/])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
 
 dnl Checks for standard programs.
 AC_PROG_F77
@@ -46,9 +47,6 @@ fi
 
 AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
 
-
-#	LAPACK/Makefile
-
 AC_CONFIG_FILES([
 	arpack.pc
 	Makefile
@@ -56,21 +54,20 @@ AC_CONFIG_FILES([
 	UTIL/Makefile
 	TESTS/Makefile
 	EXAMPLES/Makefile
-    EXAMPLES/BAND/Makefile
-    EXAMPLES/COMPLEX/Makefile
-    EXAMPLES/NONSYM/Makefile
-    EXAMPLES/SIMPLE/Makefile
-    EXAMPLES/SVD/Makefile
-    EXAMPLES/SYM/Makefile
+	EXAMPLES/BAND/Makefile
+	EXAMPLES/COMPLEX/Makefile
+	EXAMPLES/NONSYM/Makefile
+	EXAMPLES/SIMPLE/Makefile
+	EXAMPLES/SVD/Makefile
+	EXAMPLES/SYM/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
+	PARPACK/SRC/BLACS/Makefile
 	PARPACK/UTIL/Makefile
 	PARPACK/UTIL/MPI/Makefile
 	PARPACK/UTIL/BLACS/Makefile
-    PARPACK/EXAMPLES/MPI/Makefile
-    PARPACK/EXAMPLES/BLACS/Makefile
-    PARPACK/SRC/BLACS/Makefile
-
-    ])
+	PARPACK/EXAMPLES/MPI/Makefile
+	PARPACK/EXAMPLES/BLACS/Makefile
+	])
 AC_OUTPUT

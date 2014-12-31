@@ -2,11 +2,12 @@ SUBDIRS = UTIL SRC . TESTS EXAMPLES
 
 if MPI
 SUBDIRS += PARPACK
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-mpi
 endif
 
 lib_LTLIBRARIES = libarpack.la
 
-ACLOCAL_AMFLAGS = -I m4/
+ACLOCAL_AMFLAGS = -I m4
 
 libarpack_la_SOURCES =
 
@@ -19,9 +20,9 @@ libarpack_la_LDFLAGS = -no-undefined -version-info 2:0
 libarpack_la_LIBADD = \
 	$(top_builddir)/SRC/libarpacksrc.la \
 	$(top_builddir)/UTIL/libarpackutil.la \
-	$(BLAS_LIBS) $(LAPACK_LIBS)
+	$(LAPACK_LIBS) $(BLAS_LIBS)
 
-EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS EXAMPLES VISUAL_STUDIO \
+EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
 detect_arpack_bug.m4
 
 # Pkgconfig directory
@@ -29,4 +30,3 @@ pkgconfigdir = $(libdir)/pkgconfig
 
 # Files to install in Pkgconfig directory
 pkgconfig_DATA = arpack.pc
-
