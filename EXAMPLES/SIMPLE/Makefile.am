@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/libarpack.la
+LDADD = $(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
 SIMPLE = sssimp dssimp snsimp dnsimp cnsimp znsimp
 

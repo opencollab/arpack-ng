@@ -1,4 +1,4 @@
-LDADD=$(top_builddir)/libarpack.la
+LDADD=$(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
 AM_DEFAULT_SOURCE_EXT = .f
 

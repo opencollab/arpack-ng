@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/libarpack.la
+LDADD = $(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
 CNDRV = cndrv1 cndrv2 cndrv3 cndrv4
 ZNDRV = zndrv1 zndrv2 zndrv3 zndrv4
