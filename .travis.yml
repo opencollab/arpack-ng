@@ -5,6 +5,7 @@ compiler:
 
 before_install:
   - sudo apt-get build-dep arpack
+  - sudo apt-get install openmpi-bin
 
 script:
   - ./bootstrap

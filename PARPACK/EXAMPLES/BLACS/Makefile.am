@@ -9,6 +9,7 @@
 #NTEST = psntest1 pdntest1
 
 #check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV) $(NTEST)
+#TESTS = $(check_PROGRAMS)
 
 EXTRA_DIST = debug.h stat.h \
              psndrv1.f psndrv3.f \
