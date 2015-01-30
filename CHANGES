@@ -1,10 +1,16 @@
+arpack-ng - 3.3.0
+
+ [ Kyle Guinn ]
+ * General improvements on the build system
+
+ -- Sylvestre Ledru <sylvestre@debian.org>  Fri, 30 Jan 2015 08:40:51 +0200
+
 arpack-ng - 3.2.0
 
  * Switch to github - https://github.com/opencollab/arpack-ng/
 
  * Fix dsneupd select/calculate wrong eigenpairs if rvec = true
    by using dlahqr and slahqr from lapack2 (Closes: #3)
-
 
  -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 14 Nov 2014 16:25:36 +0200
 

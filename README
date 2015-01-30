@@ -70,6 +70,7 @@ currently doing the same move.
 
 4. Unlike ARPACK, ARPACK-NG is providing autotools based build system.
    Therefor, the classical:
+   $ sh bootstrap
    $ ./configure
    $ make
    $ make install
