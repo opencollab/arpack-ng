@@ -1,12 +1,11 @@
-check_PROGRAMS = dsvd ssvd
+LDADD = $(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 
-dsvd_SOURCES = dsvd.f
+SVD = ssvd dsvd
 
-dsvd_LDADD=../../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+check_PROGRAMS = $(SVD)
+TESTS = $(check_PROGRAMS)
 
+EXTRA_DIST = README debug.h
 
 ssvd_SOURCES = ssvd.f
-
-ssvd_LDADD=../../libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
-
-TESTS = dsvd ssvd
+dsvd_SOURCES = dsvd.f
