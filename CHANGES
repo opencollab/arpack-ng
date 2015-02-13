@@ -2,6 +2,7 @@ arpack-ng - 3.3.0
 
  [ Kyle Guinn ]
  * General improvements on the build system
+ * libparpack links against libarpack (instead of doing a static link)
 
  -- Sylvestre Ledru <sylvestre@debian.org>  Fri, 30 Jan 2015 08:40:51 +0200
 
