@@ -1,4 +1,4 @@
-      SUBROUTINE SLAHQR2( WANTT, WANTZ, N, ILO, IHI, H, LDH, WR, WI,
+      SUBROUTINE SLAHQR( WANTT, WANTZ, N, ILO, IHI, H, LDH, WR, WI,
      $                   ILOZ, IHIZ, Z, LDZ, INFO )
 *
 *  -- LAPACK auxiliary routine (version 2.0) --
@@ -20,7 +20,7 @@
 *  Purpose
 *  =======
 *
-*  SLAHQR2 is an auxiliary routine called by SHSEQR to update the
+*  SLAHQR is an auxiliary routine called by SHSEQR to update the
 *  eigenvalues and Schur decomposition already computed by SHSEQR, by
 *  dealing with the Hessenberg submatrix in rows and columns ILO to IHI.
 *

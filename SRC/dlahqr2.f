@@ -20,7 +20,7 @@
 *  Purpose
 *  =======
 *
-*  DLAHQR2 is an auxiliary routine called by DHSEQR to update the
+*  DLAHQR is an auxiliary routine called by DHSEQR to update the
 *  eigenvalues and Schur decomposition already computed by DHSEQR, by
 *  dealing with the Hessenberg submatrix in rows and columns ILO to IHI.
 *
