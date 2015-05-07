@@ -6,8 +6,8 @@ project(arpack)
 enable_language(Fortran)
 
 option(MPI "Enable parallel support" OFF)
-option(SYSTEM_BLAS "Use system BLAS" ON)
-option(SYSTEM_LAPACK "Use system LAPACK" ON)
+#option(SYSTEM_BLAS "Use system BLAS" ON)
+#option(SYSTEM_LAPACK "Use system LAPACK" ON)
 option(EXAMPLES "Compile ARPACK examples" OFF)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -36,12 +36,12 @@ function(pexamples list_name)
     endforeach()
 endfunction(pexamples)
 
-if (SYSTEM_BLAS)
+#if (SYSTEM_BLAS)
     find_package(BLAS REQUIRED)
-endif()
-if (BLAS_LIBRARIES)
-    set(SYSTEM_BLAS ON)
-endif()
+#endif()
+#if (BLAS_LIBRARIES)
+#    set(SYSTEM_BLAS ON)
+#endif()
 
 if (MPI)
     include(FindMPI)
@@ -50,30 +50,42 @@ if (MPI)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 endif()
 
-if (SYSTEM_LAPACK)
+#if (SYSTEM_LAPACK)
     find_package(LAPACK REQUIRED)
-endif()
-if (BLAS_LIBRARIES)
-    set(SYSTEM_LAPACK ON)
-endif()
+#endif()
+#if (BLAS_LIBRARIES)
+#    set(SYSTEM_LAPACK ON)
+#endif()
 
 if (MPI)
-    set(parpackutil_DIR ${arpack_SOURCE_DIR}/parpack/util/)
-    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/parpack/src/)
+    set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
+    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/PARPACK/SRC/)
 endif()
 
-if (NOT SYSTEM_BLAS)
-    file(GLOB arpackblas_STAT_SRCS blas/*.f)
-endif()
-if (NOT SYSTEM_LAPACK)
-    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
-endif()
+#if (NOT SYSTEM_BLAS)
+#    file(GLOB arpackblas_STAT_SRCS blas/*.f)
+#endif()
+#if (NOT SYSTEM_LAPACK)
+#    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
+#endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
-file(GLOB arpacksrc_STAT_SRCS src/*.f)
+file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
 
 set(arpackutil_STAT_SRCS
-util/icnteq.f util/icopy.f util/iset.f util/iswap.f util/ivout.f util/second_NONE.f 
-util/svout.f util/smout.f util/dvout.f util/dmout.f util/cvout.f util/cmout.f util/zvout.f util/zmout.f )
+    UTIL/icnteq.f
+    UTIL/icopy.f
+    UTIL/iset.f
+    UTIL/iswap.f 
+    UTIL/ivout.f
+    UTIL/second_NONE.f
+    UTIL/svout.f
+    UTIL/smout.f
+    UTIL/dvout.f
+    UTIL/dmout.f
+    UTIL/cvout.f
+    UTIL/cmout.f
+    UTIL/zvout.f
+    UTIL/zmout.f )
 
 
 if (MPI)
@@ -82,9 +94,11 @@ if (MPI)
 endif()
 
 #add_library(arpack SHARED
-add_library(arpack STATIC
-                   ${arpackblas_STAT_SRCS}
-                   ${arpacklapack_STAT_SRCS}
+#                   ${arpackblas_STAT_SRCS}
+#                   ${arpacklapack_STAT_SRCS}
+#                   ${arpackutil_STAT_SRCS}
+#                   ${arpacksrc_STAT_SRCS})
+add_library(arpack 
                    ${arpackutil_STAT_SRCS}
                    ${arpacksrc_STAT_SRCS})
 
@@ -93,7 +107,8 @@ target_link_libraries(arpack ${LAPACK_LIBRARIES})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack)
 
 if (MPI)
-    add_library(parpack SHARED
+#    add_library(parpack SHARED
+    add_library(parpack 
                         ${parpacksrc_STAT_SRCS}
                         ${parpackutil_STAT_SRCS})
 
@@ -108,7 +123,7 @@ if (EXAMPLES)
     ############################
     # EXAMPLES/BAND
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/band/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/BAND/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/band/)
 
     set(examples_EXTRA_SRCS ${arpackexample_DIR}/cnband.f)
@@ -171,7 +186,7 @@ if (EXAMPLES)
     ############################
     # EXAMPLES/COMPLEX
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/complex/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/COMPLEX/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/complex/)
 
     set(examples_STAT_SRCS
@@ -188,7 +203,7 @@ if (EXAMPLES)
     ############################
     # examples/nonsym
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/nonsym/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/NONSYM/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/nonsym/)
 
     set(examples_STAT_SRCS
@@ -209,7 +224,7 @@ if (EXAMPLES)
     ############################
     # examples/SIMPLE
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/simple/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SIMPLE/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/simple/)
 
     set(examples_STAT_SRCS
@@ -225,7 +240,7 @@ if (EXAMPLES)
     ############################
     # examples/svd
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/svd/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SVD/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/svd/)
 
     set(examples_STAT_SRCS
@@ -236,7 +251,7 @@ if (EXAMPLES)
     ############################
     # examples/sym
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/sym/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SYM/)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/sym/)
 
     set(examples_STAT_SRCS
@@ -259,7 +274,7 @@ if (EXAMPLES)
     # parpack/examples
     ############################
     if (MPI)
-        set(parpackexample_DIR ${arpack_SOURCE_DIR}/parpack/examples/)
+        set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/)
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/parpack)
 
         set(pexamples_STAT_SRCS
