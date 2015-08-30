@@ -139,7 +139,7 @@ c     pdgetv0  Parallel ARPACK routine to generate the initial vector.
 c     pivout   Parallel ARPACK utility routine that prints integers.
 c     pdmout   Parallel ARPACK utility routine that prints matrices.
 c     pdvout   Parallel ARPACK utility routine that prints vectors.
-c     pdlamch  ScaLAPACK routine that determines machine constants.
+c     pdlamch10  ScaLAPACK routine that determines machine constants.
 c     dlascl   LAPACK routine for careful scaling of a matrix.
 c     dgemv    Level 2 BLAS routine for matrix vector multiplication.
 c     daxpy    Level 1 BLAS that computes a vector triad.
@@ -290,8 +290,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Double precision
-     &           ddot, pdnorm2, pdlamch
-      external   ddot, pdnorm2, pdlamch
+     &           ddot, pdnorm2, pdlamch10
+      external   ddot, pdnorm2, pdlamch10
 c
 c     %-----------------%
 c     | Data statements |
@@ -318,7 +318,7 @@ c        | safmin = safe minimum is such  |
 c        | that 1/sfmin does not overflow |
 c        %--------------------------------%
 c
-         safmin = pdlamch(comm,'safmin')
+         safmin = pdlamch10(comm,'safmin')
       end if
 c
       if (ido .eq. 0) then

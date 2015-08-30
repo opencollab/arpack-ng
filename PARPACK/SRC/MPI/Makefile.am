@@ -20,7 +20,7 @@ EXTRA_DIST = debug.h stat.h
 
 noinst_LTLIBRARIES = libparpack_noopt.la libparpacksrcmpi.la
 
-libparpack_noopt_la_SOURCES = pslamch.f pdlamch.f
+libparpack_noopt_la_SOURCES = pslamch.f pdlamch10.f
 libparpack_noopt_la_FFLAGS = -O0
 
 libparpacksrcmpi_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)

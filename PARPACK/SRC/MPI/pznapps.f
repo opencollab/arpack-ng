@@ -105,7 +105,7 @@ c     zlartg  LAPACK Givens rotation construction routine.
 c     zlaset  LAPACK matrix initialization routine.
 c     dlabad  LAPACK routine for defining the underflow and overflow
 c             limits.
-c     pdlamch ScaLAPACK routine that determines machine constants.
+c     pdlamch10 ScaLAPACK routine that determines machine constants.
 c     dlapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     zgemv   Level 2 BLAS routine for matrix vector multiplication.
 c     zaxpy   Level 1 BLAS that computes a vector triad.
@@ -207,8 +207,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Double precision                 
-     &           zlanhs, pdlamch, dlapy2
-      external   zlanhs, pdlamch, dlapy2
+     &           zlanhs, pdlamch10, dlapy2
+      external   zlanhs, pdlamch10, dlapy2
 c
 c     %----------------------%
 c     | Intrinsics Functions |
@@ -243,10 +243,10 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine zlahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = pdlamch( comm, 'safe minimum' )
+         unfl = pdlamch10( comm, 'safe minimum' )
          ovfl = dble(one / unfl)
          call dlabad( unfl, ovfl )
-         ulp = pdlamch( comm, 'precision' )
+         ulp = pdlamch10( comm, 'precision' )
          smlnum = unfl*( n / ulp )
          first = .false.
       end if
