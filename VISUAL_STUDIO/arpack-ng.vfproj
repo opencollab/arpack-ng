@@ -102,8 +102,6 @@
 		<File RelativePath="..\SRC\cstatn.f"/>
 		<File RelativePath="..\UTIL\cvout.f"/>
 		<File RelativePath="..\SRC\dgetv0.f"/>
-		<File RelativePath="..\SRC\dlahqr2.f"/>
-		<File RelativePath="..\SRC\dlaqrb.f"/>
 		<File RelativePath="..\UTIL\dmout.f"/>
 		<File RelativePath="..\SRC\dnaitr.f"/>
 		<File RelativePath="..\SRC\dnapps.f"/>
@@ -144,8 +142,6 @@
 			<FileConfiguration Name="Release MKL|Win32" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\UTIL\second_NONE.f"/>
 		<File RelativePath="..\SRC\sgetv0.f"/>
-		<File RelativePath="..\SRC\slahqr2.f"/>
-		<File RelativePath="..\SRC\slaqrb.f"/>
 		<File RelativePath="..\UTIL\smout.f"/>
 		<File RelativePath="..\SRC\snaitr.f"/>
 		<File RelativePath="..\SRC\snapps.f"/>

@@ -4,6 +4,10 @@ arpack-ng - 3.3.0
  * General improvements on the build system
  * libparpack links against libarpack (instead of doing a static link)
 
+ [Guillaume Horel]
+ * reverts using {d,s}lahqr from lapack 2
+ * use dlahqr from lapack 3 instead of dlaqrb (credit to Marco Caliari) 
+
  -- Sylvestre Ledru <sylvestre@debian.org>  Fri, 30 Jan 2015 08:40:51 +0200
 
 arpack-ng - 3.2.0

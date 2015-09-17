@@ -181,7 +181,7 @@ c          Error flag on output.
 c
 c          =  0: Normal exit.
 c
-c          =  1: The Schur form computed by LAPACK routine slahqr2
+c          =  1: The Schur form computed by LAPACK routine slahqr
 c                could not be reordered by LAPACK routine strsen.
 c                Re-enter subroutine sneupd with IPARAM(5)=NCV and 
 c                increase the size of the arrays DR and DI to have 
@@ -197,7 +197,7 @@ c          = -5: WHICH must be one of 'LM', 'SM', 'LR', 'SR', 'LI', 'SI'
 c          = -6: BMAT must be one of 'I' or 'G'.
 c          = -7: Length of private work WORKL array is not sufficient.
 c          = -8: Error return from calculation of a real Schur form.
-c                Informational error from LAPACK routine slahqr2.
+c                Informational error from LAPACK routine slahqr.
 c          = -9: Error return from calculation of eigenvectors.
 c                Informational error from LAPACK routine strevc.
 c          = -10: IPARAM(7) must be 1,2,3,4.
@@ -232,7 +232,7 @@ c     svout   ARPACK utility routine that prints vectors.
 c     sgeqr2  LAPACK routine that computes the QR factorization of 
 c             a matrix.
 c     slacpy  LAPACK matrix copy routine.
-c     slahqr2  LAPACK routine to compute the real Schur form of an
+c     slahqr  LAPACK routine to compute the real Schur form of an
 c             upper Hessenberg matrix.
 c     slamch  LAPACK routine that determines machine constants.
 c     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
@@ -364,7 +364,7 @@ c     | External Subroutines |
 c     %----------------------%
 c
       external   scopy , sger  , sgeqr2, slacpy, 
-     &           slahqr2, slaset, smout , sorm2r, 
+     &           slahqr, slaset, smout , sorm2r, 
      &           strevc, strmm , strsen, sscal , 
      &           svout , ivout
 c
@@ -613,7 +613,7 @@ c
          end if
 c
 c        %-----------------------------------------------------------%
-c        | Call LAPACK routine slahqr2 to compute the real Schur form |
+c        | Call LAPACK routine slahqr to compute the real Schur form |
 c        | of the upper Hessenberg matrix returned by SNAUPD.        |
 c        | Make a copy of the upper Hessenberg matrix.               |
 c        | Initialize the Schur vector matrix Q to the identity.     |
@@ -623,7 +623,7 @@ c
          call slaset('All', ncv, ncv, 
      &                zero , one, workl(invsub),
      &                ldq)
-         call slahqr2(.true., .true.       , ncv, 
+         call slahqr(.true., .true.       , ncv, 
      &                1     , ncv          , workl(iuptri), 
      &                ldh   , workl(iheigr), workl(iheigi),
      &                1     , ncv          , workl(invsub), 
