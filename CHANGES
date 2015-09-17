@@ -1,4 +1,6 @@
 arpack-ng - 3.3.0
+ [ Denis Davydov ]
+ * Rename pdlamch to pdlamch10 to avoid symbol collision with Scalapack 2.0.2 in MPI context.
 
  [ Kyle Guinn ]
  * General improvements on the build system

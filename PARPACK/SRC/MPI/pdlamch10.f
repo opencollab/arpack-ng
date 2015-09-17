@@ -1,10 +1,14 @@
-      DOUBLE PRECISION   FUNCTION PDLAMCH( ICTXT, CMACH )
+      DOUBLE PRECISION   FUNCTION PDLAMCH10( ICTXT, CMACH )
       include "mpif.h"
 *
 *  -- ScaLAPACK auxilliary routine (version 1.0) --
 *     University of Tennessee, Knoxville, Oak Ridge National Laboratory,
 *     and University of California, Berkeley.
 *     February 28, 1995
+*
+*     The name has been changed in order to avoid symbol collision with 
+*     the newer version of PDLAMCH in Scalapack which can not be used
+*     with MPI context.
 *
 *     .. Scalar Arguments ..
       CHARACTER          CMACH
@@ -20,7 +24,7 @@
 *  =========
 *
 *  ICTXT   (global input) INTEGER
-*          The BLACS context handle in which the computation takes
+*          The MPI context handle in which the computation takes
 *          place.
 *
 *  CMACH   (global input) CHARACTER*1

@@ -108,7 +108,7 @@ c  TOL     Double precision   scalar.  (INPUT)
 c          Stopping criteria: the relative accuracy of the Ritz value 
 c          is considered acceptable if BOUNDS(I) .LE. TOL*ABS(RITZ(I))
 c          where ABS(RITZ(I)) is the magnitude when RITZ(I) is complex.
-c          DEFAULT = pdlamch (comm, 'EPS')  (machine precision as computed
+c          DEFAULT = pdlamch10 (comm, 'EPS')  (machine precision as computed
 c                    by the ScaLAPACK auxiliary subroutine pdlamch ).
 c
 c  RESID   Complex*16  array of length N.  (INPUT/OUTPUT)
@@ -360,7 +360,7 @@ c     zstatn    ARPACK routine that initializes the timing variables.
 c     pivout   Parallel ARPACK utility routine that prints integers.
 c     pzvout    Parallel ARPACK utility routine that prints vectors.
 c     arscnd   ARPACK utility routine for timing.
-c     pdlamch   ScaLAPACK routine that determines machine constants.
+c     pdlamch10   ScaLAPACK routine that determines machine constants.
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
@@ -453,8 +453,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Double precision  
-     &           pdlamch 
-      external   pdlamch 
+     &           pdlamch10 
+      external   pdlamch10 
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -529,7 +529,7 @@ c        | Set default parameters |
 c        %------------------------%
 c
          if (nb .le. 0)	nb = 1
-         if (tol .le. 0.0  ) tol = pdlamch (comm, 'EpsMach')
+         if (tol .le. 0.0  ) tol = pdlamch10 (comm, 'EpsMach')
          if (ishift .ne. 0  .and.  
      &       ishift .ne. 1  .and.
      &       ishift .ne. 2)	ishift = 1

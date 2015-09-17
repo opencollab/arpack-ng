@@ -95,7 +95,7 @@ c\Routines called:
 c     pivout  Parallel ARPACK utility routine that prints integers. 
 c     arscnd  ARPACK utility routine for timing.
 c     pdvout  Parallel ARPACK utility routine that prints vectors.
-c     pdlamch ScaLAPACK routine that determines machine constants.
+c     pdlamch10 ScaLAPACK routine that determines machine constants.
 c     dlartg  LAPACK Givens rotation construction routine.
 c     dlacpy  LAPACK matrix copy routine.
 c     dlaset  LAPACK matrix initialization routine.
@@ -194,8 +194,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Double precision
-     &           pdlamch
-      external   pdlamch
+     &           pdlamch10
+      external   pdlamch10
 c
 c     %----------------------%
 c     | Intrinsics Functions |
@@ -214,7 +214,7 @@ c     | Executable Statements |
 c     %-----------------------%
 c
       if (first) then
-         epsmch = pdlamch(comm, 'Epsilon-Machine')
+         epsmch = pdlamch10(comm, 'Epsilon-Machine')
          first = .false.
       end if
       itop = 1

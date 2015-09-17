@@ -191,7 +191,7 @@ c     pdvout  Parallel ARPACK utility routine that prints vectors.
 c     dgeqr2  LAPACK routine that computes the QR factorization of
 c             a matrix.
 c     dlacpy  LAPACK matrix copy routine.
-c     pdlamch ScaLAPACK routine that determines machine constants.
+c     pdlamch10 ScaLAPACK routine that determines machine constants.
 c     dorm2r  LAPACK routine that applies an orthogonal matrix in
 c             factored form.
 c     dsteqr  LAPACK routine that computes eigenvalues and eigenvectors
@@ -295,8 +295,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Double precision
-     &           pdnorm2, pdlamch
-      external   pdnorm2, pdlamch
+     &           pdnorm2, pdlamch10
+      external   pdnorm2, pdlamch10
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -439,7 +439,7 @@ c     %---------------------------------%
 c     | Set machine dependent constant. |
 c     %---------------------------------%
 c
-      eps23 = pdlamch(comm, 'Epsilon-Machine') 
+      eps23 = pdlamch10(comm, 'Epsilon-Machine') 
       eps23 = eps23**(2.0 / 3.0)
 c
 c     %---------------------------------------%
