@@ -3,9 +3,9 @@ LDADD=$(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
 AM_DEFAULT_SOURCE_EXT = .f
 
 check_PROGRAMS = dnsimp bug_1315_single bug_1315_double bug_1323
-TESTS = $(check_PROGRAMS)
+TESTS = test-dnsimp.sh bug_1315_single bug_1315_double bug_1323
 
-EXTRA_DIST = testA.mtx
+EXTRA_DIST = testA.mtx test-dnsimp.sh
 
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 
