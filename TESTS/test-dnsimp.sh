@@ -1,3 +1,2 @@
 #!/bin/sh
-pwd=$(pwd)
-cd "$srcdir" && exec "$pwd/dnsimp"
+cd "$srcdir" && exec "$(pwd)/dnsimp"
