@@ -21,8 +21,7 @@ few years and since many software (Octave, Scilab, R, Matlab...) forked it and
 implemented their own modifications, arpack-ng aims to tackle this by providing
 a common repository and maintained versions.
 
-arpack-ng is replacing arpack in Debian & Ubuntu. Fink, Fedora and Redhat are
-currently doing the same move.
+arpack-ng is replacing arpack almost everywhere.
 
 
 1. You have successfully unbundled ARPACK-NG and are now in the ARPACK-NG
