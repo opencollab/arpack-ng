@@ -8,7 +8,7 @@ arpack-ng - 3.3.0
 
  [Guillaume Horel]
  * reverts using {d,s}lahqr from lapack 2
- * use dlahqr from lapack 3 instead of dlaqrb (credit to Marco Caliari) 
+ * use dlahqr from lapack 3 instead of dlaqrb (credit to Marco Caliari)
 
  -- Sylvestre Ledru <sylvestre@debian.org>  Fri, 30 Jan 2015 08:40:51 +0200
 
@@ -107,7 +107,7 @@ arpack-ng - 3.1.0
    * Many bug fixes in the parpack lib. It is an old patch from upstream.
      Thanks to Viral Shah for pinging us on this subject.
      See the PARPACK_CHANGES file for the details.
-   * Change the bug report from arpack@caam.rice.edu to 
+   * Change the bug report from arpack@caam.rice.edu to
      http://forge.scilab.org/index.php/p/arpack-ng/issues/
    * Provide a M4 macro (detect_arpack_bug.m4) to check if the underlying
      arpack is buggy (ie not arpack-ng). This allows developper applications
@@ -149,8 +149,8 @@ arpack-ng - 3.0
      second_NONE works with all fortrans compilers (used by default with Scilab)
 
      sneupd.f, cneupd.f: modified for scilab add a check on nconv value (Scilab bug fix)
-     dnaupd.f: modified  NEV Integer: INPUT/OUTPUT before only INPUT (Scilab bug fix) 
- 
+     dnaupd.f: modified  NEV Integer: INPUT/OUTPUT before only INPUT (Scilab bug fix)
+
    * Patches from Octave: (Thanks to John W. EATON)
      dneupd.f: Restore value of nconv
      dseupd.f: Restore value of nconv
