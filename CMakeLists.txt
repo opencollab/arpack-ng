@@ -32,7 +32,7 @@ function(pexamples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${parpackexample_DIR}/${l} )
-        target_link_libraries(${lwe} arpack parpack ${MPI_Fortran_LIBRARIES})
+        target_link_libraries(${lwe} parpack arpack  ${MPI_Fortran_LIBRARIES})
     endforeach()
 endfunction(pexamples)
 
