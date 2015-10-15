@@ -25,10 +25,10 @@ before_script:
 
 script:
   # CMAKE
-  - if [ "$USE_CMAKE" == "true" ]; then make ; fi
+  - if [ "$BUILD" == "cmake"  ]; then make ; fi
   # CONFIGURE
-  - if [ "$USE_CMAKE" == "false" ]; then ./bootstrap ; fi
-  - if [ "$USE_CMAKE" == "false" ]; then ./configure --enable-mpi ; fi
-  - if [ "$USE_CMAKE" == "false" ]; then make all ; fi
-  - if [ "$USE_CMAKE" == "false" ]; then make check ; fi
-  - if [ "$USE_CMAKE" == "false" ]; then make distcheck ; fi
+  - if [ "$BUILD" == "configure" ]; then ./bootstrap ; fi
+  - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi ; fi
+  - if [ "$BUILD" == "configure" ]; then make all ; fi
+  - if [ "$BUILD" == "configure" ]; then make check ; fi
+  - if [ "$BUILD" == "configure" ]; then make distcheck ; fi
