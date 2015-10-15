@@ -14,9 +14,21 @@ addons:
       - libopenmpi-dev
       - openmpi-bin
 
+env:
+  - USE_CMAKE=true
+  - USE_CMAKE=false
+
+before_script:
+  - if [ "$USE_CMAKE" == "true" ]; then mkdir build ; fi
+  - if [ "$USE_CMAKE" == "true" ]; then cd build ; fi
+  - if [ "$USE_CMAKE" == "true" ]; then cmake .. ; fi
+
 script:
-  - ./bootstrap
-  - ./configure --enable-mpi
-  - make all
-  - make check
-  - make distcheck
+  # CMAKE
+  - if [ "$USE_CMAKE" == "true" ]; then make ; fi
+  # CONFIGURE
+  - if [ "$USE_CMAKE" == "false" ]; then ./bootstrap ; fi
+  - if [ "$USE_CMAKE" == "false" ]; then ./configure --enable-mpi ; fi
+  - if [ "$USE_CMAKE" == "false" ]; then make all ; fi
+  - if [ "$USE_CMAKE" == "false" ]; then make check ; fi
+  - if [ "$USE_CMAKE" == "false" ]; then make distcheck ; fi
