@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(arpack)
+project(arpack-ng)
 
 # Adopted from https://github.com/feymark/arpack.git
 
