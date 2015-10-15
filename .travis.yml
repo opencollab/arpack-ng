@@ -21,7 +21,7 @@ env:
 before_script:
   - if [ "$BUILD" == "cmake" ]; then mkdir build ; fi
   - if [ "$BUILD" == "cmake" ]; then cd build ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON .. ; fi
 
 script:
   # CMAKE
