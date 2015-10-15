@@ -15,13 +15,13 @@ addons:
       - openmpi-bin
 
 env:
-  - USE_CMAKE=true
-  - USE_CMAKE=false
+  - BUILD=cmake
+  - BUILD=configure
 
 before_script:
-  - if [ "$USE_CMAKE" == "true" ]; then mkdir build ; fi
-  - if [ "$USE_CMAKE" == "true" ]; then cd build ; fi
-  - if [ "$USE_CMAKE" == "true" ]; then cmake .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then mkdir build ; fi
+  - if [ "$BUILD" == "cmake" ]; then cd build ; fi
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON .. ; fi
 
 script:
   # CMAKE
