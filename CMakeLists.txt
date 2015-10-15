@@ -89,8 +89,8 @@ set(arpackutil_STAT_SRCS
 
 
 if (MPI)
-    file(GLOB parpackutil_STAT_SRCS parpack/util/*.f)
-    file(GLOB parpacksrc_STAT_SRCS parpack/src/*.f)
+    file(GLOB parpackutil_STAT_SRCS PARPACK/UTIL/MPI/*.f)
+    file(GLOB parpacksrc_STAT_SRCS PARPACK/SRC/MPI/*.f)
 endif()
 
 #add_library(arpack SHARED
@@ -274,7 +274,7 @@ if (EXAMPLES)
     # parpack/examples
     ############################
     if (MPI)
-        set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/)
+        set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/)
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/parpack)
 
         set(pexamples_STAT_SRCS
