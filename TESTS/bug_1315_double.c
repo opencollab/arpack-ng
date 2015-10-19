@@ -81,8 +81,12 @@ int main() {
   for (i = 0; i < nev; ++i) {
     printf("%f\n", dr[i]);
     if(fabs(dr[i] - (double)(1000-i))>1e-6){
+      free(dr);
+      free(di);
       exit(EXIT_FAILURE);
     }
   }
+  free(dr);
+  free(di);
   return 0;
 }
