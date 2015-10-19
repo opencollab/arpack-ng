@@ -9,7 +9,7 @@ addons:
   apt:
     packages:
       - gfortran
-      - libopenblas-dev
+      - libblas-dev
       - liblapack-dev
       - libopenmpi-dev
       - openmpi-bin
