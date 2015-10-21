@@ -124,7 +124,7 @@ if (EXAMPLES)
     # EXAMPLES/BAND
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/BAND/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/band/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/band/)
 
     set(examples_EXTRA_SRCS ${arpackexample_DIR}/cnband.f)
     set(examples_STAT_SRCS
@@ -187,7 +187,7 @@ if (EXAMPLES)
     # EXAMPLES/COMPLEX
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/COMPLEX/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/complex/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/complex/)
 
     set(examples_STAT_SRCS
         cndrv1.f
@@ -204,7 +204,7 @@ if (EXAMPLES)
     # examples/nonsym
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/NONSYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/nonsym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/nonsym/)
 
     set(examples_STAT_SRCS
         dndrv1.f
@@ -225,7 +225,7 @@ if (EXAMPLES)
     # examples/SIMPLE
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SIMPLE/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/simple/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/simple/)
 
     set(examples_STAT_SRCS
         cnsimp.f
@@ -241,7 +241,7 @@ if (EXAMPLES)
     # examples/svd
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SVD/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/svd/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/svd/)
 
     set(examples_STAT_SRCS
         ssvd.f)
@@ -252,7 +252,7 @@ if (EXAMPLES)
     # examples/sym
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/sym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/sym/)
 
     set(examples_STAT_SRCS
         dsdrv1.f
@@ -275,7 +275,7 @@ if (EXAMPLES)
     ############################
     if (MPI)
         set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/parpack)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/parpack)
 
         set(pexamples_STAT_SRCS
             pcndrv1.f
@@ -290,3 +290,38 @@ if (EXAMPLES)
         pexamples(pexamples_STAT_SRCS)
     endif()
 endif()
+
+
+############################
+# CHECK
+############################
+
+enable_testing()
+
+set(CMAKE_CTEST_COMMAND ctest -V)
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
+
+add_executable(dnsimp_test EXCLUDE_FROM_ALL TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
+set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
+target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+add_custom_command(TARGET dnsimp_test POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
+)
+add_test(dnsimp_test Tests/dnsimp)
+
+add_executable(bug_1315_single EXCLUDE_FROM_ALL TESTS/bug_1315_single.c)
+target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+add_test(bug_1315_single Tests/bug_1315_single)
+
+add_executable(bug_1315_double EXCLUDE_FROM_ALL TESTS/bug_1315_double.c)
+target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+add_test(bug_1315_double Tests/bug_1315_double)
+
+add_executable(bug_1323 EXCLUDE_FROM_ALL TESTS/bug_1323.f)
+target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+add_test(bug_1323 Tests/bug_1323)
+
+add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323)
