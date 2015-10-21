@@ -25,7 +25,7 @@ before_script:
 
 script:
   # CMAKE
-  - if [ "$BUILD" == "cmake"  ]; then make ; fi
+  - if [ "$BUILD" == "cmake"  ]; then make all check ; fi
   # CONFIGURE
   - if [ "$BUILD" == "configure" ]; then ./bootstrap ; fi
   - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi ; fi
