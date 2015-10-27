@@ -23,7 +23,7 @@ libarpack_la_LIBADD = \
 	$(LAPACK_LIBS) $(BLAS_LIBS)
 
 EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
-detect_arpack_bug.m4
+detect_arpack_bug.m4 CMakeLists.txt
 
 # Pkgconfig directory
 pkgconfigdir = $(libdir)/pkgconfig
