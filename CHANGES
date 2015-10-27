@@ -1,4 +1,12 @@
+arpack-ng - 3.4.0
+
+ [ Martin Reuter ]
+ * Add the support of cmake build system
+
+ -- Sylvestre Ledru <sylvestre@debian.org>  Tue, 27 October 2015 23:40:51 +0200
+
 arpack-ng - 3.3.0
+
  [ Denis Davydov ]
  * Rename pdlamch to pdlamch10 to avoid symbol collision with Scalapack 2.0.2 in MPI context.
 
