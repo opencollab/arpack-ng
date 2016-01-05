@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/libarpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+LDADD = $(top_builddir)/libarpack.la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 SSBDR = ssbdr1 ssbdr2 ssbdr3 ssbdr4 ssbdr5 ssbdr6
 DSBDR = dsbdr1 dsbdr2 dsbdr3 dsbdr4 dsbdr5 dsbdr6
