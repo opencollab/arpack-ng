@@ -14,7 +14,7 @@ ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
 
 EXTRA_DIST = debug.h stat.h
 
-noinst_LTLIBRARIES = libparpack.la
+lib_LTLIBRARIES = libparpack.la
 libparpack_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack_la_LIBADD = \
 	$(top_builddir)/PARPACK/UTIL/BLACS/libparpackutil.la \

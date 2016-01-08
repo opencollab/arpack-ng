@@ -45,7 +45,8 @@ if test x"$enable_mpi" != x"no"; then
   AC_LANG_POP([Fortran 77])
 fi
 
-AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
+AM_CONDITIONAL([MPI],[test x"$enable_mpi" = x"yes"])
+AM_CONDITIONAL([BLACS],[false])
 
 AC_CONFIG_FILES([
 	arpack.pc
@@ -61,10 +62,8 @@ AC_CONFIG_FILES([
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
 	PARPACK/Makefile
-	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
-	PARPACK/UTIL/Makefile
 	PARPACK/UTIL/MPI/Makefile
 	PARPACK/UTIL/BLACS/Makefile
 	PARPACK/EXAMPLES/MPI/Makefile
