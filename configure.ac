@@ -22,14 +22,14 @@ dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
 AX_BLAS
 if test "$ax_blas_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find BLAS libraries])
+   AC_MSG_ERROR([cannot find BLAS libraries])
 fi
 
 dnl Check for LAPACK libraries
 sinclude(ax_lapack.m4)
 AX_LAPACK
 if test "$ax_lapack_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find LAPACK libraries])
+   AC_MSG_ERROR([cannot find LAPACK libraries])
 fi
 
 dnl See if compiling parpack
