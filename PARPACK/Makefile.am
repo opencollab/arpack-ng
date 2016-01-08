@@ -14,5 +14,5 @@ libparpack_la_LDFLAGS = -no-undefined -version-info 2:0
 libparpack_la_LIBADD = \
 	$(top_builddir)/PARPACK/SRC/MPI/libparpacksrc.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
-	$(top_builddir)/libarpack.la \
+	$(top_builddir)/SRC/libarpack.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPILIBS)
