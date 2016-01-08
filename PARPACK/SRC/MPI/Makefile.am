@@ -18,11 +18,15 @@ ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
 
 EXTRA_DIST = debug.h stat.h
 
-noinst_LTLIBRARIES = libparpack_noopt.la libparpacksrc.la
-
+noinst_LTLIBRARIES = libparpack_noopt.la
 libparpack_noopt_la_SOURCES = pslamch.f pdlamch10.f
 libparpack_noopt_la_FFLAGS = -O0
 
-libparpacksrc_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
-libparpacksrc_la_FFLAGS = $(FFLAGS_SAV)
-libparpacksrc_la_LIBADD = libparpack_noopt.la
+lib_LTLIBRARIES = libparpack.la
+libparpack_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libparpack_la_FFLAGS = $(FFLAGS_SAV)
+libparpack_la_LIBADD = libparpack_noopt.la \
+	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
+	$(top_builddir)/SRC/libarpack.la \
+	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPILIBS)
+libparpack_la_LDFLAGS = -no-undefined -version-info 2:0
