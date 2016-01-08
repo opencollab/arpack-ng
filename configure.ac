@@ -33,7 +33,6 @@ if test "$ax_lapack_ok" = "no"; then
 fi
 
 dnl See if compiling parpack
-AC_MSG_CHECKING([for MPI mode])
 AC_ARG_ENABLE(mpi,
 	      AC_HELP_STRING([--enable-mpi],
 			     [build parallel version of arpack with MPI]),
