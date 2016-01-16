@@ -9,15 +9,18 @@
  * This is not efficient since the problem is
  * symmetric but is done to exhibit the bug.
  * */
+#ifndef BLASINT
+#define BLASINT int
+#endif
 
-extern void dnaupd_(int *, char *, int *, char *, int *,
-		   double *, double *, int *, double *,
-		   int *, int *, int *, double *,
-		   double *, int *, int *);
+extern void dnaupd_(BLASINT *, char *, BLASINT *, char *, BLASINT *,
+		   double *, double *, BLASINT *, double *,
+		   BLASINT *, BLASINT *, BLASINT *, double *,
+		   double *, BLASINT *, BLASINT *);
 
-extern void dneupd_( int*, char*, int *, double *, double *, double *, int*, double *,
-		double *, double *, char *, int *, char *, int *, double *, double *, int *,
-		double *, int *, int *, int *, double *, double *, int *, int * );
+extern void dneupd_( BLASINT*, char*, BLASINT *, double *, double *, double *, BLASINT*, double *,
+		double *, double *, char *, BLASINT *, char *, BLASINT *, double *, double *, BLASINT *,
+		double *, BLASINT *, BLASINT *, BLASINT *, double *, double *, BLASINT *, BLASINT * );
 
 void matVec(double * x, double * y) {
   int i;
@@ -26,26 +29,26 @@ void matVec(double * x, double * y) {
 };
 
 int main() {
-  int ido = 0;
+  BLASINT ido = 0;
   char bmat[] = "I";
-  int N = 1000;
+  BLASINT N = 1000;
   char which[] = "LM";
-  int nev = 9;
+  BLASINT nev = 9;
   double tol = 0;
   double resid[N];
-  int ncv = 2*nev+1;
+  BLASINT ncv = 2*nev+1;
   double V[ncv*N];
-  int ldv = N;
-  int iparam[11];
-  int ipntr[14];
+  BLASINT ldv = N;
+  BLASINT iparam[11];
+  BLASINT ipntr[14];
   double workd[3*N];
-  int rvec = 1;
+  BLASINT rvec = 1;
   char howmny[] = "A";
   double* dr = (double*) malloc((nev+1)*sizeof(double));
   double* di = (double*) malloc((nev+1)*sizeof(double));
-  int select[3*ncv];
+  BLASINT select[3*ncv];
   double z[(N+1)*(nev+1)];
-  int ldz = N+1;
+  BLASINT ldz = N+1;
   double sigmar=0;
   double sigmai=0;
   double workev[3*ncv];
@@ -55,8 +58,8 @@ int main() {
   double workl[3*(ncv*ncv) + 6*ncv];
   for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0;
-  int lworkl = 3*(ncv*ncv) + 6*ncv;
-  int info = 0;
+  BLASINT lworkl = 3*(ncv*ncv) + 6*ncv;
+  BLASINT info = 0;
 
   iparam[0] = 1;
   iparam[2] = 10*N;

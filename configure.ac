@@ -18,6 +18,13 @@ ifdef([LT_INIT], [], [
 LT_PREREQ([2.4.2])
 LT_INIT([win32-dll])
 
+AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
+if test x"$INTERFACE64" == x"1"; then
+  # FIXME: ifort needs -i8
+  FFLAGS+=" -fdefault-integer-8"
+  CFLAGS+=" -DBLASINT=int64_t"
+fi
+
 AC_ARG_VAR(LIBSUFFIX, [suffix to add to ARPACK library name])
 AC_ARG_VAR(SYMBOLSUFFIX, [suffix to add to ARPACK, BLAS and LAPACK function names])
 
