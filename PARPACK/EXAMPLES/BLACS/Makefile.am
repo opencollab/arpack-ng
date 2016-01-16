@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/PARPACK/SRC/BLACS/libparpack.la $(LAPACK_LIBS) $(BLAS_LIBS)
+LDADD = $(top_builddir)/PARPACK/SRC/BLACS/libparpack$(LIBSUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 SNDRV = psndrv1 psndrv3
 DNDRV = pdndrv1 pdndrv3
