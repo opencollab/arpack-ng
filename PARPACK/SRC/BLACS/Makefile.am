@@ -14,10 +14,10 @@ ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
 
 EXTRA_DIST = debug.h stat.h
 
-lib_LTLIBRARIES = libparpack$(LIBSUFFIX).la
+lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
 libparpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@_la_LIBADD = \
 	$(top_builddir)/PARPACK/UTIL/BLACS/libparpackutil.la \
-	$(top_builddir)/SRC/libarpack$(LIBSUFFIX).la \
+	$(top_builddir)/SRC/libarpack@LIBSUFFIX@.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS)
 libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0

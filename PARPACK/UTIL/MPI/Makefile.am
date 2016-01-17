@@ -8,4 +8,4 @@ CSRC = pcmout.f pcvout.f
 ZSRC = pzmout.f pzvout.f
 
 noinst_LTLIBRARIES = libparpackutil.la
-libparpackutil__la_SOURCES = $(SRCS) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libparpackutil_la_SOURCES = $(SRCS) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)

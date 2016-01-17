@@ -7,5 +7,5 @@ ZSRC = zvout.f zmout.f
 
 EXTRA_DIST = second.f second.t3d
 
-noinst_LTLIBRARIES = libarpackutil@LIBSUFFIX@.la
-libarpackutil@LIBSUFFIX@_la_SOURCES = $(SRCS) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+noinst_LTLIBRARIES = libarpackutil.la
+libarpackutil_la_SOURCES = $(SRCS) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
