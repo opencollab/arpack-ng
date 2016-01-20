@@ -14,5 +14,7 @@ ZSRC = znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f zstatn.f \
 
 EXTRA_DIST = debug.h stat.h version.h
 
-noinst_LTLIBRARIES = libarpacksrc.la
-libarpacksrc_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+lib_LTLIBRARIES = libarpack.la
+libarpack_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libarpack_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
+libarpack_la_LDFLAGS = -no-undefined -version-info 2:0

@@ -22,18 +22,17 @@ dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
 AX_BLAS
 if test "$ax_blas_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find BLAS libraries])
+   AC_MSG_ERROR([cannot find BLAS libraries])
 fi
 
 dnl Check for LAPACK libraries
 sinclude(ax_lapack.m4)
 AX_LAPACK
 if test "$ax_lapack_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find LAPACK libraries])
+   AC_MSG_ERROR([cannot find LAPACK libraries])
 fi
 
 dnl See if compiling parpack
-AC_MSG_CHECKING([for MPI mode])
 AC_ARG_ENABLE(mpi,
 	      AC_HELP_STRING([--enable-mpi],
 			     [build parallel version of arpack with MPI]),
@@ -45,7 +44,8 @@ if test x"$enable_mpi" != x"no"; then
   AC_LANG_POP([Fortran 77])
 fi
 
-AM_CONDITIONAL(MPI, test x"$enable_mpi" = x"yes")
+AM_CONDITIONAL([MPI],[test x"$enable_mpi" = x"yes"])
+AM_CONDITIONAL([BLACS],[false])
 
 AC_CONFIG_FILES([
 	arpack.pc
@@ -61,10 +61,8 @@ AC_CONFIG_FILES([
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
 	PARPACK/Makefile
-	PARPACK/SRC/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
-	PARPACK/UTIL/Makefile
 	PARPACK/UTIL/MPI/Makefile
 	PARPACK/UTIL/BLACS/Makefile
 	PARPACK/EXAMPLES/MPI/Makefile

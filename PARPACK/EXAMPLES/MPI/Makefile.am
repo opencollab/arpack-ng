@@ -1,5 +1,5 @@
 F77 = $(MPIF77)
-LDADD = $(top_builddir)/PARPACK/libparpack.la $(BLAS_LIBS) $(LAPACK_LIBS)
+LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack.la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 SNDRV = psndrv1 psndrv3
 DNDRV = pdndrv1 pdndrv3

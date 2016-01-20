@@ -1,26 +1,10 @@
-SUBDIRS = UTIL SRC . TESTS EXAMPLES
+ACLOCAL_AMFLAGS = -I m4
 
 if MPI
-SUBDIRS += PARPACK
 AM_DISTCHECK_CONFIGURE_FLAGS = --enable-mpi
 endif
 
-lib_LTLIBRARIES = libarpack.la
-
-ACLOCAL_AMFLAGS = -I m4
-
-libarpack_la_SOURCES =
-
-# Force libarpack to be linked with the Fortran compiler.
-# The file dummy.f does not need to exist in the source tree.
-nodist_EXTRA_libarpack_la_SOURCES = dummy.f
-
-libarpack_la_LDFLAGS = -no-undefined -version-info 2:0
-
-libarpack_la_LIBADD = \
-	$(top_builddir)/SRC/libarpacksrc.la \
-	$(top_builddir)/UTIL/libarpackutil.la \
-	$(LAPACK_LIBS) $(BLAS_LIBS)
+SUBDIRS = UTIL SRC . TESTS EXAMPLES PARPACK
 
 EXTRA_DIST = README PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
 detect_arpack_bug.m4 CMakeLists.txt
