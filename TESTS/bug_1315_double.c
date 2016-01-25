@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifdef INCLUDE_FCMANGLE
+#include "FCMangle.h"
+#endif
+
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
@@ -13,12 +17,12 @@
 #define BLASINT int
 #endif
 
-extern void dnaupd_(BLASINT *, char *, BLASINT *, char *, BLASINT *,
+extern void dnaupd(BLASINT *, char *, BLASINT *, char *, BLASINT *,
 		   double *, double *, BLASINT *, double *,
 		   BLASINT *, BLASINT *, BLASINT *, double *,
 		   double *, BLASINT *, BLASINT *);
 
-extern void dneupd_( BLASINT*, char*, BLASINT *, double *, double *, double *, BLASINT*, double *,
+extern void dneupd( BLASINT*, char*, BLASINT *, double *, double *, double *, BLASINT*, double *,
 		double *, double *, char *, BLASINT *, char *, BLASINT *, double *, double *, BLASINT *,
 		double *, BLASINT *, BLASINT *, BLASINT *, double *, double *, BLASINT *, BLASINT * );
 
@@ -66,18 +70,18 @@ int main() {
   iparam[3] = 1;
   iparam[6] = 1;
 
-  dnaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
+  dnaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
 
   while(ido == 1) {
 
     matVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
 
-    dnaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
+    dnaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
   }
 
-  dneupd_( &rvec, howmny, select, dr,di, z, &ldz, &sigmar, &sigmai,workev,
+  dneupd( &rvec, howmny, select, dr,di, z, &ldz, &sigmar, &sigmai,workev,
 	   bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	   workd, workl, &lworkl, &info);
   int i;

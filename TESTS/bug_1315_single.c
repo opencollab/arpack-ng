@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifdef INCLUDE_FCMANGLE
+#include "FCMangle.h"
+#endif
+
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
@@ -13,12 +17,12 @@
 #define BLASINT int
 #endif
 
-extern void snaupd_(BLASINT *, char *, BLASINT *, char *, BLASINT *,
+extern void snaupd(BLASINT *, char *, BLASINT *, char *, BLASINT *,
 		   float *, float *, BLASINT *, float *,
 		   BLASINT *, BLASINT *, BLASINT *, float *,
 		   float *, BLASINT *, BLASINT *);
 
-extern void sneupd_( BLASINT*, char*, BLASINT *, float *, float *, float *, BLASINT*, float *,
+extern void sneupd( BLASINT*, char*, BLASINT *, float *, float *, float *, BLASINT*, float *,
 		float *, float *, char *, BLASINT *, char *, BLASINT *, float *, float *, BLASINT *,
 		float *, BLASINT *, BLASINT *, BLASINT *, float *, float *, BLASINT *, BLASINT * );
 
@@ -67,18 +71,18 @@ int main() {
   iparam[3] = 1;
   iparam[6] = 1;
 
-  snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
+  snaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
 
   while(ido == 1) {
 
     matVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
 
-    snaupd_(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
+    snaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
   }
 
-  sneupd_( &rvec, howmny, select, dr,di, z, &ldz, &sigmar, &sigmai,workev,
+  sneupd( &rvec, howmny, select, dr,di, z, &ldz, &sigmar, &sigmai,workev,
 	   bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	   workd, workl, &lworkl, &info);
   int i;
