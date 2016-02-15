@@ -1,3 +1,9 @@
+arpack-ng - 3.4.1
+  [ Milan Bouchet-Valat]
+  * Allow adding suffixes to symbols and library names to build ILP64 version
+    based on ILP64 BLAS/LAPACK with suffixes. This avoids conflicts when loading
+    libraries with different integer sizes in the same program.
+
 arpack-ng - 3.4.0
 
  [ Martin Reuter ]
