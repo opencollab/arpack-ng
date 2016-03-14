@@ -6,7 +6,7 @@
 *     and University of California, Berkeley.
 *     February 28, 1995
 *
-*     The name has been changed in order to avoid symbol collision with 
+*     The name has been changed in order to avoid symbol collision with
 *     the newer version of PDLAMCH in Scalapack which can not be used
 *     with MPI context.
 *
@@ -86,8 +86,8 @@
           TEMP = TEMP1
       END IF
 *
-      PDLAMCH = TEMP
+      PDLAMCH10 = TEMP
 *
-*     End of PDLAMCH
+*     End of PDLAMCH10
 *
       END
