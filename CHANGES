@@ -5,8 +5,8 @@ arpack-ng - 3.4.0
     based on ILP64 BLAS/LAPACK with suffixes. This avoids conflicts when loading
     libraries with different integer sizes in the same program.
 
- [ Martin Reuter ]
- * Add the support of cmake build system
+  [ Martin Reuter ]
+  * Add the support of cmake build system
 
  -- Sylvestre Ledru <sylvestre@debian.org>  Tue, 27 October 2015 23:40:51 +0200
 
