@@ -8,7 +8,7 @@ arpack-ng - 3.4.0
   [ Martin Reuter ]
   * Add the support of cmake build system
 
- -- Sylvestre Ledru <sylvestre@debian.org>  Tue, 27 October 2015 23:40:51 +0200
+ -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 02 Jul 2016 21:51:52 +0200
 
 arpack-ng - 3.3.0
 
