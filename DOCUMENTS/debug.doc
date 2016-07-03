@@ -219,7 +219,7 @@ c     %---------------------------------%
               of the Hessenberg matrix and their the corresponding 
               error bounds, KEV, NP.
 
- mnapps > 0: *Print information about where deflation occured.
+ mnapps > 0: *Print information about where deflation occurred.
  mnapps > 1: *Print sigmak, betak, order of the final Hessenberg matrix,
               and the final compressed upper Hessenberg matrix.
  mnapps > 2: *Print implicit application of shift number, real and imaginary 
@@ -303,7 +303,7 @@ c     %---------------------------------%
               of the Hessenberg matrix and their the corresponding 
               error bounds, KEV, NP.
 
- mcapps > 0: *Print information about where deflation occured.
+ mcapps > 0: *Print information about where deflation occurred.
  mcapps > 1: *Print sigmak, betak, order of the final Hessenberg matrix,
               and the final compressed upper Hessenberg matrix.
  mcapps > 2: *Print implicit application of shift number, the shift.

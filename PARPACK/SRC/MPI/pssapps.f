@@ -275,7 +275,7 @@ c
                   call pivout (comm, logfil, 1, i, ndigit, 
      &                 '_sapps: deflation at row/column no.')
                   call pivout (comm, logfil, 1, jj, ndigit, 
-     &                 '_sapps: occured before shift number.')
+     &                 '_sapps: occurred before shift number.')
                   call psvout (comm, logfil, 1, h(i+1,1), ndigit, 
      &                 '_sapps: the corresponding off diagonal element')
                end if
