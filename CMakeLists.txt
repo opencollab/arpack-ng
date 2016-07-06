@@ -80,7 +80,7 @@ set(arpackutil_STAT_SRCS
     UTIL/icnteq.f
     UTIL/icopy.f
     UTIL/iset.f
-    UTIL/iswap.f 
+    UTIL/iswap.f
     UTIL/ivout.f
     UTIL/second_NONE.f
     UTIL/svout.f
@@ -103,7 +103,7 @@ endif()
 #                   ${arpacklapack_STAT_SRCS}
 #                   ${arpackutil_STAT_SRCS}
 #                   ${arpacksrc_STAT_SRCS})
-add_library(arpack 
+add_library(arpack
                    ${arpackutil_STAT_SRCS}
                    ${arpacksrc_STAT_SRCS})
 
