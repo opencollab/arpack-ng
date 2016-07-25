@@ -74,13 +74,15 @@ arpack-ng is replacing arpack almost everywhere.
    $ make
    $ make install
    should work as expected.
-   
+
    Furthermore, ARPACK-NG now provides CMake functionality:
    $ mkdir build
-   $ cd build 
-   $ cmake -D EXAMPLES=ON -D MPI=ON ..
+   $ cd build
+   $ cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
+   $ make
+   $ make install
    builds everything including examples and parallel support (with MPI).
-   
+
 5. Within DOCUMENTS directory there are three files
 
    ex-sym.doc

@@ -80,7 +80,7 @@ set(arpackutil_STAT_SRCS
     UTIL/icnteq.f
     UTIL/icopy.f
     UTIL/iset.f
-    UTIL/iswap.f 
+    UTIL/iswap.f
     UTIL/ivout.f
     UTIL/second_NONE.f
     UTIL/svout.f
@@ -103,7 +103,7 @@ endif()
 #                   ${arpacklapack_STAT_SRCS}
 #                   ${arpackutil_STAT_SRCS}
 #                   ${arpacksrc_STAT_SRCS})
-add_library(arpack 
+add_library(arpack
                    ${arpackutil_STAT_SRCS}
                    ${arpacksrc_STAT_SRCS})
 
@@ -113,11 +113,12 @@ set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
 
 if (MPI)
 #    add_library(parpack SHARED
-    add_library(parpack 
+    add_library(parpack
                         ${parpacksrc_STAT_SRCS}
                         ${parpackutil_STAT_SRCS})
 
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
+    target_link_libraries(parpack arpack)
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
 endif ()
 
@@ -389,3 +390,19 @@ target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 add_test(bug_1323 Tests/bug_1323)
 
 add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323)
+
+############################
+# install
+############################
+# 'make install' to the correct location
+install(TARGETS arpack
+    ARCHIVE  DESTINATION lib
+    LIBRARY  DESTINATION lib
+    RUNTIME  DESTINATION bin)
+
+if (MPI)
+  install(TARGETS parpack
+      ARCHIVE  DESTINATION lib
+      LIBRARY  DESTINATION lib
+      RUNTIME  DESTINATION bin)
+endif ()
