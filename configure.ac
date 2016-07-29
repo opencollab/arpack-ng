@@ -37,7 +37,6 @@ AC_ARG_VAR(SYMBOLSUFFIX, [suffix to add to ARPACK, BLAS and LAPACK function name
 
 if test x"$SYMBOLSUFFIX" != x""; then
   dnl Need to rely on non-F77 features
-  AC_FC_LINE_LENGTH(unlimited)
   FFLAGS="$FFLAGS $ac_cv_fc_line_length"
 
   AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS="$FFLAGS -cpp",
