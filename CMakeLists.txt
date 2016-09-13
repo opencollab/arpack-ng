@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 2.8.6)
-project(arpack)
+
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+   set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
+endif ()
+
+project(arpack C Fortran)
 
 # Adopted from https://github.com/feymark/arpack.git
-
-enable_language(Fortran)
 
 option(MPI "Enable parallel support" OFF)
 #option(SYSTEM_BLAS "Use system BLAS" ON)
