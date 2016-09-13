@@ -9,6 +9,7 @@ project(arpack C Fortran)
 # Adopted from https://github.com/feymark/arpack.git
 
 if (POLICY CMP0042)
+  # enable MACOSX_RPATH by default
   cmake_policy (SET CMP0042 NEW)
 endif ()
 
