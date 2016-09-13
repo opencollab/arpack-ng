@@ -8,6 +8,10 @@ project(arpack C Fortran)
 
 # Adopted from https://github.com/feymark/arpack.git
 
+if (POLICY CMP0042)
+  cmake_policy (SET CMP0042 NEW)
+endif ()
+
 option(MPI "Enable parallel support" OFF)
 #option(SYSTEM_BLAS "Use system BLAS" ON)
 #option(SYSTEM_LAPACK "Use system LAPACK" ON)
