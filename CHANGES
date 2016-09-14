@@ -5,6 +5,7 @@ arpack-ng - 3.5.0
  
  [ Zhang Z ]
  * fix usages of DLACPY to not alias inputs
+   (patch from https://software.intel.com/en-us/articles/how-to-resolve-arpack-issues-with-intel-mkl-110-update-3)
 
  -- Sylvestre Ledru <sylvestre@debian.org>  Sun, 03 Jul 2016 21:51:52 +0200
 
