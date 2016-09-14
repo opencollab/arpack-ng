@@ -468,7 +468,9 @@ c     %-------------------------------------------------%
 c     |  Move v(:,kplusp-kev+1:kplusp) into v(:,1:kev). |
 c     %-------------------------------------------------%
 c
-      call dlacpy ('All', n, kev, v(1,np+1), ldv, v, ldv)
+      do 140 i = 1, kev
+         call dcopy (n, v(1,np+i), 1, v(1,i), 1)
+  140 continue
 c 
 c     %--------------------------------------------%
 c     | Copy the (kev+1)-st column of (V*Q) in the |
