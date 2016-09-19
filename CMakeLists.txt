@@ -399,6 +399,11 @@ add_test(bug_1323 Tests/bug_1323)
 
 add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323)
 
+if(MPI)
+  add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
+  target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  add_test(issue46 Tests/issue46)
+endif()
 ############################
 # install
 ############################
