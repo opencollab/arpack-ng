@@ -2,6 +2,7 @@ F77 = $(MPIF77)
 FFLAGS_SAV = @FFLAGS@
 FFLAGS =
 
+PSRC = pcontext.f
 SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
        pssaitr.f pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
        psgetv0.f pslarnv.f psnorm2.f
@@ -16,14 +17,14 @@ CSRC = pcnaitr.f pcnapps.f pcnaup2.f pcnaupd.f pcneigh.f pcneupd.f pcngets.f \
 ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.f pzlarnv.f pdznorm2.f
 
-EXTRA_DIST = debug.h stat.h
+EXTRA_DIST = debug.h stat.h pcontext.h
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@_noopt.la
 libparpack@LIBSUFFIX@_noopt_la_SOURCES = pslamch.f pdlamch10.f
 libparpack@LIBSUFFIX@_noopt_la_FFLAGS = -O0
 
 lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
-libparpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \

@@ -418,6 +418,7 @@ c
      &     iparam, ipntr, workd, workl, lworkl, info )
 c
       include  'mpif.h'
+      include  'pcontext.h'
 c
 c     %------------------%
 c     | MPI Variables    |
@@ -472,7 +473,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pdsaup2 , pdvout , pivout, arscnd, dstats 
+      external   pdsaup2 , pdvout , pivout, arscnd, dstats, pcontext
 c
 c     %--------------------%
 c     | External Functions |
@@ -487,6 +488,13 @@ c     | Executable Statements |
 c     %-----------------------%
 c 
       if (ido .eq. 0) then
+c
+c        %-------------------------------%
+c        | Initialize parallel execution |
+c        | context                       |
+c        %-------------------------------%
+c
+      call pcontext
 c
 c        %-------------------------------%
 c        | Initialize timing statistics  |

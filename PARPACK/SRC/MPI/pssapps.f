@@ -140,6 +140,7 @@ c     %--------------------%
 c     | MPI Communicator |
 c     %--------------------%
 c
+      include   'pcontext.h'
       integer   comm
 c
 c     %----------------------------------------------------%
@@ -176,10 +177,9 @@ c     | Local Scalars |
 c     %---------------%
 c
       integer    i, iend, istart, itop, j, jj, kplusp, msglvl
-      logical    first
       Real
      &           a1, a2, a3, a4, big, c, epsmch, f, g, r, s
-      save       epsmch, first
+      save       epsmch
 c
 c
 c     %----------------------%
@@ -207,15 +207,14 @@ c     %----------------%
 c     | Data statments |
 c     %----------------%
 c
-      data       first / .true. /
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
 c
-      if (first) then
+      if (apps_first) then
          epsmch = pslamch(comm, 'Epsilon-Machine')
-         first = .false.
+         apps_first = .false.
       end if
       itop = 1
 c

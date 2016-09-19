@@ -220,6 +220,7 @@ c
      &    ipntr, workd, workl, info)
 c
       include   'mpif.h'
+      include   'pcontext.h'
 c
 c     %---------------%
 c     | MPI Variables |
@@ -310,13 +311,12 @@ c     %-----------------%
 c     | Data statements |
 c     %-----------------%
 c
-      data      first / .true. /
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
 c
-      if (first) then
+      if (aitr_first) then
 c
 c        %-----------------------------------------%
 c        | Set machine-dependent constants for the |

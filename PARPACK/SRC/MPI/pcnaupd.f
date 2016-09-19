@@ -389,6 +389,7 @@ c
      &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv, 
      &     iparam, ipntr, workd, workl, lworkl, rwork, info )
 c
+      include   'pcontext.h'
       include  'mpif.h'
 c
 c     %------------------%
@@ -446,7 +447,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   pcnaup2, pcvout, pivout, arscnd, cstatn
+      external   pcnaup2, pcvout, pivout, arscnd, cstatn, pcontext
 c
 c     %--------------------%
 c     | External Functions |
@@ -461,6 +462,13 @@ c     | Executable Statements |
 c     %-----------------------%
 c 
       if (ido .eq. 0) then
+c
+c        %-------------------------------%
+c        | Initialize parallel execution |
+c        | context                       |
+c        %-------------------------------%
+c
+      call pcontext
 c 
 c        %-------------------------------%
 c        | Initialize timing statistics  |

@@ -214,6 +214,7 @@ c
      &   (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh, 
      &    ipntr, workd, workl, info)
 c
+      include   'pcontext.h'
       include   'mpif.h'
 c
 c     %---------------%
@@ -259,7 +260,7 @@ c     %---------------%
 c     | Local Scalars |
 c     %---------------%
 c
-      logical    first, orth1, orth2, rstart, step3, step4
+      logical    orth1, orth2, rstart, step3, step4
       integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,
      &           jj
       Real
@@ -297,7 +298,6 @@ c     %-----------------%
 c     | Data statements |
 c     %-----------------%
 c
-      data      first / .true. /
 c
 c
 c     %---------------------%
@@ -310,8 +310,8 @@ c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
 c
-      if (first) then
-         first = .false.
+      if (aitr_first) then
+         aitr_first = .false.
 c
 c        %--------------------------------%
 c        | safmin = safe minimum is such  |
