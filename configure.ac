@@ -7,7 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
 
 dnl Checks for standard programs.
-AC_PROG_F77
+AC_PROG_FC
 AC_PROG_CC
 
 dnl Check for BLAS libraries
