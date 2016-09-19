@@ -13,6 +13,10 @@ arpack-ng - 3.5.0
  * fix usages of DLACPY to not alias inputs
    (patch from https://software.intel.com/en-us/articles/how-to-resolve-arpack-issues-with-intel-mkl-110-update-3)
 
+ [ Iskakov Sergei ]
+ *  Fix possible deadlock when PARPACK call uses communicator with a larger number of CPUs than previous
+ call
+
  -- Sylvestre Ledru <sylvestre@debian.org>  Sun, 03 Jul 2016 21:51:52 +0200
 
 arpack-ng - 3.4.0
