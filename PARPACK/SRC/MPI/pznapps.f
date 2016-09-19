@@ -149,6 +149,7 @@ c     %--------------------%
 c     | MPI Communicator |
 c     %--------------------%
 c
+      include   'pcontext.h'
       integer   comm
 c
 c     %----------------------------------------------------%
@@ -188,12 +189,11 @@ c     | Local Scalars & Arrays |
 c     %------------------------%
 c
       integer    i, iend, istart, j, jj, kplusp, msglvl
-      logical    first
       Complex*16
      &           cdum, f, g, h11, h21, r, s, sigma, t
       Double precision             
      &           c,  ovfl, smlnum, ulp, unfl, tst1
-      save       first, ovfl, smlnum, ulp, unfl 
+      save       ovfl, smlnum, ulp, unfl 
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -228,13 +228,12 @@ c     %----------------%
 c     | Data statments |
 c     %----------------%
 c
-      data       first / .true. /
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
 c
-      if (first) then
+      if (apps_first) then
 c
 c        %-----------------------------------------------%
 c        | Set machine-dependent constants for the       |
@@ -248,7 +247,7 @@ c
          call dlabad( unfl, ovfl )
          ulp = pdlamch10( comm, 'precision' )
          smlnum = unfl*( n / ulp )
-         first = .false.
+         apps_first = .false.
       end if
 c
 c     %-------------------------------%
