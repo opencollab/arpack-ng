@@ -223,6 +223,7 @@ c
      &   (comm, ido, bmat, n, k, np, nb, resid, rnorm, v, ldv, h, ldh, 
      &    ipntr, workd, workl, info)
 c
+      include   'pcontext.h'
       include   'mpif.h'
 c
 c     %---------------%
@@ -278,7 +279,7 @@ c     %---------------%
 c     | Local Scalars |
 c     %---------------%
 c
-      logical    first, orth1, orth2, rstart, step3, step4
+      logical    orth1, orth2, rstart, step3, step4
       integer    ierr, i, infol, ipj, irj, ivj, iter, itry, j, msglvl,
      &           jj
       Real
@@ -287,7 +288,7 @@ c
       Complex
      &           cnorm
 c
-      save       first, orth1, orth2, rstart, step3, step4,
+      save       orth1, orth2, rstart, step3, step4,
      &           ierr, ipj, irj, ivj, iter, itry, j, msglvl, ovfl,
      &           betaj, rnorm1, smlnum, ulp, unfl, wnorm
 c
@@ -321,13 +322,12 @@ c     %-----------------%
 c     | Data statements |
 c     %-----------------%
 c
-      data       first / .true. /
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
 c
-      if (first) then
+      if (aitr_first) then
 c
 c        %-----------------------------------------%
 c        | Set machine-dependent constants for the |
@@ -342,7 +342,7 @@ c
          call slabad( unfl, ovfl )
          ulp = pslamch( comm, 'precision' )
          smlnum = unfl*( n / ulp )
-         first = .false.
+         aitr_first = .false.
       end if
 c
       if (ido .eq. 0) then
