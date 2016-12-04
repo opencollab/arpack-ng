@@ -111,6 +111,7 @@ fi
 AM_CONDITIONAL([MPI],[test x"$enable_mpi" = x"yes"])
 AM_CONDITIONAL([BLACS],[false])
 
+PKG_INSTALLDIR
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
