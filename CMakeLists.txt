@@ -118,6 +118,8 @@ add_library(arpack
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
+set_target_properties(arpack PROPERTIES VERSION 2.0.0)
+set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
 #    add_library(parpack SHARED
@@ -128,6 +130,8 @@ if (MPI)
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
+    set_target_properties(parpack PROPERTIES VERSION 2.0.0)
+    set_target_properties(parpack PROPERTIES SOVERSION 2)
 endif ()
 
 if (INTERFACE64)
