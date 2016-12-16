@@ -106,7 +106,7 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 
-PKG_INSTALLDIR
+m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
