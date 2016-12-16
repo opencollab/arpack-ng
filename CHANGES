@@ -17,6 +17,9 @@ arpack-ng - 3.5.0
  *  Fix possible deadlock when PARPACK call uses communicator with a larger number of CPUs than previous
  call
 
+ [ Kyle Guinn ]
+ * Portability improvements to the autotools build system.
+
  -- Sylvestre Ledru <sylvestre@debian.org>  Sun, 03 Jul 2016 21:51:52 +0200
 
 arpack-ng - 3.4.0
