@@ -118,6 +118,8 @@ add_library(arpack
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
+set_target_properties(arpack PROPERTIES VERSION 2.0.0)
+set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
 #    add_library(parpack SHARED
@@ -128,6 +130,8 @@ if (MPI)
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
+    set_target_properties(parpack PROPERTIES VERSION 2.0.0)
+    set_target_properties(parpack PROPERTIES SOVERSION 2)
 endif ()
 
 if (INTERFACE64)
@@ -408,14 +412,31 @@ endif()
 # install
 ############################
 # 'make install' to the correct location
+include(GNUInstallDirs)
+
+# Convert variable names to those expected by the .pc file.
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix \${prefix})
+set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(PACKAGE_NAME ${PROJECT_NAME})
+# TODO: Fill these in with something appropriate.
+#set(PACKAGE_VERSION)
+#set(PACKAGE_URL)
+#set(LAPACK_LIBS)
+#set(BLAS_LIBS)
+configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
+
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
 install(TARGETS arpack
-    ARCHIVE  DESTINATION lib
-    LIBRARY  DESTINATION lib
-    RUNTIME  DESTINATION bin)
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if (MPI)
   install(TARGETS parpack
-      ARCHIVE  DESTINATION lib
-      LIBRARY  DESTINATION lib
-      RUNTIME  DESTINATION bin)
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif ()
