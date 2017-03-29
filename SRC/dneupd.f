@@ -1030,7 +1030,7 @@ c
          iconj = 0
          do 110 j=1, nconv
             if ((workl(iheigi+j-1) .eq. zero) .and.
-     &           (work(iheigr+j-1) .ne. zero)) then
+     &           (workl(iheigr+j-1) .ne. zero)) then
                workev(j) =  workl(invsub+(j-1)*ldq+ncv-1) /
      &                      workl(iheigr+j-1)
             else if (iconj .eq. 0) then
