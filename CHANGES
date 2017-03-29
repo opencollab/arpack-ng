@@ -18,6 +18,7 @@ arpack-ng - 3.5.0
  call
 
  [ Kyle Guinn ]
+ * Portability improvements to the autotools build system.
  * Let cmake guess the default installation directories.  Can be
    overridden by changing CMAKE_INSTALL_LIBDIR and CMAKE_INSTALL_BINDIR.
  * Shared libraries built by cmake now have their SONAME set identical to

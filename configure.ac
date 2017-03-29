@@ -12,17 +12,11 @@ AC_PROG_CC
 
 dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
-AX_BLAS
-if test "$ax_blas_ok" = "no"; then
-   AC_MSG_ERROR([cannot find BLAS libraries])
-fi
+AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
 dnl Check for LAPACK libraries
 sinclude(ax_lapack.m4)
-AX_LAPACK
-if test "$ax_lapack_ok" = "no"; then
-   AC_MSG_ERROR([cannot find LAPACK libraries])
-fi
+AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
 if test x"$INTERFACE64" == x"1"; then
@@ -97,20 +91,22 @@ LT_PREREQ([2.4.2])
 LT_INIT([win32-dll])
 
 dnl See if compiling parpack
-AC_ARG_ENABLE(mpi,
-	      AC_HELP_STRING([--enable-mpi],
-			     [build parallel version of arpack with MPI]),
-	      [enable_mpi=$enableval],
-	      [enable_mpi=no])
-if test x"$enable_mpi" != x"no"; then
-  AC_LANG_PUSH([Fortran 77])
-  AX_MPI([], AC_MSG_ERROR([could not compile a MPI test program]))
-  AC_LANG_POP([Fortran 77])
-fi
+AC_ARG_ENABLE([mpi],
+	[AS_HELP_STRING(
+		[--enable-mpi],
+		[build parallel version of arpack with MPI])],
+	[],
+	[AS_VAR_SET([enable_mpi], [no])])
+AS_IF([test x"$enable_mpi" != x"no"], [
+	AC_LANG_PUSH([Fortran 77])
+	AX_MPI([], AC_MSG_ERROR([could not compile a MPI test program]))
+	AC_LANG_POP([Fortran 77])
+])
 
-AM_CONDITIONAL([MPI],[test x"$enable_mpi" = x"yes"])
-AM_CONDITIONAL([BLACS],[false])
+AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
+AM_CONDITIONAL([BLACS], [false])
 
+m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
@@ -130,8 +126,8 @@ AC_CONFIG_FILES([
 	PARPACK/SRC/BLACS/Makefile
 	PARPACK/UTIL/MPI/Makefile
 	PARPACK/UTIL/BLACS/Makefile
-	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/TESTS/MPI/Makefile
+	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
-	])
+])
 AC_OUTPUT
