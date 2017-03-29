@@ -1029,19 +1029,22 @@ c        %------------------------------------------------%
 c
          iconj = 0
          do 110 j=1, nconv
-            if (workl(iheigi+j-1) .eq. zero) then
+            if ((workl(iheigi+j-1) .eq. zero) .and.
+     &           (work(iheigr+j-1) .ne. zero)) then
                workev(j) =  workl(invsub+(j-1)*ldq+ncv-1) /
      &                      workl(iheigr+j-1)
             else if (iconj .eq. 0) then
                temp = dlapy2 ( workl(iheigr+j-1), workl(iheigi+j-1) )
-               workev(j) = ( workl(invsub+(j-1)*ldq+ncv-1) * 
-     &                       workl(iheigr+j-1) +
-     &                       workl(invsub+j*ldq+ncv-1) * 
-     &                       workl(iheigi+j-1) ) / temp / temp
-               workev(j+1) = ( workl(invsub+j*ldq+ncv-1) * 
-     &                         workl(iheigr+j-1) -
-     &                         workl(invsub+(j-1)*ldq+ncv-1) * 
-     &                         workl(iheigi+j-1) ) / temp / temp
+               if (temp .ne. zero) then
+                  workev(j) = ( workl(invsub+(j-1)*ldq+ncv-1) * 
+     &                          workl(iheigr+j-1) +
+     &                          workl(invsub+j*ldq+ncv-1) * 
+     &                          workl(iheigi+j-1) ) / temp / temp
+                  workev(j+1) = ( workl(invsub+j*ldq+ncv-1) * 
+     &                            workl(iheigr+j-1) -
+     &                            workl(invsub+(j-1)*ldq+ncv-1) * 
+     &                            workl(iheigi+j-1) ) / temp / temp
+               end if
                iconj = 1
             else
                iconj = 0
