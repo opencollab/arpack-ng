@@ -291,7 +291,6 @@ c        %-------------------------------------------%
 c 
          rvec = .true.
 c
-         write(6,*) iparam(5)
          call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,  
      &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
      &        resid, ncv, v, ldv, iparam, ipntr, workd, 
@@ -418,10 +417,9 @@ c
          print *, ' '
 c
       end if
-      write(6,*) 'EIGENVECTORS'
-      do i = 1,n
-         write(6,*) (v(i,j),j=1,nconv)
-      end do
+      if (isnan(v(1,1))) then
+         stop 1
+      end if
 c
 c     %---------------------------%
 c     | Done with program dndrv2. |
