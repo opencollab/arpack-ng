@@ -306,7 +306,7 @@ c     also increases the work and storage required to maintain the orthogonal
 c     basis vectors.   The optimal "cross-over" with respect to CPU time
 c     is problem dependent and must be determined empirically.
 c
-c  5. If IPARAM(7) = 2 then in the Reverse commuication interface the user
+c  5. If IPARAM(7) = 2 then in the Reverse communication interface the user
 c     must do the following. When IDO = 1, Y = OP * X is to be computed.
 c     When IPARAM(7) = 2 OP = inv(B)*A. After computing A*X the user
 c     must overwrite X with A*X. Y is then the solution to the linear set
