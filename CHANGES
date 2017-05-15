@@ -1,3 +1,7 @@
+ [ Marco Caliari ]
+ * Avoid purification stage in [d,s]neupd.f if it requires division
+    by zero (Closes: #58)
+
 arpack-ng - 3.5.0
  [ Julien Schueller ]
  * Improve cmake build system: disable C++ detection, set default build type.

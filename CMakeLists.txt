@@ -401,7 +401,11 @@ add_executable(bug_1323 EXCLUDE_FROM_ALL TESTS/bug_1323.f)
 target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 add_test(bug_1323 Tests/bug_1323)
 
-add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323)
+add_executable(bug_58_double EXCLUDE_FROM_ALL TESTS/bug_58_double.f)
+target_link_libraries(bug_58_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+add_test(bug_58_double Tests/bug_58_double)
+
+add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double)
 
 if(MPI)
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
