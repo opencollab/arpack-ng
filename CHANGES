@@ -29,7 +29,7 @@ arpack-ng - 3.5.0
  * Avoid purification stage in [d,s]neupd.f if it requires division
     by zero (Closes: #58)
  
- -- Sylvestre Ledru <sylvestre@debian.org>  Sun, 03 Jul 2016 21:51:52 +0200
+ -- Sylvestre Ledru <sylvestre@debian.org>  Mon, 15 May 2017 14:21:48 +0200
 
 arpack-ng - 3.4.0
 
@@ -41,7 +41,7 @@ arpack-ng - 3.4.0
   [ Martin Reuter ]
   * Add the support of cmake build system
 
- -- Sylvestre Ledru <sylvestre@debian.org>  Mon, 15 May 2017 14:21:48 +0200
+ -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 02 Jul 2016 21:51:52 +0200  
 
 arpack-ng - 3.3.0
 
