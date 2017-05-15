@@ -1,7 +1,3 @@
- [ Marco Caliari ]
- * Avoid purification stage in [d,s]neupd.f if it requires division
-    by zero (Closes: #58)
-
 arpack-ng - 3.5.0
  [ Julien Schueller ]
  * Improve cmake build system: disable C++ detection, set default build type.
@@ -27,7 +23,11 @@ arpack-ng - 3.5.0
    overridden by changing CMAKE_INSTALL_LIBDIR and CMAKE_INSTALL_BINDIR.
  * Shared libraries built by cmake now have their SONAME set identical to
    those built by autotools.
-
+   
+ [ Marco Caliari ]
+ * Avoid purification stage in [d,s]neupd.f if it requires division
+    by zero (Closes: #58)
+ 
  -- Sylvestre Ledru <sylvestre@debian.org>  Sun, 03 Jul 2016 21:51:52 +0200
 
 arpack-ng - 3.4.0
