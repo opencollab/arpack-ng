@@ -9,14 +9,14 @@ arpack-ng - 3.5.0
 
  [ Denis Davydov ]
  * Improve cmake build system: add make install and fix shared libraries.
- 
+
  [ Zhang Z ]
  * fix usages of DLACPY to not alias inputs
    (patch from https://software.intel.com/en-us/articles/how-to-resolve-arpack-issues-with-intel-mkl-110-update-3)
 
  [ Iskakov Sergei ]
- *  Fix possible deadlock when PARPACK call uses communicator with a larger number of CPUs than previous
- call
+ *  Fix possible deadlock when PARPACK call uses communicator with a larger
+    number of CPUs than previous call
 
  [ Kyle Guinn ]
  * Portability improvements to the autotools build system.
@@ -24,16 +24,16 @@ arpack-ng - 3.5.0
    overridden by changing CMAKE_INSTALL_LIBDIR and CMAKE_INSTALL_BINDIR.
  * Shared libraries built by cmake now have their SONAME set identical to
    those built by autotools.
-   
+
  [ Marco Caliari ]
  * Avoid purification stage in [d,s]neupd.f if it requires division
     by zero (Closes: #58)
- 
+
  -- Sylvestre Ledru <sylvestre@debian.org>  Mon, 15 May 2017 14:21:48 +0200
 
 arpack-ng - 3.4.0
 
-  [ Milan Bouchet-Valat]
+  [ Milan Bouchet-Valat ]
   * Allow adding suffixes to symbols and library names to build ILP64 version
     based on ILP64 BLAS/LAPACK with suffixes. This avoids conflicts when loading
     libraries with different integer sizes in the same program.
@@ -41,7 +41,7 @@ arpack-ng - 3.4.0
   [ Martin Reuter ]
   * Add the support of cmake build system
 
- -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 02 Jul 2016 21:51:52 +0200  
+ -- Sylvestre Ledru <sylvestre@debian.org>  Sat, 02 Jul 2016 21:51:52 +0200
 
 arpack-ng - 3.3.0
 
@@ -52,7 +52,7 @@ arpack-ng - 3.3.0
  * General improvements on the build system
  * libparpack links against libarpack (instead of doing a static link)
 
- [Guillaume Horel]
+ [ Guillaume Horel ]
  * reverts using {d,s}lahqr from lapack 2
  * use dlahqr from lapack 3 instead of dlaqrb (credit to Marco Caliari)
 
