@@ -12,11 +12,9 @@ AC_PROG_FC
 AC_PROG_CC
 
 dnl Check for BLAS libraries
-sinclude(ax_blas.m4)
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
 dnl Check for LAPACK libraries
-sinclude(ax_lapack.m4)
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
