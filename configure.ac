@@ -1,21 +1,20 @@
 AC_PREREQ(2.67)
 AC_INIT([ARPACK-NG],[3.5.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
-
+AC_CONFIG_SRCDIR([SRC/version.h])
+AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
+AM_INIT_AUTOMAKE([foreign])
+AM_MAINTAINER_MODE
 
 dnl Checks for standard programs.
 AC_PROG_FC
 AC_PROG_CC
 
 dnl Check for BLAS libraries
-sinclude(ax_blas.m4)
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
 dnl Check for LAPACK libraries
-sinclude(ax_lapack.m4)
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
