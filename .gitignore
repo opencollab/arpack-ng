@@ -30,6 +30,7 @@ TESTS/dnsimp
 TESTS/bug_1315_double
 TESTS/bug_1315_single
 TESTS/bug_1323
+TESTS/bug_58_double
 EXAMPLES/BAND/[sd][sn]bdr[123456]
 EXAMPLES/BAND/[cz]nbdr[1234]
 EXAMPLES/COMPLEX/[cz]ndrv[1234]
