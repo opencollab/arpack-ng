@@ -1,3 +1,8 @@
+arpack-ng - Next Release
+
+ [ Kyle Guinn ]
+ * Autoconf cleanup; move generated files to the build-aux subdirectory.
+
 arpack-ng - 3.5.0
 
  [ Julien Schueller ]
