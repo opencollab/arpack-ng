@@ -61,7 +61,7 @@ c\Local variables:
 c     xxxxxx  real
 c
 c\Routines called:
-c     slahqr  ARPACK routine to compute the real Schur form of an
+c     slahqr  LAPACK routine to compute the real Schur form of an
 c             upper Hessenberg matrix and last row of the Schur vectors.
 c     arscnd  ARPACK utility routine for timing.
 c     smout   ARPACK utility routine that prints matrices
