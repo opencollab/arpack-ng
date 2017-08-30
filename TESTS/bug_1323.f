@@ -8,7 +8,7 @@ c  * computation of the norm residual has been commented out
 c  * 5th and 6th original arguments (v and ldv) have been replaced by
 c    others (z and ldz)
 c  * z is an allocatable array -- it is claimed that it is not referenced
-c  * ldz = ldv -- fullfill the requirement that ldz .ge. 1
+c  * ldz = ldv -- fulfill the requirement that ldz .ge. 1
 c
 c the following error is expected:
 c

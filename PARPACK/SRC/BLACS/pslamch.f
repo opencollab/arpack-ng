@@ -1,6 +1,6 @@
       REAL               FUNCTION PSLAMCH( ICTXT, CMACH )
 *
-*  -- ScaLAPACK auxilliary routine (version 1.0) --
+*  -- ScaLAPACK auxiliary routine (version 1.0) --
 *     University of Tennessee, Knoxville, Oak Ridge National Laboratory,
 *     and University of California, Berkeley.
 *     February 28, 1995
