@@ -1,5 +1,10 @@
 arpack-ng - Next Release
 
+ [ Franck Houssen ]
+ * Add support for ISO_C_BINDING (Fortran std 2003) to improve portability (Fortran/C/C++).
+   Example of   C/Fortran binding can be found in the TESTS/iso_c_binding_c.c     file.
+   Example of C++/Fortran binding can be found in the TESTS/iso_c_binding_cpp.cpp file.
+
  [ Kyle Guinn ]
  * Autoconf cleanup; move generated files to the build-aux subdirectory.
 

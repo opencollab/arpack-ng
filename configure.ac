@@ -105,6 +105,18 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 
+dnl See if compiling with ISO_C_BINDING support
+AC_MSG_CHECKING([for ISO_C_BINDING support])
+AC_ARG_ENABLE([icb],
+              [AC_HELP_STRING([--enable-icb],
+                              [build support for *[ae]upd_c with ISO_C_BINDING])],
+              [AS_VAR_SET([enable_icb], [$enableval])],
+              [])
+if test x"$enable_icb" != x"no"; then
+  AC_PROG_CXX
+  AM_CONDITIONAL([ICB], [true])
+fi
+
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 

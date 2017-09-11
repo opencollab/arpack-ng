@@ -14,6 +14,7 @@ if (POLICY CMP0042)
 endif ()
 
 option(MPI "Enable parallel support" OFF)
+option(ICB "Enable support for *[ae]upd_c with ISO_C_BINDING" OFF)
 #option(SYSTEM_BLAS "Use system BLAS" ON)
 #option(SYSTEM_LAPACK "Use system LAPACK" ON)
 option(EXAMPLES "Compile ARPACK examples" OFF)
@@ -84,6 +85,11 @@ endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
 file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
 
+set(arpacksrc_ICB "")
+if(ICB)
+  file(GLOB arpacksrc_ICB SRC/icba*.f90)
+endif()
+
 set(arpackutil_STAT_SRCS
     UTIL/icnteq.f
     UTIL/icopy.f
@@ -111,9 +117,9 @@ endif()
 #                   ${arpacklapack_STAT_SRCS}
 #                   ${arpackutil_STAT_SRCS}
 #                   ${arpacksrc_STAT_SRCS})
-add_library(arpack
-                   ${arpackutil_STAT_SRCS}
-                   ${arpacksrc_STAT_SRCS})
+add_library(arpack ${arpackutil_STAT_SRCS}
+                   ${arpacksrc_STAT_SRCS}
+                   ${arpacksrc_ICB})
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES})
@@ -187,8 +193,10 @@ foreach (f IN LISTS CFUNS)
   list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
 endforeach ()
 
-include(FortranCInterface)
-FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
+if(NOT ICB) # With ICB no more need to tweak mangling.
+    include(FortranCInterface)
+    FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
+endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -412,6 +420,18 @@ if(MPI)
   target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(issue46 Tests/issue46)
 endif()
+
+if(ICB)
+  add_executable(iso_c_binding_c TESTS/iso_c_binding_c.c)
+  target_link_libraries(iso_c_binding_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  add_test(iso_c_binding_c Tests/iso_c_binding_c)
+
+  enable_language(CXX) # For testing binding with c++.
+  add_executable(iso_c_binding_cpp TESTS/iso_c_binding_cpp.cpp)
+  target_link_libraries(iso_c_binding_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  add_test(iso_c_binding_cpp Tests/iso_c_binding_cpp)
+endif()
+
 ############################
 # install
 ############################
