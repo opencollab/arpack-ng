@@ -1,4 +1,4 @@
-arpack-ng - Next Release
+arpack-ng - 3.6.0
 
  [ Franck Houssen ]
  * Provide find_package for (cmake) users to find arpack-ng.
