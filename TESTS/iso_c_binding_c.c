@@ -1,3 +1,10 @@
+/*
+ * This example demonstrates the use of ISO_C_BINDING to call arpack (portability).
+ *
+ * Just use arpack as you would have normally done, but, use *[ae]upd_c instead of *[ae]upd_.
+ * The main advantage is that compiler checks (arguments) are performed at build time.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -63,6 +70,7 @@ int main() {
   iparam[3] = 1;
   iparam[6] = 1;
 
+  /* call arpack like you would have, but, use dsaupd_c instead of dsaupd_ */
   dsaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
            workd, workl, lworkl, &info);
 
@@ -70,10 +78,12 @@ int main() {
 
     matVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
 
+    /* call arpack like you would have, but, use dsaupd_c instead of dsaupd_ */
     dsaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, &info);
   }
 
+  /* call arpack like you would have, but, use dseupd_c instead of dseupd_ */
   dseupd_c(rvec, howmny, select, d, z, ldz, sigma,
            bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
            workd, workl, lworkl, &info);
