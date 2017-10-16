@@ -1,5 +1,8 @@
 arpack-ng - Next Release
 
+ [ Franck Houssen ]
+ * Provide find_package for (cmake) users to find arpack-ng.
+
  [ Kyle Guinn ]
  * Autoconf cleanup; move generated files to the build-aux subdirectory.
 

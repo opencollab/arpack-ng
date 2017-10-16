@@ -444,3 +444,17 @@ if (MPI)
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif ()
+
+# Provide find_package for arpack-ng to users.
+configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake")
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(arpack-ng)
+configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/ArpackNGConfig.cmake")
+install(FILES "${PROJECT_BINARY_DIR}/ArpackNGConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(ArpackNG)
+set(ArpackNG_MAJOR_VERSION 3)
+set(ArpackNG_MINOR_VERSION 5)
+set(ArpackNG_PATCH_VERSION 0)
+set(ArpackNG_VERSION ${ArpackNG_MAJOR_VERSION}.${ArpackNG_MINOR_VERSION}.${ArpackNG_PATCH_VERSION})
+configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/ArpackNGConfigVersion.cmake" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/ArpackNGConfigVersion.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
