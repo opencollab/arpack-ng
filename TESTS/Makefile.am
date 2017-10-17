@@ -24,7 +24,9 @@ bug_58_double_SOURCES = bug_58_double.f
 if ICB
 iso_c_binding_c_SOURCES = iso_c_binding_c.c
 iso_c_binding_c_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
+iso_c_binding_c_CFLAGS = -I$(top_builddir)
 
 iso_c_binding_cpp_SOURCES = iso_c_binding_cpp.cpp
 iso_c_binding_cpp_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
+iso_c_binding_cpp_CPPFLAGS = -I$(top_builddir)
 endif

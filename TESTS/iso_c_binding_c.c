@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h> // bool.
+#include "arpack.h"
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -17,17 +18,6 @@
 #ifndef BLASINT
 #define BLASINT int
 #endif
-
-extern void dsaupd_c(BLASINT * ido, char * bmat, BLASINT n, char * which, BLASINT nev,
-                     double tol, double * resid, BLASINT ncv, double * v,
-                     BLASINT ldv, BLASINT * iparam, BLASINT * ipntr, double * workd,
-                     double * workl, BLASINT lworkl, BLASINT * info);
-
-extern void dseupd_c(bool rvec, char * howmny, bool * select, double * d, double * z, int ldz, double sigma,
-                     char * bmat, BLASINT n, char * which, BLASINT nev,
-                     double tol, double * resid, BLASINT ncv, double * v,
-                     BLASINT ldv, BLASINT * iparam, BLASINT * ipntr, double * workd,
-                     double * workl, BLASINT lworkl, BLASINT * info);
 
 void matVec(double * x, double * y) {
   int i;

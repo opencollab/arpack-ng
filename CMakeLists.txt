@@ -120,6 +120,10 @@ endif()
 add_library(arpack ${arpackutil_STAT_SRCS}
                    ${arpacksrc_STAT_SRCS}
                    ${arpacksrc_ICB})
+if(ICB)
+  install(FILES arpack.h DESTINATION include)
+  install(FILES arpack.hpp DESTINATION include)
+endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES})
@@ -423,11 +427,13 @@ endif()
 
 if(ICB)
   add_executable(iso_c_binding_c TESTS/iso_c_binding_c.c)
+  target_include_directories(iso_c_binding_c PUBLIC ..)
   target_link_libraries(iso_c_binding_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(iso_c_binding_c Tests/iso_c_binding_c)
 
   enable_language(CXX) # For testing binding with c++.
   add_executable(iso_c_binding_cpp TESTS/iso_c_binding_cpp.cpp)
+  target_include_directories(iso_c_binding_cpp PUBLIC ..)
   target_link_libraries(iso_c_binding_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(iso_c_binding_cpp Tests/iso_c_binding_cpp)
 endif()
