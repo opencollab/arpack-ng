@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include "arpack.hpp"
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -15,17 +16,6 @@
 #ifndef BLASINT
 #define BLASINT int
 #endif
-
-extern "C" void ssaupd_c(BLASINT & ido, char * bmat, BLASINT n, char * which, BLASINT nev,
-                         float tol, float * resid, BLASINT ncv, float * v,
-                         BLASINT ldv, BLASINT * iparam, BLASINT * ipntr, float * workd,
-                         float * workl, BLASINT lworkl, BLASINT & info);
-
-extern "C" void sseupd_c(bool rvec, char * howmny, bool * select, float * d, float * z, int ldz, float sigma,
-                         char * bmat, BLASINT n, char * which, BLASINT nev,
-                         float tol, float * resid, BLASINT ncv, float * v,
-                         BLASINT ldv, BLASINT * iparam, BLASINT * ipntr, float * workd,
-                         float * workl, BLASINT lworkl, BLASINT & info);
 
 void matVec(float * x, float * y) {
   int i;
