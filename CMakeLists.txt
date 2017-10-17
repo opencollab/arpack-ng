@@ -485,3 +485,11 @@ configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-n
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ngConfigVersion.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ngConfigVersion.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+
+# Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
+set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")
+set(CPACK_VERSION_MINOR "${arpack_ng_MINOR_VERSION}")
+set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
+set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
+include(CPack)

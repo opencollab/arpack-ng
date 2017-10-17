@@ -1,6 +1,7 @@
 arpack-ng - 3.6.0
 
  [ Franck Houssen ]
+ * Provide tarball generation using cmake (cpack).
  * Provide find_package for (cmake) users to find arpack-ng.
  * Add support for ISO_C_BINDING (Fortran std 2003) to improve portability (Fortran/C/C++).
    Example of   C/Fortran binding can be found in the TESTS/icb_arpack_c.c     file.
