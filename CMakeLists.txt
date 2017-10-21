@@ -426,16 +426,16 @@ if(MPI)
 endif()
 
 if(ICB)
-  add_executable(iso_c_binding_c TESTS/iso_c_binding_c.c)
-  target_include_directories(iso_c_binding_c PUBLIC ..)
-  target_link_libraries(iso_c_binding_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-  add_test(iso_c_binding_c Tests/iso_c_binding_c)
+  add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
+  target_include_directories(icb_arpack_c PUBLIC ..)
+  target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  add_test(icb_arpack_c Tests/icb_arpack_c)
 
   enable_language(CXX) # For testing binding with c++.
-  add_executable(iso_c_binding_cpp TESTS/iso_c_binding_cpp.cpp)
-  target_include_directories(iso_c_binding_cpp PUBLIC ..)
-  target_link_libraries(iso_c_binding_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-  add_test(iso_c_binding_cpp Tests/iso_c_binding_cpp)
+  add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
+  target_include_directories(icb_arpack_cpp PUBLIC ..)
+  target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  add_test(icb_arpack_cpp Tests/icb_arpack_cpp)
 endif()
 
 ############################
