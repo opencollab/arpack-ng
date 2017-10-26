@@ -473,9 +473,9 @@ if (MPI)
 endif ()
 
 # Provide find_package for arpack-ng to users.
-configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake")
+configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(arpack-ng)
-configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ngConfig.cmake")
+configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ngConfig.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ngConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(arpack-ng)
 set(arpack_ng_MAJOR_VERSION 3)
 set(arpack_ng_MINOR_VERSION 6)
