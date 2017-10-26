@@ -8,3 +8,4 @@ Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
 Libs: -L${libdir} -larpack@LIBSUFFIX@
 Libs.private: @LAPACK_LIBS@ @BLAS_LIBS@
+Cflags: -I${includedir}
