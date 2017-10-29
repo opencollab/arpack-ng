@@ -399,7 +399,7 @@ c
          end if
 c
 c        %---------------------------------------------------------%
-c        | Check for exact zero. Equivalent to determing whether a |
+c        | Check for exact zero. Equivalent to determining whether a |
 c        | j-step Arnoldi factorization is present.                |
 c        %---------------------------------------------------------%
 c
