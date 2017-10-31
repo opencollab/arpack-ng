@@ -10,6 +10,8 @@ arpack-ng - 3.6.0
  [ Kyle Guinn ]
  * Autoconf cleanup; move generated files to the build-aux subdirectory.
 
+ -- Sylvestre Ledru <sylvestre@debian.org> Mon, 30 Oct 2017 14:21:48 +0200
+
 arpack-ng - 3.5.0
 
  [ Julien Schueller ]
