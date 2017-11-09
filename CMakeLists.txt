@@ -475,16 +475,12 @@ endif ()
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(arpack-ng)
-configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ngConfig.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ngConfig.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}") # find_package(arpack-ng)
 set(arpack_ng_MAJOR_VERSION 3)
 set(arpack_ng_MINOR_VERSION 6)
 set(arpack_ng_PATCH_VERSION 0)
 set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
-configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ngConfigVersion.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ngConfigVersion.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
 # Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
 set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")
