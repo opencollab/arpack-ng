@@ -242,14 +242,12 @@ c        | the generalized problem when B is possibly (singular).   |
 c        %----------------------------------------------------------%
 c
          call arscnd (t2)
-         if (bmat .eq. 'G') then
-            nopx = nopx + 1
-            ipntr(1) = 1
-            ipntr(2) = n + 1
-            call scopy (n, resid, 1, workd, 1)
-            ido = -1
-            go to 9000
-         end if
+         nopx = nopx + 1
+         ipntr(1) = 1
+         ipntr(2) = n + 1
+         call scopy (n, resid, 1, workd, 1)
+         ido = -1
+         go to 9000
       end if
 c 
 c     %-----------------------------------------%
@@ -259,7 +257,7 @@ c
       if (first) go to 20
 c
 c     %-----------------------------------------------%
-c     | Back from computing B*(orthogonalized-vector) |
+c     | Back from computing OP*(orthogonalized-vector) |
 c     %-----------------------------------------------%
 c
       if (orth)  go to 40
@@ -276,9 +274,9 @@ c     %------------------------------------------------------%
 c
       call arscnd (t2)
       first = .TRUE.
+      call scopy (n, workd(n+1), 1, resid, 1)
       if (bmat .eq. 'G') then
          nbx = nbx + 1
-         call scopy (n, workd(n+1), 1, resid, 1)
          ipntr(1) = n + 1
          ipntr(2) = 1
          ido = 2
