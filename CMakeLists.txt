@@ -422,7 +422,7 @@ add_executable(bug_79_double_complex EXCLUDE_FROM_ALL TESTS/bug_79_double_comple
 target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 add_test(bug_79_double_complex Tests/bug_79_double_complex)
 
-add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double)
+add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double bug_79_double_complex)
 
 if(MPI)
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
