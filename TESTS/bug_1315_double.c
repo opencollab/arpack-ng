@@ -73,7 +73,7 @@ int main() {
   dnaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
 	 workd, workl, &lworkl, &info);
 
-  while(ido == 1) {
+  while(ido == -1 || ido == 1) {
 
     matVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
 
