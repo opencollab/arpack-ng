@@ -41,7 +41,7 @@ int ss() {
   bool rvec = true;
   char howmny[] = "A";
   float* d = (float*) new float[(nev+1)];
-  bool select[3*ncv];
+  int select[ncv];
   float z[(N+1)*(nev+1)];
   BLASINT ldz = N+1;
   float sigma=0;
@@ -108,7 +108,7 @@ int cn() {
   bool rvec = true;
   char howmny[] = "A";
   float _Complex* d = (float _Complex*) new float _Complex[(nev+1)];
-  bool select[3*ncv];
+  int select[ncv];
   float _Complex z[(N+1)*(nev+1)];
   BLASINT ldz = N+1;
   float sigma=0;
