@@ -102,7 +102,7 @@ c
 c\Routines called:
 c     slabad  LAPACK routine that computes machine constants.
 c     slacpy  LAPACK matrix copy routine.
-c     pslamch ScaLAPACK routine that determines machine constants.
+c     pslamch10 ScaLAPACK routine that determines machine constants.
 c     slanhs  LAPACK routine that computes various norms of a matrix.
 c     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     slarf   LAPACK routine that applies Householder reflection to
@@ -206,8 +206,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real
-     &           pslamch, slanhs, slapy2
-      external   pslamch, slanhs, slapy2
+     &           pslamch10, slanhs, slapy2
+      external   pslamch10, slanhs, slapy2
 c
 c     %----------------------%
 c     | Intrinsics Functions |
@@ -233,10 +233,10 @@ c        | overflow should not occur.                    |
 c        | REFERENCE: LAPACK subroutine slahqr           |
 c        %-----------------------------------------------%
 c
-         unfl = pslamch( comm, 'safe minimum' )
+         unfl = pslamch10( comm, 'safe minimum' )
          ovfl = one / unfl
          call slabad( unfl, ovfl )
-         ulp = pslamch( comm, 'precision' )
+         ulp = pslamch10( comm, 'precision' )
          smlnum = unfl*( n / ulp )
          apps_first = .false.
       end if

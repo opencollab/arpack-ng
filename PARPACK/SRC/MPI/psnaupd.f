@@ -384,7 +384,7 @@ c              Arnoldi Iteration.
 c     pivout   Parallel ARPACK utility routine that prints integers.
 c     arscnd   ARPACK utility routine for timing.
 c     psvout   Parallel ARPACK utility routine that prints vectors.
-c     pslamch  ScaLAPACK routine that determines machine constants.
+c     pslamch10  ScaLAPACK routine that determines machine constants.
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
@@ -476,8 +476,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real 
-     &           pslamch
-      external   pslamch
+     &           pslamch10
+      external   pslamch10
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -561,7 +561,7 @@ c        | Set default parameters |
 c        %------------------------%
 c
          if (nb .le. 0)	nb = 1
-         if (tol .le. zero)	tol = pslamch(comm, 'EpsMach')
+         if (tol .le. zero)	tol = pslamch10(comm, 'EpsMach')
 c
 c        %----------------------------------------------%
 c        | NP is the number of additional steps to      |

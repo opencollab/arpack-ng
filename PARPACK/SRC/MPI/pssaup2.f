@@ -155,7 +155,7 @@ c              tridiagonal matrix using the implicit QL or QR method.
 c     pivout   Parallel ARPACK utility routine that prints integers.
 c     arscnd   ARPACK utility routine for timing.
 c     psvout   Parallel ARPACK utility routine that prints vectors.
-c     pslamch  ScaLAPACK routine that determines machine constants.
+c     pslamch10  ScaLAPACK routine that determines machine constants.
 c     scopy    Level 1 BLAS that copies one vector to another.
 c     sdot     Level 1 BLAS that computes the scalar product of two vectors.
 c     psnorm2  Parallel version of Level 1 BLAS that computes the norm of a vector.
@@ -263,8 +263,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real
-     &           sdot, psnorm2, pslamch
-      external   sdot, psnorm2, pslamch
+     &           sdot, psnorm2, pslamch10
+      external   sdot, psnorm2, pslamch10
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -290,7 +290,7 @@ c        %---------------------------------%
 c        | Set machine dependent constant. |
 c        %---------------------------------%
 c
-         eps23 = pslamch(comm, 'Epsilon-Machine')
+         eps23 = pslamch10(comm, 'Epsilon-Machine')
          eps23 = eps23**(2.0/3.0)
 c
 c        %-------------------------------------%

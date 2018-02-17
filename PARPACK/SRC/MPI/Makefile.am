@@ -20,7 +20,7 @@ ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
 EXTRA_DIST = debug.h stat.h pcontext.h
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@_noopt.la
-libparpack@LIBSUFFIX@_noopt_la_SOURCES = pslamch.f pdlamch10.f
+libparpack@LIBSUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f
 libparpack@LIBSUFFIX@_noopt_la_FFLAGS = -O0
 
 lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la

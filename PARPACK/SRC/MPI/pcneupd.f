@@ -213,7 +213,7 @@ c             in upper triangular form.
 c     ctrsen  LAPACK routine that re-orders the Schur form.
 c     cunm2r  LAPACK routine that applies an orthogonal matrix in 
 c             factored form.
-c     pslamch ScaLAPACK routine that determines machine constants.
+c     pslamch10 ScaLAPACK routine that determines machine constants.
 c     ctrmm   Level 3 BLAS matrix times an upper triangular matrix.
 c     cgeru   Level 2 BLAS rank one update to a matrix.
 c     ccopy   Level 1 BLAS that copies one vector to another .
@@ -336,8 +336,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real
-     &           scnrm2,pslamch,slapy2
-      external   scnrm2,pslamch,slapy2
+     &           scnrm2,pslamch10,slapy2
+      external   scnrm2,pslamch10,slapy2
 c
       Complex
      &           cdotc
@@ -367,7 +367,7 @@ c     %---------------------------------%
 c     | Get machine dependent constant. |
 c     %---------------------------------%
 c
-      eps23 = pslamch(comm, 'Epsilon-Machine')
+      eps23 = pslamch10(comm, 'Epsilon-Machine')
       eps23 = eps23**(2.0 / 3.0)
 c
 c     %-------------------------------%
