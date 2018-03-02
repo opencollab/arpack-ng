@@ -238,7 +238,7 @@ c             a matrix.
 c     slacpy  LAPACK matrix copy routine.
 c     slahqr  LAPACK routine to compute the real Schur form of an
 c             upper Hessenberg matrix.
-c     pslamch ScaLAPACK routine that determines machine constants.
+c     pslamch10 ScaLAPACK routine that determines machine constants.
 c     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     slaset  LAPACK matrix initialization routine.
 c     sorm2r  LAPACK routine that applies an orthogonal matrix in 
@@ -388,8 +388,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real 
-     &           slapy2, snrm2, pslamch
-      external   slapy2, snrm2, pslamch
+     &           slapy2, snrm2, pslamch10
+      external   slapy2, snrm2, pslamch10
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -414,7 +414,7 @@ c     %---------------------------------%
 c     | Get machine dependent constant. |
 c     %---------------------------------%
 c
-      eps23 = pslamch(comm, 'Epsilon-Machine')
+      eps23 = pslamch10(comm, 'Epsilon-Machine')
       eps23 = eps23**(2.0  / 3.0 )
 c
 c     %--------------%

@@ -1,5 +1,8 @@
 arpack-ng - 3.6.0
 
+ [ Denis Davydov ]
+ * Rename pslamch to pslamch10 to avoid symbol collision with Scalapack 2.0.2 in MPI context.
+
  [ Franck Houssen ]
  * Provide tarball generation using cmake (cpack).
  * Provide find_package for (cmake) users to find arpack-ng.

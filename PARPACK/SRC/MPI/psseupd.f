@@ -191,7 +191,7 @@ c     psvout  Parallel ARPACK utility routine that prints vectors.
 c     sgeqr2  LAPACK routine that computes the QR factorization of
 c             a matrix.
 c     slacpy  LAPACK matrix copy routine.
-c     pslamch ScaLAPACK routine that determines machine constants.
+c     pslamch10 ScaLAPACK routine that determines machine constants.
 c     sorm2r  LAPACK routine that applies an orthogonal matrix in
 c             factored form.
 c     ssteqr  LAPACK routine that computes eigenvalues and eigenvectors
@@ -295,8 +295,8 @@ c     | External Functions |
 c     %--------------------%
 c
       Real
-     &           psnorm2, pslamch
-      external   psnorm2, pslamch
+     &           psnorm2, pslamch10
+      external   psnorm2, pslamch10
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -439,7 +439,7 @@ c     %---------------------------------%
 c     | Set machine dependent constant. |
 c     %---------------------------------%
 c
-      eps23 = pslamch(comm, 'Epsilon-Machine') 
+      eps23 = pslamch10(comm, 'Epsilon-Machine') 
       eps23 = eps23**(2.0 / 3.0)
 c
 c     %---------------------------------------%

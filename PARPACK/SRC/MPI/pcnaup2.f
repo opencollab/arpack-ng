@@ -141,7 +141,7 @@ c     arscnd   ARPACK utility routine for timing.
 c     pcmout   Parallel ARPACK utility routine that prints matrices
 c     pcvout   Parallel ARPACK utility routine that prints vectors.
 c     psvout   ARPACK utility routine that prints vectors.
-c     pslamch  ScaLAPACK routine that determines machine constants.
+c     pslamch10  ScaLAPACK routine that determines machine constants.
 c     slapy2   LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     ccopy    Level 1 BLAS that copies one vector to another .
 c     cdotc    Level 1 BLAS that computes the scalar product of two vectors. 
@@ -259,8 +259,8 @@ c
       Complex
      &           cdotc
       Real  
-     &           pscnorm2, pslamch, slapy2
-      external   cdotc, pscnorm2, pslamch, slapy2
+     &           pscnorm2, pslamch10, slapy2
+      external   cdotc, pscnorm2, pslamch10, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -298,7 +298,7 @@ c        %---------------------------------%
 c        | Get machine dependent constant. |
 c        %---------------------------------%
 c
-         eps23 = pslamch(comm, 'Epsilon-Machine')
+         eps23 = pslamch10(comm, 'Epsilon-Machine')
          eps23 = eps23**(2.0 / 3.0)
 c
 c        %---------------------------------------%

@@ -144,7 +144,7 @@ c     clanhs    LAPACK routine that computes various norms of a matrix.
 c     clascl    LAPACK routine for careful scaling of a matrix.
 c     slabad    LAPACK routine for defining the underflow and overflow
 c               limits
-c     pslamch   ScaLAPACK routine that determines machine constants.
+c     pslamch10   ScaLAPACK routine that determines machine constants.
 c     slapy2    LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     cgemv     Level 2 BLAS routine for matrix vector multiplication.
 c     caxpy     Level 1 BLAS that computes a vector triad.
@@ -309,8 +309,8 @@ c
       Complex
      &           cdotc 
       Real            
-     &           pslamch, pscnorm2, clanhs, slapy2
-      external   cdotc, pscnorm2, clanhs, pslamch, slapy2
+     &           pslamch10, pscnorm2, clanhs, slapy2
+      external   cdotc, pscnorm2, clanhs, pslamch10, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -337,10 +337,10 @@ c        | overflow should not occur.              |
 c        | REFERENCE: LAPACK subroutine clahqr     |
 c        %-----------------------------------------%
 c
-         unfl = pslamch(comm,  'safe minimum' )
+         unfl = pslamch10(comm,  'safe minimum' )
          ovfl = real(one / unfl)
          call slabad( unfl, ovfl )
-         ulp = pslamch( comm, 'precision' )
+         ulp = pslamch10( comm, 'precision' )
          smlnum = unfl*( n / ulp )
          aitr_first = .false.
       end if
