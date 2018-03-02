@@ -12,6 +12,9 @@ arpack-ng - 3.6.0
 
  [ Kyle Guinn ]
  * Autoconf cleanup; move generated files to the build-aux subdirectory.
+ 
+ [ Marco Caliari ]
+ * Force the initial residual to be in the range of the operator OP in the standard case, too (Closes: #79).
 
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 30 Oct 2017 14:21:48 +0200
 
