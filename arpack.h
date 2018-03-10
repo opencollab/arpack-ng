@@ -1,5 +1,5 @@
-#ifndef __ARAPCK_H__
-#define __ARAPCK_H__
+#ifndef __ARPACK_H__
+#define __ARPACK_H__
 
 extern void ssaupd_c(int * ido, char * bmat, int n, char * which, int nev,
                      float tol, float * resid, int ncv, float * v,
