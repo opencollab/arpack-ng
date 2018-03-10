@@ -9,6 +9,7 @@
 #include <cmath>
 #include "arpack.hpp"
 #include <complex.h> // creal, cimag.
+#include <string>
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -26,9 +27,9 @@ void sMatVec(float * x, float * y) {
 
 int ss() {
   BLASINT ido = 0;
-  char bmat[] = "I";
+  std::string bmat("I");
   BLASINT N = 1000;
-  char which[] = "LM";
+  std::string which("LM");
   BLASINT nev = 9;
   float tol = 0;
   float resid[N];
@@ -39,7 +40,7 @@ int ss() {
   BLASINT ipntr[14];
   float workd[3*N];
   bool rvec = true;
-  char howmny[] = "A";
+  std::string howmny("A");
   float* d = (float*) new float[(nev+1)];
   int select[ncv];
   float z[(N+1)*(nev+1)];
@@ -62,7 +63,7 @@ int ss() {
 
   while(ido != 99) {
     /* call arpack like you would have, but, use ssaupd_c instead of ssaupd_ */
-    ssaupd_c(ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
+    ssaupd_c(ido, bmat.c_str(), N, which.c_str(), nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, info);
 
     sMatVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
@@ -70,8 +71,8 @@ int ss() {
   if (iparam[4] != nev) return 1; // check number of ev found by arpack.
 
   /* call arpack like you would have, but, use sseupd_c instead of sseupd_ */
-  sseupd_c(rvec, howmny, select, d, z, ldz, sigma,
-           bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
+  sseupd_c(rvec, howmny.c_str(), select, d, z, ldz, sigma,
+           bmat.c_str(), N, which.c_str(), nev, tol, resid, ncv, V, ldv, iparam, ipntr,
            workd, workl, lworkl, info);
   int i;
   for (i = 0; i < nev; ++i) {
@@ -93,9 +94,9 @@ void cMatVec(float _Complex * x, float _Complex * y) {
 
 int cn() {
   BLASINT ido = 0;
-  char bmat[] = "I";
+  std::string bmat("I");
   BLASINT N = 1000;
-  char which[] = "LM";
+  std::string which("LM");
   BLASINT nev = 9;
   float tol = 0;
   float _Complex resid[N];
@@ -106,7 +107,7 @@ int cn() {
   BLASINT ipntr[14];
   float _Complex workd[3*N];
   bool rvec = true;
-  char howmny[] = "A";
+  std::string howmny("A");
   float _Complex* d = (float _Complex*) new float _Complex[(nev+1)];
   int select[ncv];
   float _Complex z[(N+1)*(nev+1)];
@@ -131,7 +132,7 @@ int cn() {
 
   while(ido != 99) {
     /* call arpack like you would have, but, use cnaupd_c instead of cnaupd_ */
-    cnaupd_c(ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
+    cnaupd_c(ido, bmat.c_str(), N, which.c_str(), nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, info);
 
     cMatVec(&(workd[ipntr[0]-1]), &(workd[ipntr[1]-1]));
@@ -139,8 +140,8 @@ int cn() {
   if (iparam[4] != nev) return 1; // check number of ev found by arpack.
 
   /* call arpack like you would have, but, use cneupd_c instead of cneupd_ */
-  cneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,
-           bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
+  cneupd_c(rvec, howmny.c_str(), select, d, z, ldz, sigma, workev,
+           bmat.c_str(), N, which.c_str(), nev, tol, resid, ncv, V, ldv, iparam, ipntr,
            workd, workl, lworkl, rwork, info);
   int i;
   for (i = 0; i < nev; ++i) {
