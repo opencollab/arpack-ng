@@ -145,7 +145,7 @@ int cn() {
   int i;
   for (i = 0; i < nev; ++i) {
     std::cout << creal(d[i]) << " " << cimag(d[i]) << std::endl;
-    if(fabs(creal(d[i]) - (float)(1000-i))>1e-1){
+    if(fabs(creal(d[i]) - (float)(1000-i))>1e-1 || fabs(cimag(d[i]) - (float)(1000-i))>1e-1){
       delete [] d;
       return 1;
     }

@@ -147,7 +147,7 @@ int zn() {
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f %f\n", creal(d[i]), cimag(d[i]));
-    if(fabs(creal(d[i]) - (double)(1000-i))>1e-6){
+    if(fabs(creal(d[i]) - (double)(1000-i))>1e-6 || fabs(cimag(d[i]) - (double)(1000-i))>1e-6){
       free(d);
       return 1;
     }
