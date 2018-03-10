@@ -206,7 +206,7 @@ c
       intrinsic  abs, max, min
 c
 c     %----------------%
-c     | Data statments |
+c     | Data statements |
 c     %----------------%
 c
       data       first / .true. /
@@ -385,7 +385,7 @@ c
             do 80 i = istart, iend-1
 c
 c              %-----------------------------------------------------%
-c              | Contruct the plane rotation G to zero out the bulge |
+c              | Construct the plane rotation G to zero out the bulge |
 c              %-----------------------------------------------------%
 c
                call dlartg (f, g, c, s, r)

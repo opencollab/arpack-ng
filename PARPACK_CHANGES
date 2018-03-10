@@ -334,4 +334,4 @@ c  SELECT  Logical array of dimension NCV.  (INPUT/WORKSPACE)
 36. 09/18/2016 p*apps.f and p*aitr.f contain condition to fetch machine epsilon.
     When different p*aupd call use communicator with different number of CPU these
     conditions cause deadlock. Variables inside conditions are moved to global
-    to be reseted each first iteration
+    to be reset each first iteration

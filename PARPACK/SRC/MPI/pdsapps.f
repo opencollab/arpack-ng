@@ -205,7 +205,7 @@ c
       intrinsic  abs
 c
 c     %----------------%
-c     | Data statments |
+c     | Data statements |
 c     %----------------%
 c
 c
