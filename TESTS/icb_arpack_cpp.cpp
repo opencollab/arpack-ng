@@ -89,7 +89,7 @@ int ss() {
 void cMatVec(float _Complex * x, float _Complex * y) {
   int i;
   for (i = 0; i < 1000; ++i)
-    y[i] = (i+1.)*creal(x[i]) + I * (i+1.)*cimag(x[i]);
+    y[i] = x[i] * (i+1.0f + _Complex_I * (i+1.0f));
 };
 
 int cn() {
@@ -146,7 +146,7 @@ int cn() {
   int i;
   for (i = 0; i < nev; ++i) {
     std::cout << creal(d[i]) << " " << cimag(d[i]) << std::endl;
-    if(fabs(creal(d[i]) - (float)(1000-i))>1e-1){
+    if(fabs(creal(d[i]) - (float)(1000-i))>1e-1 || fabs(cimag(d[i]) - (float)(1000-i))>1e-1){
       delete [] d;
       return 1;
     }

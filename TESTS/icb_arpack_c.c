@@ -90,7 +90,7 @@ int ds() {
 void zMatVec(double _Complex * x, double _Complex * y) {
   int i;
   for (i = 0; i < 1000; ++i)
-    y[i] = (i+1.)*creal(x[i]) + I * (i+1.)*cimag(x[i]);
+    y[i] = x[i] * (i+1.0 + _Complex_I * (i+1.0));
 };
 
 int zn() {
@@ -147,7 +147,7 @@ int zn() {
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f %f\n", creal(d[i]), cimag(d[i]));
-    if(fabs(creal(d[i]) - (double)(1000-i))>1e-6){
+    if(fabs(creal(d[i]) - (double)(1000-i))>1e-6 || fabs(cimag(d[i]) - (double)(1000-i))>1e-6){
       free(d);
       return 1;
     }
