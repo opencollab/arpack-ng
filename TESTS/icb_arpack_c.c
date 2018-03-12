@@ -90,7 +90,7 @@ int ds() {
 void zMatVec(double _Complex * x, double _Complex * y) {
   int i;
   for (i = 0; i < 1000; ++i)
-    y[i] = (i+1.)*creal(x[i]) + I * (i+1.)*cimag(x[i]);
+    y[i] = x[i] * (i+1.0 + _Complex_I * (i+1.0));
 };
 
 int zn() {
