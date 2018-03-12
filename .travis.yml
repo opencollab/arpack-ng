@@ -28,10 +28,10 @@ script:
   - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D ICB=ON .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D ENABLE_STATIC=OFF -D MPI=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D ENABLE_STATIC=OFF -D ICB=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D ICB=ON .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
   # CONFIGURE
