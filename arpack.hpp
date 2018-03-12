@@ -1,6 +1,12 @@
 #ifndef __ARPACK_HPP__
 #define __ARPACK_HPP__
 
+/*
+ * From C++, arpack does not exist.
+ * Arpack is Fortran. ISO_C_BINDING is a gateway from Fortran to C, not C++. But, C++ can "get back" to C.
+ * This is why you find C types in the arpack.hpp (C++ header) to be as safe as possible.
+ */
+
 extern "C" void ssaupd_c(int & ido, const char * bmat, int n, const char * which, int nev,
                          float tol, float * resid, int ncv, float * v,
                          int ldv, int * iparam, int * ipntr, float * workd,
