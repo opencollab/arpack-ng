@@ -113,12 +113,8 @@ if (MPI)
     file(GLOB parpacksrc_STAT_SRCS PARPACK/SRC/MPI/*.f)
 endif()
 
-option(ENABLE_STATIC "Static linking (shared otherwise)" ON)
-if (ENABLE_STATIC)
-  add_library(arpack STATIC ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
-else ()
-  add_library(arpack SHARED ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
-endif()
+# use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
+add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
 if(ICB)
   install(FILES arpack.h DESTINATION include)
@@ -132,11 +128,8 @@ set_target_properties(arpack PROPERTIES VERSION 2.0.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
-  if (ENABLE_STATIC)
-    add_library(parpack STATIC ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS})
-  else ()
-    add_library(parpack SHARED ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS})
-  endif ()
+    # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
+    add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS})
 
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
