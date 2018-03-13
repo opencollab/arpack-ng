@@ -113,10 +113,15 @@ AC_ARG_ENABLE([icb],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [])
 if test x"$enable_icb" != x"no"; then
+  AC_PROG_CC
   AC_PROG_CXX
   AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
+  if test x"$enable_mpi" != x"no"; then
+    AC_CONFIG_FILES([parpack.h:parpack.h])
+    AC_CONFIG_FILES([parpack.hpp:parpack.hpp])
+  fi
 fi
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])

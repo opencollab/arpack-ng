@@ -87,8 +87,10 @@ endif()
 file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
 
 set(arpacksrc_ICB "")
+set(parpacksrc_ICB "")
 if(ICB)
   file(GLOB arpacksrc_ICB SRC/icba*.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -119,6 +121,10 @@ add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_IC
 if(ICB)
   install(FILES arpack.h DESTINATION include)
   install(FILES arpack.hpp DESTINATION include)
+  if (MPI)
+    install(FILES parpack.h DESTINATION include)
+    install(FILES parpack.hpp DESTINATION include)
+  endif()
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
@@ -129,7 +135,7 @@ set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
     # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
-    add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS})
+    add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB})
 
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
