@@ -9,6 +9,9 @@ addons:
   apt:
     packages:
       - gfortran
+      - gcc
+      - g++
+      - libc++-dev
       - libblas-dev
       - liblapack-dev
       - libopenmpi-dev
@@ -22,16 +25,35 @@ script:
   # CMAKE
   - if [ "$BUILD" == "cmake" ]; then mkdir build ; fi
   - if [ "$BUILD" == "cmake" ]; then cd build ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D ICB=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=OFF .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D ICB=ON .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=ON  .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then make all check ; fi
+  - if [ "$BUILD" == "cmake" ]; then make test ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON  -D ICB=OFF .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then make all check ; fi
+  - if [ "$BUILD" == "cmake" ]; then make test ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON  -D ICB=ON  .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then make all check ; fi
+  - if [ "$BUILD" == "cmake" ]; then make test ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=OFF -D ICB=OFF .. ; fi
+  - if [ "$BUILD" == "cmake" ]; then make all check ; fi
+  - if [ "$BUILD" == "cmake" ]; then make test ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
+  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=OFF -D ICB=ON  .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
   # CONFIGURE
