@@ -1,1 +1,9 @@
 * add a version somewhere to allow configure to detect it
+* add icb_parpack_c and icb_parpack_cpp tests in autotools test suite
+  check out TODO in PARPACK/TESTS/MPI/Makefile.am and .travis.yml
+  => uncomment "TODO lines" in PARPACK/TESTS/MPI/Makefile.am
+  => run: ./bootstrap; ./configure --enable-mpi --enable-icb; make all check
+  => problem is icb_parpack_c.c and icb_parpack_cpp.cpp do not link...
+     autotools gurus who could fix this will maybe find their way to a solution
+     in the HDF5 tarball (check m4/aclocal_fc.* and PAC_* macros)
+  => if this could be fixed: do not forget to uncomment TODO in .travis.yml

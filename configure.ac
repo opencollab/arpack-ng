@@ -98,7 +98,9 @@ AC_ARG_ENABLE([mpi],
 	[AS_VAR_SET([enable_mpi], [no])])
 AS_IF([test x"$enable_mpi" != x"no"], [
 	AC_LANG_PUSH([Fortran 77])
-	AX_MPI([], AC_MSG_ERROR([could not compile a MPI test program]))
+	AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
+	AC_SUBST([MPI_Fortran_LIBS], [$MPILIBS])
+	F77=$MPIF77
 	AC_LANG_POP([Fortran 77])
 ])
 
@@ -121,6 +123,16 @@ if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
     AC_CONFIG_FILES([parpack.h:parpack.h])
     AC_CONFIG_FILES([parpack.hpp:parpack.hpp])
+    AC_LANG_PUSH([C])
+    AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))
+    AC_SUBST([MPI_C_LIBS], [$MPILIBS])
+    CC=$MPICC
+    AC_LANG_POP([C])
+    AC_LANG_PUSH([C++])
+    AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))
+    AC_SUBST([MPI_CXX_LIBS], [$MPILIBS])
+    CXX=$MPICXX
+    AC_LANG_POP([C++])
   fi
 fi
 
