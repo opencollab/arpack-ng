@@ -441,23 +441,23 @@ endif()
 
 if(ICB)
   add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
-  target_include_directories(icb_arpack_c PUBLIC ..)
+  target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.h
   target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(icb_arpack_c Tests/icb_arpack_c)
 
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
-  target_include_directories(icb_arpack_cpp PUBLIC ..)
+  target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.hpp
   target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(icb_arpack_cpp Tests/icb_arpack_cpp)
 
   if (MPI)
     add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
-    target_include_directories(icb_parpack_c PUBLIC .. ${MPI_C_INCLUDE_DIRS})
+    target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_C_INCLUDE_DIRS}) # Get parpack.h mpi.h
     target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES})
     add_test(icb_parpack_c mpirun -n 2 Tests/icb_parpack_c)
 
     add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
-    target_include_directories(icb_parpack_cpp PUBLIC .. ${MPI_CXX_INCLUDE_DIRS})
+    target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_CXX_INCLUDE_DIRS}) # Get parpack.hpp mpi.h
     target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_CXX_LIBRARIES})
     add_test(icb_parpack_cpp mpirun -n 2 Tests/icb_parpack_cpp)
   endif()
