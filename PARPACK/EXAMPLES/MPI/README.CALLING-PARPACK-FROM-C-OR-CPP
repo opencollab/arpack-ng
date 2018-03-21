@@ -1,0 +1,2 @@
+In PARPACK/TESTS/MPI, the file icb_parpack_c.c     is an example of how to call parpack from C.
+In PARPACK/TESTS/MPI, the file icb_parpack_cpp.cpp is an example of how to call parpack from C++.
