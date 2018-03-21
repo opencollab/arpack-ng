@@ -119,10 +119,8 @@ if test x"$enable_icb" != x"no"; then
   AC_PROG_CXX
   AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
-  AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
     AC_CONFIG_FILES([parpack.h:parpack.h])
-    AC_CONFIG_FILES([parpack.hpp:parpack.hpp])
     AC_LANG_PUSH([C])
     AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))
     AC_SUBST([MPI_C_LIBS], [$MPILIBS])

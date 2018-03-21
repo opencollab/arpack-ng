@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <cmath>
-#include "arpack.hpp"
+#include "arpack.h"
 #include <complex.h> // creal, cimag.
 #include <string>
 
