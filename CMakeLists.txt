@@ -51,6 +51,11 @@ function(pexamples list_name)
     endforeach()
 endfunction(pexamples)
 
+# Enable language(s) before any find_package (in particular before MPI find_package).
+if (ICB)
+    enable_language(C CXX) # For testing binding with c/c++.
+endif()
+
 #if (SYSTEM_BLAS)
     find_package(BLAS REQUIRED)
 #endif()
@@ -87,8 +92,10 @@ endif()
 file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
 
 set(arpacksrc_ICB "")
+set(parpacksrc_ICB "")
 if(ICB)
   file(GLOB arpacksrc_ICB SRC/icba*.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -119,6 +126,10 @@ add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_IC
 if(ICB)
   install(FILES arpack.h DESTINATION include)
   install(FILES arpack.hpp DESTINATION include)
+  if (MPI)
+    install(FILES parpack.h DESTINATION include)
+    install(FILES parpack.hpp DESTINATION include)
+  endif()
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
@@ -129,8 +140,15 @@ set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
     # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
-    add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS})
+    add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB})
 
+    if (ICB)
+        target_include_directories(parpack PUBLIC ${MPI_C_INCLUDE_DIRS})
+        target_include_directories(parpack PUBLIC ${MPI_CXX_INCLUDE_DIRS})
+        target_link_libraries(parpack ${MPI_C_LIBRARIES})
+        target_link_libraries(parpack ${MPI_CXX_LIBRARIES})
+    endif()
+    target_include_directories(parpack PUBLIC ${MPI_Fortran_INCLUDE_DIRS})
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
@@ -191,10 +209,8 @@ foreach (f IN LISTS CFUNS)
   list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
 endforeach ()
 
-if(NOT ICB) # With ICB no more need to tweak mangling.
-    include(FortranCInterface)
-    FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
-endif()
+include(FortranCInterface)
+FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -429,11 +445,22 @@ if(ICB)
   target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(icb_arpack_c Tests/icb_arpack_c)
 
-  enable_language(CXX) # For testing binding with c++.
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
   target_include_directories(icb_arpack_cpp PUBLIC ..)
   target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   add_test(icb_arpack_cpp Tests/icb_arpack_cpp)
+
+  if (MPI)
+    add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
+    target_include_directories(icb_parpack_c PUBLIC .. ${MPI_C_INCLUDE_DIRS})
+    target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES})
+    add_test(icb_parpack_c mpirun -n 2 Tests/icb_parpack_c)
+
+    add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
+    target_include_directories(icb_parpack_cpp PUBLIC .. ${MPI_CXX_INCLUDE_DIRS})
+    target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_CXX_LIBRARIES})
+    add_test(icb_parpack_cpp mpirun -n 2 Tests/icb_parpack_cpp)
+  endif()
 endif()
 
 ############################

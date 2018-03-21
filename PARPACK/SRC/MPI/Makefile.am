@@ -17,6 +17,13 @@ CSRC = pcnaitr.f pcnapps.f pcnaup2.f pcnaupd.f pcneigh.f pcneupd.f pcngets.f \
 ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.f pzlarnv.f pdznorm2.f
 
+if ICB
+SSRC += icbpss.f90 icbpsn.f90
+DSRC += icbpds.f90 icbpdn.f90
+CSRC += icbpcn.f90
+ZSRC += icbpzn.f90
+endif
+
 EXTRA_DIST = debug.h stat.h pcontext.h
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@_noopt.la
@@ -29,5 +36,5 @@ libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
 	$(top_builddir)/SRC/libarpack@LIBSUFFIX@.la \
-	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPILIBS)
+	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
 libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
