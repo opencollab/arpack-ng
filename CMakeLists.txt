@@ -54,6 +54,22 @@ endfunction(pexamples)
 # Enable language(s) before any find_package (in particular before MPI find_package).
 if (ICB)
     enable_language(C CXX) # For testing binding with c/c++.
+
+    file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
+         "
+          PROGRAM PROG_ICB
+          USE iso_c_binding
+          IMPLICIT NONE
+          INTEGER(C_INT) :: a
+          a = 1
+          END PROGRAM PROG_ICB
+         ")
+    try_compile(COMPILE_ICB ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90)
+    if(NOT ${COMPILE_ICB})
+      message(FATAL_ERROR "-- Fortran compiler does not support iso_c_binding.")
+    else()
+      message("-- Fortran compiler does support iso_c_binding.")
+    endif()
 endif()
 
 #if (SYSTEM_BLAS)
