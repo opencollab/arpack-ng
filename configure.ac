@@ -139,6 +139,23 @@ if test x"$enable_icb" != x"no"; then
     AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
     CXX=$MPICXX
     AC_LANG_POP([C++])
+
+    AC_LANG_PUSH([C])
+    AC_MSG_CHECKING([for MPI_Comm_c2f function])
+    AC_LINK_IFELSE(
+                   [
+                    AC_LANG_PROGRAM(
+                                    [[#include <mpi.h>]],
+                                    [[MPI_Comm c_comm; MPI_Comm_c2f(c_comm)]]
+                                   )
+                   ],
+                   [AC_MSG_RESULT([yes])],
+                   [
+                    AC_MSG_RESULT([no])
+                    AC_MSG_ERROR([symbol MPI_Comm_c2f does not exist])
+                   ]
+                  )
+    AC_LANG_POP([C])
   fi
 fi
 
