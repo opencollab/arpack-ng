@@ -121,16 +121,22 @@ if test x"$enable_icb" != x"no"; then
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
+    AC_LANG_PUSH([Fortran])
+    AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
+    FC=$MPIFC
+    AC_FC_WRAPPERS dnl set FCLIBS
+    AC_LANG_POP([Fortran])
+
     AC_CONFIG_FILES([parpack.h:parpack.h])
     AC_CONFIG_FILES([parpack.hpp:parpack.hpp])
     AC_LANG_PUSH([C])
     AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))
-    AC_SUBST([MPI_C_LIBS], [$MPILIBS])
+    AC_SUBST([MPI_C_LIBS], ["$MPILIBS $FCLIBS"])
     CC=$MPICC
     AC_LANG_POP([C])
     AC_LANG_PUSH([C++])
     AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))
-    AC_SUBST([MPI_CXX_LIBS], [$MPILIBS])
+    AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
     CXX=$MPICXX
     AC_LANG_POP([C++])
   fi
