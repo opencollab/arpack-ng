@@ -50,6 +50,9 @@ EXAMPLES/SYM/[sd]sdrv[123456]
 PARPACK/EXAMPLES/MPI/p[sd]ndrv[13]
 PARPACK/EXAMPLES/MPI/p[sd]sdrv1
 PARPACK/EXAMPLES/MPI/p[cz]ndrv1
+PARPACK/TESTS/MPI/icb_parpack_c
+PARPACK/TESTS/MPI/icb_parpack_cpp
+PARPACK/TESTS/MPI/issue46
 
 *.lib
 *.def

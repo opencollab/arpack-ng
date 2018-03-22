@@ -61,9 +61,9 @@ script:
   - if [ "$BUILD" == "configure" ]; then make all ; fi
   - if [ "$BUILD" == "configure" ]; then make check ; fi
   - if [ "$BUILD" == "configure" ]; then make distcheck ; fi
-# - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi --enable-icb ; fi # TODO
-# - if [ "$BUILD" == "configure" ]; then make all ; fi
-# - if [ "$BUILD" == "configure" ]; then make check ; fi
+  - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi --enable-icb ; fi
+  - if [ "$BUILD" == "configure" ]; then make all ; fi
+  - if [ "$BUILD" == "configure" ]; then make check ; fi
   - if [ "$BUILD" == "configure" ]; then ./configure --enable-icb ; fi
   - if [ "$BUILD" == "configure" ]; then make all ; fi
   - if [ "$BUILD" == "configure" ]; then make check ; fi
