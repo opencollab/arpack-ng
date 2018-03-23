@@ -108,13 +108,34 @@ AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 
 dnl See if compiling with ISO_C_BINDING support
-AC_MSG_CHECKING([for ISO_C_BINDING support])
 AC_ARG_ENABLE([icb],
               [AC_HELP_STRING([--enable-icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [])
 if test x"$enable_icb" != x"no"; then
+  AC_LANG_PUSH([Fortran])
+  AC_MSG_CHECKING([for iso_c_binding module compilation])
+  AC_LINK_IFELSE(
+                 [
+                  AC_LANG_PROGRAM(
+                                  [],
+                                  [
+                                   USE iso_c_binding
+                                   IMPLICIT NONE
+                                   INTEGER(C_INT) :: a
+                                   a = 1
+                                  ]
+                                 )
+                 ],
+                 [AC_MSG_RESULT([yes])],
+                 [
+                  AC_MSG_RESULT([no])
+                  AC_MSG_ERROR([Fortran compiler does not support iso_c_binding])
+                 ]
+                )
+  AC_LANG_POP([Fortran])
+
   AC_PROG_CC
   AC_PROG_CXX
   AM_CONDITIONAL([ICB], [true])
@@ -139,6 +160,23 @@ if test x"$enable_icb" != x"no"; then
     AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
     CXX=$MPICXX
     AC_LANG_POP([C++])
+
+    AC_LANG_PUSH([C])
+    AC_MSG_CHECKING([for MPI_Comm_c2f function])
+    AC_LINK_IFELSE(
+                   [
+                    AC_LANG_PROGRAM(
+                                    [[#include <mpi.h>]],
+                                    [[MPI_Comm c_comm; MPI_Comm_c2f(c_comm)]]
+                                   )
+                   ],
+                   [AC_MSG_RESULT([yes])],
+                   [
+                    AC_MSG_RESULT([no])
+                    AC_MSG_ERROR([symbol MPI_Comm_c2f does not exist])
+                   ]
+                  )
+    AC_LANG_POP([C])
   fi
 fi
 

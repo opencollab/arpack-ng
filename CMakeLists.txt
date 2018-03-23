@@ -54,6 +54,22 @@ endfunction(pexamples)
 # Enable language(s) before any find_package (in particular before MPI find_package).
 if (ICB)
     enable_language(C CXX) # For testing binding with c/c++.
+
+    file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
+         "
+          PROGRAM PROG_ICB
+          USE iso_c_binding
+          IMPLICIT NONE
+          INTEGER(C_INT) :: a
+          a = 1
+          END PROGRAM PROG_ICB
+         ")
+    try_compile(COMPILE_ICB ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90)
+    if(NOT ${COMPILE_ICB})
+      message(FATAL_ERROR "-- Fortran compiler does not support iso_c_binding.")
+    else()
+      message("-- Fortran compiler does support iso_c_binding.")
+    endif()
 endif()
 
 #if (SYSTEM_BLAS)
@@ -68,6 +84,14 @@ if (MPI)
     find_package(MPI REQUIRED)
     include_directories(${MPI_Fortran_INCLUDE_PATH})
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
+
+    if(ICB)
+        include_directories(${MPI_C_INCLUDE_PATH})
+        check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h" MPI_Comm_c2f_FOUND)
+        if(NOT ${MPI_Comm_c2f_FOUND})
+          message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
+        endif()
+    endif()
 endif()
 
 #if (SYSTEM_LAPACK)
