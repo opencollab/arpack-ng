@@ -1,6 +1,10 @@
 F77 = $(MPIF77)
 LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
+# Run MPI tests with "mpirun -n 2"
+LOG_COMPILER = mpirun
+LOG_FLAGS = -n 2
+
 SISS = issue46
 
 check_PROGRAMS = $(SISS)
