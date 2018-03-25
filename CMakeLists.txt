@@ -157,10 +157,8 @@ add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_IC
 
 if(ICB)
   install(FILES arpack.h DESTINATION include)
-  install(FILES arpack.hpp DESTINATION include)
   if (MPI)
     install(FILES parpack.h DESTINATION include)
-    install(FILES parpack.hpp DESTINATION include)
   endif()
 endif()
 

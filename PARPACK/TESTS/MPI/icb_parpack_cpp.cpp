@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cmath>
 #include "mpi.h"
-#include "parpack.hpp"
+#include "parpack.h"
 #include <complex.h> // creal, cimag.
 #include <string>
 
