@@ -71,14 +71,15 @@ arpack-ng is replacing arpack almost everywhere.
    The following instructions explain how to make the ARPACK library.
 
 4. Unlike ARPACK, ARPACK-NG is providing autotools based build system.
-Therefor, the classical:
+
+Therefor, the classical commands should work as expected:
+   
    
     $ sh bootstrap
     $ ./configure
     $ make
     $ make check
     $ make install
-   should work as expected.
 
 Furthermore, ARPACK-NG now provides CMake functionality:
    
@@ -103,15 +104,15 @@ To build with code coverage:
 * ex-complex.doc
 
    for templates on how to invoke the computational modes of ARPACK.
-   Also look in the README file for explanations concerning the
+   Also look in the README.MD file for explanations concerning the
    other documents.
 
-
+Authors:
 * Danny Sorensen   at  sorensen@caam.rice.edu
 * Richard Lehoucq  at  rblehou@sandia.gov
 * Chao Yang        at  cyang@lbl.gov
 * Kristi Maschhoff at  kristyn@tera.com
-* Sylvestre Ledru  at  sylvestre@debian.org
+* Sylvestre Ledru  at  sylvestre@debian.org (current maintainer)
 * Allan Cornet
 
  Good luck and enjoy.
