@@ -1,6 +1,9 @@
 ARPACK-NG is a collection of Fortran77 subroutines designed to solve large scale
 eigenvalue problems.
 
+<a href="https://travis-ci.org/opencollab/arpack-ng"><img src="https://travis-ci.org/opencollab/arpack-ng.svg"/></a><br/>
+[![Coverage Status](https://coveralls.io/repos/github/opencollab/arpack-ng/badge.svg?branch=master)](https://coveralls.io/github/opencollab/arpack-ng?branch=master)
+
 Important Features:
 
 * Reverse Communication Interface.
