@@ -34,9 +34,9 @@ arpack-ng is replacing arpack almost everywhere.
    The directory SRC contains the top level routines including
    the highest level reverse communication interface routines
 
-      ssaupd, dsaupd - symmetric single and double precision
-      snaupd, dnaupd - non-symmetric single and double precision
-      cnaupd, znaupd - complex non-symmetric single and double precision
+* ssaupd, dsaupd - symmetric single and double precision
+* snaupd, dnaupd - non-symmetric single and double precision
+* cnaupd, znaupd - complex non-symmetric single and double precision
 
    The headers of these routines contain full documentation of calling
    sequence and usage.  Additional information is in the DOCUMENTS directory.
@@ -48,13 +48,13 @@ arpack-ng is replacing arpack almost everywhere.
    data types and precisions may be found in the EXAMPLES directory.
    Upon executing the 'ls EXAMPLES' command you should see
 
-      BAND
-      COMPLEX
-      NONSYM
-      README
-      SIMPLE
-      SVD
-      SYM
+* BAND
+* COMPLEX
+* NONSYM
+* README
+* SIMPLE
+* SVD
+* SYM
 
    Example programs for banded, complex, nonsymmetric, symmetric,
    and singular value decomposition may be found in the directories
@@ -71,44 +71,47 @@ arpack-ng is replacing arpack almost everywhere.
    The following instructions explain how to make the ARPACK library.
 
 4. Unlike ARPACK, ARPACK-NG is providing autotools based build system.
-   Therefor, the classical:
-   $ sh bootstrap
-   $ ./configure
-   $ make
-   $ make check
-   $ make install
+Therefor, the classical:
+   
+    $ sh bootstrap
+    $ ./configure
+    $ make
+    $ make check
+    $ make install
    should work as expected.
 
-   Furthermore, ARPACK-NG now provides CMake functionality:
-   $ mkdir build
-   $ cd build
-   $ cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
-   $ make
-   $ make install
+Furthermore, ARPACK-NG now provides CMake functionality:
+   
+    $ mkdir build
+    $ cd build
+    $ cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
+    $ make
+    $ make install
    builds everything including examples and parallel support (with MPI).
 
-   To build with code coverage:
-   $ mkdir build
-   $ cd build
-   $ cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
-   $ make all check test coveralls
+To build with code coverage:
+   
+    $ mkdir build
+    $ cd build
+    $ cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
+    $ make all check test coveralls
 
 5. Within DOCUMENTS directory there are three files
 
-   ex-sym.doc
-   ex-nonsym.doc and
-   ex-complex.doc
+* ex-sym.doc
+* ex-nonsym.doc and
+* ex-complex.doc
 
    for templates on how to invoke the computational modes of ARPACK.
    Also look in the README file for explanations concerning the
    other documents.
 
 
-   Danny Sorensen   at  sorensen@caam.rice.edu
-   Richard Lehoucq  at  rblehou@sandia.gov
-   Chao Yang        at  cyang@lbl.gov
-   Kristi Maschhoff at  kristyn@tera.com
-   Sylvestre Ledru  at  sylvestre@debian.org
-   Allan Cornet
+* Danny Sorensen   at  sorensen@caam.rice.edu
+* Richard Lehoucq  at  rblehou@sandia.gov
+* Chao Yang        at  cyang@lbl.gov
+* Kristi Maschhoff at  kristyn@tera.com
+* Sylvestre Ledru  at  sylvestre@debian.org
+* Allan Cornet
 
  Good luck and enjoy.
