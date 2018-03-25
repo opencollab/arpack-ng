@@ -84,6 +84,12 @@ arpack-ng is replacing arpack almost everywhere.
    $ make install
    builds everything including examples and parallel support (with MPI).
 
+   To build with code coverage:
+   $ mkdir build
+   $ cd build
+   $ cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
+   $ make all check test coveralls
+
 5. Within DOCUMENTS directory there are three files
 
    ex-sym.doc

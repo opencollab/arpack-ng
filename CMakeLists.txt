@@ -6,6 +6,8 @@ endif ()
 
 project(arpack C Fortran)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
 # Adopted from https://github.com/feymark/arpack.git
 
 if (POLICY CMP0042)
@@ -26,6 +28,12 @@ option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS an
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+if (COVERALLS)
+    include(Coveralls)
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    set(EXTRA_LDLAGS "${EXTRA_LDLAGS}-lgcov")
+endif()
+
 function(prefixlist list_name prefix)
     set(${list_name}_TMP)
     foreach(l ${${list_name}})
@@ -38,7 +46,7 @@ function(examples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
-        target_link_libraries(${lwe} arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+        target_link_libraries(${lwe} arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
         add_test(NAME "${lwe}_ex" COMMAND ${lwe} WORKING_DIRECTORY ${arpackexample_DIR})
     endforeach()
 endfunction(examples)
@@ -113,7 +121,7 @@ endif()
 #    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
 #endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
-file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
+file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/SRC/*.f)
 
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
@@ -123,20 +131,20 @@ if(ICB)
 endif()
 
 set(arpackutil_STAT_SRCS
-    UTIL/icnteq.f
-    UTIL/icopy.f
-    UTIL/iset.f
-    UTIL/iswap.f
-    UTIL/ivout.f
-    UTIL/second_NONE.f
-    UTIL/svout.f
-    UTIL/smout.f
-    UTIL/dvout.f
-    UTIL/dmout.f
-    UTIL/cvout.f
-    UTIL/cmout.f
-    UTIL/zvout.f
-    UTIL/zmout.f )
+    ${arpack_SOURCE_DIR}/UTIL/icnteq.f
+    ${arpack_SOURCE_DIR}/UTIL/icopy.f
+    ${arpack_SOURCE_DIR}/UTIL/iset.f
+    ${arpack_SOURCE_DIR}/UTIL/iswap.f
+    ${arpack_SOURCE_DIR}/UTIL/ivout.f
+    ${arpack_SOURCE_DIR}/UTIL/second_NONE.f
+    ${arpack_SOURCE_DIR}/UTIL/svout.f
+    ${arpack_SOURCE_DIR}/UTIL/smout.f
+    ${arpack_SOURCE_DIR}/UTIL/dvout.f
+    ${arpack_SOURCE_DIR}/UTIL/dmout.f
+    ${arpack_SOURCE_DIR}/UTIL/cvout.f
+    ${arpack_SOURCE_DIR}/UTIL/cmout.f
+    ${arpack_SOURCE_DIR}/UTIL/zvout.f
+    ${arpack_SOURCE_DIR}/UTIL/zmout.f )
 
 
 if (MPI)
@@ -157,7 +165,7 @@ if(ICB)
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
-target_link_libraries(arpack ${LAPACK_LIBRARIES})
+target_link_libraries(arpack ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.0.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
@@ -429,60 +437,60 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
 
 add_executable(dnsimp_test EXCLUDE_FROM_ALL TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
 set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
-target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_custom_command(TARGET dnsimp_test POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
 )
 add_test(dnsimp_test Tests/dnsimp)
 
 add_executable(bug_1315_single EXCLUDE_FROM_ALL TESTS/bug_1315_single.c)
-target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_1315_single Tests/bug_1315_single)
 
 add_executable(bug_1315_double EXCLUDE_FROM_ALL TESTS/bug_1315_double.c)
-target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_1315_double Tests/bug_1315_double)
 
 add_executable(bug_1323 EXCLUDE_FROM_ALL TESTS/bug_1323.f)
-target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_1323 Tests/bug_1323)
 
 add_executable(bug_58_double EXCLUDE_FROM_ALL TESTS/bug_58_double.f)
-target_link_libraries(bug_58_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(bug_58_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_58_double Tests/bug_58_double)
 
 add_executable(bug_79_double_complex EXCLUDE_FROM_ALL TESTS/bug_79_double_complex.f)
-target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_79_double_complex Tests/bug_79_double_complex)
 
 add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double bug_79_double_complex)
 
 if(MPI)
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
-  target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
   add_test(issue46 Tests/issue46)
 endif()
 
 if(ICB)
   add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
   target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.h
-  target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
   add_test(icb_arpack_c Tests/icb_arpack_c)
 
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
   target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.hpp
-  target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
   add_test(icb_arpack_cpp Tests/icb_arpack_cpp)
 
   if (MPI)
     add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
     target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_C_INCLUDE_DIRS}) # Get parpack.h mpi.h
-    target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES})
+    target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_C_LIBRARIES})
     add_test(icb_parpack_c mpirun -n 2 Tests/icb_parpack_c)
 
     add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
     target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_CXX_INCLUDE_DIRS}) # Get parpack.hpp mpi.h
-    target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_CXX_LIBRARIES})
+    target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_CXX_LIBRARIES})
     add_test(icb_parpack_cpp mpirun -n 2 Tests/icb_parpack_cpp)
   endif()
 endif()
@@ -537,3 +545,19 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
+
+
+# We don't want this to run on every build.
+option(COVERALLS "Generate coveralls data" OFF)
+
+
+if (COVERALLS)
+    set(COVERAGE_SRCS awesome.c code.c files.c)
+
+    # Create the coveralls target.
+    coveralls_setup(
+        "${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB}" # The source files.
+        ON                 # If we should upload.
+        "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
+endif()
+
