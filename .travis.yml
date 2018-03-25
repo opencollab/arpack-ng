@@ -55,6 +55,9 @@ script:
   - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=OFF -D ICB=ON  .. ; fi
   - if [ "$BUILD" == "cmake" ]; then make all check ; fi
   - if [ "$BUILD" == "cmake" ]; then make test ; fi
+  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch for code coverage
+  - if [ "$BUILD" == "cmake" ]; then cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..  ; fi
+  - if [ "$BUILD" == "cmake" ]; then make all check test coveralls VERBOSE=1 ; fi
   # CONFIGURE
   - if [ "$BUILD" == "configure" ]; then ./bootstrap ; fi
   - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi ; fi
