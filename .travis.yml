@@ -73,3 +73,9 @@ script:
   - if [ "$BUILD" == "configure" ]; then ./configure ; fi
   - if [ "$BUILD" == "configure" ]; then make all ; fi
   - if [ "$BUILD" == "configure" ]; then make check ; fi
+
+after_success:
+
+  # COVERAGE
+  - if [[ "$BUILD" == "cmake" ]]; then gcov -s ../SRC -s ../PARPACK/SRC/MPI CMakeFiles/arpack.dir/SRC/* CMakeFiles/parpack.dir/PARPACK/SRC/MPI/*; fi
+  - if [[ "$BUILD" == "cmake" ]]; then bash <(curl -s https://codecov.io/bash); fi
