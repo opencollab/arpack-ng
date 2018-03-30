@@ -1,0 +1,47 @@
+codecov:
+
+  branches: *
+
+  ci:
+
+    - travis-ci.org
+
+coverage:
+
+  range: 75..100
+
+  round: nearest
+
+  precision: 2
+
+  status:
+
+    project:
+
+      default:
+
+        enabled: yes
+
+        target: auto
+
+        if_not_found: success
+
+        if_ci_failed: error
+
+    patch:
+
+      default:
+
+        enabled: yes
+
+        target: 75%
+
+        if_not_found: success
+
+        if_ci_failed: error
+
+comment:
+
+  behavior: default
+
+  layout: "header, diff"
