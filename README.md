@@ -72,7 +72,7 @@ arpack-ng is replacing arpack almost everywhere.
 
 4. Unlike ARPACK, ARPACK-NG is providing autotools based build system.
 
-Therefor, the classical commands should work as expected:
+Therefore, the classical commands should work as expected:
    
    
     $ sh bootstrap
