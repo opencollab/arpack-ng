@@ -3,6 +3,7 @@
  *
  * Just use arpack as you would have normally done, but, use *[ae]upd_c instead of *[ae]upd_.
  * The main advantage is that compiler checks (arguments) are performed at build time.
+ * Note: to debug arpack, call debug_c.
  */
 
 #include <stdio.h>
@@ -11,6 +12,7 @@
 #include <stdbool.h> // bool.
 #include "arpack.h"
 #include <complex.h> // creal, cimag.
+#include "debug_c.h" // debug arpack.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -157,6 +159,9 @@ int zn() {
 }
 
 int main() {
+  // Ask arpack to print debug information.
+  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
   if (ds() != 0) return 1;
   printf("------\n");
   return zn();

@@ -180,6 +180,13 @@ if test x"$enable_icb" != x"no"; then
   fi
 fi
 
+dnl Add support for debuging arpack
+AC_CONFIG_FILES([debug.h:debug.h])
+if test x"$enable_icb" != x"no"; then
+  AC_CONFIG_FILES([debug_c.h:debug_c.h])
+  AC_CONFIG_FILES([debug_c.hpp:debug_c.hpp])
+fi
+
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 

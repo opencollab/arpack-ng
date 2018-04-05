@@ -4,6 +4,7 @@
  *
  * Just use arpack as you would have normally done, but, use *[ae]upd_c instead of *[ae]upd_.
  * The main advantage is that compiler checks (arguments) are performed at build time.
+ * Note: to debug parpack, call debug_c.
  */
 
 #include <iostream>
@@ -12,6 +13,7 @@
 #include "parpack.hpp"
 #include <complex.h> // creal, cimag.
 #include <string>
+#include "debug_c.hpp" // debug parpack.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -162,6 +164,9 @@ int cn() {
 }
 
 int main() {
+  // Ask parpack to print debug information.
+  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
   MPI_Init(NULL, NULL);
   if (ss() != 0) return 1;
   std::cout << "------" << std::endl;
