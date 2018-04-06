@@ -159,10 +159,8 @@ int zn() {
 }
 
 int main() {
-  // Ask arpack to print debug information.
-  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-  if (ds() != 0) return 1;
+  if (ds() != 0) return 1; // arpack without debug.
   printf("------\n");
-  return zn();
+  debug_c(6, -6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // set debug flags.
+  return zn(); // arpack with debug.
 }

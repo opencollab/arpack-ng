@@ -158,10 +158,8 @@ int cn() {
 }
 
 int main() {
-  // Ask arpack to print debug information.
-  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-  if (ss() != 0) return 1;
+  if (ss() != 0) return 1; // arpack without debug.
   std::cout << "------" << std::endl;
-  return cn();
+  debug_c(6, -6, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1); // set debug flags.
+  return cn(); // arpack with debug.
 }

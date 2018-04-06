@@ -165,13 +165,12 @@ int zn() {
 }
 
 int main() {
-  // Ask parpack to print debug information.
-  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
   MPI_Init(NULL, NULL);
-  if (ds() != 0) return 1;
+  if (ds() != 0) return 1; // parpack without debug.
+  MPI_Barrier(MPI_COMM_WORLD);
   printf("------\n");
-  if (zn() != 0) return 1;
+  debug_c(6, -6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // set debug flags.
+  if (zn() != 0) return 1; // parpack with debug.
   MPI_Finalize();
   return 0;
 }

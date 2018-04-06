@@ -164,13 +164,12 @@ int cn() {
 }
 
 int main() {
-  // Ask parpack to print debug information.
-  debug_c(6, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
   MPI_Init(NULL, NULL);
-  if (ss() != 0) return 1;
+  if (ss() != 0) return 1; // parpack without debug.
+  MPI_Barrier(MPI_COMM_WORLD);
   std::cout << "------" << std::endl;
-  if (cn() != 0) return 1;
+  debug_c(6, -6, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1); // set debug flags.
+  if (cn() != 0) return 1; // parpack with debug.
   MPI_Finalize();
   return 0;
 }
