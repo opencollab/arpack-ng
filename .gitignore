@@ -37,6 +37,7 @@ TESTS/bug_1315_double
 TESTS/bug_1315_single
 TESTS/bug_1323
 TESTS/bug_58_double
+TESTS/bug_79_double_complex
 TESTS/icb_arpack_c
 TESTS/icb_arpack_cpp
 EXAMPLES/BAND/[sd][sn]bdr[123456]
