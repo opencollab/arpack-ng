@@ -126,8 +126,8 @@ file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/SRC/*.f)
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_icb.f90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_icb.f90)
+  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_init.f90 debug_icb.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_init.f90 debug_icb.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
