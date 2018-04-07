@@ -165,11 +165,24 @@ int cn() {
 
 int main() {
   MPI_Init(NULL, NULL);
-  if (ss() != 0) return 1; // parpack without debug.
+
+  int rc = ss(); // parpack without debug.
+  fflush(stdout);
   MPI_Barrier(MPI_COMM_WORLD);
-  std::cout << "------" << std::endl;
-  debug_c(6, -6, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1); // set debug flags.
-  if (cn() != 0) return 1; // parpack with debug.
+  if (rc != 0) return rc;
+
+  int rank = 0; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if (rank == 0) std::cout << "------" << std::endl;
+
+  debug_c(6, -6, 1,
+          1, 0, 0, 0, 0, 0, 1,
+          1, 0, 0, 0, 0, 0, 1,
+          1, 0, 0, 0, 0, 0, 1); // set debug flags.
+  rc = cn(); // parpack with debug.
+  fflush(stdout);
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (rc != 0) return rc;
+
   MPI_Finalize();
   return 0;
 }

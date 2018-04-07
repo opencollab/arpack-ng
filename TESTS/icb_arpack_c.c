@@ -159,8 +159,16 @@ int zn() {
 }
 
 int main() {
-  if (ds() != 0) return 1; // arpack without debug.
+  int rc = ds(); // arpack without debug.
+  if (rc != 0) return rc;
+
   printf("------\n");
-  debug_c(6, -6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // set debug flags.
-  return zn(); // arpack with debug.
+
+  debug_c(6, -6, 1,
+          0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0); // set debug flags.
+  rc = zn(); // arpack with debug.
+
+  return rc;
 }

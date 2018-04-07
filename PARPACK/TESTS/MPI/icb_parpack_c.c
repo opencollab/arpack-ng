@@ -166,11 +166,24 @@ int zn() {
 
 int main() {
   MPI_Init(NULL, NULL);
-  if (ds() != 0) return 1; // parpack without debug.
+
+  int rc = ds(); // parpack without debug.
+  fflush(stdout);
   MPI_Barrier(MPI_COMM_WORLD);
-  printf("------\n");
-  debug_c(6, -6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // set debug flags.
-  if (zn() != 0) return 1; // parpack with debug.
+  if (rc != 0) return rc;
+
+  int rank = 0; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if (rank == 0) printf("------\n");
+
+  debug_c(6, -6, 1,
+          0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0); // set debug flags.
+  rc = zn(); // parpack with debug.
+  fflush(stdout);
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (rc != 0) return rc;
+
   MPI_Finalize();
   return 0;
 }

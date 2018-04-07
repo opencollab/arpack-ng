@@ -158,8 +158,16 @@ int cn() {
 }
 
 int main() {
-  if (ss() != 0) return 1; // arpack without debug.
+  int rc = ss(); // arpack without debug.
+  if (rc != 0) return rc;
+
   std::cout << "------" << std::endl;
-  debug_c(6, -6, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1); // set debug flags.
-  return cn(); // arpack with debug.
+
+  debug_c(6, -6, 1,
+          1, 0, 0, 0, 0, 0, 1,
+          1, 0, 0, 0, 0, 0, 1,
+          1, 0, 0, 0, 0, 0, 1); // set debug flags.
+  rc = cn(); // arpack with debug.
+
+  return rc;
 }
