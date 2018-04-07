@@ -164,9 +164,9 @@ int main() {
   std::cout << "------" << std::endl;
 
   debug_c(6, -6, 1,
-          1, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 0, 1); // set debug flags.
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1); // set debug flags.
   rc = cn(); // arpack with debug.
 
   return rc;

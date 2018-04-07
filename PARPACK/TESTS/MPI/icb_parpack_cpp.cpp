@@ -175,9 +175,9 @@ int main() {
   if (rank == 0) std::cout << "------" << std::endl;
 
   debug_c(6, -6, 1,
-          1, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 0, 1); // set debug flags.
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1); // set debug flags.
   rc = cn(); // parpack with debug.
   fflush(stdout);
   MPI_Barrier(MPI_COMM_WORLD);

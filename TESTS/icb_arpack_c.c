@@ -165,9 +165,9 @@ int main() {
   printf("------\n");
 
   debug_c(6, -6, 1,
-          0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0); // set debug flags.
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1); // set debug flags.
   rc = zn(); // arpack with debug.
 
   return rc;

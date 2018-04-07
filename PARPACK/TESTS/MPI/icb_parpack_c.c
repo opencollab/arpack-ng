@@ -176,9 +176,9 @@ int main() {
   if (rank == 0) printf("------\n");
 
   debug_c(6, -6, 1,
-          0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0); // set debug flags.
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1); // set debug flags.
   rc = zn(); // parpack with debug.
   fflush(stdout);
   MPI_Barrier(MPI_COMM_WORLD);
