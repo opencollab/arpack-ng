@@ -4,9 +4,10 @@ AM_DISTCHECK_CONFIGURE_FLAGS =
 if MPI
 AM_DISTCHECK_CONFIGURE_FLAGS += --enable-mpi
 endif
+include_HEADERS = debug.h
 if ICB
 AM_DISTCHECK_CONFIGURE_FLAGS += --enable-icb
-include_HEADERS = debug.h debug_c.h debug_c.hpp
+include_HEADERS += debug_c.h debug_c.hpp
 include_HEADERS += arpack.h arpack.hpp
 if MPI
 include_HEADERS += parpack.h parpack.hpp
