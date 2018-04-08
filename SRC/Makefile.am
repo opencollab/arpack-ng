@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects # Needed as debug_init/icb.f90 are not in current directory.
+
 SSRC = snaitr.f snapps.f snaup2.f snaupd.f snconv.f sneigh.f sneupd.f sngets.f sstatn.f \
        ssaitr.f ssapps.f ssaup2.f ssaupd.f ssconv.f sseigt.f sseupd.f ssgets.f sstats.f \
        sgetv0.f ssortc.f ssortr.f ssesrt.f sstqrb.f
@@ -23,5 +25,9 @@ EXTRA_DIST = debug.h stat.h version.h
 
 lib_LTLIBRARIES = libarpack@LIBSUFFIX@.la
 libarpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_init.f90
+if ICB
+libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
+endif
 libarpack@LIBSUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
 libarpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0

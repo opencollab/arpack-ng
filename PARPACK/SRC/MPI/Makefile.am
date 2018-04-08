@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects # Needed as debug_init/icb.f90 are not in current directory.
+
 F77 = $(MPIF77)
 FFLAGS_SAV = @FFLAGS@
 FFLAGS =
@@ -32,6 +34,10 @@ libparpack@LIBSUFFIX@_noopt_la_FFLAGS = -O0
 
 lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
 libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_init.f90
+if ICB
+libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
+endif
 libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \

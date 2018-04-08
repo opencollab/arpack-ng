@@ -4,6 +4,7 @@
  *
  * Just use arpack as you would have normally done, but, use *[ae]upd_c instead of *[ae]upd_.
  * The main advantage is that compiler checks (arguments) are performed at build time.
+ * Note: to debug parpack, call debug_c.
  */
 
 #include <stdio.h>
@@ -13,6 +14,7 @@
 #include "mpi.h"
 #include "parpack.h"
 #include <complex.h> // creal, cimag.
+#include "debug_c.h" // debug parpack.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -164,9 +166,24 @@ int zn() {
 
 int main() {
   MPI_Init(NULL, NULL);
-  if (ds() != 0) return 1;
-  printf("------\n");
-  if (zn() != 0) return 1;
+
+  int rc = ds(); // parpack without debug.
+  fflush(stdout);
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (rc != 0) return rc;
+
+  int rank = 0; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if (rank == 0) printf("------\n");
+
+  debug_c(6, -6, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1); // set debug flags.
+  rc = zn(); // parpack with debug.
+  fflush(stdout);
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (rc != 0) return rc;
+
   MPI_Finalize();
   return 0;
 }
