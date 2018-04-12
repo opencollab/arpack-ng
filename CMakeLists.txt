@@ -441,33 +441,33 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
 
-add_executable(dnsimp_test EXCLUDE_FROM_ALL TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
+add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
 set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
 target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_custom_command(TARGET dnsimp_test POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
 )
-add_test(dnsimp_test Tests/dnsimp)
+add_test(dnsimp_tst Tests/dnsimp)
 
-add_executable(bug_1315_single EXCLUDE_FROM_ALL TESTS/bug_1315_single.c)
+add_executable(bug_1315_single TESTS/bug_1315_single.c)
 target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1315_single Tests/bug_1315_single)
+add_test(bug_1315_single_tst Tests/bug_1315_single)
 
-add_executable(bug_1315_double EXCLUDE_FROM_ALL TESTS/bug_1315_double.c)
+add_executable(bug_1315_double TESTS/bug_1315_double.c)
 target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1315_double Tests/bug_1315_double)
+add_test(bug_1315_double_tst Tests/bug_1315_double)
 
-add_executable(bug_1323 EXCLUDE_FROM_ALL TESTS/bug_1323.f)
+add_executable(bug_1323 TESTS/bug_1323.f)
 target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1323 Tests/bug_1323)
+add_test(bug_1323_tst Tests/bug_1323)
 
-add_executable(bug_58_double EXCLUDE_FROM_ALL TESTS/bug_58_double.f)
+add_executable(bug_58_double TESTS/bug_58_double.f)
 target_link_libraries(bug_58_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_58_double Tests/bug_58_double)
+add_test(bug_58_double_tst Tests/bug_58_double)
 
-add_executable(bug_79_double_complex EXCLUDE_FROM_ALL TESTS/bug_79_double_complex.f)
+add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
 target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_79_double_complex Tests/bug_79_double_complex)
+add_test(bug_79_double_complex_tst Tests/bug_79_double_complex)
 
 add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double bug_79_double_complex)
 
