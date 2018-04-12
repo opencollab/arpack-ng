@@ -430,14 +430,12 @@ endif()
 
 
 ############################
-# CHECK
+# TEST
 ############################
 
 enable_testing()
 
 set(CMAKE_CTEST_COMMAND ctest -V)
-
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
 
@@ -468,8 +466,6 @@ add_test(bug_58_double_tst Tests/bug_58_double)
 add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
 target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_79_double_complex_tst Tests/bug_79_double_complex)
-
-add_dependencies(check dnsimp_test bug_1315_single bug_1315_double bug_1323 bug_58_double bug_79_double_complex)
 
 if(MPI)
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
