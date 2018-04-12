@@ -126,8 +126,8 @@ file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/SRC/*.f)
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_init.f90 debug_icb.f90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_init.f90 debug_icb.f90)
+  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_init.f90 debug_icb.f90 stat_icb.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_init.f90 debug_icb.f90 stat_icb.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -168,6 +168,12 @@ install(FILES debug.h DESTINATION include)
 if(ICB)
   install(FILES debug_c.h DESTINATION include)
   install(FILES debug_c.hpp DESTINATION include)
+endif()
+
+install(FILES stat.h DESTINATION include)
+if(ICB)
+  install(FILES stat_c.h DESTINATION include)
+  install(FILES stat_c.hpp DESTINATION include)
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})

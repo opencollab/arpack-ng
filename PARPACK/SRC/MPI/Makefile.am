@@ -37,6 +37,7 @@ libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_init.f90
 if ICB
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
+libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/stat_icb.f90
 endif
 libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \

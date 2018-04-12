@@ -15,6 +15,7 @@
 #include "parpack.h"
 #include <complex.h> // creal, cimag.
 #include "debug_c.h" // debug parpack.
+#include "stat_c.h" // arpack statistics.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -167,10 +168,22 @@ int zn() {
 int main() {
   MPI_Init(NULL, NULL);
 
+  sstats_c();
   int rc = ds(); // parpack without debug.
   fflush(stdout);
   MPI_Barrier(MPI_COMM_WORLD);
   if (rc != 0) return rc;
+  int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
+  float tsaupd_c, tsaup2_c, tsaitr_c, tseigt_c, tsgets_c, tsapps_c, tsconv_c;
+  float tnaupd_c, tnaup2_c, tnaitr_c, tneigt_c, tngets_c, tnapps_c, tnconv_c;
+  float tcaupd_c, tcaup2_c, tcaitr_c, tceigt_c, tcgets_c, tcapps_c, tcconv_c;
+  float tmvopx_c, tmvbx_c, tgetv0_c, titref_c, trvec_c;
+  stat_c(  &nopx_c,    &nbx_c, &nrorth_c, &nitref_c, &nrstrt_c,
+         &tsaupd_c, &tsaup2_c, &tsaitr_c, &tseigt_c, &tsgets_c, &tsapps_c, &tsconv_c,
+         &tnaupd_c, &tnaup2_c, &tnaitr_c, &tneigt_c, &tngets_c, &tnapps_c, &tnconv_c,
+         &tcaupd_c, &tcaup2_c, &tcaitr_c, &tceigt_c, &tcgets_c, &tcapps_c, &tcconv_c,
+         &tmvopx_c,  &tmvbx_c, &tgetv0_c, &titref_c,  &trvec_c);
+  printf("Timers : nopx %d, tmvopx %f - nbx %d, tmvbx %f\n", nopx_c, tmvopx_c, nbx_c, tmvbx_c);
 
   int rank = 0; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   if (rank == 0) printf("------\n");

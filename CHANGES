@@ -6,6 +6,8 @@ arpack-ng - 3.6.0
    ARPACK:  example of C++/Fortran binding can be found in the         TESTS/icb_arpack_cpp.cpp      file.
    PARPACK: example of   C/Fortran binding can be found in the PARPACK/TESTS/MPI/icb_parpack_c.c     file.
    PARPACK: example of C++/Fortran binding can be found in the PARPACK/TESTS/MPI/icb_parpack_cpp.cpp file.
+   DEBUG:   add support for debug.
+   STAT:    add support for statistics (timers, nb operations, ...).
  * Provide tarball generation using cmake (cpack).
  * Provide find_package for (cmake) users to find arpack-ng.
 

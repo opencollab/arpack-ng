@@ -187,6 +187,13 @@ if test x"$enable_icb" != x"no"; then
   AC_CONFIG_FILES([debug_c.hpp:debug_c.hpp])
 fi
 
+dnl Add support for arpack statistics
+AC_CONFIG_FILES([stat.h:stat.h])
+if test x"$enable_icb" != x"no"; then
+  AC_CONFIG_FILES([stat_c.h:stat_c.h])
+  AC_CONFIG_FILES([stat_c.hpp:stat_c.hpp])
+fi
+
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 

@@ -70,7 +70,9 @@ arpack-ng is replacing arpack almost everywhere.
 
    The following instructions explain how to make the ARPACK library.
 
-4. Unlike ARPACK, ARPACK-NG is providing autotools based build system.
+4. Unlike ARPACK, ARPACK-NG is providing autotools based build system
+   and iso_c_binding support (which enables to call fortran subroutines
+   natively from C or C++).
 
 Therefore, the classical commands should work as expected:
    
@@ -96,6 +98,18 @@ To build with code coverage:
     $ cd build
     $ cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
     $ make all check test coveralls
+
+To get iso_c_binding support:
+   
+    $ ./configure --enable-icb
+    $ cmake -D ICB=ON
+   The install will now provide arpack.h/hpp, parpack.h/hpp and friends.
+   Examples of use can be found in ./TESTS and ./PARPACK/TESTS/MPI.
+   A few related links can be found here:
+
+   * http://fortranwiki.org/fortran/show/ISO_C_BINDING
+   * http://fortranwiki.org/fortran/show/Generating+C+Interfaces
+   * https://www.roguewave.com/sites/rw/files/attachments/StandardizedMixedLanguageProgrammingforCandFortran.pdf
 
 5. Within DOCUMENTS directory there are three files
 
