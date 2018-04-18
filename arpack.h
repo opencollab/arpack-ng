@@ -1,6 +1,10 @@
 #ifndef __ARPACK_H__
 #define __ARPACK_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void ssaupd_c(int * ido, char * bmat, int n, char * which, int nev,
                      float tol, float * resid, int ncv, float * v,
                      int ldv, int * iparam, int * ipntr, float * workd,
@@ -68,5 +72,9 @@ extern void zneupd_c(bool rvec, char * howmny, int * select,
                      double tol, double _Complex * resid, int ncv, double _Complex * v,
                      int ldv, int * iparam, int * ipntr, double _Complex * workd,
                      double _Complex * workl, int lworkl, double _Complex * rwork, int * info);
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif
