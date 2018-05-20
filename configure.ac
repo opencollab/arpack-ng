@@ -138,7 +138,7 @@ if test x"$enable_icb" != x"no"; then
 
   AC_PROG_CC
   AC_PROG_CXX
-  AX_CXX_COMPILE_STDCXX([11])
+  AX_CXX_COMPILE_STDCXX(11, ext)
   AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
