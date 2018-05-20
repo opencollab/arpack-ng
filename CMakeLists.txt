@@ -430,6 +430,7 @@ if(ICB)
   add_test(icb_arpack_c Tests/icb_arpack_c)
 
   enable_language(CXX) # For testing binding with c++.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
   target_include_directories(icb_arpack_cpp PUBLIC ..)
   target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
