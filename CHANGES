@@ -23,6 +23,11 @@ arpack-ng - 3.6.0
  [ Sylvestre Ledru ]
  * Add coverage information to improve testing: https://coveralls.io/github/opencollab/arpack-ng
 
+ [ Darcy Beurle]
+ * Add C++11 interface through arpack.hpp
+ * Rewrite C++ example / test demonstrating new C++11 interface
+ * Pre-C++11 interface now available through arpack.h
+
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 30 Oct 2017 14:21:48 +0200
 
 arpack-ng - 3.5.0
