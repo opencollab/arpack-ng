@@ -66,7 +66,6 @@ void real_symmetric_runner() {
   BLASINT info = 0, ido = 0;
 
   while (ido != 99) {
-    /* call arpack like you would have, but, use ssaupd_c instead of ssaupd_ */
     arpack::saupd(ido, arpack::bmat::identity, N,
                   arpack::which::largest_magnitude, nev, tol, resid.data(), ncv,
                   V.data(), ldv, iparam.data(), ipntr.data(), workd.data(),
