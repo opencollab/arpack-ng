@@ -15,6 +15,7 @@
 #include <string>
 #include "debug_c.hpp" // debug parpack.
 #include "stat_c.hpp" // arpack statistics.
+#include <stdio.h>
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
