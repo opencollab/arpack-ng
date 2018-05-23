@@ -14,7 +14,6 @@
 #include <array>
 #include <cmath>
 #include <iostream>
-#include <string>
 #include <vector>
 
 #include "debug_c.hpp"  // debug arpack.
