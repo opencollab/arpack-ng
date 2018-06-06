@@ -94,7 +94,7 @@ void cnaupd_c(int& ido, const char* bmat, int n, const char* which, int nev,
               int& info);
 
 void cneupd_c(bool rvec, const char* howmny, int* select, float _Complex* d,
-              float _Complex* z, int ldz, float _Complex sigma,
+              float _Complex* z, int ldz, float _Complex const* sigma,
               float _Complex* workev, const char* bmat, int n,
               const char* which, int nev, float tol, float _Complex* resid,
               int ncv, float _Complex* v, int ldv, int* iparam, int* ipntr,
@@ -108,7 +108,7 @@ void znaupd_c(int& ido, const char* bmat, int n, const char* which, int nev,
               int& info);
 
 void zneupd_c(bool rvec, const char* howmny, int* select, double _Complex* d,
-              double _Complex* z, int ldz, double _Complex sigma,
+              double _Complex* z, int ldz, double _Complex const* sigma,
               double _Complex* workev, const char* bmat, int n,
               const char* which, int nev, double tol, double _Complex* resid,
               int ncv, double _Complex* v, int ldv, int* iparam, int* ipntr,
@@ -273,10 +273,11 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                   std::complex<float>* v, int ldv, int* iparam, int* ipntr,
                   std::complex<float>* workd, std::complex<float>* workl,
                   int lworkl, std::complex<float>* rwork, int& info) {
+  const _Complex float csigma=std::real(sigma) + std::imag(sigma) * I;
   internal::cneupd_c(rvec, internal::convert_to_char(howmny_option), select,
                      reinterpret_cast<_Complex float*>(d),
                      reinterpret_cast<_Complex float*>(z), ldz,
-                     std::real(sigma) + std::imag(sigma) * I,
+                     &csigma,
                      reinterpret_cast<_Complex float*>(workev),
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
@@ -310,10 +311,11 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                   std::complex<double>* v, int ldv, int* iparam, int* ipntr,
                   std::complex<double>* workd, std::complex<double>* workl,
                   int lworkl, std::complex<double>* rwork, int& info) {
+  const _Complex double csigma=std::real(sigma) + _Complex_I * std::imag(sigma);
   internal::zneupd_c(rvec, internal::convert_to_char(howmny_option), select,
                      reinterpret_cast<_Complex double*>(d),
                      reinterpret_cast<_Complex double*>(z), ldz,
-                     std::real(sigma) + _Complex_I * std::imag(sigma),
+                     &csigma,
                      reinterpret_cast<_Complex double*>(workev),
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
