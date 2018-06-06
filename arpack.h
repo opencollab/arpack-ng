@@ -55,7 +55,7 @@ extern void cnaupd_c(int * ido, char * bmat, int n, char * which, int nev,
                      float _Complex * workl, int lworkl, float _Complex * rwork, int * info);
 
 extern void cneupd_c(bool rvec, char * howmny, int * select,
-                     float _Complex * d, float _Complex * z, int ldz, float _Complex sigma, float _Complex * workev,
+                     float _Complex * d, float _Complex * z, int ldz, float _Complex const* sigma, float _Complex * workev,
                      char * bmat, int n, char * which, int nev,
                      float tol, float _Complex * resid, int ncv, float _Complex * v,
                      int ldv, int * iparam, int * ipntr, float _Complex * workd,
@@ -67,7 +67,7 @@ extern void znaupd_c(int * ido, char * bmat, int n, char * which, int nev,
                      double _Complex * workl, int lworkl, double _Complex * rwork, int * info);
 
 extern void zneupd_c(bool rvec, char * howmny, int * select,
-                     double _Complex * d, double _Complex * z, int ldz, double _Complex sigma, double _Complex * workev,
+                     double _Complex * d, double _Complex * z, int ldz, double _Complex const* sigma, double _Complex * workev,
                      char * bmat, int n, char * which, int nev,
                      double tol, double _Complex * resid, int ncv, double _Complex * v,
                      int ldv, int * iparam, int * ipntr, double _Complex * workd,

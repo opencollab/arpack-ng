@@ -116,7 +116,7 @@ int zn() {
   int select[ncv];
   double _Complex z[(N+1)*(nev+1)];
   BLASINT ldz = N+1;
-  double sigma=0;
+  double _Complex sigma=0;
   int k;
   for (k=0; k < 3*N; ++k )
     workd[k] = 0;
@@ -144,7 +144,7 @@ int zn() {
   if (iparam[4] != nev) return 1; // check number of ev found by arpack.
 
   /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
-  zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,
+  zneupd_c(rvec, howmny, select, d, z, ldz, &sigma, workev,
            bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
            workd, workl, lworkl, rwork, &info);
   int i;
