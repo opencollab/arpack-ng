@@ -124,7 +124,7 @@ int zn() {
   for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0;
   BLASINT lworkl = 3*(ncv*ncv) + 6*ncv;
-  double _Complex rwork[ncv];
+  double rwork[ncv];
   double _Complex workev[2*ncv];
   BLASINT info = 0;
 
