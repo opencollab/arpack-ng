@@ -23,12 +23,14 @@
 #define BLASINT int
 #endif
 
-void diagonal_matrix_vector_product(float const* const x, float* const y) {
+template<typename Real>
+void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
   for (int i = 0; i < 1000; ++i) {
-    y[i] = static_cast<float>(i + 1) * x[i];
+    y[i] = static_cast<Real>(i + 1) * x[i];
   }
 }
 
+template<typename Real>
 void real_symmetric_runner() {
   BLASINT const N = 1000;
   BLASINT const nev = 9;
@@ -40,17 +42,17 @@ void real_symmetric_runner() {
 
   BLASINT const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  float const tol = 0.0f;
-  float const sigma = 0.0f;
+  Real const tol = 0.0;
+  Real const sigma = 0.0;
 
   bool const rvec = true;
 
-  std::vector<float> resid(N);
-  std::vector<float> V(ncv * N);
-  std::vector<float> workd(3 * N, 0.0f);
-  std::vector<float> workl(lworkl, 0.0f);
-  std::vector<float> d((nev + 1));
-  std::vector<float> z((N + 1) * (nev + 1));
+  std::vector<Real> resid(N);
+  std::vector<Real> V(ncv * N);
+  std::vector<Real> workd(3 * N, 0.0);
+  std::vector<Real> workl(lworkl, 0.0);
+  std::vector<Real> d((nev + 1));
+  std::vector<Real> z((N + 1) * (nev + 1));
 
   std::array<BLASINT, 11> iparam{};
 
@@ -90,20 +92,22 @@ void real_symmetric_runner() {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
-    if (std::abs(d[i] - static_cast<float>(1000 - (nev - 1) + i)) > 1e-1) {
+    if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > 1e-1) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
   std::cout << "------\n";
 }
 
-void diagonal_matrix_vector_product(std::complex<float> const* const x,
-                                    std::complex<float>* const y) {
+template<typename Real>
+void diagonal_matrix_vector_product(std::complex<Real> const* const x,
+                                    std::complex<Real>* const y) {
   for (int i = 0; i < 1000; ++i) {
-    y[i] = x[i] * std::complex<float>{i + 1.0f, i + 1.0f};
+    y[i] = x[i] * std::complex<Real>{Real(i + 1), Real(i + 1)};
   }
 }
 
+template<typename Real>
 void complex_symmetric_runner() {
   BLASINT const N = 1000;
   BLASINT const nev = 9;
@@ -115,19 +119,19 @@ void complex_symmetric_runner() {
 
   BLASINT const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  float const tol = 0.0f;
-  float const sigma = 0.0f;
+  Real const tol = 0.0;
+  Real const sigma = 0.0;
 
   bool const rvec = true;
 
-  std::vector<std::complex<float>> resid(N);
-  std::vector<std::complex<float>> V(ncv * N);
-  std::vector<std::complex<float>> workd(3 * N);
-  std::vector<std::complex<float>> workl(lworkl);
-  std::vector<std::complex<float>> d(nev + 1);
-  std::vector<std::complex<float>> z((N + 1) * (nev + 1));
-  std::vector<float> rwork(ncv);
-  std::vector<std::complex<float>> workev(2 * ncv);
+  std::vector<std::complex<Real>> resid(N);
+  std::vector<std::complex<Real>> V(ncv * N);
+  std::vector<std::complex<Real>> workd(3 * N);
+  std::vector<std::complex<Real>> workl(lworkl);
+  std::vector<std::complex<Real>> d(nev + 1);
+  std::vector<std::complex<Real>> z((N + 1) * (nev + 1));
+  std::vector<Real> rwork(ncv);
+  std::vector<std::complex<Real>> workev(2 * ncv);
 
   std::array<BLASINT, 11> iparam{};
   iparam[0] = 1;
@@ -166,8 +170,8 @@ void complex_symmetric_runner() {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
-    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - i)) > 1e-1 ||
-        std::abs(std::imag(d[i]) - static_cast<float>(1000 - i)) > 1e-1) {
+    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - i)) > 1e-1 ||
+        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - i)) > 1e-1) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -177,7 +181,8 @@ int main() {
   sstats_c();
 
   // arpack without debug
-  real_symmetric_runner();
+  real_symmetric_runner<float>();
+  real_symmetric_runner<double>();
 
   int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
   float tsaupd_c, tsaup2_c, tsaitr_c, tseigt_c, tsgets_c, tsapps_c, tsconv_c;
@@ -199,7 +204,8 @@ int main() {
           1);
 
   // arpack with debug
-  complex_symmetric_runner();
+  complex_symmetric_runner<float>();
+  complex_symmetric_runner<double>();
 
   return 0;
 }
