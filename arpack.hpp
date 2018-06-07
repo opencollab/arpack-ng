@@ -93,9 +93,9 @@ inline void saupd(int& ido, bmat const bmat_option, int n,
                   which const ritz_option, int nev, float tol, float* resid,
                   int ncv, float* v, int ldv, int* iparam, int* ipntr,
                   float* workd, float* workl, int lworkl, int& info) {
-  internal::ssaupd_c(ido, internal::convert_to_char(bmat_option), n,
+  internal::ssaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void seupd(bool rvec, howmny const howmny_option, int* select, float* d,
@@ -106,16 +106,16 @@ inline void seupd(bool rvec, howmny const howmny_option, int* select, float* d,
   internal::sseupd_c(rvec, internal::convert_to_char(howmny_option), select, d,
                      z, ldz, sigma, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void saupd(int& ido, bmat const bmat_option, int n,
                   which const ritz_option, int nev, double tol, double* resid,
                   int ncv, double* v, int ldv, int* iparam, int* ipntr,
                   double* workd, double* workl, int lworkl, int& info) {
-  internal::dsaupd_c(ido, internal::convert_to_char(bmat_option), n,
+  internal::dsaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void seupd(bool rvec, howmny const howmny_option, int* select, double* d,
@@ -127,16 +127,16 @@ inline void seupd(bool rvec, howmny const howmny_option, int* select, double* d,
   internal::dseupd_c(rvec, internal::convert_to_char(howmny_option), select, d,
                      z, ldz, sigma, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void naupd(int& ido, bmat const bmat_option, int n,
                   which const ritz_option, int nev, float tol, float* resid,
                   int ncv, float* v, int ldv, int* iparam, int* ipntr,
                   float* workd, float* workl, int lworkl, int& info) {
-  internal::snaupd_c(ido, internal::convert_to_char(bmat_option), n,
+  internal::snaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select, float* dr,
@@ -149,16 +149,16 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select, float* dr,
                      di, z, ldz, sigmar, sigmai,
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void naupd(int& ido, bmat const bmat_option, int n,
                   which const ritz_option, int nev, double tol, double* resid,
                   int ncv, double* v, int ldv, int* iparam, int* ipntr,
                   double* workd, double* workl, int lworkl, int& info) {
-  internal::dnaupd_c(ido, internal::convert_to_char(bmat_option), n,
+  internal::dnaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select,
@@ -171,7 +171,7 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                      di, z, ldz, sigmar, sigmai,
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
-                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+                     ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
 inline void naupd(int& ido, bmat const bmat_option, int n,
@@ -179,14 +179,14 @@ inline void naupd(int& ido, bmat const bmat_option, int n,
                   std::complex<float>* resid, int ncv, std::complex<float>* v,
                   int ldv, int* iparam, int* ipntr, std::complex<float>* workd,
                   std::complex<float>* workl, int lworkl,
-                  std::complex<float>* rwork, int& info) {
-  internal::cnaupd_c(ido, internal::convert_to_char(bmat_option), n,
+                  float* rwork, int& info) {
+  internal::cnaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
                      reinterpret_cast<_Complex float*>(resid), ncv,
                      reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
                      reinterpret_cast<_Complex float*>(workd),
                      reinterpret_cast<_Complex float*>(workl), lworkl,
-                     reinterpret_cast<_Complex float*>(rwork), info);
+                     rwork, &info);
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select,
@@ -196,7 +196,7 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                   int nev, float tol, std::complex<float>* resid, int ncv,
                   std::complex<float>* v, int ldv, int* iparam, int* ipntr,
                   std::complex<float>* workd, std::complex<float>* workl,
-                  int lworkl, std::complex<float>* rwork, int& info) {
+                  int lworkl, float* rwork, int& info) {
   internal::cneupd_c(rvec, internal::convert_to_char(howmny_option), select,
                      reinterpret_cast<_Complex float*>(d),
                      reinterpret_cast<_Complex float*>(z), ldz,
@@ -208,7 +208,7 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                      reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
                      reinterpret_cast<_Complex float*>(workd),
                      reinterpret_cast<_Complex float*>(workl), lworkl,
-                     reinterpret_cast<_Complex float*>(rwork), info);
+                     rwork, &info);
 }
 
 inline void naupd(int& ido, bmat const bmat_option, int n,
@@ -216,14 +216,14 @@ inline void naupd(int& ido, bmat const bmat_option, int n,
                   std::complex<double>* resid, int ncv, std::complex<double>* v,
                   int ldv, int* iparam, int* ipntr, std::complex<double>* workd,
                   std::complex<double>* workl, int lworkl,
-                  std::complex<double>* rwork, int& info) {
-  internal::znaupd_c(ido, internal::convert_to_char(bmat_option), n,
+                  double* rwork, int& info) {
+  internal::znaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
                      reinterpret_cast<_Complex double*>(resid), ncv,
                      reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
                      reinterpret_cast<_Complex double*>(workd),
                      reinterpret_cast<_Complex double*>(workl), lworkl,
-                     reinterpret_cast<_Complex double*>(rwork), info);
+                     rwork, &info);
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select,
@@ -233,7 +233,7 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                   int nev, double tol, std::complex<double>* resid, int ncv,
                   std::complex<double>* v, int ldv, int* iparam, int* ipntr,
                   std::complex<double>* workd, std::complex<double>* workl,
-                  int lworkl, std::complex<double>* rwork, int& info) {
+                  int lworkl, double* rwork, int& info) {
   internal::zneupd_c(rvec, internal::convert_to_char(howmny_option), select,
                      reinterpret_cast<_Complex double*>(d),
                      reinterpret_cast<_Complex double*>(z), ldz,
@@ -245,7 +245,7 @@ inline void neupd(bool rvec, howmny const howmny_option, int* select,
                      reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
                      reinterpret_cast<_Complex double*>(workd),
                      reinterpret_cast<_Complex double*>(workl), lworkl,
-                     reinterpret_cast<_Complex double*>(rwork), info);
+                     rwork, &info);
 }
 }  // namespace arpack
 

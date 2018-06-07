@@ -126,7 +126,7 @@ void complex_symmetric_runner() {
   std::vector<std::complex<float>> workl(lworkl);
   std::vector<std::complex<float>> d(nev + 1);
   std::vector<std::complex<float>> z((N + 1) * (nev + 1));
-  std::vector<std::complex<float>> rwork(ncv);
+  std::vector<float> rwork(ncv);
   std::vector<std::complex<float>> workev(2 * ncv);
 
   std::array<BLASINT, 11> iparam{};
