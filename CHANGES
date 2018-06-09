@@ -1,3 +1,10 @@
+arpack-ng - 3.6.1
+
+ [ Ruslan Kabatsayev ]
+ * Fix a regression on i386 and other archs
+
+ -- Sylvestre Ledru <sylvestre@debian.org> Thu Jun 7 21:41:16 2018 +0200
+ 
 arpack-ng - 3.6.0
 
  [ Franck Houssen ]
