@@ -1,3 +1,6 @@
+ [ Franck Houssen ]
+ * CMake install: move headers into a dedicated directory (local/include/arpack).
+
 arpack-ng - 3.6.2
 
  * Remove all trailing whitespaces
