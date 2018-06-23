@@ -181,7 +181,7 @@ if test x"$enable_icb" != x"no"; then
   fi
 fi
 
-dnl Add support for debuging arpack
+dnl Add support for debugging arpack
 AC_CONFIG_FILES([debug-arpack.h:debug-arpack.h])
 if test x"$enable_icb" != x"no"; then
   AC_CONFIG_FILES([debug_c.h:debug_c.h])
