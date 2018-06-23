@@ -50,14 +50,14 @@ c     | MAXN   - Maximum size of the matrix |
 c     | MAXNEV - Maximum number of          |
 c     |          eigenvalues to be computed |
 c     | MAXNCV - Maximum number of Arnoldi  |
-c     |          vectors stored             | 
+c     |          vectors stored             |
 c     | MAXBDW - Maximum bandwidth          |
 c     %-------------------------------------%
 c
       integer          maxn, maxnev, maxncv, maxbdw, lda,
      &                 lworkl, ldv
-      parameter        ( maxn = 1000, maxnev = 25, maxncv=50, 
-     &                   maxbdw=50, lda = maxbdw, ldv = maxn) 
+      parameter        ( maxn = 1000, maxnev = 25, maxncv=50,
+     &                   maxbdw=50, lda = maxbdw, ldv = maxn)
 c
 c     %--------------%
 c     | Local Arrays |
@@ -67,10 +67,10 @@ c
       logical          select(maxncv)
       Real
      &                 a(lda,maxn), m(lda,maxn), rfac(lda,maxn),
-     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn), 
+     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn),
      &                 workev(3*maxncv), v(ldv, maxncv),
      &                 resid(maxn), d(maxncv, 3), ax(maxn), mx(maxn)
-      Complex 
+      Complex
      &                 cfac(lda, maxn), workc(maxn)
 c
 c     %---------------%
@@ -82,16 +82,16 @@ c
      &                 n, idiag, isup, isub, mode, maxitr,
      &                 nconv
       logical          rvec, first
-      Real 
+      Real
      &                 tol, rho, h, sigmar, sigmai
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Real 
+      Real
      &                 one, zero, two, six
-      parameter        (one = 1.0E+0, zero = 0.0E+0, 
+      parameter        (one = 1.0E+0, zero = 0.0E+0,
      &                  two = 2.0E+0, six = 6.0E+0)
 c
 c     %-----------------------------%
@@ -100,7 +100,7 @@ c     %-----------------------------%
 c
       Real
      &                  slapy2, snrm2
-      external          slapy2, snrm2, sgbmv, saxpy 
+      external          slapy2, snrm2, sgbmv, saxpy
 c
 c     %--------------------%
 c     | Intrinsic function |
@@ -127,8 +127,8 @@ c     |           NEV + 2 <= NCV <= MAXNCV              |
 c     %-------------------------------------------------%
 c
       n    = 100
-      nev  = 4 
-      ncv  = 10 
+      nev  = 4
+      ncv  = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NBDR4: N is greater than MAXN '
          go to 9000
@@ -142,7 +142,7 @@ c
       bmat = 'G'
       which = 'LM'
       sigmar = 1.0E+1
-      sigmai = 0.0E+0 
+      sigmai = 0.0E+0
 c
 c     %-----------------------------------------------------%
 c     | The work array WORKL is used in SNAUPD as           |
@@ -157,7 +157,7 @@ c     %-----------------------------------------------------%
 c
       lworkl  = 3*ncv**2+6*ncv
       info = 0
-      tol  = zero 
+      tol  = zero
       ido  = 0
 c
 c     %---------------------------------------------------%
@@ -171,7 +171,7 @@ c
       maxitr = 300
       mode   = 3
 c
-      iparam(3) = n 
+      iparam(3) = n
       iparam(7) = 3
 c
 c     %--------------------------------------------%
@@ -194,9 +194,9 @@ c     | matrices A and M.                   |
 c     %-------------------------------------%
 c
       kl   = 1
-      ku   = 1 
+      ku   = 1
 c
-c     %---------------% 
+c     %---------------%
 c     | Main diagonal |
 c     %---------------%
 c
@@ -205,12 +205,12 @@ c
       do 30 j = 1, n
          a(idiag,j) = 2.0E+0 / h
          m(idiag,j) = 4.0E+0 * h / six
-  30  continue 
-c 
+  30  continue
+c
 c     %-------------------------------------%
 c     | First subdiagonal and superdiagonal |
 c     %-------------------------------------%
-c 
+c
       isup = kl+ku
       isub = kl+ku+2
       rho = 1.0E+1
@@ -218,8 +218,8 @@ c
          a(isup,j+1) = -one/h + rho/two
          a(isub,j) = -one/h - rho/two
          m(isup,j+1) = one*h/six
-         m(isub,j) = one*h/six 
-  40    continue      
+         m(isub,j) = one*h/six
+  40    continue
 c
 c     %------------------------------------------------%
 c     | Call ARPACK banded solver to find eigenvalues  |
@@ -231,9 +231,9 @@ c     | in the first NCONV (=IPARAM(5)) columns of V.  |
 c     %------------------------------------------------%
 c
       rvec = .true.
-      call snband(rvec, 'A', select, d, d(1,2), v, ldv, sigmar, 
+      call snband(rvec, 'A', select, d, d(1,2), v, ldv, sigmar,
      &     sigmai, workev, n, A, M, lda, rfac, cfac, kl, ku,
-     &     which, bmat, nev, tol, resid, ncv, v, ldv, iparam, 
+     &     which, bmat, nev, tol, resid, ncv, v, ldv, iparam,
      &     workd, workl, lworkl, workc, iwork, info)
 c
       if ( info .eq. 0) then
@@ -266,7 +266,7 @@ c        | Compute the residual norm. |
 c        |    ||  A*x - lambda*x ||   |
 c        %----------------------------%
 c
-         first = .true. 
+         first = .true.
          do 50 j = 1, nconv
 c
             if ( d(j,2) .eq. zero ) then
@@ -275,11 +275,11 @@ c              %--------------------%
 c              | Ritz value is real |
 c              %--------------------%
 c
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j), 1, zero,
      &                    ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call saxpy(n, -d(j,1), mx, 1, ax, 1)
                d(j,3) = snrm2(n, ax, 1)
@@ -291,30 +291,30 @@ c              %------------------------%
 c              | Ritz value is complex  |
 c              | Residual of one Ritz   |
 c              | value of the conjugate |
-c              | pair is computed.      | 
+c              | pair is computed.      |
 c              %------------------------%
 c
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j), 1, zero,
      &                    ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call saxpy(n, -d(j,1), mx, 1, ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    mx, 1)
                call saxpy(n, d(j,2), mx, 1, ax, 1)
                d(j,3) = snrm2(n, ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    mx, 1)
                call saxpy(n, -d(j,1), mx, 1, ax, 1)
-               call sgbmv('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call sgbmv('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call saxpy(n, -d(j,2), mx, 1, ax, 1)
                d(j,3) = slapy2( d(j,3), snrm2(n, ax, 1) )
@@ -325,11 +325,11 @@ c
                first = .true.
             end if
 c
- 50      continue 
+ 50      continue
 
          call smout(6, nconv, 3, d, maxncv, -6,
      &             'Ritz values (Real,Imag) and relatve residuals')
-      else 
+      else
 c
 c        %-------------------------------------%
 c        | Either convergence failed, or there |
@@ -340,8 +340,8 @@ c
           print *, ' '
           print *, ' Error with _nband, info= ', info
           print *, ' Check the documentation of _nband '
-          print *, ' ' 
+          print *, ' '
 c
       end if
 c
- 9000 end      
+ 9000 end

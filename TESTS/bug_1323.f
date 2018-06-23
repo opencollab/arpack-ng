@@ -24,8 +24,8 @@ c______________________________________________________________________________
 c
 c     Program to illustrate the idea of reverse communication
 c     in shift and invert mode for a standard symmetric eigenvalue
-c     problem.  The following program uses the two LAPACK subroutines 
-c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of 
+c     problem.  The following program uses the two LAPACK subroutines
+c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of
 c     equations.
 c
 c     We implement example two of ex-sym.doc in DOCUMENTS directory
@@ -47,7 +47,7 @@ c             Ritz vectors.
 c     dgttrf  LAPACK tridiagonal factorization routine.
 c     dgttrs  LAPACK tridiagonal solve routine.
 c     daxpy   daxpy   Level 1 BLAS that computes y <- alpha*x+y.
-c     dnrm2   Level 1 BLAS that computes the norm of a vector.     
+c     dnrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
 c
 c\Author
@@ -80,7 +80,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxn, maxnev, maxncv, ldv
-      parameter        (maxn=256, maxnev=10, maxncv=25, 
+      parameter        (maxn=256, maxnev=10, maxncv=25,
      &                 ldv=maxn )
 c
 c     %--------------%
@@ -89,7 +89,7 @@ c     %--------------%
 c
       Double precision
      &                 v(ldv,maxncv), workl(maxncv*(maxncv+8)),
-     &                 workd(3*maxn), d(maxncv,2), resid(maxn), 
+     &                 workd(3*maxn), d(maxncv,2), resid(maxn),
      &                 ad(maxn), adl(maxn), adu(maxn), adu2(maxn),
      &                 ax(maxn)
       logical          select(maxncv)
@@ -113,9 +113,9 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision           
-     &                 zero, one, two 
-      parameter        (zero = 0.0D+0, one = 1.0D+0, 
+      Double precision
+     &                 zero, one, two
+      parameter        (zero = 0.0D+0, one = 1.0D+0,
      &                  two = 2.0D+0)
 c
 c     %-----------------------------%
@@ -142,14 +142,14 @@ c     | standard eigenvalue problem is solved (BMAT = 'I'. |
 c     | NEV is the number of eigenvalues (closest to       |
 c     | SIGMA) to be approximated.  Since the shift-invert |
 c     | mode is used, WHICH is set to 'LM'.  The user can  |
-c     | modify NEV, NCV, SIGMA to solve problems of        | 
+c     | modify NEV, NCV, SIGMA to solve problems of        |
 c     | different sizes, and to get different parts of the |
 c     | spectrum.  However, The following conditions must  |
 c     | be satisfied:                                      |
-c     |                   N <= MAXN,                       | 
+c     |                   N <= MAXN,                       |
 c     |                 NEV <= MAXNEV,                     |
-c     |             NEV + 1 <= NCV <= MAXNCV               | 
-c     %----------------------------------------------------% 
+c     |             NEV + 1 <= NCV <= MAXNCV               |
+c     %----------------------------------------------------%
 c
       n = 100
       nev = 4
@@ -167,7 +167,7 @@ c
 c
       bmat = 'I'
       which = 'LM'
-      sigma = zero 
+      sigma = zero
 c
 c     %--------------------------------------------------%
 c     | The work array WORKL is used in DSAUPD as        |
@@ -182,7 +182,7 @@ c     | iteration.                                       |
 c     %--------------------------------------------------%
 c
       lworkl = ncv*(ncv+8)
-      tol = zero 
+      tol = zero
       ido = 0
       info = 0
 c
@@ -200,24 +200,24 @@ c
       maxitr = 300
       mode   = 3
 c
-      iparam(1) = ishfts 
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-----------------------------------------------------%
 c     | Call LAPACK routine to factor (A-SIGMA*I), where A  |
-c     | is the 1-d Laplacian.                               | 
+c     | is the 1-d Laplacian.                               |
 c     %-----------------------------------------------------%
 c
       h2 = one / dble((n+1)*(n+1))
       do 20 j=1,n
          ad(j) = two / h2 - sigma
          adl(j) = -one / h2
- 20   continue 
+ 20   continue
       call dcopy (n, adl, 1, adu, 1)
       call dgttrf (n, adl, ad, adu, adu2, ipiv, ierr)
-      if (ierr .ne. 0) then 
-         print *, ' ' 
+      if (ierr .ne. 0) then
+         print *, ' '
          print *, ' Error with _gttrf in SDRV2.'
          print *, ' '
          go to 9000
@@ -257,7 +257,7 @@ c
             if (ierr .ne. 0) then
                print *, ' '
                print *, ' Error with _gttrs in _SDRV2. '
-               print *, ' ' 
+               print *, ' '
                go to 9000
             end if
 c
@@ -267,7 +267,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-         end if 
+         end if
 c
 c     %----------------------------------------%
 c     | Either we have convergence or there is |
@@ -284,9 +284,9 @@ c
          print *, ' '
          print *, ' Error with _saupd, info = ',info
          print *, ' Check documentation of _saupd '
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -316,7 +316,7 @@ c        | corresponding to the eigenvalues in D is     |
 c        | returned in V.                               |
 c        %----------------------------------------------%
 
-         if ( ierr .ne. 0 ) then 
+         if ( ierr .ne. 0 ) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -328,7 +328,7 @@ c
             print *, ' Check the documentation of _seupd '
             print *, ' '
 c
-         else 
+         else
 c
             nconv =  iparam(5)
 CC            do 30 j=1, nconv
@@ -379,14 +379,14 @@ c
          print *, ' '
          print *, ' _SDRV2 '
          print *, ' ====== '
-         print *, ' ' 
+         print *, ' '
          print *, ' Size of the matrix is ', n
          print *, ' The number of Ritz values requested is ', nev
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
          print *, ' The number of converged Ritz values is ',
-     &              nconv 
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -417,10 +417,10 @@ c
 c
       w(1) =  two*v(1) - v(2)
       do 100 j = 2,n-1
-         w(j) = - v(j-1) + two*v(j) - v(j+1) 
+         w(j) = - v(j-1) + two*v(j) - v(j+1)
   100 continue
       j = n
-      w(j) = - v(j-1) + two*v(j) 
+      w(j) = - v(j-1) + two*v(j)
 c
 c     Scale the vector w by (1 / h^2).
 c

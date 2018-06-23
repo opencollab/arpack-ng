@@ -1,9 +1,9 @@
       program cnbdr3
 c
 c     ... Construct matrices A and M in LAPACK-style band form.
-c         Matrices A and M are derived from the finite 
-c         element discretization of the 1-dimensional 
-c         convection-diffusion operator 
+c         Matrices A and M are derived from the finite
+c         element discretization of the 1-dimensional
+c         convection-diffusion operator
 c                         (d^2u/dx^2) + rho*(du/dx)
 c         on the interval [0,1] with zero boundary condition using
 c         piecewise linear elements.
@@ -51,13 +51,13 @@ c     | MAXN   - Maximum size of the matrix |
 c     | MAXNEV - Maximum number of          |
 c     |          eigenvalues to be computed |
 c     | MAXNCV - Maximum number of Arnoldi  |
-c     |          vectors stored             | 
+c     |          vectors stored             |
 c     | MAXBDW - Maximum bandwidth          |
 c     %-------------------------------------%
 c
       integer          maxn, maxnev, maxncv, maxbdw, lda,
      &                 lworkl, ldv
-      parameter        ( maxn = 1000, maxnev = 25, maxncv=50, 
+      parameter        ( maxn = 1000, maxnev = 25, maxncv=50,
      &                   maxbdw=50, lda = maxbdw, ldv = maxn)
 c
 c     %--------------%
@@ -66,12 +66,12 @@ c     %--------------%
 c
       integer          iparam(11), iwork(maxn)
       logical          select(maxncv)
-      Complex  
+      Complex
      &                 a(lda,maxn), m(lda,maxn), fac(lda,maxn),
-     &                 workl(3*maxncv*maxncv+5*maxncv), workd(3*maxn), 
+     &                 workl(3*maxncv*maxncv+5*maxncv), workd(3*maxn),
      &                 workev(2*maxncv), v(ldv, maxncv),
      &                 resid(maxn), d(maxncv), ax(maxn), mx(maxn)
-      Real  
+      Real
      &                 rwork(maxn), rd(maxncv,3)
 c
 c     %---------------%
@@ -83,16 +83,16 @@ c
      &                 n, idiag, isup, isub, maxitr,
      &                 mode, nconv
       logical          rvec
-      Real  
+      Real
      &                 tol
-      Complex 
+      Complex
      &                 rho, h, sigma
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex  
+      Complex
      &                 one, zero, two
       parameter        (one  = (1.0E+0, 0.0E+0) ,
      &                  zero = (0.0E+0, 0.0E+0) ,
@@ -102,9 +102,9 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Real 
+      Real
      &                  scnrm2, slapy2
-      external          scnrm2, cgbmv, caxpy, slapy2, claset 
+      external          scnrm2, cgbmv, caxpy, slapy2, claset
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -129,8 +129,8 @@ c     |           NEV + 2 <= NCV <= MAXNCV              |
 c     %-------------------------------------------------%
 c
       n    = 100
-      nev  = 4 
-      ncv  = 10 
+      nev  = 4
+      ncv  = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NBDR3: N is greater than MAXN '
          go to 9000
@@ -146,13 +146,13 @@ c
       sigma = zero
 c
 c     %----------------------------------------------------%
-c     | The work array WORKL is used in CNAUPD as          | 
+c     | The work array WORKL is used in CNAUPD as          |
 c     | workspace.  Its dimension LWORKL has to be set as  |
 c     | illustrated below.  The parameter TOL determines   |
 c     | the stopping criterion. If TOL<=0, machine machine |
 c     | precision is used.  Setting INFO=0 indicates that  |
 c     | using a randomly generated vector to start the     |
-c     | the ARNOLDI process.                               | 
+c     | the ARNOLDI process.                               |
 c     %----------------------------------------------------%
 c
       lworkl  = 3*ncv**2+5*ncv
@@ -195,7 +195,7 @@ c
       kl   = 1
       ku   = 1
 c
-c     %---------------% 
+c     %---------------%
 c     | Main diagonal |
 c     %---------------%
 c
@@ -203,23 +203,23 @@ c
 c
       idiag = kl+ku+1
       do 30 j = 1, n
-         a(idiag,j) = (2.0E+0, 0.0E+0)  / h 
-         m(idiag,j) = (4.0E+0, 0.0E+0)  * h 
-  30  continue 
-c 
+         a(idiag,j) = (2.0E+0, 0.0E+0)  / h
+         m(idiag,j) = (4.0E+0, 0.0E+0)  * h
+  30  continue
+c
 c     %-------------------------------------%
 c     | First subdiagonal and superdiagonal |
 c     %-------------------------------------%
-c 
+c
       isup = kl+ku
       isub = kl+ku+2
-      rho = (1.0E+1, 0.0E+0) 
+      rho = (1.0E+1, 0.0E+0)
       do 40 j = 1, n-1
            a(isup,j+1) = -one/h + rho/two
            a(isub,j) = -one/h - rho/two
            m(isup,j+1) = one*h
            m(isub,j) = one*h
-  40  continue      
+  40  continue
 c
 c     %-----------------------------------------------%
 c     | Call ARPACK banded solver to find eigenvalues |
@@ -229,7 +229,7 @@ c     | are returned in the first NCONV (=IPARAM(5))  |
 c     | columns of V.                                 |
 c     %-----------------------------------------------%
 c
-      rvec = .true. 
+      rvec = .true.
       call cnband(rvec, 'A', select, d, v, ldv, sigma,
      &           workev, n, a, m, lda, fac, kl, ku, which,
      &           bmat, nev, tol, resid, ncv, v, ldv, iparam,
@@ -277,24 +277,24 @@ c
             rd(j,1) = real (d(j))
             rd(j,2) = aimag(d(j))
             rd(j,3) = scnrm2(n, ax, 1)
-            rd(j,3) = rd(j,3) / slapy2(rd(j,1), rd(j,2))         
- 50      continue 
+            rd(j,3) = rd(j,3) / slapy2(rd(j,1), rd(j,2))
+ 50      continue
 
          call smout(6, nconv, 3, rd, maxncv, -6,
      &             'Ritz values (Real,Imag) and relative residuals')
-      else 
+      else
 c
 c        %-------------------------------------%
 c        | Either convergence failed, or there |
 c        | is error.  Check the documentation  |
-c        | for cnband.                         | 
+c        | for cnband.                         |
 c        %-------------------------------------%
 c
           print *, ' '
           print *, ' Error with _band, info= ', info
           print *, ' Check the documentation of _band '
-          print *, ' ' 
+          print *, ' '
 c
       end if
 c
- 9000 end      
+ 9000 end

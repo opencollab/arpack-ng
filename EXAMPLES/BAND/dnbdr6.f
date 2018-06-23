@@ -1,7 +1,7 @@
-      program dnbdr6 
+      program dnbdr6
 c
 c     ... Construct matrices A and M in LAPACK-style band form.
-c         The matrix A is a block tridiagonal matrix.  Each 
+c         The matrix A is a block tridiagonal matrix.  Each
 c         diagonal block is a tridiagonal matrix with
 c         4 on the diagonal, 1-rho*h/2 on the subdiagonal and
 c         1+rho*h/2 on the superdiagonal.  Each subdiagonal block
@@ -53,13 +53,13 @@ c     | MAXN   - Maximum size of the matrix |
 c     | MAXNEV - Maximum number of          |
 c     |          eigenvalues to be computed |
 c     | MAXNCV - Maximum number of Arnoldi  |
-c     |          vectors stored             | 
+c     |          vectors stored             |
 c     | MAXBDW - Maximum bandwidth          |
 c     %-------------------------------------%
 c
       integer          maxn, maxnev, maxncv, maxbdw, lda,
      &                 lworkl, ldv
-      parameter        ( maxn = 1000, maxnev = 25, maxncv=50, 
+      parameter        ( maxn = 1000, maxnev = 25, maxncv=50,
      &                   maxbdw=50, lda = maxbdw, ldv = maxn )
 c
 c     %--------------%
@@ -68,12 +68,12 @@ c     %--------------%
 c
       integer          iparam(11), iwork(maxn)
       logical          select(maxncv)
-      Double precision 
+      Double precision
      &                 a(lda,maxn), m(lda,maxn), rfac(lda,maxn),
-     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn), 
+     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn),
      &                 workev(3*maxncv), v(ldv, maxncv),
      &                 resid(maxn), d(maxncv, 3), ax(maxn), mx(maxn)
-      Complex*16  
+      Complex*16
      &                 cfac(lda, maxn), workc(maxn)
 c
 c     %---------------%
@@ -85,16 +85,16 @@ c
      &                 n, nx, lo, idiag, isup, isub, mode, maxitr,
      &                 nconv
       logical          rvec, first
-      Double precision  
+      Double precision
      &                 tol, rho, h, sigmar, sigmai
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision  
+      Double precision
      &                 one, zero, two
-      parameter        (one = 1.0D+0 , zero = 0.0D+0 , 
+      parameter        (one = 1.0D+0 , zero = 0.0D+0 ,
      &                  two = 2.0D+0 )
 c
 c     %--------------------%
@@ -107,9 +107,9 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision 
-     &                  dlapy2 , dnrm2 
-      external          dlapy2 , dnrm2 , dgbmv , daxpy  
+      Double precision
+     &                  dlapy2 , dnrm2
+      external          dlapy2 , dnrm2 , dgbmv , daxpy
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -129,13 +129,13 @@ c     | to get different parts the spectrum. However, the   |
 c     | following rules must be satisfied:                  |
 c     |                   N <= MAXN                         |
 c     |                 NEV <= MAXNEV                       |
-c     |           NEV + 2 <= NCV <= MAXNCV                  | 
-c     %-----------------------------------------------------% 
+c     |           NEV + 2 <= NCV <= MAXNCV                  |
+c     %-----------------------------------------------------%
 c
-      nx  = 10 
+      nx  = 10
       n    = nx*nx
-      nev  = 4 
-      ncv  = 10 
+      nev  = 4
+      ncv  = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NBDR6: N is greater than MAXN '
          go to 9000
@@ -148,8 +148,8 @@ c
       end if
       bmat = 'G'
       which = 'LM'
-      sigmar = 4.0D-1 
-      sigmai = 6.0D-1 
+      sigmar = 4.0D-1
+      sigmai = 6.0D-1
 c
 c     %-----------------------------------------------------%
 c     | The work array WORKL is used in DNAUPD  as           |
@@ -163,7 +163,7 @@ c     | generated in DNAUPD  to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
       lworkl  = 3*ncv**2+6*ncv
-      tol  = zero 
+      tol  = zero
       ido  = 0
       info = 0
 c
@@ -178,7 +178,7 @@ c
       maxitr = 300
       mode = 4
 c
-      iparam(3) = maxitr 
+      iparam(3) = maxitr
       iparam(7) = mode
 c
 c     %--------------------------------------------%
@@ -200,34 +200,34 @@ c     | and subdiagonals within the band of |
 c     | matrices A and M.                   |
 c     %-------------------------------------%
 c
-      kl   = nx 
-      ku   = nx 
+      kl   = nx
+      ku   = nx
 c
-c     %---------------% 
+c     %---------------%
 c     | Main diagonal |
 c     %---------------%
 c
       idiag = kl+ku+1
       do 30 j = 1, n
-         a(idiag,j) = 4.0D+0 
-         m(idiag,j) = 4.0D+0 
-  30  continue 
-c 
+         a(idiag,j) = 4.0D+0
+         m(idiag,j) = 4.0D+0
+  30  continue
+c
 c     %-------------------------------------%
 c     | First subdiagonal and superdiagonal |
 c     %-------------------------------------%
-c 
+c
       isup = kl+ku
       isub = kl+ku+2
       h = one / dble (nx+1)
-      rho = 1.0D+2 
+      rho = 1.0D+2
       do 50 i = 1, nx
         lo = (i-1)*nx
         do 40 j = lo+1, lo+nx-1
            a(isub,j+1) = -one+h*rho/two
            a(isup,j) = -one-h*rho/two
-  40    continue      
-  50  continue 
+  40    continue
+  50  continue
 c
       do 60 j = 1, n-1
          m(isub,j+1) = one
@@ -246,8 +246,8 @@ c
          do 70 j = lo+1, lo+nx
             a(isup,nx+j)  = -one
             a(isub,j) = -one
- 70      continue 
- 80   continue 
+ 70      continue
+ 80   continue
 c
 c     %------------------------------------------------%
 c     | Call ARPACK banded solver to find eigenvalues  |
@@ -259,9 +259,9 @@ c     | in the first NCONV (=IPARAM(5)) columns of V.  |
 c     %------------------------------------------------%
 c
       rvec = .true.
-      call dnband (rvec, 'A', select, d, d(1,2), v, ldv, sigmar, 
-     &     sigmai, workev, n, a, m, lda, rfac, cfac, ku, kl, 
-     &     which, bmat, nev, tol, resid, ncv, v, ldv, iparam, 
+      call dnband (rvec, 'A', select, d, d(1,2), v, ldv, sigmar,
+     &     sigmai, workev, n, a, m, lda, rfac, cfac, ku, kl,
+     &     which, bmat, nev, tol, resid, ncv, v, ldv, iparam,
      &     workd, workl, lworkl, workc, iwork, info)
 c
       if ( info .eq. 0) then
@@ -294,7 +294,7 @@ c        | Compute the residual norm. |
 c        |    ||  A*x - lambda*x ||   |
 c        %----------------------------%
 c
-         first = .true. 
+         first = .true.
          do 90 j = 1, nconv
 c
             if ( d(j,2) .eq. zero ) then
@@ -303,11 +303,11 @@ c              %--------------------%
 c              | Ritz value is real |
 c              %--------------------%
 c
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j), 1, zero,
      &                    ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call daxpy (n, -d(j,1), mx, 1, ax, 1)
                d(j,3) = dnrm2 (n, ax, 1)
@@ -319,30 +319,30 @@ c              %------------------------%
 c              | Ritz value is complex  |
 c              | Residual of one Ritz   |
 c              | value of the conjugate |
-c              | pair is computed.      | 
+c              | pair is computed.      |
 c              %------------------------%
 c
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j), 1, zero,
      &                    ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call daxpy (n, -d(j,1), mx, 1, ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    mx, 1)
                call daxpy (n, d(j,2), mx, 1, ax, 1)
                d(j,3) = dnrm2 (n, ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    a(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    a(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j+1), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j+1), 1, zero,
      &                    mx, 1)
                call daxpy (n, -d(j,1), mx, 1, ax, 1)
-               call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                    m(kl+1,1), lda, v(1,j), 1, zero, 
+               call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                    m(kl+1,1), lda, v(1,j), 1, zero,
      &                    mx, 1)
                call daxpy (n, -d(j,2), mx, 1, ax, 1)
                d(j,3) = dlapy2 ( d(j,3), dnrm2 (n, ax, 1) )
@@ -353,11 +353,11 @@ c
                first = .true.
             end if
 c
- 90      continue 
+ 90      continue
 
          call dmout (6, nconv, 3, d, maxncv, -6,
      &             'Ritz values (Real,Imag) and relative residuals')
-      else 
+      else
 c
 c        %-------------------------------------%
 c        | Either convergence failed, or there |
@@ -368,8 +368,8 @@ c
           print *, ' '
           print *, ' Error with _nband, info= ', info
           print *, ' Check the documentation of _nband '
-          print *, ' ' 
+          print *, ' '
 c
       end if
 c
- 9000 end      
+ 9000 end

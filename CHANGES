@@ -1,3 +1,9 @@
+arpack-ng - 3.6.2
+
+ * Remove all trailing whitespaces
+
+ -- Sylvestre Ledru <sylvestre@debian.org> Sat, 23 Jun 2018 14:56:54 +0200
+
 arpack-ng - 3.6.1
 
  * Rename debug.h to debug-arpack.h to avoid collision (Closes #126)
@@ -6,7 +12,7 @@ arpack-ng - 3.6.1
  * Fix a regression on i386 and other archs (Closes #123)
 
  -- Sylvestre Ledru <sylvestre@debian.org> Thu Jun 7 21:41:16 2018 +0200
- 
+
 arpack-ng - 3.6.0
 
  [ Franck Houssen ]

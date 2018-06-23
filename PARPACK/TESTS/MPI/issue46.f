@@ -40,7 +40,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxnloc, maxnev, maxncv, ldv
-      parameter       (maxnloc=256, maxnev=10, maxncv=25, 
+      parameter       (maxnloc=256, maxnev=10, maxncv=25,
      &                 ldv=maxnloc )
 c
 c     %--------------%
@@ -59,10 +59,10 @@ c     | Local Scalars |
 c     %---------------%
 c
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, ierr, j, 
+      integer          ido, n, nev, ncv, lworkl, info, ierr, j,
      &                 nx, nconv, maxitr, mode, ishfts
       logical          rvec
-      Double precision      
+      Double precision
      &                 tol, sigma
 c
 c     %----------------------------------------------%
@@ -79,13 +79,13 @@ c
       Double precision
      &                 zero
       parameter        (zero = 0.0)
-c  
+c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision           
-     &                 pdnorm2 
+      Double precision
+     &                 pdnorm2
       external         pdnorm2, daxpy
 c
 c     %---------------------%
@@ -117,15 +117,15 @@ c     | modify NEV, NCV, WHICH to solve problems of        |
 c     | different sizes, and to get different parts of the |
 c     | spectrum.  However, The following conditions must  |
 c     | be satisfied:                                      |
-c     |                   N <= MAXN,                       | 
+c     |                   N <= MAXN,                       |
 c     |                 NEV <= MAXNEV,                     |
-c     |             NEV + 2 <= NCV <= MAXNCV               | 
-c     %----------------------------------------------------% 
+c     |             NEV + 2 <= NCV <= MAXNCV               |
+c     %----------------------------------------------------%
 c
       nx = 10
       n = nx*nx
-      nev =  4 
-      ncv =  20 
+      nev =  4
+      ncv =  20
 c
 c     %--------------------------------------%
 c     | Set up distribution of data to nodes |
@@ -160,7 +160,7 @@ c     | iteration.                                       |
 c     %--------------------------------------------------%
 c
       lworkl = ncv*(ncv+8)
-      tol = zero 
+      tol = zero
       info = 0
       ido = 0
 c
@@ -177,10 +177,10 @@ c
       ishfts = 1
       maxitr = 300
       mode   = 1
-c      
-      iparam(1) = ishfts 
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+c
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
 c     | M A I N   L O O P (Reverse communication) |
@@ -189,13 +189,13 @@ c
  10   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine PSSAUPD and take| 
+c        | Repeatedly call the routine PSSAUPD and take|
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call pdsaupd ( comm, ido, bmat, nloc, which, nev, tol, resid, 
+         call pdsaupd ( comm, ido, bmat, nloc, which, nev, tol, resid,
      &                 ncv, v, ldv, iparam, ipntr, workd, workl,
      &                 lworkl, info )
 c
@@ -211,7 +211,7 @@ c           | the input, and return the result to  |
 c           | workd(ipntr(2)).                     |
 c           %--------------------------------------%
 c
-            call av ( comm, nloc, nx, mv_buf, 
+            call av ( comm, nloc, nx, mv_buf,
      &               workd(ipntr(1)), workd(ipntr(2)))
 c
 c           %-----------------------------------------%
@@ -220,7 +220,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-         end if 
+         end if
 c
 c     %----------------------------------------%
 c     | Either we have convergence or there is |
@@ -241,23 +241,23 @@ c
             print *, ' '
          endif
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using PSSEUPD.               |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
-c           
+c
          rvec = .true.
 c
-         call pdseupd ( comm, rvec, 'All', select, 
-     &        d, v, ldv, sigma, 
-     &        bmat, nloc, which, nev, tol, resid, ncv, v, ldv, 
+         call pdseupd ( comm, rvec, 'All', select,
+     &        d, v, ldv, sigma,
+     &        bmat, nloc, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
 c        %----------------------------------------------%
 c        | Eigenvalues are returned in the first column |
@@ -327,11 +327,11 @@ c
             print *, ' Maximum number of iterations reached.'
             print *, ' '
          else if ( info .eq. 3) then
-            print *, ' ' 
+            print *, ' '
             print *, ' No shifts could be applied during implicit
      &                 Arnoldi update, try increasing NCV.'
             print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_SDRV1 '
@@ -343,8 +343,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -362,7 +362,7 @@ c
 c
 c
       end
-c 
+c
 c ------------------------------------------------------------------
 c     parallel matrix vector subroutine
 c
@@ -392,7 +392,7 @@ c     .. MPI Declarations ...
      &                  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          daxpy
- 
+
       call MPI_COMM_RANK( comm, myid, ierr )
       call MPI_COMM_SIZE( comm, nprocs, ierr )
 c
@@ -442,7 +442,7 @@ c
 c=========================================================================
       subroutine tv (nx, x, y)
 c
-      integer           nx, j 
+      integer           nx, j
       Double precision
      &                  x(nx), y(nx), dd, dl, du
 c
@@ -451,18 +451,18 @@ c
       parameter        (one = 1.0 )
 c
 c     Compute the matrix vector multiplication y<---T*x
-c     where T is a nx by nx tridiagonal matrix with DD on the 
+c     where T is a nx by nx tridiagonal matrix with DD on the
 c     diagonal, DL on the subdiagonal, and DU on the superdiagonal.
-c     
+c
 c
       dd  = 4.0
-      dl  = -one 
+      dl  = -one
       du  = -one
-c 
+c
       y(1) =  dd*x(1) + du*x(2)
       do 10 j = 2,nx-1
-         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1) 
- 10   continue 
-      y(nx) =  dl*x(nx-1) + dd*x(nx) 
+         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1)
+ 10   continue
+      y(nx) =  dl*x(nx-1) + dd*x(nx)
       return
       end

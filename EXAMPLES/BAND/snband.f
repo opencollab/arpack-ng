@@ -35,18 +35,18 @@ c  Mode 2:  A*z = lambda*M*z, M symmetric positive definite
 c           ===> OP = inv[M]*A  and  B = M.
 c
 c  Mode 3:  A*z = lambda*M*z, M symmetric semi-definite
-c           ===> OP = Real_Part{ inv[A - sigma*M]*M }  and  B = M. 
+c           ===> OP = Real_Part{ inv[A - sigma*M]*M }  and  B = M.
 c           ===> shift-and-invert mode (in real arithmetic)
-c           If OP*z = amu*z, then 
+c           If OP*z = amu*z, then
 c           amu = 1/2 * [ 1/(lambda-sigma) + 1/(lambda-conjg(sigma)) ].
 c           Note: If sigma is real, i.e. imaginary part of sigma is zero;
-c                 Real_Part{ inv[A - sigma*M]*M } == inv[A - sigma*M]*M 
-c                 amu == 1/(lambda-sigma). 
-c  
+c                 Real_Part{ inv[A - sigma*M]*M } == inv[A - sigma*M]*M
+c                 amu == 1/(lambda-sigma).
+c
 c  Mode 4:  A*z = lambda*M*z, M symmetric semi-definite
-c           ===> OP = Imaginary_Part{ inv[A - sigma*M]*M }  and  B = M. 
+c           ===> OP = Imaginary_Part{ inv[A - sigma*M]*M }  and  B = M.
 c           ===> shift-and-invert mode (in real arithmetic)
-c           If OP*z = amu*z, then 
+c           If OP*z = amu*z, then
 c           amu = 1/2i * [ 1/(lambda-sigma) - 1/(lambda-conjg(sigma)) ].
 c
 c
@@ -54,28 +54,28 @@ c  The choice of mode must be specified in IPARAM(7) defined below.
 c
 c \Usage
 c   call snband
-c      ( RVEC, HOWMNY, SELECT, DR, DI, Z, LDZ, SIGMAR, SIGMAI, 
-c        WORKEV, V, N, AB, MB, LDA, RFAC, CFAC, KL, KU, WHICH, 
-c        BMAT, NEV, TOL, RESID, NCV, V, LDV, IPARAM, WORKD, 
+c      ( RVEC, HOWMNY, SELECT, DR, DI, Z, LDZ, SIGMAR, SIGMAI,
+c        WORKEV, V, N, AB, MB, LDA, RFAC, CFAC, KL, KU, WHICH,
+c        BMAT, NEV, TOL, RESID, NCV, V, LDV, IPARAM, WORKD,
 c        WORKL, LWORKL, WORKC, IWORK, INFO )
 c
 c \Arguments
-c 
-c  RVEC    LOGICAL  (INPUT) 
-c          Specifies whether a basis for the invariant subspace corresponding 
-c          to the converged Ritz value approximations for the eigenproblem 
+c
+c  RVEC    LOGICAL  (INPUT)
+c          Specifies whether a basis for the invariant subspace corresponding
+c          to the converged Ritz value approximations for the eigenproblem
 c          A*z = lambda*B*z is computed.
 c
 c             RVEC = .FALSE.     Compute Ritz values only.
 c
 c             RVEC = .TRUE.      Compute the Ritz vectors or Schur vectors.
-c                                See Remarks below. 
+c                                See Remarks below.
 c
-c  HOWMNY  Character*1  (INPUT) 
-c          Specifies the form of the basis for the invariant subspace 
+c  HOWMNY  Character*1  (INPUT)
+c          Specifies the form of the basis for the invariant subspace
 c          corresponding to the converged Ritz values that is to be computed.
 c
-c          = 'A': Compute NEV Ritz vectors; 
+c          = 'A': Compute NEV Ritz vectors;
 c          = 'P': Compute NEV Schur vectors;
 c          = 'S': compute some of the Ritz vectors, specified
 c                 by the logical array SELECT.
@@ -83,23 +83,23 @@ c
 c  SELECT  Logical array of dimension NCV.  (INPUT)
 c          If HOWMNY = 'S', SELECT specifies the Ritz vectors to be
 c          computed. To select the Ritz vector corresponding to a
-c          Ritz value (DR(j), DI(j)), SELECT(j) must be set to .TRUE.. 
+c          Ritz value (DR(j), DI(j)), SELECT(j) must be set to .TRUE..
 c          If HOWMNY = 'A' or 'P', SELECT is used as internal workspace.
 c
 c  DR      Real array of dimension NEV+1.  (OUTPUT)
-c          On exit, DR contains the real part of the Ritz value approximations 
-c          to the eigenvalues of A*z = lambda*B*z. 
+c          On exit, DR contains the real part of the Ritz value approximations
+c          to the eigenvalues of A*z = lambda*B*z.
 c
 c  DI      Real array of dimension NEV+1.  (OUTPUT)
-c          On exit, DI contains the imaginary part of the Ritz value 
+c          On exit, DI contains the imaginary part of the Ritz value
 c          approximations to the eigenvalues of A*z = lambda*B*z associated
-c          with DR. 
+c          with DR.
 c
-c          NOTE: When Ritz values are complex, they will come in complex 
-c                conjugate pairs.  If eigenvectors are requested, the 
-c                corresponding Ritz vectors will also come in conjugate 
-c                pairs and the real and imaginary parts of these are 
-c                represented in two consecutive columns of the array Z 
+c          NOTE: When Ritz values are complex, they will come in complex
+c                conjugate pairs.  If eigenvectors are requested, the
+c                corresponding Ritz vectors will also come in conjugate
+c                pairs and the real and imaginary parts of these are
+c                represented in two consecutive columns of the array Z
 c                (see below).
 c
 c  Z       Real N by NEV+1 array if RVEC = .TRUE. and HOWMNY = 'A'. (OUTPUT)
@@ -124,24 +124,24 @@ c          the array Z may be set equal to first NEV+1 columns of the Arnoldi
 c          basis array V computed by SNAUPD.  In this case the Arnoldi basis
 c          will be destroyed and overwritten with the eigenvector basis.
 c
-c  LDZ     Integer.  (INPUT) 
-c          The leading dimension of the array Z.  If Ritz vectors are 
-c          desired, then  LDZ >= max( 1, N ).  In any case,  LDZ >= 1.  
-c 
-c  SIGMAR  Real  (INPUT) 
-c          If IPARAM(7) = 3 or 4, represents the real part of the shift. 
-c          Not referenced if IPARAM(7) = 1 or 2.  
-c 
-c  SIGMAI  Real  (INPUT) 
-c          If IPARAM(7) = 3 or 4, represents the imaginary part of the 
-c          shift. 
-c          Not referenced if IPARAM(7) = 1 or 2.  
-c 
-c  WORKEV  Real work array of dimension 3*NCV.  (WORKSPACE) 
-c 
-c  N       Integer.  (INPUT) 
-c          Dimension of the eigenproblem.  
-c 
+c  LDZ     Integer.  (INPUT)
+c          The leading dimension of the array Z.  If Ritz vectors are
+c          desired, then  LDZ >= max( 1, N ).  In any case,  LDZ >= 1.
+c
+c  SIGMAR  Real  (INPUT)
+c          If IPARAM(7) = 3 or 4, represents the real part of the shift.
+c          Not referenced if IPARAM(7) = 1 or 2.
+c
+c  SIGMAI  Real  (INPUT)
+c          If IPARAM(7) = 3 or 4, represents the imaginary part of the
+c          shift.
+c          Not referenced if IPARAM(7) = 1 or 2.
+c
+c  WORKEV  Real work array of dimension 3*NCV.  (WORKSPACE)
+c
+c  N       Integer.  (INPUT)
+c          Dimension of the eigenproblem.
+c
 c  AB      Real array of dimension LDA by N. (INPUT)
 c          The matrix A in band storage, in rows KL+1 to
 c          2*KL+KU+1; rows 1 to KL of the array need not be set.
@@ -151,25 +151,25 @@ c          AB(kl+ku+1+i-j,j) = A(i,j) for max(1,j-ku)<=i<=min(m,j+kl)
 c
 c  MB      Real array of dimension LDA by N. (INPUT)
 c          The matrix M in band storage, in rows KL+1 to
-c          2*KL+KU+1; rows 1 to KL of the array need not be set. 
+c          2*KL+KU+1; rows 1 to KL of the array need not be set.
 c          The j-th column of M is stored in the j-th column of the
 c          array AB as follows:
 c          MB(kl+ku+1+i-j,j) = M(i,j) for max(1,j-ku)<=i<=min(m,j+kl)
 c          Not referenced if IPARAM(7) = 1
 c
 c  LDA     Integer. (INPUT)
-c          Leading dimension of AB, MB, RFAC and CFAC. 
+c          Leading dimension of AB, MB, RFAC and CFAC.
 c
 c  RFAC    Real array of LDA by N. (WORKSPACE/OUTPUT)
-c          RFAC is used to store the LU factors of MB when IPARAM(7) = 2 
+c          RFAC is used to store the LU factors of MB when IPARAM(7) = 2
 c          is invoked.  It is used to store the LU factors of
 c          (A-sigma*M) when IPARAM(7) = 3 is invoked with a real shift.
 c          It is not referenced when IPARAM(7) = 1 or 4.
 c
 c  CFAC    Complex array of LDA by N. (WORKSPACE/OUTPUT)
 c          CFAC is used to store (A-SIGMA*M) and its LU factors
-c          when IPARAM(7) = 3 or 4 are used with a complex shift SIGMA.  
-c          On exit, it contains the LU factors of (A-SIGMA*M).  
+c          when IPARAM(7) = 3 or 4 are used with a complex shift SIGMA.
+c          On exit, it contains the LU factors of (A-SIGMA*M).
 c          It is not referenced when IPARAM(7) = 1 or 2.
 c
 c  KL      Integer. (INPUT)
@@ -181,7 +181,7 @@ c
 c  WHICH   Character*2.  (INPUT)
 c          When IPARAM(7)= 1 or 2,  WHICH can be set to any one of
 c          the following.
-c  
+c
 c            'LM' -> want the NEV eigenvalues of largest magnitude.
 c            'SM' -> want the NEV eigenvalues of smallest magnitude.
 c            'LR' -> want the NEV eigenvalues of largest real part.
@@ -189,8 +189,8 @@ c            'SR' -> want the NEV eigenvalues of smallest real part.
 c            'LI' -> want the NEV eigenvalues of largest imaginary part.
 c            'SI' -> want the NEV eigenvalues of smallest imaginary part.
 c
-c          When IPARAM(7) = 3 or 4, WHICH should be set to 'LM' only. 
-c          
+c          When IPARAM(7) = 3 or 4, WHICH should be set to 'LM' only.
+c
 c  BMAT    Character*1.  (INPUT)
 c          BMAT specifies the type of the matrix B that defines the
 c          semi-inner product for the operator OP.
@@ -199,9 +199,9 @@ c          BMAT = 'G' -> generalized eigenvalue problem A*z = lambda*M*z
 
 c  NEV     Integer. (INPUT)
 c          Number of eigenvalues to be computed.
-c   
+c
 c  TOL     Real scalar.  (INPUT)
-c          Stopping criteria: the relative accuracy of the Ritz value 
+c          Stopping criteria: the relative accuracy of the Ritz value
 c          is considered acceptable if BOUNDS(I) .LE. TOL*ABS(RITZ(I)).
 c          If TOL .LE. 0. is passed a default is set:
 c          DEFAULT = SLAMCH('EPS')  (machine precision as computed
@@ -221,12 +221,12 @@ c          Represents the dimension of the Arnoldi basis constructed
 c          by snaupd for OP.
 c
 c  V       Real array N by NCV+1.  (OUTPUT)
-c          Upon OUTPUT: If RVEC = .TRUE. the first NCONV=IPARAM(5) columns 
-c                       represent approximate Schur vectors that span the 
+c          Upon OUTPUT: If RVEC = .TRUE. the first NCONV=IPARAM(5) columns
+c                       represent approximate Schur vectors that span the
 c                       desired invariant subspace.
-c          NOTE: The array Z may be set equal to first NEV+1 columns of the 
+c          NOTE: The array Z may be set equal to first NEV+1 columns of the
 c          Arnoldi basis vector array V computed by SNAUPD. In this case
-c          if RVEC = .TRUE. and HOWMNY='A', then the first NCONV=IPARAM(5) 
+c          if RVEC = .TRUE. and HOWMNY='A', then the first NCONV=IPARAM(5)
 c          are the desired Ritz vectors.
 c
 c  LDV     Integer.  (INPUT)
@@ -234,7 +234,7 @@ c          Leading dimension of V exactly as declared in the calling
 c          program.
 c
 c  IPARAM  Integer array of length 11.  (INPUT/OUTPUT)
-c          IPARAM(1) = ISHIFT: 
+c          IPARAM(1) = ISHIFT:
 c          The shifts selected at each iteration are used to restart
 c          the Arnoldi iteration in an implicit fashion.
 c          It is set to 1 in this subroutine.  The user do not need
@@ -248,7 +248,7 @@ c                      combination of Ritz vectors associated with the
 c                      "wanted" eigenvalues.
 c          -------------------------------------------------------------
 c
-c          IPARAM(2) = No longer referenced. 
+c          IPARAM(2) = No longer referenced.
 c
 c          IPARAM(3) = MXITER
 c          On INPUT:  max number of Arnoldi update iterations allowed.
@@ -262,9 +262,9 @@ c
 c          IPARAM(6) = IUPD
 c          Not referenced. Implicit restarting is ALWAYS used.
 c
-c          IPARAM(7) = IPARAM(7): 
+c          IPARAM(7) = IPARAM(7):
 c          On INPUT determines what type of eigenproblem is being solved.
-c          Must be 1,2,3,4; See under \Description of snband for the 
+c          Must be 1,2,3,4; See under \Description of snband for the
 c          four modes available.
 c
 c          IPARAM(9) = NUMOP, IPARAM(10) = NUMOPB, IPARAM(11) = NUMREO,
@@ -280,22 +280,22 @@ c LWORKL   Integer.  (INPUT)
 c          LWORKL must be at least 3*NCV**2 + 6*NCV.
 c
 c WORKC    Complex array of length N. (WORKSPACE)
-c          Workspace used when IPARAM(7) = 3 or 4 for storing a temporary 
+c          Workspace used when IPARAM(7) = 3 or 4 for storing a temporary
 c          complex vector.
 c
 c IWORK    Integer array of dimension at least N. (WORKSPACE)
-c          Used when IPARAM(7)=2,3,4 to store the pivot information in the 
+c          Used when IPARAM(7)=2,3,4 to store the pivot information in the
 c          factorization of M or (A-SIGMA*M).
-c            
+c
 c INFO     Integer.  (INPUT/OUTPUT)
 c          Error flag on output.
 c          =  0: Normal exit.
 c          =  1: The Schur form computed by LAPACK routine slahqr
 c                could not be reordered by LAPACK routine strsen.
-c                Re-enter subroutine SNEUPD with IPARAM(5)=NCV and 
-c                increase the size of the arrays DR and DI to have 
-c                dimension at least NCV and allocate at least NCV 
-c                columns for Z. NOTE: Not necessary if Z and V share 
+c                Re-enter subroutine SNEUPD with IPARAM(5)=NCV and
+c                increase the size of the arrays DR and DI to have
+c                dimension at least NCV and allocate at least NCV
+c                columns for Z. NOTE: Not necessary if Z and V share
 c                the same space. Please notify the authors.
 c
 c          = -1: N must be positive.
@@ -314,9 +314,9 @@ c          = -12: HOWMNY = 'S' not yet implemented
 c          = -13: HOWMNY must be one of 'A' or 'P'
 c          = -14: SNAUPD did not find any eigenvalues to sufficient
 c                 accuracy.
-c          = -15: Overflow occurs when we try to transform the Ritz 
+c          = -15: Overflow occurs when we try to transform the Ritz
 c                 values returned from SNAUPD to those of the original
-c                 problem using Rayleigh Quotient. 
+c                 problem using Rayleigh Quotient.
 c          = -9999: Could not build an Arnoldi factorization.
 c                   IPARAM(5) returns the size of the current
 c                   Arnoldi factorization.
@@ -332,7 +332,7 @@ c  1. D.C. Sorensen, "Implicit Application of Polynomial Filters in
 c     a k-Step Arnoldi Method", SIAM J. Matr. Anal. Apps., 13 (1992),
 c     pp 357-385.
 c
-c  2. R.B. Lehoucq, "Analysis and Implementation of an Implicitly 
+c  2. R.B. Lehoucq, "Analysis and Implementation of an Implicitly
 c     Restarted Arnoldi Iteration", Ph.D thesis, TR95-13, Rice Univ,
 c     May 1995.
 c
@@ -363,9 +363,9 @@ c     Ritz vectors. Thus, their numerical properties are often superior.
 c     If RVEC = .TRUE. then the relationship
 c             A * V(:,1:IPARAM(5)) = V(:,1:IPARAM(5)) * T, and
 c     V(:,1:IPARAM(5))' * V(:,1:IPARAM(5)) = I are approximately satisfied.
-c     Here T is the leading submatrix of order IPARAM(5) of the real 
+c     Here T is the leading submatrix of order IPARAM(5) of the real
 c     upper quasi-triangular matrix stored workl(ipntr(12)). That is,
-c     T is block upper triangular with 1-by-1 and 2-by-2 diagonal blocks; 
+c     T is block upper triangular with 1-by-1 and 2-by-2 diagonal blocks;
 c     each 2-by-2 diagonal block has its diagonal elements equal and its
 c     off-diagonal elements of opposite sign.  Corresponding to each 2-by-2
 c     diagonal block is a complex conjugate pair of Ritz values. The real
@@ -387,20 +387,20 @@ c\EndLib
 c
 c---------------------------------------------------------------------
 c
-      subroutine snband( rvec, howmny, select, dr, di, z, ldz,  sigmar, 
-     &           sigmai, workev, n, ab, mb, lda, rfac,  cfac, kl, ku, 
-     &           which, bmat, nev, tol, resid,  ncv, v, ldv, 
+      subroutine snband( rvec, howmny, select, dr, di, z, ldz,  sigmar,
+     &           sigmai, workev, n, ab, mb, lda, rfac,  cfac, kl, ku,
+     &           which, bmat, nev, tol, resid,  ncv, v, ldv,
      &           iparam, workd, workl, lworkl, workc, iwork, info)
 c
 c     %------------------%
 c     | Scalar Arguments |
 c     %------------------%
-c 
+c
       character        which*2, bmat, howmny
       integer          n, lda, kl, ku, nev, ncv, ldv,
-     &                 ldz, lworkl, info  
+     &                 ldz, lworkl, info
       Real
-     &                 tol, sigmar, sigmai 
+     &                 tol, sigmar, sigmai
 c
 c     %-----------------%
 c     | Array Arguments |
@@ -410,7 +410,7 @@ c
       logical          select(*)
       Real
      &                 dr(*), di(*), resid(*), v(ldv,*), z(ldz,*),
-     &                 ab(lda,*), mb(lda,*), rfac(lda,*), 
+     &                 ab(lda,*), mb(lda,*), rfac(lda,*),
      &                 workd(*), workl(*), workev(*)
       Complex
      &                 cfac(lda,*), workc(*)
@@ -426,9 +426,9 @@ c     | Local Scalars |
 c     %---------------%
 c
       integer          ido, i, j, type, imid, itop, ibot, ierr
-      Real        
-     &                 numr, denr, deni, dmdul, safmin 
-      logical          rvec, first 
+      Real
+     &                 numr, denr, deni, dmdul, safmin
+      logical          rvec, first
 c
 c     %------------%
 c     | Parameters |
@@ -445,7 +445,7 @@ c     %-----------------------------%
 c
       Real
      &                 sdot, snrm2, slapy2, slamch
-      external         sdot, scopy, sgbmv, cgbtrf, cgbtrs, sgbtrf, 
+      external         sdot, scopy, sgbmv, cgbtrf, cgbtrs, sgbtrf,
      &                 sgbtrs, snrm2, slapy2, slacpy, slamch
 c
 c     %---------------------%
@@ -464,17 +464,17 @@ c     | that 1/sfmin does not overflow |
 c     %--------------------------------%
 c
       safmin = slamch('safmin')
-c     
+c
 c     %----------------------------------------------------------------%
 c     | Set type of the problem to be solved. Check consistency        |
 c     | between BMAT and IPARAM(7).                                    |
 c     | type = 1 --> Solving standard problem in regular mode.         |
-c     | type = 2 --> Solving standard problem in shift-invert mode.    | 
+c     | type = 2 --> Solving standard problem in shift-invert mode.    |
 c     | type = 3 --> Solving generalized problem in regular mode.      |
 c     | type = 4 --> Solving generalized problem in shift-invert mode. |
 c     | type = 5 --> Solving standard problem in shift-invert mode     |
 c     |              using iparam(7) = 4 in SNAUPD.                    |
-c     | type = 6 --> Solving generalized problem in shift-invert mode. | 
+c     | type = 6 --> Solving generalized problem in shift-invert mode. |
 c     |              using iparam(7) = 4 in SNAUPD.                    |
 c     %----------------------------------------------------------------%
 c
@@ -485,19 +485,19 @@ c
       else if ( iparam(7) .eq. 2 ) then
          type = 3
       else if ( iparam(7) .eq. 3 .and. bmat .eq. 'G') then
-         type = 4 
+         type = 4
       else if ( iparam(7) .eq. 4 .and. bmat .eq. 'I') then
          type = 5
-      else if ( iparam(7) .eq. 4 .and. bmat .eq. 'G') then 
+      else if ( iparam(7) .eq. 4 .and. bmat .eq. 'G') then
          type = 6
       else
          print*, ' '
          print*, 'BMAT is inconsistent with IPARAM(7).'
-         print*, ' ' 
+         print*, ' '
          go to 9000
       end if
 c
-c     %----------------------------------%       
+c     %----------------------------------%
 c     | When type = 5,6 are used, sigmai |
 c     | must be nonzero.                 |
 c     %----------------------------------%
@@ -505,16 +505,16 @@ c
       if ( type .eq. 5 .or. type .eq. 6 ) then
           if ( sigmai .eq. zero ) then
              print*, ' '
-             print*, '_NBAND: sigmai must be nonzero when type 5 or 6 
+             print*, '_NBAND: sigmai must be nonzero when type 5 or 6
      &                is used. '
              print*, ' '
              go to 9000
-          end if    
+          end if
       end if
 c
 c     %------------------------%
 c     | Initialize the reverse |
-c     | communication flag.    |         
+c     | communication flag.    |
 c     %------------------------%
 c
       ido   = 0
@@ -546,7 +546,7 @@ c         | Factor (A-sigma*I).           |
 c         %-------------------------------%
 c
           if (sigmai .eq. zero) then
-c            
+c
 c            %-----------------------------------%
 c            | Construct (A-sigmar*I) and factor |
 c            | in real arithmetic.               |
@@ -558,7 +558,7 @@ c
   10         continue
              call sgbtrf(n, n, kl, ku, rfac, lda, iwork, ierr )
              if (ierr .ne. 0) then
-                print*, ' ' 
+                print*, ' '
                 print*, ' _NBAND: Error with _gbtrf. '
                 print*, ' '
                 go to  9000
@@ -574,24 +574,24 @@ c
              do 30 j = 1, n
                 do 20 i = itop, ibot
                    cfac(i,j) = cmplx(ab(i,j))
-  20            continue 
+  20            continue
   30         continue
 c
              do 40 j = 1, n
-                cfac(imid,j) = cfac(imid,j) 
+                cfac(imid,j) = cfac(imid,j)
      $                         - cmplx(sigmar, sigmai)
-  40         continue 
-c 
-             call cgbtrf(n, n, kl, ku, cfac, lda, iwork, ierr ) 
+  40         continue
+c
+             call cgbtrf(n, n, kl, ku, cfac, lda, iwork, ierr )
              if ( ierr .ne. 0) then
                 print*, ' '
                 print*, ' _NBAND: Error with _gbtrf. '
                 print*, ' '
                 go to  9000
              end if
-c        
+c
           end if
-      
+
       else if ( type .eq. 3 ) then
 c
 c        %-----------------------------------------------%
@@ -603,7 +603,7 @@ c
          call slacpy ('A', ibot, n, mb, lda, rfac, lda )
          call sgbtrf(n, n, kl, ku, rfac, lda, iwork, ierr)
          if (ierr .ne. 0) then
-             print*, ' ' 
+             print*, ' '
              print*,'_NBAND:  Error with _gbtrf.'
              print*, ' '
              go to 9000
@@ -615,7 +615,7 @@ c        %-------------------------------------------%
 c        | Solving generalized eigenvalue problem in |
 c        | shift-invert mode.                        |
 c        %-------------------------------------------%
-c 
+c
          if ( sigmai .eq. zero ) then
 c
 c            %--------------------------------------------%
@@ -624,7 +624,7 @@ c            | arithmetic.                                |
 c            %--------------------------------------------%
 c
              do 60 j = 1,n
-                do 50 i = itop, ibot 
+                do 50 i = itop, ibot
                    rfac(i,j) = ab(i,j) - sigmar*mb(i,j)
   50            continue
   60         continue
@@ -642,13 +642,13 @@ c
 c            %-----------------------------------------------%
 c            | Construct (A - sigma*M) and factor in complex |
 c            | arithmetic.                                   |
-c            %-----------------------------------------------% 
+c            %-----------------------------------------------%
 c
              do 80 j = 1,n
-                do 70 i = itop, ibot 
-                   cfac(i,j) = cmplx( ab(i,j)-sigmar*mb(i,j), 
+                do 70 i = itop, ibot
+                   cfac(i,j) = cmplx( ab(i,j)-sigmar*mb(i,j),
      &                         -sigmai*mb(i,j) )
-  70            continue 
+  70            continue
   80         continue
 c
              call cgbtrf(n, n, kl, ku, cfac, lda, iwork, ierr)
@@ -658,7 +658,7 @@ c
                 print*, ' '
                 go to 9000
              end if
-c 
+c
          end if
 c
       end if
@@ -667,7 +667,7 @@ c     %--------------------------------------------%
 c     |  M A I N   L O O P (reverse communication) |
 c     %--------------------------------------------%
 c
-  90  continue 
+  90  continue
 c
       call snaupd ( ido, bmat, n, which, nev, tol, resid, ncv,
      &              v, ldv, iparam, ipntr, workd, workl, lworkl,
@@ -681,8 +681,8 @@ c           %----------------------------%
 c           | Perform  y <--- OP*x = A*x |
 c           %----------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1), 
-     &                 lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1),
+     &                 lda, workd(ipntr(1)), 1, zero,
      &                 workd(ipntr(2)), 1)
 c
          else if ( type .eq. 2 ) then
@@ -690,7 +690,7 @@ c
             if (sigmai .eq. zero) then
 c
 c              %----------------------------------%
-c              | Shift is real.  Perform          | 
+c              | Shift is real.  Perform          |
 c              | y <--- OP*x = inv[A-sigmar*I]*x  |
 c              | to force the starting vector     |
 c              | into the range of OP.            |
@@ -700,7 +700,7 @@ c
                call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda,
      &                       iwork, workd(ipntr(2)), n, ierr)
                if ( ierr .ne. 0 ) then
-                  print*, ' ' 
+                  print*, ' '
                   print*, ' _NBAND: Error with _bgtrs. '
                   print*, ' '
                   go to 9000
@@ -711,8 +711,8 @@ c
 c              %--------------------------------------------%
 c              | Shift is COMPLEX. Perform                  |
 c              | y <--- OP*x = Real_Part{inv[A-sigma*I]*x}  |
-c              | to force the starting vector into the      | 
-c              | range of OP.                               | 
+c              | to force the starting vector into the      |
+c              | range of OP.                               |
 c              %--------------------------------------------%
 c
                do 100 j = 1, n
@@ -732,21 +732,21 @@ c
                   workd(ipntr(2)+j-1) = real(workc(j))
   110          continue
 c
-            end if 
-c 
+            end if
+c
          else if ( type .eq. 3 ) then
 c
 c           %-----------------------------------%
 c           | Perform  y <--- OP*x = inv[M]*A*x |
-c           | to force the starting vector into | 
+c           | to force the starting vector into |
 c           | the range of OP.                  |
 c           %-----------------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1), 
-     &                  lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1),
+     &                  lda, workd(ipntr(1)), 1, zero,
      &                  workd(ipntr(2)), 1)
 c
-            call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda, 
+            call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda,
      &                    iwork, workd(ipntr(2)), n, ierr)
             if (ierr .ne. 0) then
                print*, ' '
@@ -759,13 +759,13 @@ c
 c
 c           %-----------------------------------------%
 c           | Perform y <-- OP*x                      |
-c           |         = Real_part{inv[A-SIGMA*M]*M}*x | 
+c           |         = Real_part{inv[A-SIGMA*M]*M}*x |
 c           | to force the starting vector into the   |
 c           | range of OP.                            |
 c           %-----------------------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1), 
-     &                 lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1),
+     &                 lda, workd(ipntr(1)), 1, zero,
      &                 workd(ipntr(2)), 1)
 c
             if ( sigmai .eq. zero ) then
@@ -773,14 +773,14 @@ c
 c              %---------------------%
 c              | Shift is real, stay |
 c              | in real arithmetic. |
-c              %---------------------%            
+c              %---------------------%
 c
-               call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda, 
+               call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda,
      &                      iwork, workd(ipntr(2)), n, ierr)
                if (ierr .ne. 0) then
-                  print*, ' ' 
+                  print*, ' '
                   print*, '_NBAND: Error with _gbtrs.'
-                  print*, ' ' 
+                  print*, ' '
                   go to 9000
                end if
 c
@@ -792,26 +792,26 @@ c              %--------------------------%
 c
                do 120 i = 1,n
                   workc(i) = cmplx(workd(ipntr(2)+i-1))
-  120           continue 
+  120           continue
 c
-               call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda, 
+               call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda,
      &                      iwork, workc, n, ierr)
-               if (ierr .ne. 0) then 
+               if (ierr .ne. 0) then
                   print*, ' '
-                  print*, '_NBAND: Error with _gbtrs.' 
+                  print*, '_NBAND: Error with _gbtrs.'
                   print*, ' '
                   go to 9000
                end if
 c
                do  130 i = 1, n
                   workd(ipntr(2)+i-1) = real(workc(i))
-  130          continue 
+  130          continue
 c
             end if
 c
          else if ( type .eq. 5) then
 c
-c           %---------------------------------------% 
+c           %---------------------------------------%
 c           | Perform y <-- OP*x                    |
 c           |    = Imaginary_part{inv[A-SIGMA*I]}*x |
 c           | to force the starting vector into the |
@@ -839,32 +839,32 @@ c
 c
 c           %----------------------------------------%
 c           | Perform y <-- OP*x                     |
-c           |       Imaginary_part{inv[A-SIGMA*M]*M} | 
+c           |       Imaginary_part{inv[A-SIGMA*M]*M} |
 c           | to force the starting vector into the  |
 c           | range of OP.                           |
 c           %----------------------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1), 
-     &                 lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1),
+     &                 lda, workd(ipntr(1)), 1, zero,
      &                 workd(ipntr(2)), 1)
 c
             do 160 i = 1,n
                workc(i) = cmplx(workd(ipntr(2)+i-1))
-  160       continue 
+  160       continue
 c
-            call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda, 
+            call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda,
      &                   iwork, workc, n, ierr)
-            if (ierr .ne. 0) then 
+            if (ierr .ne. 0) then
                print*, ' '
-               print*, '_NBAND: Error with _gbtrs.' 
+               print*, '_NBAND: Error with _gbtrs.'
                print*, ' '
                go to 9000
             end if
 c
             do  170 i = 1, n
                workd(ipntr(2)+i-1) = aimag(workc(i))
-  170       continue 
-c 
+  170       continue
+c
          end if
 c
       else if (ido .eq. 1) then
@@ -875,8 +875,8 @@ c           %----------------------------%
 c           | Perform  y <--- OP*x = A*x |
 c           %----------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1), 
-     &                 lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1),
+     &                 lda, workd(ipntr(1)), 1, zero,
      &                 workd(ipntr(2)), 1)
 c
          else if ( type .eq. 2) then
@@ -907,7 +907,7 @@ c
      &                       iwork, workc, n, ierr)
                if ( ierr .ne. 0 ) then
                   print*, ' '
-                  print*, '_NBAND: Error with _gbtrs.' 
+                  print*, '_NBAND: Error with _gbtrs.'
                   print*, ' '
                   go to 9000
                end if
@@ -924,16 +924,16 @@ c           %-----------------------------------%
 c           | Perform  y <--- OP*x = inv[M]*A*x |
 c           %-----------------------------------%
 c
-            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1), 
-     &                  lda, workd(ipntr(1)), 1, zero, 
+            call sgbmv('Notranspose', n, n, kl, ku, one, ab(itop,1),
+     &                  lda, workd(ipntr(1)), 1, zero,
      &                  workd(ipntr(2)), 1)
 c
-            call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda, 
+            call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda,
      &                    iwork, workd(ipntr(2)), n, ierr)
             if (ierr .ne. 0) then
                print*, ' '
                print*, '_NBAND: Error with _bgtrs.'
-               print*, ' ' 
+               print*, ' '
                go to 9000
             end if
 c
@@ -942,7 +942,7 @@ c
 c           %--------------------------------------%
 c           | Perform  y <-- inv(A-sigma*M)*(M*x). |
 c           | (M*x) has been computed and stored   |
-c           | in workd(ipntr(3)).                  |           
+c           | in workd(ipntr(3)).                  |
 c           %--------------------------------------%
 c
             if ( sigmai .eq. zero ) then
@@ -953,16 +953,16 @@ c              | real arithmetic.       |
 c              %------------------------%
 c
                call scopy(n, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-               call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda, 
+               call sgbtrs ('Notranspose', n, kl, ku, 1, rfac, lda,
      &                       iwork, workd(ipntr(2)), n, ierr)
-               if (ierr .ne. 0) then 
+               if (ierr .ne. 0) then
                   print*, ' '
-                  print*, '_NBAND: Error with _gbtrs.' 
+                  print*, '_NBAND: Error with _gbtrs.'
                   print*, ' '
                   go to 9000
                end if
-c 
-            else 
+c
+            else
 c
 c              %---------------------------%
 c              | Go to COMPLEX arithmetic. |
@@ -970,26 +970,26 @@ c              %---------------------------%
 c
                do 200 i = 1,n
                   workc(i) = cmplx(workd(ipntr(3)+i-1))
-  200          continue 
+  200          continue
 c
-               call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda, 
+               call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda,
      &                       iwork, workc, n, ierr)
-               if (ierr .ne. 0) then 
+               if (ierr .ne. 0) then
                   print*, ' '
-                  print*, '_NBAND: Error in _gbtrs.' 
-                  print*, ' ' 
+                  print*, '_NBAND: Error in _gbtrs.'
+                  print*, ' '
                   go to 9000
                end if
 c
                do 210 i = 1,n
                   workd(ipntr(2)+i-1) = real(workc(i))
-  210          continue 
+  210          continue
 c
             end if
 c
          else if ( type .eq. 5 ) then
 c
-c           %---------------------------------------% 
+c           %---------------------------------------%
 c           | Perform y <-- OP*x                    |
 c           |    = Imaginary_part{inv[A-SIGMA*I]*x} |
 c           %---------------------------------------%
@@ -1015,25 +1015,25 @@ c
 c
 c           %-----------------------------------------%
 c           | Perform y <-- OP*x                      |
-c           |   = Imaginary_part{inv[A-SIGMA*M]*M}*x. | 
+c           |   = Imaginary_part{inv[A-SIGMA*M]*M}*x. |
 c           %-----------------------------------------%
 c
             do 240 i = 1,n
                workc(i) = cmplx(workd(ipntr(3)+i-1))
-  240       continue 
+  240       continue
 c
-            call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda, 
+            call cgbtrs ('Notranspose', n, kl, ku, 1, cfac, lda,
      &                   iwork, workc, n, ierr)
-            if (ierr .ne. 0) then 
+            if (ierr .ne. 0) then
                print*, ' '
-               print*, '_NBAND: Error with _gbtrs.' 
+               print*, '_NBAND: Error with _gbtrs.'
                print*, ' '
                go to 9000
             end if
 c
             do  250 i = 1, n
                workd(ipntr(2)+i-1) = aimag(workc(i))
-  250       continue 
+  250       continue
 c
          end if
 c
@@ -1045,14 +1045,14 @@ c        | Not used when      |
 c        | type = 1,2.        |
 c        %--------------------%
 c
-          call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1), 
-     &                lda, workd(ipntr(1)), 1, zero, 
+          call sgbmv('Notranspose', n, n, kl, ku, one, mb(itop,1),
+     &                lda, workd(ipntr(1)), 1, zero,
      &                workd(ipntr(2)), 1)
 c
-      else 
+      else
 c
 c        %-----------------------------------------%
-c        | Either we have convergence, or there is | 
+c        | Either we have convergence, or there is |
 c        | error.                                  |
 c        %-----------------------------------------%
 c
@@ -1069,7 +1069,7 @@ c
             print *, ' '
             go to 9000
 c
-         else 
+         else
 c
             if ( info .eq. 1) then
                print *, ' '
@@ -1084,29 +1084,29 @@ c
 c
             if (iparam(5) .gt. 0) then
 c
-               call sneupd ( rvec, 'A', select, dr, di, z, ldz, 
-     &                 sigmar, sigmai, workev, bmat, n, which, 
+               call sneupd ( rvec, 'A', select, dr, di, z, ldz,
+     &                 sigmar, sigmai, workev, bmat, n, which,
      &                 nev, tol, resid, ncv, v, ldv, iparam,
-     &                 ipntr, workd, workl, lworkl, info )            
+     &                 ipntr, workd, workl, lworkl, info )
 c
                if ( info .ne. 0) then
-c 
+c
 c                 %------------------------------------%
 c                 | Check the documentation of SNEUPD. |
 c                 %------------------------------------%
 c
-                  print *, ' ' 
+                  print *, ' '
                   print *, ' Error with _neupd = ', info
                   print *, ' Check the documentation of _neupd '
-                  print *, ' ' 
+                  print *, ' '
                   go to 9000
 c
-               else if ( sigmai .ne. zero ) then 
-c 
+               else if ( sigmai .ne. zero ) then
+c
                   if ( type .eq. 4 .or. type .eq. 6 ) then
-c 
+c
                      first = .true.
-                     do 270 j = 1, iparam(5) 
+                     do 270 j = 1, iparam(5)
 c
 c                    %----------------------------------%
 c                    | Use Rayleigh Quotient to recover |
@@ -1118,16 +1118,16 @@ c
 c
 c                       %--------------------------------------%
 c                       | Eigenvalue is real. Compute          |
-c                       | d = (x'*inv[A-sigma*M]*M*x) / (x'*x) | 
+c                       | d = (x'*inv[A-sigma*M]*M*x) / (x'*x) |
 c                       %--------------------------------------%
 c
-                        call sgbmv('Nontranspose', n, n, kl, ku, one, 
+                        call sgbmv('Nontranspose', n, n, kl, ku, one,
      $                     mb(itop,1), lda, z(1,j), 1, zero,
      $                     workd, 1)
                         do i = 1, n
                            workc(i) = cmplx(workd(i))
                         end do
-                        call cgbtrs ('Notranspose', n, kl, ku, 1, 
+                        call cgbtrs ('Notranspose', n, kl, ku, 1,
      $                        cfac, lda, iwork, workc, n, info)
                         do i = 1, n
                            workd(i) = real(workc(i))
@@ -1151,7 +1151,7 @@ c
                            go to 9000
                         end if
 c
-                     else if (first) then 
+                     else if (first) then
 c
 c                       %------------------------%
 c                       | Eigenvalue is complex. |
@@ -1166,7 +1166,7 @@ c
                         call sgbmv('Nontranspose', n, n, kl, ku,
      $                      one, mb(itop,1), lda, z(1,j), 1, zero,
      $                      workd, 1)
-                        call sgbmv('Nontranspose', n, n, kl, ku, 
+                        call sgbmv('Nontranspose', n, n, kl, ku,
      $                       one, mb(itop,1), lda, z(1,j+1), 1,
      $                       zero, workd(n+1), 1)
                         do i = 1, n
@@ -1177,7 +1177,7 @@ c                       %----------------------------%
 c                       | Compute inv(A-sigma*M)*M*x |
 c                       %----------------------------%
 c
-                        call cgbtrs('Notranspose',n,kl,ku,1,cfac, 
+                        call cgbtrs('Notranspose',n,kl,ku,1,cfac,
      $                     lda, iwork, workc, n, info)
 c
 c                       %-------------------------------%
@@ -1197,7 +1197,7 @@ c                       %----------------%
 c                       | Compute (x'*x) |
 c                       %----------------%
 c
-                        numr = slapy2( snrm2(n, z(1,j), 1), 
+                        numr = slapy2( snrm2(n, z(1,j), 1),
      &                         snrm2(n, z(1, j+1), 1) )**2
 c
 c                       %----------------------------------------%
@@ -1237,7 +1237,7 @@ c
 c
                      end if
 c
-  270                continue 
+  270                continue
 c
                   else if ( type .eq. 2 .or. type .eq. 5) then
 c
@@ -1260,7 +1260,7 @@ c
                         do i = 1, n
                            workc(i) = cmplx(z(i,j))
                         end do
-                        call cgbtrs ('Notranspose', n, kl, ku, 1, 
+                        call cgbtrs ('Notranspose', n, kl, ku, 1,
      $                        cfac, lda, iwork, workc, n, info)
                         do i = 1, n
                            workd(i) = real(workc(i))
@@ -1329,7 +1329,7 @@ c                       | Compute (x'x) / (x'*inv(A-sigma*I)*x). |
 c                       %----------------------------------------%
 c
                         dmdul = slapy2(denr,deni)**2
-                        if (dmdul .ge. safmin) then  
+                        if (dmdul .ge. safmin) then
                            dr(j) = sigmar+numr*denr / dmdul
                            di(j) = sigmai-numr*deni / dmdul
                            first = .false.
@@ -1378,7 +1378,7 @@ c     %----------------------------------------%
 c     | L O O P  B A C K to call SNAUPD again. |
 c     %----------------------------------------%
 c
-      go to 90 
+      go to 90
 c
  9000 continue
 c

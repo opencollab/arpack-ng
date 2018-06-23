@@ -9,7 +9,7 @@ c
 c  Parallel Version of ARPACK utility routine zlarnv
 c
 c  PZLARNV returns a vector of n (nloc) random Complex*16 numbers from a uniform or
-c  normal distribution. It is assumed that X is distributed across a 1-D array 
+c  normal distribution. It is assumed that X is distributed across a 1-D array
 c  of processors ( nprocs < 1000 )
 c
 c\Arguments
@@ -37,14 +37,14 @@ c\Author: Kristi Maschhoff
 c
 c\Details
 c
-c  Simple parallel version of LAPACK auxiliary routine zlarnv 
+c  Simple parallel version of LAPACK auxiliary routine zlarnv
 c  for X distributed across a 1-D array of processors.
 c  This routine calls the auxiliary routine CLARNV to generate random
 c  Complex*16 numbers from a uniform or normal distribution. Output is consistent
-c  with serial version. 
+c  with serial version.
 c
-c\SCCS Information: 
-c FILE: larnv.F   SID: 1.3   DATE OF SID: 04/17/99   
+c\SCCS Information:
+c FILE: larnv.F   SID: 1.3   DATE OF SID: 04/17/99
 c
 c-----------------------------------------------------------------------
 c
@@ -57,7 +57,7 @@ c     .. Scalar Arguments ..
 c     ..
 c     .. Array Arguments ..
       integer			iseed( 4 )
-      Complex*16			
+      Complex*16
      &                          x( * )
 c     ..
 c     .. External Subroutines ..

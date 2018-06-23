@@ -1,18 +1,18 @@
-      program pcndrv1 
+      program pcndrv1
 c
 c     Message Passing Layer: MPI
 c
 c     Example program to illustrate the idea of reverse communication
-c     for a standard complex nonsymmetric eigenvalue problem. 
+c     for a standard complex nonsymmetric eigenvalue problem.
 c
 c     We implement example one of ex-complex.doc in DOCUMENTS directory
 c
 c\Example-1
 c     ... Suppose we want to solve A*x = lambda*x in regular mode,
 c         where A is obtained from the standard central difference
-c         discretization of the convection-diffusion operator 
+c         discretization of the convection-diffusion operator
 c                 (Laplacian u) + rho*(du / dx)
-c         in the domain omega = (0,1)x(0,1), with 
+c         in the domain omega = (0,1)x(0,1), with
 c         u = 0 on the boundary of omega.
 c
 c     ... OP = A  and  B = I.
@@ -47,7 +47,7 @@ c
 c\Revision history:
 c     Starting Point: Complex Code FILE: ndrv1.F   SID: 2.1
 c
-c\SCCS Information: 
+c\SCCS Information:
 c FILE: ndrv1.F   SID: 1.1   DATE OF SID: 8/13/96   RELEASE: 1
 c
 c\Remarks
@@ -59,11 +59,11 @@ c
       include 'mpif.h'
       include 'debug-arpack.h'
       include 'stat.h'
-c 
+c
 c     %---------------%
 c     | MPI INTERFACE |
 c     %---------------%
- 
+
       integer           comm, myid, nprocs, rc, nloc
 c     %-----------------------------%
 c     | Define maximum dimensions   |
@@ -84,11 +84,11 @@ c
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
       Complex
-     &                  ax(maxn), d(maxncv), 
-     &                  v(ldv,maxncv), workd(3*maxn), 
-     &                  workev(3*maxncv), resid(maxn), 
+     &                  ax(maxn), d(maxncv),
+     &                  v(ldv,maxncv), workd(3*maxn),
+     &                  workev(3*maxncv), resid(maxn),
      &                  workl(3*maxncv*maxncv+5*maxncv)
-      Real 
+      Real
      &                  rwork(maxncv), rd(maxncv,3)
 c
 c     %---------------%
@@ -117,12 +117,12 @@ c     %-----------------------------%
 c
       Real
      &                  pscnorm2
-      external          pscnorm2, caxpy 
+      external          pscnorm2, caxpy
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
-c 
+c
       call MPI_INIT( ierr )
       comm = MPI_COMM_WORLD
       call MPI_COMM_RANK( comm, myid, ierr )
@@ -136,7 +136,7 @@ c     %--------------------------------------------------%
 c     | The number NX is the number of interior points   |
 c     | in the discretization of the 2-dimensional       |
 c     | convection-diffusion operator on the unit        |
-c     | square with zero Dirichlet boundary condition.   | 
+c     | square with zero Dirichlet boundary condition.   |
 c     | The number N(=NX*NX) is the dimension of the     |
 c     | matrix.  A standard eigenvalue problem is        |
 c     | solved (BMAT = 'I').  NEV is the number of       |
@@ -147,13 +147,13 @@ c     | the spectrum.  However, The following            |
 c     | conditions must be satisfied:                    |
 c     |                   N <= MAXN                      |
 c     |                 NEV <= MAXNEV                    |
-c     |           NEV + 2 <= NCV <= MAXNCV               | 
-c     %--------------------------------------------------% 
+c     |           NEV + 2 <= NCV <= MAXNCV               |
+c     %--------------------------------------------------%
 c
-      nx    = 10 
-      n     = nx*nx 
+      nx    = 10
+      n     = nx*nx
       nev   = 4
-      ncv   = 20 
+      ncv   = 20
 c
 c     %--------------------------------------%
 c     | Set up distribution of data to nodes |
@@ -176,18 +176,18 @@ c
       which = 'LM'
 c
 c     %---------------------------------------------------%
-c     | The work array WORKL is used in CNAUPD as         | 
+c     | The work array WORKL is used in CNAUPD as         |
 c     | workspace.  Its dimension LWORKL is set as        |
 c     | illustrated below.  The parameter TOL determines  |
 c     | the stopping criterion. If TOL<=0, machine        |
 c     | precision is used.  The variable IDO is used for  |
 c     | reverse communication, and is initially set to 0. |
 c     | Setting INFO=0 indicates that a random vector is  |
-c     | generated to start the ARNOLDI iteration.         | 
+c     | generated to start the ARNOLDI iteration.         |
 c     %---------------------------------------------------%
 c
-      lworkl  = 3*ncv**2+5*ncv 
-      tol    = 0.0 
+      lworkl  = 3*ncv**2+5*ncv
+      tol    = 0.0
       ido    = 0
       info   = 0
 c
@@ -206,11 +206,11 @@ c
       mode   = 1
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  10   continue
@@ -222,8 +222,8 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call pcnaupd ( comm, ido, bmat, nloc, which, 
-     &        nev, tol, resid, ncv, v, ldv, iparam, ipntr, 
+         call pcnaupd ( comm, ido, bmat, nloc, which,
+     &        nev, tol, resid, ncv, v, ldv, iparam, ipntr,
      &        workd, workl, lworkl, rwork,info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -235,7 +235,7 @@ c           | The user should supply his/her own        |
 c           | matrix vector multiplication routine here |
 c           | that takes workd(ipntr(1)) as the input   |
 c           | vector, and return the matrix vector      |
-c           | product to workd(ipntr(2)).               | 
+c           | product to workd(ipntr(2)).               |
 c           %-------------------------------------------%
 c
             call av ( comm, nloc, nx, mv_buf,
@@ -247,7 +247,7 @@ c           %-----------------------------------------%
 c
             go to 10
          end if
-c 
+c
 c     %----------------------------------------%
 c     | Either we have convergence or there is |
 c     | an error.                              |
@@ -267,7 +267,7 @@ c
             print *, ' '
          endif
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -281,16 +281,16 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call pcneupd (comm, rvec, 'A', select, d, v, ldv, sigma, 
-     &        workev, bmat, nloc, which, nev, tol, resid, ncv, 
-     &        v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call pcneupd (comm, rvec, 'A', select, d, v, ldv, sigma,
+     &        workev, bmat, nloc, which, nev, tol, resid, ncv,
+     &        v, ldv, iparam, ipntr, workd, workl, lworkl,
      &        rwork, ierr)
 c
 c        %----------------------------------------------%
 c        | Eigenvalues are returned in the one          |
 c        | dimensional array D.  The corresponding      |
 c        | eigenvectors are returned in the first NCONV |
-c        | (=IPARAM(5)) columns of the two dimensional  | 
+c        | (=IPARAM(5)) columns of the two dimensional  |
 c        | array V if requested.  Otherwise, an         |
 c        | orthogonal basis for the invariant subspace  |
 c        | corresponding to the eigenvalues in D is     |
@@ -298,7 +298,7 @@ c        | returned in V.                               |
 c        %----------------------------------------------%
 c
          if ( ierr .ne. 0) then
-c 
+c
 c           %------------------------------------%
 c           | Error condition:                   |
 c           | Check the documentation of CNEUPD. |
@@ -355,11 +355,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit
      &                  Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_NDRV1'
@@ -371,8 +371,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -396,7 +396,7 @@ c
       call MPI_FINALIZE(rc)
 c
       end
-c 
+c
 c==========================================================================
 c
 c     parallel matrix vector subroutine
@@ -404,16 +404,16 @@ c
 c     The matrix used is the convection-diffusion operator
 c     discretized using centered difference.
 c
-c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block 
+c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block
 c     tridiagonal matrix
 c
-c                  | T -I          | 
+c                  | T -I          |
 c                  |-I  T -I       |
 c             OP = |   -I  T       |
 c                  |        ...  -I|
 c                  |           -I T|
 c
-c     derived from the standard central difference  discretization 
+c     derived from the standard central difference  discretization
 c     of the convection-diffusion operator (Laplacian u) + rho*(du/dx)
 c     with zero boundary condition.
 c
@@ -428,7 +428,7 @@ c     .. MPI Declarations ...
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, nx, np, j, lo, next, prev
-      Complex         
+      Complex
      &                  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = (1.0, 0.0))
       external          caxpy, tv
@@ -445,7 +445,7 @@ c
          call tv(nx, v(lo+1), w(lo+1))
          call caxpy(nx, -one, v(lo-nx+1), 1, w(lo+1), 1)
          call caxpy(nx, -one, v(lo+nx+1), 1, w(lo+1), 1)
-  10  continue 
+  10  continue
 c
       lo = (np-1)*nx
       call tv(nx, v(lo+1), w(lo+1))
@@ -478,7 +478,7 @@ c
 c=========================================================================
       subroutine tv (nx, x, y)
 c
-      integer           nx, j 
+      integer           nx, j
       Complex
      &                  x(nx), y(nx), h, dd, dl, du
 c
@@ -487,18 +487,18 @@ c
       parameter         (one = (1.0, 0.0), rho = (100.0, 0.0))
 c
 c     Compute the matrix vector multiplication y<---T*x
-c     where T is a nx by nx tridiagonal matrix with DD on the 
+c     where T is a nx by nx tridiagonal matrix with DD on the
 c     diagonal, DL on the subdiagonal, and DU on the superdiagonal
-c     
+c
       h   = one / cmplx(nx+1)
       dd  = (4.0, 0.0)
       dl  = -one - (0.5, 0.0)*rho*h
       du  = -one + (0.5, 0.0)*rho*h
-c 
+c
       y(1) =  dd*x(1) + du*x(2)
       do 10 j = 2,nx-1
-         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1) 
- 10   continue 
-      y(nx) =  dl*x(nx-1) + dd*x(nx) 
+         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1)
+ 10   continue
+      y(nx) =  dl*x(nx-1) + dd*x(nx)
       return
       end

@@ -45,7 +45,7 @@ c
 c\Example-1
 c     ... Suppose we want to solve A*x = lambda*x in regular mode,
 c         where A is obtained from the standard central difference
-c         discretization of the convection-diffusion operator 
+c         discretization of the convection-diffusion operator
 c                 (Laplacian u) + rho*(du / dx)
 c         on the unit square, with zero Dirichlet boundary condition.
 c
@@ -63,7 +63,7 @@ c     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     saxpy   Level 1 BLAS that computes y <- alpha*x+y.
 c     snrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
-c     tv      Matrix vector multiplication routine that computes T*x, 
+c     tv      Matrix vector multiplication routine that computes T*x,
 c             where T is a tridiagonal matrix.  It is used in routine
 c             av.
 c
@@ -117,9 +117,9 @@ c
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
       Real
-     &                  ax(maxn), d(maxncv,3), resid(maxn), 
-     &                  v(ldv,maxncv), workd(3*maxn), 
-     &                  workev(3*maxncv), 
+     &                  ax(maxn), d(maxncv,3), resid(maxn),
+     &                  v(ldv,maxncv), workd(3*maxn),
+     &                  workev(3*maxncv),
      &                  workl(3*maxncv*maxncv+6*maxncv)
 c
 c     %---------------%
@@ -147,7 +147,7 @@ c     %-----------------------------%
 c
       Real
      &                  slapy2, snrm2
-      external          slapy2, snrm2, saxpy 
+      external          slapy2, snrm2, saxpy
 c
 c     %--------------------%
 c     | Intrinsic function |
@@ -183,8 +183,8 @@ c     %-------------------------------------------------%
 c     | The following sets dimensions for this problem. |
 c     %-------------------------------------------------%
 c
-      nx    = 10 
-      n     = nx*nx 
+      nx    = 10
+      n     = nx*nx
 c
 c     %-----------------------------------------------%
 c     |                                               |
@@ -266,8 +266,8 @@ c     | illustrated below.                                  |
 c     |                                                     |
 c     %-----------------------------------------------------%
 c
-      lworkl  = 3*ncv**2+6*ncv 
-      tol    = zero 
+      lworkl  = 3*ncv**2+6*ncv
+      tol    = zero
       ido    = 0
       info   = 0
 c
@@ -294,7 +294,7 @@ c
       iparam(7) = mode1
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  10   continue
@@ -306,8 +306,8 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call snaupd ( ido, bmat, n, which, nev, tol, resid, ncv, 
-     &                 v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call snaupd ( ido, bmat, n, which, nev, tol, resid, ncv,
+     &                 v, ldv, iparam, ipntr, workd, workl, lworkl,
      &                 info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -319,7 +319,7 @@ c           | The user should supply his/her own        |
 c           | matrix vector multiplication routine here |
 c           | that takes workd(ipntr(1)) as the input   |
 c           | vector, and return the matrix vector      |
-c           | product to workd(ipntr(2)).               | 
+c           | product to workd(ipntr(2)).               |
 c           %-------------------------------------------%
 c
             call av (nx, workd(ipntr(1)), workd(ipntr(2)))
@@ -349,7 +349,7 @@ c
          print *, ' Check the documentation of _naupd'
          print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -369,8 +369,8 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call sneupd ( rvec, 'A', select, d, d(1,2), v, ldv, 
-     &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
+         call sneupd ( rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, n, which, nev, tol,
      &        resid, ncv, v, ldv, iparam, ipntr, workd, workl,
      &        lworkl, ierr )
 c
@@ -472,11 +472,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _NSIMP '
@@ -487,8 +487,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -504,37 +504,37 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector subroutine
 c
-c     The matrix used is the 2 dimensional convection-diffusion 
+c     The matrix used is the 2 dimensional convection-diffusion
 c     operator discretized using central difference.
 c
       subroutine av (nx, v, w)
       integer           nx, j, lo
-      Real         
+      Real
      &                  v(nx*nx), w(nx*nx), one, h2
       parameter         (one = 1.0E+0)
       external          saxpy, tv
 c
-c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block 
+c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block
 c     tridiagonal matrix
 c
-c                  | T -I          | 
+c                  | T -I          |
 c                  |-I  T -I       |
 c             OP = |   -I  T       |
 c                  |        ...  -I|
 c                  |           -I T|
 c
-c     derived from the standard central difference discretization 
-c     of the 2 dimensional convection-diffusion operator 
-c     (Laplacian u) + rho*(du/dx) on a unit square with zero boundary 
+c     derived from the standard central difference discretization
+c     of the 2 dimensional convection-diffusion operator
+c     (Laplacian u) + rho*(du/dx) on a unit square with zero boundary
 c     condition.
 c
-c     When rho*h/2 <= 1, the discrete convection-diffusion operator 
-c     has real eigenvalues.  When rho*h/2 > 1, it has complex 
+c     When rho*h/2 <= 1, the discrete convection-diffusion operator
+c     has real eigenvalues.  When rho*h/2 > 1, it has complex
 c     eigenvalues.
 c
 c     The subroutine TV is called to computed y<---T*x.
@@ -550,7 +550,7 @@ c
          call tv(nx, v(lo+1), w(lo+1))
          call saxpy(nx, -one/h2, v(lo-nx+1), 1, w(lo+1), 1)
          call saxpy(nx, -one/h2, v(lo+nx+1), 1, w(lo+1), 1)
-  10  continue 
+  10  continue
 c
       lo = (nx-1)*nx
       call tv(nx, v(lo+1), w(lo+1))
@@ -561,7 +561,7 @@ c
 c=========================================================================
       subroutine tv (nx, x, y)
 c
-      integer           nx, j 
+      integer           nx, j
       Real
      &                  x(nx), y(nx), h, dd, dl, du, h2
 c
@@ -570,23 +570,23 @@ c
       parameter         (one = 1.0E+0, rho = 1.0E+2)
 c
 c     Compute the matrix vector multiplication y<---T*x
-c     where T is a nx by nx tridiagonal matrix with DD on the 
+c     where T is a nx by nx tridiagonal matrix with DD on the
 c     diagonal, DL on the subdiagonal, and DU on the superdiagonal.
 c
-c     When rho*h/2 <= 1, the discrete convection-diffusion operator 
-c     has real eigenvalues.  When rho*h/2 > 1, it has complex 
+c     When rho*h/2 <= 1, the discrete convection-diffusion operator
+c     has real eigenvalues.  When rho*h/2 > 1, it has complex
 c     eigenvalues.
 c
       h   = one / real(nx+1)
       h2  = h*h
-      dd  = 4.0E+0 / h2 
+      dd  = 4.0E+0 / h2
       dl  = -one/h2 - 5.0E-1*rho/h
       du  = -one/h2 + 5.0E-1*rho/h
-c 
+c
       y(1) =  dd*x(1) + du*x(2)
       do 10 j = 2,nx-1
-         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1) 
- 10   continue 
-      y(nx) =  dl*x(nx-1) + dd*x(nx) 
+         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1)
+ 10   continue
+      y(nx) =  dl*x(nx-1) + dd*x(nx)
       return
       end

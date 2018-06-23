@@ -1,7 +1,7 @@
       program dndrv4
 c
 c     Simple program to illustrate the idea of reverse communication
-c     in shift-invert mode for a generalized nonsymmetric eigenvalue 
+c     in shift-invert mode for a generalized nonsymmetric eigenvalue
 c     problem.
 c
 c     We implement example four of ex-nonsym.doc in DOCUMENTS directory
@@ -25,7 +25,7 @@ c
 c\Routines called:
 c     dnaupd  ARPACK reverse communication interface routine.
 c     dneupd  ARPACK routine that returns Ritz values and (optionally)
-c             Ritz vectors. 
+c             Ritz vectors.
 c     dgttrf  LAPACK tridiagonal factorization routine.
 c     dgttrs  LAPACK tridiagonal linear system solve routine.
 c     dlapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
@@ -37,15 +37,15 @@ c     av      Matrix vector multiplication routine that computes A*x.
 c     mv      Matrix vector multiplication routine that computes M*x.
 c
 c\Author
-c     Richard Lehoucq 
-c     Danny Sorensen               
-c     Chao Yang             
-c     Dept. of Computational &     
-c     Applied Mathematics          
-c     Rice University           
-c     Houston, Texas    
+c     Richard Lehoucq
+c     Danny Sorensen
+c     Chao Yang
+c     Dept. of Computational &
+c     Applied Mathematics
+c     Rice University
+c     Houston, Texas
 c
-c\SCCS Information: @(#) 
+c\SCCS Information: @(#)
 c FILE: ndrv4.F   SID: 2.5   DATE OF SID: 10/17/00   RELEASE: 2
 c
 c\Remarks
@@ -64,7 +64,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -90,13 +90,13 @@ c
       Double precision
      &                  tol, h, s,
      &                  sigmar, sigmai, s1, s2, s3
-      logical           first, rvec 
-c 
+      logical           first, rvec
+c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision   
+      Double precision
      &                  ddot, dnrm2, dlapy2
       external          ddot, dnrm2, dlapy2, dgttrf, dgttrs
 c
@@ -113,7 +113,7 @@ c
       Double precision
      &                   one, zero, two, six, rho
       common            /convct/ rho
-      parameter         (one = 1.0D+0, zero = 0.0D+0, 
+      parameter         (one = 1.0D+0, zero = 0.0D+0,
      &                   two = 2.0D+0, six = 6.0D+0)
 c
 c     %-----------------------%
@@ -130,14 +130,14 @@ c     | The user can modify NEV, NCV, SIGMAR to solve      |
 c     | problems of different sizes, and to get different  |
 c     | parts of the spectrum.  However, The following     |
 c     | conditions must be satisfied:                      |
-c     |                     N <= MAXN,                     | 
+c     |                     N <= MAXN,                     |
 c     |                   NEV <= MAXNEV,                   |
-c     |               NEV + 2 <= NCV <= MAXNCV             | 
+c     |               NEV + 2 <= NCV <= MAXNCV             |
 c     %----------------------------------------------------%
 c
-      n     = 100 
-      nev   = 4 
-      ncv   = 10 
+      n     = 100
+      nev   = 4
+      ncv   = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV4: N is greater than MAXN '
          go to 9000
@@ -150,7 +150,7 @@ c
       end if
       bmat  = 'G'
       which = 'LM'
-      sigmar = one 
+      sigmar = one
       sigmai = zero
 c
 c     %--------------------------------------------------%
@@ -175,12 +175,12 @@ c
       s3 = -one/h + s - sigmar*h/six
 c
       do 10 j = 1, n-1
-         dl(j) = s1 
+         dl(j) = s1
          dd(j) = s2
          du(j) = s3
-  10  continue 
-      dd(n) = s2 
-c 
+  10  continue
+      dd(n) = s2
+c
       call dgttrf(n, dl, dd, du, du2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
@@ -200,7 +200,7 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in DNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+6*ncv 
+      lworkl = 3*ncv**2+6*ncv
       tol    = zero
       ido    = 0
       info   = 0
@@ -224,20 +224,20 @@ c
       iparam(7) = mode
 c
 c     %------------------------------------------%
-c     | M A I N   L O O P(Reverse communication) | 
+c     | M A I N   L O O P(Reverse communication) |
 c     %------------------------------------------%
 c
  20   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine DNAUPD and take | 
+c        | Repeatedly call the routine DNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dnaupd ( ido, bmat, n, which, nev, tol, resid, 
-     &                 ncv, v, ldv, iparam, ipntr, workd, 
+         call dnaupd ( ido, bmat, n, which, nev, tol, resid,
+     &                 ncv, v, ldv, iparam, ipntr, workd,
      &                 workl, lworkl, info )
 c
          if (ido .eq. -1) then
@@ -255,8 +255,8 @@ c           | workd(ipntr(2)).                          |
 c           %-------------------------------------------%
 c
             call mv (n, workd(ipntr(1)), workd(ipntr(2)))
-            call dgttrs('N', n, 1, dl, dd, du, du2, ipiv, 
-     &                  workd(ipntr(2)), n, ierr) 
+            call dgttrs('N', n, 1, dl, dd, du, du2, ipiv,
+     &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _gttrs in _NDRV4.'
@@ -282,7 +282,7 @@ c           | workd(ipntr(2)).                        |
 c           %-----------------------------------------%
 c
             call dcopy( n, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-            call dgttrs ('N', n, 1, dl, dd, du, du2, ipiv, 
+            call dgttrs ('N', n, 1, dl, dd, du, du2, ipiv,
      &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
@@ -314,8 +314,8 @@ c           %-----------------------------------------%
 c
             go to 20
 c
-         end if 
-c 
+         end if
+c
 c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
@@ -334,23 +334,23 @@ c
          print *, ' Check the documentation in _naupd.'
          print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using DNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
 c
          rvec = .true.
-         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,  
-     &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
-     &        resid, ncv, v, ldv, iparam, ipntr, workd, 
-     &        workl, lworkl, ierr )            
+         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, n, which, nev, tol,
+     &        resid, ncv, v, ldv, iparam, ipntr, workd,
+     &        workl, lworkl, ierr )
 c
 c        %-----------------------------------------------%
 c        | The real part of the eigenvalue is returned   |
@@ -365,16 +365,16 @@ c        | the eigenvalues in D is returned in V.        |
 c        %-----------------------------------------------%
 c
          if ( ierr .ne. 0) then
-c 
+c
 c            %------------------------------------%
 c            | Error condition:                   |
 c            | Check the documentation of DNEUPD. |
 c            %------------------------------------%
 c
-             print *, ' ' 
+             print *, ' '
              print *, ' Error with _neupd, info = ', ierr
              print *, ' Check the documentation of _neupd. '
-             print *, ' ' 
+             print *, ' '
 c
          else
 c
@@ -413,9 +413,9 @@ c                    %------------------------%
 c                    | Ritz value is complex. |
 c                    | Residual of one Ritz   |
 c                    | value of the conjugate |
-c                    | pair is computed.      | 
+c                    | pair is computed.      |
 c                    %------------------------%
-c     
+c
                      call av(n, v(1,j), ax)
                      call mv(n, v(1,j), mx)
                      call daxpy(n, -d(j,1), mx, 1, ax, 1)
@@ -455,11 +455,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _NDRV4 '
@@ -470,8 +470,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -487,7 +487,7 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector multiplication subroutine
@@ -495,17 +495,17 @@ c
       subroutine mv (n, v, w)
       integer           n, j
       Double precision
-     &                  v(n), w(n), one, four, six, h 
+     &                  v(n), w(n), one, four, six, h
       parameter         (one = 1.0D+0, four = 4.0D+0, six = 6.0D+0)
 c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is mass matrix formed by using piecewise linear elements 
+c     where M is mass matrix formed by using piecewise linear elements
 c     on [0,1].
-c 
+c
       w(1) =  ( four*v(1) + one*v(2) ) / six
       do 10 j = 2,n-1
          w(j) = ( one*v(j-1) + four*v(j) + one*v(j+1) ) / six
- 10   continue 
+ 10   continue
       w(n) =  ( one*v(n-1) + four*v(n) ) / six
 c
       h = one / dble(n+1)
@@ -516,7 +516,7 @@ c------------------------------------------------------------------
       subroutine av (n, v, w)
       integer           n, j
       Double precision
-     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho 
+     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho
       common            /convct/ rho
       parameter         (one = 1.0D+0, two = 2.0D+0)
 c
@@ -530,7 +530,7 @@ c     This routine is only used in residual calculation.
 c
       h = one / dble(n+1)
       s = rho / two
-      dd = two / h 
+      dd = two / h
       dl = -one/h - s
       du = -one/h + s
 c

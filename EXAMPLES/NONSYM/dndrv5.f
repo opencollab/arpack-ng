@@ -8,9 +8,9 @@ c
 c\Example-5
 c
 c     ... Suppose we want to solve A*x = lambda*B*x in shift-invert mode
-c         The matrix A is the tridiagonal matrix with 2 on the diagonal, 
-c         -2 on the subdiagonal and 3 on the superdiagonal.  The matrix M 
-c         is the tridiagonal matrix with 4 on the diagonal and 1 on the 
+c         The matrix A is the tridiagonal matrix with 2 on the diagonal,
+c         -2 on the subdiagonal and 3 on the superdiagonal.  The matrix M
+c         is the tridiagonal matrix with 4 on the diagonal and 1 on the
 c         off-diagonals.
 c     ... The shift sigma is a complex number (sigmar, sigmai).
 c     ... OP = Real_Part{inv[A-(SIGMAR,SIGMAI)*M]*M and  B = M.
@@ -32,15 +32,15 @@ c     av      Matrix vector subroutine that computes A*x.
 c     mv      Matrix vector subroutine that computes M*x.
 c
 c\Author
-c     Richard Lehoucq 
-c     Danny Sorensen               
-c     Chao Yang             
-c     Dept. of Computational &     
-c     Applied Mathematics          
-c     Rice University           
-c     Houston, Texas    
+c     Richard Lehoucq
+c     Danny Sorensen
+c     Chao Yang
+c     Dept. of Computational &
+c     Applied Mathematics
+c     Rice University
+c     Houston, Texas
 c
-c\SCCS Information: @(#) 
+c\SCCS Information: @(#)
 c FILE: ndrv5.F   SID: 2.5   DATE OF SID: 10/17/00   RELEASE: 2
 c
 c\Remarks
@@ -59,7 +59,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -73,7 +73,7 @@ c
      &                  v(ldv,maxncv), workd(3*maxn),
      &                  workev(3*maxncv),
      &                  workl(3*maxncv*maxncv+6*maxncv)
-      Complex*16         
+      Complex*16
      &                  cdd(maxn), cdl(maxn), cdu(maxn),
      &                  cdu2(maxn), ctemp(maxn)
 c
@@ -86,16 +86,16 @@ c
      &                  nconv, maxitr, ishfts, mode
       Double precision
      &                  tol, numr, numi, denr, deni, sigmar, sigmai
-      Complex*16         
+      Complex*16
      &                  c1, c2, c3
-      logical           first, rvec 
-c 
+      logical           first, rvec
+c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
       external          zgttrf, zgttrs
-      Double precision   
+      Double precision
      &                  ddot, dnrm2, dlapy2
       external          ddot, dnrm2, dlapy2
 c
@@ -128,14 +128,14 @@ c     | to 'LM'.  The user can modify NEV, NCV, SIGMAR,    |
 c     | SIGMAI to solve problems of different sizes, and   |
 c     | to get different parts of the spectrum. However,   |
 c     | The following conditions must be satisfied:        |
-c     |                     N <= MAXN,                     | 
+c     |                     N <= MAXN,                     |
 c     |                   NEV <= MAXNEV,                   |
-c     |               NEV + 2 <= NCV <= MAXNCV             | 
+c     |               NEV + 2 <= NCV <= MAXNCV             |
 c     %----------------------------------------------------%
 c
-      n     = 100 
-      nev   = 4 
-      ncv   = 20 
+      n     = 100
+      nev   = 4
+      ncv   = 20
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV5: N is greater than MAXN '
          go to 9000
@@ -167,12 +167,12 @@ c
       c3 = dcmplx( 3.0D+0-sigmar, -sigmai)
 c
       do 10 j = 1, n-1
-         cdl(j) = c1 
+         cdl(j) = c1
          cdd(j) = c2
          cdu(j) = c3
-  10  continue 
-      cdd(n) = c2 
-c 
+  10  continue
+      cdd(n) = c2
+c
       call zgttrf(n, cdl, cdd, cdu, cdu2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
@@ -192,8 +192,8 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in DNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+6*ncv 
-      tol    = zero 
+      lworkl = 3*ncv**2+6*ncv
+      tol    = zero
       ido    = 0
       info   = 0
 c
@@ -212,30 +212,30 @@ c
       mode   = 3
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr  
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %------------------------------------------%
-c     | M A I N   L O O P(Reverse communication) | 
+c     | M A I N   L O O P(Reverse communication) |
 c     %------------------------------------------%
 c
  20   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine DNAUPD and take | 
+c        | Repeatedly call the routine DNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dnaupd ( ido, bmat, n, which, nev, tol, resid, 
-     &                 ncv, v, ldv, iparam, ipntr, workd, 
+         call dnaupd ( ido, bmat, n, which, nev, tol, resid,
+     &                 ncv, v, ldv, iparam, ipntr, workd,
      &                 workl, lworkl, info )
 c
          if (ido .eq. -1) then
 c
 c           %-------------------------------------------------------%
-c           |                       Perform                         | 
+c           |                       Perform                         |
 c           | y <--- OP*x = Real_Part{inv[A-(SIGMAR,SIGMAI)*M]*M*x} |
 c           | to force starting vector into the range of OP. The    |
 c           | user should supply his/her own matrix vector          |
@@ -251,14 +251,14 @@ c
                ctemp(j) = dcmplx(workd(ipntr(2)+j-1))
   30        continue
 c
-            call zgttrs('N', n, 1, cdl, cdd, cdu, cdu2, ipiv, 
+            call zgttrs('N', n, 1, cdl, cdd, cdu, cdu2, ipiv,
      &                  ctemp, n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _gttrs in _NDRV5.'
                print*, ' '
                go to 9000
-            end if 
+            end if
             do  40 j = 1, n
                workd(ipntr(2)+j-1) = dble(ctemp(j))
   40        continue
@@ -283,14 +283,14 @@ c
             do 50 j = 1,n
                ctemp(j) = dcmplx(workd(ipntr(3)+j-1))
   50        continue
-            call zgttrs ('N', n, 1, cdl, cdd, cdu, cdu2, ipiv, 
+            call zgttrs ('N', n, 1, cdl, cdd, cdu, cdu2, ipiv,
      &                   ctemp, n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _gttrs in _NDRV5.'
                print*, ' '
                go to 9000
-            end if 
+            end if
             do  60 j = 1, n
                workd(ipntr(2)+j-1) = dble(ctemp(j))
   60        continue
@@ -320,7 +320,7 @@ c
 c
          end if
 c
-c 
+c
 c     %------------------------------------------%
 c     | Either we have convergence, or there is  |
 c     | an error.                                |
@@ -336,25 +336,25 @@ c
          print *, ' '
          print *, ' Error with _naupd info = ',info
          print *, ' Check the documentation of _naupd.'
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using DNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
 c
          rvec = .true.
-         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv, 
-     &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
-     &        resid, ncv, v, ldv, iparam, ipntr, workd, 
-     &        workl, lworkl, ierr ) 
+         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, n, which, nev, tol,
+     &        resid, ncv, v, ldv, iparam, ipntr, workd,
+     &        workl, lworkl, ierr )
 c
 c        %-----------------------------------------------%
 c        | The real part of the eigenvalue is returned   |
@@ -375,14 +375,14 @@ c           | Error condition:                   |
 c           | Check the documentation of DNEUPD. |
 c           %------------------------------------%
 c
-            print *, ' ' 
+            print *, ' '
             print *, ' Error with _neupd = ', ierr
             print *, ' Check the documentation of _neupd. '
-            print *, ' ' 
+            print *, ' '
 c
-         else 
+         else
 c
-            first = .true. 
+            first = .true.
             nconv =  iparam(5)
             do 70 j=1,nconv
 c
@@ -394,7 +394,7 @@ c
                if ( d(j,2) .eq. zero ) then
 c
 c                 %---------------------------%
-c                 |    Eigenvalue is real.    | 
+c                 |    Eigenvalue is real.    |
 c                 | Compute d = x'(Ax)/x'(Mx).|
 c                 %---------------------------%
 c
@@ -402,7 +402,7 @@ c
                   numr = ddot(n, v(1,j), 1, ax, 1)
                   call mv(n, v(1,j), ax )
                   denr = ddot(n, v(1,j), 1, ax, 1)
-                  d(j,1) =  numr / denr 
+                  d(j,1) =  numr / denr
 c
                else if (first) then
 c
@@ -420,7 +420,7 @@ c                 %----------------%
                   numr = ddot(n, v(1,j), 1, ax, 1)
                   numi = ddot(n, v(1,j+1), 1, ax, 1)
                   call av(n, v(1,j+1), ax)
-                  numr = numr + ddot(n,v(1,j+1),1,ax,1) 
+                  numr = numr + ddot(n,v(1,j+1),1,ax,1)
                   numi = -numi + ddot(n,v(1,j),1,ax,1)
 c
 c                 %----------------%
@@ -431,7 +431,7 @@ c
                   denr = ddot(n, v(1,j), 1, ax, 1)
                   deni = ddot(n, v(1,j+1), 1, ax, 1)
                   call mv(n, v(1,j+1), ax)
-                  denr = denr + ddot(n,v(1,j+1),1,ax,1) 
+                  denr = denr + ddot(n,v(1,j+1),1,ax,1)
                   deni = -deni + ddot(n,v(1,j),1, ax,1)
 c
 c                 %----------------%
@@ -452,7 +452,7 @@ c                 | the conjugate pair by taking |
 c                 | the conjugate of the last    |
 c                 | eigenvalue computed.         |
 c                 %------------------------------%
-c 
+c
                   d(j,1) = d(j-1,1)
                   d(j,2) = -d(j-1,2)
                   first = .true.
@@ -475,7 +475,7 @@ c           | tolerance)                |
 c           %---------------------------%
 c
             first  = .true.
-            do 80 j=1, nconv 
+            do 80 j=1, nconv
 c
                if (d(j,2) .eq. zero)  then
 c
@@ -495,9 +495,9 @@ c                 %------------------------%
 c                 | Ritz value is complex  |
 c                 | Residual of one Ritz   |
 c                 | value of the conjugate |
-c                 | pair is computed.      | 
+c                 | pair is computed.      |
 c                 %------------------------%
-c        
+c
                   call av(n, v(1,j), ax)
                   call mv(n, v(1,j), mx)
                   call daxpy(n, -d(j,1), mx, 1, ax, 1)
@@ -527,7 +527,7 @@ c
              call dmout(6, nconv, 3, d, maxncv, -6,
      &            'Ritz values (Real,Imag) and relative residuals')
 c
-         end if 
+         end if
 c
 c        %-------------------------------------------%
 c        | Print additional convergence information. |
@@ -538,11 +538,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _NDRV5 '
@@ -553,8 +553,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -570,7 +570,7 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector multiplication subroutine
@@ -578,25 +578,25 @@ c
       subroutine mv (n, v, w)
       integer           n, j
       Double precision
-     &                  v(n), w(n), one, four 
+     &                  v(n), w(n), one, four
       parameter         (one = 1.0D+0, four = 4.0D+0)
 c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is a n by n symmetric tridiagonal matrix with 4 on the 
+c     where M is a n by n symmetric tridiagonal matrix with 4 on the
 c     diagonal, 1 on the subdiagonal and superdiagonal.
-c 
+c
       w(1) =  four*v(1) + one*v(2)
       do 10 j = 2,n-1
-         w(j) = one*v(j-1) + four*v(j) + one*v(j+1) 
- 10   continue 
-      w(n) =  one*v(n-1) + four*v(n) 
+         w(j) = one*v(j-1) + four*v(j) + one*v(j+1)
+ 10   continue
+      w(n) =  one*v(n-1) + four*v(n)
       return
       end
 c------------------------------------------------------------------
       subroutine av (n, v, w)
       integer           n, j
-      Double precision            
-     &                  v(n), w(n), three, two 
+      Double precision
+     &                  v(n), w(n), three, two
       parameter         (three = 3.0D+0, two = 2.0D+0)
 c
 c     Compute the matrix vector multiplication y<---A*x

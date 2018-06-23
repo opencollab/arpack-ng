@@ -1,9 +1,9 @@
-      program dsdrv6 
+      program dsdrv6
 c
 c     Program to illustrate the idea of reverse communication
-c     in Cayley mode for a generalized symmetric eigenvalue 
-c     problem.  The following program uses the two LAPACK subroutines 
-c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of 
+c     in Cayley mode for a generalized symmetric eigenvalue
+c     problem.  The following program uses the two LAPACK subroutines
+c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of
 c     equations.
 c
 c     We implement example six of ex-sym.doc in DOCUMENTS directory
@@ -23,8 +23,8 @@ c
 c\BeginLib
 c
 c\References:
-c  1. R.G. Grimes, J.G. Lewis and H.D. Simon, "A Shifted Block Lanczos 
-c     Algorithm for Solving Sparse Symmetric Generalized Eigenproblems", 
+c  1. R.G. Grimes, J.G. Lewis and H.D. Simon, "A Shifted Block Lanczos
+c     Algorithm for Solving Sparse Symmetric Generalized Eigenproblems",
 c     SIAM J. Matr. Anal. Apps.,  January (1993).
 c
 c\Routines called:
@@ -36,7 +36,7 @@ c     dgttrs  LAPACK tridiagonal solve routine.
 c     daxpy   Level 1 BLAS that computes y <- alpha*x+y.
 c     dcopy   Level 1 BLAS that copies one vector to another.
 c     dscal   Level 1 BLAS that scales a vector by a scalar.
-c     dnrm2   Level 1 BLAS that computes the norm of a vector. 
+c     dnrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
 c     mv      Matrix vector multiplication routine that computes M*x.
 c
@@ -46,9 +46,9 @@ c     Richard Lehoucq
 c     Chao Yang
 c     Dept. of Computational &
 c     Applied Mathematics
-c     Rice University 
-c     Houston, Texas 
-c 
+c     Rice University
+c     Houston, Texas
+c
 c\SCCS Information: @(#)
 c FILE: sdrv6.F   SID: 2.5   DATE OF SID: 10/17/00   RELEASE: 2
 c
@@ -68,7 +68,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxn, maxnev, maxncv, ldv
-      parameter        (maxn=256, maxnev=10, maxncv=25, 
+      parameter        (maxn=256, maxnev=10, maxncv=25,
      &                 ldv=maxn)
 c
 c     %--------------%
@@ -77,7 +77,7 @@ c     %--------------%
 c
       Double precision
      &                 v(ldv,maxncv), workl(maxncv*(maxncv+8)),
-     &                 workd(3*maxn), d(maxncv,2), resid(maxn), 
+     &                 workd(3*maxn), d(maxncv,2), resid(maxn),
      &                 ad(maxn), adl(maxn), adu(maxn), adu2(maxn),
      &                 temp(maxn), ax(maxn), mx(maxn)
       logical          select(maxncv)
@@ -100,9 +100,9 @@ c     %------------%
 c
       Double precision
      &                 zero, one, two, four, six
-      parameter        (zero = 0.0D+0, one = 1.0D+0, 
+      parameter        (zero = 0.0D+0, one = 1.0D+0,
      &                  four = 4.0D+0, six = 6.0D+0,
-     &                  two = 2.0D+0 ) 
+     &                  two = 2.0D+0 )
 c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
@@ -132,9 +132,9 @@ c     | NCV, SIGMA to solve problems of different sizes, |
 c     | and to get different parts of the spectrum.      |
 c     | However, The following conditions must be        |
 c     | satisfied:                                       |
-c     |                 N <= MAXN,                       | 
+c     |                 N <= MAXN,                       |
 c     |               NEV <= MAXNEV,                     |
-c     |           NEV + 1 <= NCV <= MAXNCV               | 
+c     |           NEV + 1 <= NCV <= MAXNCV               |
 c     %--------------------------------------------------%
 c
       n = 100
@@ -186,8 +186,8 @@ c
       mode   = 5
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %------------------------------------------------------%
 c     | Call LAPACK routine to factor (A-sigma*M).  The      |
@@ -203,10 +203,10 @@ c
       do 20 j=1,n
          ad(j) = two / h - sigma * r1
          adl(j) = -one / h - sigma * r2
- 20   continue 
+ 20   continue
       call dcopy (n, adl, 1, adu, 1)
       call dgttrf (n, adl, ad, adu, adu2, ipiv, ierr)
-      if (ierr .ne. 0) then 
+      if (ierr .ne. 0) then
          print *, ' '
          print *, ' Error with _gttrf in _SDRV6.'
          print *, ' '
@@ -226,8 +226,8 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dsaupd ( ido, bmat, n, which, nev, tol, resid, ncv, 
-     &                 v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call dsaupd ( ido, bmat, n, which, nev, tol, resid, ncv,
+     &                 v, ldv, iparam, ipntr, workd, workl, lworkl,
      &                 info )
 c
          if (ido .eq. -1) then
@@ -239,19 +239,19 @@ c           | user should provide his/her matrix vector (A*x, M*x)  |
 c           | multiplication routines and a linear system solver    |
 c           | here.  The matrix vector multiplication routine takes |
 c           | workd(ipntr(1)) as the input vector.  The final       |
-c           | result is returned to workd(ipntr(2)).                | 
+c           | result is returned to workd(ipntr(2)).                |
 c           %-------------------------------------------------------%
 c
             call av (n, workd(ipntr(1)), workd(ipntr(2)))
             call mv (n, workd(ipntr(1)), temp)
-            call daxpy(n, sigma, temp, 1, workd(ipntr(2)), 1) 
+            call daxpy(n, sigma, temp, 1, workd(ipntr(2)), 1)
 c
-            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
+            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
      &                workd(ipntr(2)), n, ierr)
-            if (ierr .ne. 0) then 
+            if (ierr .ne. 0) then
                print *, ' '
                print *, ' Error with _gttrs in _SDRV6.'
-               print *, ' ' 
+               print *, ' '
                go to 9000
             end if
 c
@@ -272,15 +272,15 @@ c           | matrix vector multiplication routine takes         |
 c           | workd(ipntr(1)) as the input, and the result is    |
 c           | combined with workd(ipntr(3)) to form the input    |
 c           | for the linear system solver.  The final result is |
-c           | returned to workd(ipntr(2)).                       | 
+c           | returned to workd(ipntr(2)).                       |
 c           %----------------------------------------------------%
 c
             call av (n, workd(ipntr(1)), workd(ipntr(2)))
             call daxpy(n, sigma, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
+            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
      &                   workd(ipntr(2)), n, ierr)
-            if (ierr .ne. 0) then 
-               print *, ' ' 
+            if (ierr .ne. 0) then
+               print *, ' '
                print *, ' Error with _gttrs in _SDRV6. '
                print *, ' '
                go to 9000
@@ -309,7 +309,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-         end if 
+         end if
 c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
@@ -328,7 +328,7 @@ c
            print *, ' Check the documentation of _saupd. '
            print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -342,8 +342,8 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call dseupd ( rvec, 'All', select, d, v, ldv, sigma, 
-     &        bmat, n, which, nev, tol, resid, ncv, v, ldv, 
+         call dseupd ( rvec, 'All', select, d, v, ldv, sigma,
+     &        bmat, n, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
 c
 c        %----------------------------------------------%
@@ -357,7 +357,7 @@ c        | corresponding to the eigenvalues in D is     |
 c        | returned in V.                               |
 c        %----------------------------------------------%
 c
-         if ( ierr .ne. 0 ) then 
+         if ( ierr .ne. 0 ) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -383,7 +383,7 @@ c           | indicates how many are    |
 c           | accurate to the requested |
 c           | tolerance)                |
 c           %---------------------------%
-c  
+c
             nconv = iparam(5)
             do 30 j=1, nconv
                call av(n, v(1,j), ax)
@@ -423,7 +423,7 @@ c
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
          print *, ' The number of converged Ritz values is ',
-     &              nconv 
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &           ' iterations taken is', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -448,17 +448,17 @@ c     on the interval [0,1].
 c
       subroutine mv (n, v, w)
       integer           n, j
-      Double precision 
+      Double precision
      &                  v(n), w(n), one, four, six, h
-      parameter         (one = 1.0D+0, four = 4.0D+0, 
-     &                   six = 6.0D+0) 
+      parameter         (one = 1.0D+0, four = 4.0D+0,
+     &                   six = 6.0D+0)
 c
       w(1) =  four*v(1) + v(2)
       do 100 j = 2,n-1
-         w(j) = v(j-1) + four*v(j) + v(j+1) 
+         w(j) = v(j-1) + four*v(j) + v(j+1)
   100 continue
       j = n
-      w(j) = v(j-1) + four*v(j) 
+      w(j) = v(j-1) + four*v(j)
 c
 c     Scale the vector w by h.
 c
@@ -469,7 +469,7 @@ c
 c
 c------------------------------------------------------------------------
 c     Matrix vector subroutine
-c     where the matrix is the stiffness matrix obtained from the 
+c     where the matrix is the stiffness matrix obtained from the
 c     finite element discretization of the 1-dimensional discrete Laplacian
 c     on the interval [0,1] with zero Dirichlet boundary condition
 c     using piecewise linear elements.
@@ -482,14 +482,14 @@ c
 c
       w(1) =  two*v(1) - v(2)
       do 100 j = 2,n-1
-         w(j) = - v(j-1) + two*v(j) - v(j+1) 
+         w(j) = - v(j-1) + two*v(j) - v(j+1)
   100 continue
       j = n
       w(j) = - v(j-1) + two*v(j)
-c     
+c
 c     Scale the vector w by (1/h).
 c
       h = one / dble(n+1)
-      call dscal(n, one/h, w, 1) 
+      call dscal(n, one/h, w, 1)
       return
       end

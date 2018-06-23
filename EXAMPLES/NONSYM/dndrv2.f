@@ -9,7 +9,7 @@ c\Example-2
 c     ... Suppose we want to solve A*x = lambda*x in shift-invert mode,
 c         where A is derived from the centered difference discretization
 c         of the 1-dimensional convection-diffusion operator
-c                          (d^2u / dx^2) + rho*(du/dx) 
+c                          (d^2u / dx^2) + rho*(du/dx)
 c         on the interval [0,1] with zero Dirichlet boundary condition.
 c
 c     ... The shift sigma is a real number.
@@ -61,7 +61,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -97,7 +97,7 @@ c
       Double precision
      &                   one, zero, two, rho
       common            /convct/ rho
-      parameter         (one = 1.0D+0, zero = 0.0D+0, 
+      parameter         (one = 1.0D+0, zero = 0.0D+0,
      &                   two = 2.0D+0)
 c
 c     %-----------------------------%
@@ -128,14 +128,14 @@ c     | 'LM'.  The user can modify NEV, NCV, SIGMAR to   |
 c     | solve problems of different sizes, and to get    |
 c     | different parts of the spectrum.  However, The   |
 c     | following conditions must be satisfied:          |
-c     |                 N <= MAXN,                       | 
+c     |                 N <= MAXN,                       |
 c     |               NEV <= MAXNEV,                     |
-c     |           NEV + 2 <= NCV <= MAXNCV               | 
+c     |           NEV + 2 <= NCV <= MAXNCV               |
 c     %--------------------------------------------------%
 c
       n     = 100
-      nev   = 4 
-      ncv   = 20 
+      nev   = 4
+      ncv   = 20
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV2: N is greater than MAXN '
          go to 9000
@@ -148,8 +148,8 @@ c
       end if
       bmat  = 'I'
       which = 'LM'
-      sigmar = 1.0D+0 
-      sigmai = 0.0D+0 
+      sigmar = 1.0D+0
+      sigmai = 0.0D+0
 c
 c     %----------------------------------------------------%
 c     | Construct C = A - SIGMA*I in real arithmetic, and  |
@@ -157,7 +157,7 @@ c     | factor C in real arithmetic using LAPACK           |
 c     | subroutine dgttrf. The matrix A is chosen to be    |
 c     | the tridiagonal matrix derived from standard       |
 c     | central difference of the 1-d convection diffusion |
-c     | operator u" + rho*u' on the interval [0, 1] with   | 
+c     | operator u" + rho*u' on the interval [0, 1] with   |
 c     | zero Dirichlet boundary condition.                 |
 c     %----------------------------------------------------%
 c
@@ -165,25 +165,25 @@ c
       h = one / dble(n+1)
       s = rho*h / two
 c
-      s1 = -one-s 
+      s1 = -one-s
       s2 = two - sigmar
-      s3 = -one+s  
+      s3 = -one+s
 c
       do 10 j = 1, n-1
-         dl(j) = s1 
+         dl(j) = s1
          dd(j) = s2
          du(j) = s3
-  10  continue 
-      dd(n) = s2 
-c 
+  10  continue
+      dd(n) = s2
+c
       call dgttrf(n, dl, dd, du, du2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
-         print*, ' ' 
+         print*, ' '
          print*, ' ERROR with _gttrf in _NDRV2.'
          print*, ' '
          go to 9000
       end if
-c        
+c
 c     %-----------------------------------------------------%
 c     | The work array WORKL is used in DNAUPD as           |
 c     | workspace.  Its dimension LWORKL is set as          |
@@ -195,8 +195,8 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in DNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+6*ncv 
-      tol    = zero 
+      lworkl = 3*ncv**2+6*ncv
+      tol    = zero
       ido    = 0
       info   = 0
 c
@@ -213,26 +213,26 @@ c
       ishfts = 1
       maxitr = 300
       mode   = 3
- 
-      iparam(1) = ishfts 
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  20   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine DNAUPD and take | 
+c        | Repeatedly call the routine DNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dnaupd ( ido, bmat, n, which, nev, tol, resid, 
-     &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call dnaupd ( ido, bmat, n, which, nev, tol, resid,
+     &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl,
      &        info )
 c
          if ( ido .eq. -1 .or. ido .eq. 1) then
@@ -247,10 +247,10 @@ c           %-------------------------------------------%
 c
             call dcopy( n, workd(ipntr(1)), 1, workd(ipntr(2)), 1)
 c
-            call dgttrs('N', n, 1, dl, dd, du, du2, ipiv, 
-     &                  workd(ipntr(2)), n, ierr) 
+            call dgttrs('N', n, 1, dl, dd, du, du2, ipiv,
+     &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
-               print*, ' ' 
+               print*, ' '
                print*, ' ERROR with _gttrs in _NDRV2.'
                print*, ' '
                go to 9000
@@ -279,26 +279,26 @@ c
          print *, ' '
          print *, ' Error with _naupd, info = ', info
          print *, ' Check the documentation in _naupd.'
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using DNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
-c 
+c
          rvec = .true.
 c
-         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,  
-     &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
-     &        resid, ncv, v, ldv, iparam, ipntr, workd, 
-     &        workl, lworkl, ierr )            
+         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, n, which, nev, tol,
+     &        resid, ncv, v, ldv, iparam, ipntr, workd,
+     &        workl, lworkl, ierr )
 c
 c        %-----------------------------------------------%
 c        | The real part of the eigenvalue is returned   |
@@ -319,11 +319,11 @@ c           | Error condition:                   |
 c           | Check the documentation of DNEUPD. |
 c           %------------------------------------%
 c
-            print *, ' ' 
+            print *, ' '
             print *, ' Error with _neupd, info = ', ierr
             print *, ' Check the documentation of _neupd. '
-            print *, ' ' 
-c 
+            print *, ' '
+c
          else
 c
             first  = .true.
@@ -360,9 +360,9 @@ c                 %------------------------%
 c                 | Ritz value is complex  |
 c                 | Residual of one Ritz   |
 c                 | value of the conjugate |
-c                 | pair is computed.      | 
+c                 | pair is computed.      |
 c                 %------------------------%
-c 
+c
                   call av(n, v(1,j), ax)
                   call daxpy(n, -d(j,1), v(1,j), 1, ax, 1)
                   call daxpy(n, d(j,2), v(1,j+1), 1, ax, 1)
@@ -397,11 +397,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _NDRV2 '
@@ -412,8 +412,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)

@@ -7,7 +7,7 @@ c
 c\Example-1
 c     ... Suppose we want to solve A*x = lambda*x in regular mode,
 c         where A is obtained from the standard central difference
-c         discretization of the convection-diffusion operator 
+c         discretization of the convection-diffusion operator
 c                 (Laplacian u) + rho*(du / dx)
 c         on the unit squre [0,1]x[0,1] with zero Dirichlet boundary
 c         condition.
@@ -68,12 +68,12 @@ c     %--------------%
 c
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
-      Complex*16 
-     &                  ax(maxn), d(maxncv), 
-     &                  v(ldv,maxncv), workd(3*maxn), 
-     &                  workev(3*maxncv), resid(maxn), 
+      Complex*16
+     &                  ax(maxn), d(maxncv),
+     &                  v(ldv,maxncv), workd(3*maxn),
+     &                  workev(3*maxncv), resid(maxn),
      &                  workl(3*maxncv*maxncv+5*maxncv)
-      Double precision  
+      Double precision
      &                  rwork(maxncv), rd(maxncv,3)
 c
 c     %---------------%
@@ -83,9 +83,9 @@ c
       character         bmat*1, which*2
       integer           ido, n, nx, nev, ncv, lworkl, info, j,
      &                  ierr, nconv, maxitr, ishfts, mode
-      Complex*16 
+      Complex*16
      &                  sigma
-      Double precision 
+      Double precision
      &                  tol,res1,res2
       logical           rvec
 c
@@ -93,19 +93,19 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision 
-     &                  dznrm2 , dlapy2 
-      external          dznrm2 , zaxpy , dlapy2  
+      Double precision
+     &                  dznrm2 , dlapy2
+      external          dznrm2 , zaxpy , dlapy2
 c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
-c 
+c
 c     %--------------------------------------------------%
 c     | The number NX is the number of interior points   |
 c     | in the discretization of the 2-dimensional       |
 c     | convection-diffusion operator on the unit        |
-c     | square with zero Dirichlet boundary condition.   | 
+c     | square with zero Dirichlet boundary condition.   |
 c     | The number N(=NX*NX) is the dimension of the     |
 c     | matrix.  A standard eigenvalue problem is        |
 c     | solved (BMAT = 'I').  NEV is the number of       |
@@ -116,13 +116,13 @@ c     | the spectrum.  However, The following            |
 c     | conditions must be satisfied:                    |
 c     |                   N <= MAXN                      |
 c     |                 NEV <= MAXNEV                    |
-c     |           NEV + 2 <= NCV <= MAXNCV               | 
-c     %--------------------------------------------------% 
+c     |           NEV + 2 <= NCV <= MAXNCV               |
+c     %--------------------------------------------------%
 c
-      nx    = 10 
-      n     = nx*nx 
+      nx    = 10
+      n     = nx*nx
       nev   = 4
-      ncv   = 20 
+      ncv   = 20
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV1: N is greater than MAXN '
          go to 9000
@@ -137,18 +137,18 @@ c
       which = 'LM'
 c
 c     %---------------------------------------------------%
-c     | The work array WORKL is used in ZNAUPD  as         | 
+c     | The work array WORKL is used in ZNAUPD  as         |
 c     | workspace.  Its dimension LWORKL is set as        |
 c     | illustrated below.  The parameter TOL determines  |
 c     | the stopping criterion. If TOL<=0, machine        |
 c     | precision is used.  The variable IDO is used for  |
 c     | reverse communication, and is initially set to 0. |
 c     | Setting INFO=0 indicates that a random vector is  |
-c     | generated to start the ARNOLDI iteration.         | 
+c     | generated to start the ARNOLDI iteration.         |
 c     %---------------------------------------------------%
 c
-      lworkl  = 3*ncv**2+5*ncv 
-      tol    = 0.0 
+      lworkl  = 3*ncv**2+5*ncv
+      tol    = 0.0
       ido    = 0
       info   = 1
       do 5, i = 1, n
@@ -159,7 +159,7 @@ c     | compute A * resid by hand |
 c     %---------------------------%
       call av (nx, resid, workd)
       res1 = dznrm2 (n, workd, 1)
-      
+
 c
 c     %---------------------------------------------------%
 c     | This program uses exact shift with respect to     |
@@ -176,11 +176,11 @@ c
       mode   = 1
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  10   continue
@@ -205,7 +205,7 @@ c           | The user should supply his/her own        |
 c           | matrix vector multiplication routine here |
 c           | that takes workd(ipntr(1)) as the input   |
 c           | vector, and return the matrix vector      |
-c           | product to workd(ipntr(2)).               | 
+c           | product to workd(ipntr(2)).               |
 c           %-------------------------------------------%
 c
             call av (nx, workd(ipntr(1)), workd(ipntr(2)))
@@ -221,7 +221,7 @@ c           %----------------------------------%
          stop 1
       end if
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector subroutine
@@ -231,21 +231,21 @@ c     discretized using centered difference.
 c
       subroutine av (nx, v, w)
       integer           nx, j, lo
-      Complex*16          
+      Complex*16
      &                  v(nx*nx), w(nx*nx), one, h2
       parameter         (one = (1.0D+0, 0.0D+0) )
       external          zaxpy , tv
 c
-c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block 
+c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block
 c     tridiagonal matrix
 c
-c                  | T -I          | 
+c                  | T -I          |
 c                  |-I  T -I       |
 c             OP = |   -I  T       |
 c                  |        ...  -I|
 c                  |           -I T|
 c
-c     derived from the standard central difference  discretization 
+c     derived from the standard central difference  discretization
 c     of the convection-diffusion operator (Laplacian u) + rho*(du/dx)
 c     with zero boundary condition.
 c
@@ -262,7 +262,7 @@ c
          call tv(nx, v(lo+1), w(lo+1))
          call zaxpy (nx, -one/h2, v(lo-nx+1), 1, w(lo+1), 1)
          call zaxpy (nx, -one/h2, v(lo+nx+1), 1, w(lo+1), 1)
-  10  continue 
+  10  continue
 c
       lo = (nx-1)*nx
       call tv(nx, v(lo+1), w(lo+1))
@@ -273,29 +273,29 @@ c
 c=========================================================================
       subroutine tv (nx, x, y)
 c
-      integer           nx, j 
-      Complex*16 
+      integer           nx, j
+      Complex*16
      &                  x(nx), y(nx), h, h2, dd, dl, du
 c
-      Complex*16 
+      Complex*16
      &                  one, rho
       parameter         (one = (1.0D+0, 0.0D+0) ,
      &                   rho = (1.0D+2, 0.0D+0) )
 c
 c     Compute the matrix vector multiplication y<---T*x
-c     where T is a nx by nx tridiagonal matrix with DD on the 
+c     where T is a nx by nx tridiagonal matrix with DD on the
 c     diagonal, DL on the subdiagonal, and DU on the superdiagonal
-c     
+c
       h   = one / dcmplx (nx+1)
       h2  = h*h
       dd  = (4.0D+0, 0.0D+0)  / h2
       dl  = -one/h2 - (5.0D-1, 0.0D+0) *rho/h
       du  = -one/h2 + (5.0D-1, 0.0D+0) *rho/h
-c 
+c
       y(1) =  dd*x(1) + du*x(2)
       do 10 j = 2,nx-1
-         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1) 
- 10   continue 
-      y(nx) =  dl*x(nx-1) + dd*x(nx) 
+         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1)
+ 10   continue
+      y(nx) =  dl*x(nx-1) + dd*x(nx)
       return
       end

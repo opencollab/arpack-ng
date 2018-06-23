@@ -1,16 +1,16 @@
 c\BeginDoc
 c
-c\Name: pdnaup2 
+c\Name: pdnaup2
 c
-c Message Passing Layer: BLACS 
+c Message Passing Layer: BLACS
 c
-c\Description: 
+c\Description:
 c  Intermediate level interface called by pdnaupd .
 c
 c\Usage:
-c  call pdnaup2 
+c  call pdnaup2
 c     ( COMM, IDO, BMAT, N, WHICH, NEV, NP, TOL, RESID, MODE, IUPD,
-c       ISHIFT, MXITER, V, LDV, H, LDH, RITZR, RITZI, BOUNDS, 
+c       ISHIFT, MXITER, V, LDV, H, LDH, RITZR, RITZI, BOUNDS,
 c       Q, LDQ, WORKL, IPNTR, WORKD, INFO )
 c
 c\Arguments
@@ -19,22 +19,22 @@ c  COMM, IDO, BMAT, N, WHICH, NEV, TOL, RESID: same as defined in pdnaupd .
 c  MODE, ISHIFT, MXITER: see the definition of IPARAM in pdnaupd .
 c
 c  NP      Integer.  (INPUT/OUTPUT)
-c          Contains the number of implicit shifts to apply during 
-c          each Arnoldi iteration.  
-c          If ISHIFT=1, NP is adjusted dynamically at each iteration 
+c          Contains the number of implicit shifts to apply during
+c          each Arnoldi iteration.
+c          If ISHIFT=1, NP is adjusted dynamically at each iteration
 c          to accelerate convergence and prevent stagnation.
-c          This is also roughly equal to the number of matrix-vector 
+c          This is also roughly equal to the number of matrix-vector
 c          products (involving the operator OP) per Arnoldi iteration.
 c          The logic for adjusting is contained within the current
 c          subroutine.
 c          If ISHIFT=0, NP is the number of shifts the user needs
 c          to provide via reverse communication. 0 < NP < NCV-NEV.
 c          NP may be less than NCV-NEV for two reasons. The first, is
-c          to keep complex conjugate pairs of "wanted" Ritz values 
+c          to keep complex conjugate pairs of "wanted" Ritz values
 c          together. The second, is that a leading block of the current
 c          upper Hessenberg matrix has split off and contains "unwanted"
 c          Ritz values.
-c          Upon termination of the IRA iteration, NP contains the number 
+c          Upon termination of the IRA iteration, NP contains the number
 c          of "converged" wanted Ritz values.
 c
 c  IUPD    Integer.  (INPUT)
@@ -42,18 +42,18 @@ c          IUPD .EQ. 0: use explicit restart instead implicit update.
 c          IUPD .NE. 0: use implicit update.
 c
 c  V       Double precision  N by (NEV+NP) array.  (INPUT/OUTPUT)
-c          The Arnoldi basis vectors are returned in the first NEV 
+c          The Arnoldi basis vectors are returned in the first NEV
 c          columns of V.
 c
 c  LDV     Integer.  (INPUT)
-c          Leading dimension of V exactly as declared in the calling 
+c          Leading dimension of V exactly as declared in the calling
 c          program.
 c
 c  H       Double precision  (NEV+NP) by (NEV+NP) array.  (OUTPUT)
 c          H is used to store the generated upper Hessenberg matrix
 c
 c  LDH     Integer.  (INPUT)
-c          Leading dimension of H exactly as declared in the calling 
+c          Leading dimension of H exactly as declared in the calling
 c          program.
 c
 c  RITZR,  Double precision  arrays of length NEV+NP.  (OUTPUT)
@@ -61,9 +61,9 @@ c  RITZI   RITZR(1:NEV) (resp. RITZI(1:NEV)) contains the real (resp.
 c          imaginary) part of the computed Ritz values of OP.
 c
 c  BOUNDS  Double precision  array of length NEV+NP.  (OUTPUT)
-c          BOUNDS(1:NEV) contain the error bounds corresponding to 
+c          BOUNDS(1:NEV) contain the error bounds corresponding to
 c          the computed Ritz values.
-c          
+c
 c  Q       Double precision  (NEV+NP) by (NEV+NP) array.  (WORKSPACE)
 c          Private (replicated) work array used to accumulate the
 c          rotation in the shift application step.
@@ -72,7 +72,7 @@ c  LDQ     Integer.  (INPUT)
 c          Leading dimension of Q exactly as declared in the calling
 c          program.
 c
-c  WORKL   Double precision  work array of length at least 
+c  WORKL   Double precision  work array of length at least
 c          (NEV+NP)**2 + 3*(NEV+NP).  (INPUT/WORKSPACE)
 c          Private (replicated) array on each PE or array allocated on
 c          the front end.  It is used in shifts calculation, shifts
@@ -84,19 +84,19 @@ c          estimates of the current Hessenberg matrix.  They are
 c          listed in the same order as returned from dneigh .
 c
 c          If ISHIFT .EQ. O and IDO .EQ. 3, the first 2*NP locations
-c          of WORKL are used in reverse communication to hold the user 
+c          of WORKL are used in reverse communication to hold the user
 c          supplied shifts.
 c
 c  IPNTR   Integer array of length 3.  (OUTPUT)
-c          Pointer to mark the starting locations in the WORKD for 
+c          Pointer to mark the starting locations in the WORKD for
 c          vectors used by the Arnoldi iteration.
 c          -------------------------------------------------------------
 c          IPNTR(1): pointer to the current operand vector X.
 c          IPNTR(2): pointer to the current result vector Y.
-c          IPNTR(3): pointer to the vector B * X when used in the 
+c          IPNTR(3): pointer to the vector B * X when used in the
 c                    shift-and-invert mode.  X is the current operand.
 c          -------------------------------------------------------------
-c          
+c
 c  WORKD   Double precision  work array of length 3*N.  (WORKSPACE)
 c          Distributed array to be used in the basic Arnoldi iteration
 c          for reverse communication.  The user should not use WORKD
@@ -110,7 +110,7 @@ c                          possibly from a previous run.
 c          Error flag on output.
 c          =     0: Normal return.
 c          =     1: Maximum number of iterations taken.
-c                   All possible eigenvalues of OP has been found.  
+c                   All possible eigenvalues of OP has been found.
 c                   NP returns the number of converged Ritz values.
 c          =     2: No shifts could be applied.
 c          =    -8: Error return from LAPACK eigenvalue calculation;
@@ -132,12 +132,12 @@ c\References:
 c  1. D.C. Sorensen, "Implicit Application of Polynomial Filters in
 c     a k-Step Arnoldi Method", SIAM J. Matr. Anal. Apps., 13 (1992),
 c     pp 357-385.
-c  2. R.B. Lehoucq, "Analysis and Implementation of an Implicitly 
+c  2. R.B. Lehoucq, "Analysis and Implementation of an Implicitly
 c     Restarted Arnoldi Iteration", Rice University Technical Report
 c     TR95-13, Department of Computational and Applied Mathematics.
 c
 c\Routines called:
-c     pdgetv0   Parallel ARPACK initial vector generation routine. 
+c     pdgetv0   Parallel ARPACK initial vector generation routine.
 c     pdnaitr   Parallel ARPACK Arnoldi factorization routine.
 c     pdnapps   Parallel ARPACK application of implicit shifts routine.
 c     dnconv    ARPACK convergence of Ritz values routine.
@@ -151,7 +151,7 @@ c     pdvout    ARPACK utility routine that prints vectors.
 c     pdlamch   ScaLAPACK routine that determines machine constants.
 c     dlapy2    LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     dcopy     Level 1 BLAS that copies one vector to another .
-c     ddot      Level 1 BLAS that computes the scalar product of two vectors. 
+c     ddot      Level 1 BLAS that computes the scalar product of two vectors.
 c     pdnorm2   Parallel version of Level 1 BLAS that computes the norm of a vector.
 c     dswap     Level 1 BLAS that swaps two vectors.
 c
@@ -160,14 +160,14 @@ c     Danny Sorensen               Phuong Vu
 c     Richard Lehoucq              Cray Research, Inc. &
 c     Dept. of Computational &     CRPC / Rice University
 c     Applied Mathematics          Houston, Texas
-c     Rice University           
-c     Houston, Texas    
-c 
+c     Rice University
+c     Houston, Texas
+c
 c\Revision history:
 c     Starting Point: Serial Code FILE: naup2.F   SID: 2.2
 c
-c\SCCS Information: 
-c FILE: naup2.F   SID: 1.5   DATE OF SID: 06/01/00   
+c\SCCS Information:
+c FILE: naup2.F   SID: 1.5   DATE OF SID: 06/01/00
 c
 c\Remarks
 c     1. None
@@ -176,9 +176,9 @@ c\EndLib
 c
 c-----------------------------------------------------------------------
 c
-      subroutine pdnaup2 
-     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd, 
-     &     ishift, mxiter, v, ldv, h, ldh, ritzr, ritzi, bounds, 
+      subroutine pdnaup2
+     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,
+     &     ishift, mxiter, v, ldv, h, ldh, ritzr, ritzi, bounds,
      &     q, ldq, workl, ipntr, workd, info )
 c
 c
@@ -187,7 +187,7 @@ c     | BLACS Variables and Routines |
 c     %------------------------------%
 c
       integer    comm
-      external   dgsum2d 
+      external   dgsum2d
 c
 c     %----------------------------------------------------%
 c     | Include files for debugging and timing information |
@@ -203,7 +203,7 @@ c
       character  bmat*1, which*2
       integer    ido, info, ishift, iupd, mode, ldh, ldq, ldv, mxiter,
      &           n, nev, np
-      Double precision 
+      Double precision
      &           tol
 c
 c     %-----------------%
@@ -211,16 +211,16 @@ c     | Array Arguments |
 c     %-----------------%
 c
       integer    ipntr(13)
-      Double precision 
+      Double precision
      &           bounds(nev+np), h(ldh,nev+np), q(ldq,nev+np), resid(n),
-     &           ritzi(nev+np), ritzr(nev+np), v(ldv,nev+np), 
+     &           ritzi(nev+np), ritzr(nev+np), v(ldv,nev+np),
      &           workd(3*n), workl( (nev+np)*(nev+np+3) )
 c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision 
+      Double precision
      &           one, zero
       parameter (one = 1.0 , zero = 0.0 )
 c
@@ -230,16 +230,16 @@ c     %---------------%
 c
       character  wprime*2
       logical    cnorm , getv0, initv , update, ushift
-      integer    ierr  , iter , kplusp, msglvl, nconv, 
+      integer    ierr  , iter , kplusp, msglvl, nconv,
      &           nevbef, nev0 , np0   , nptemp, numcnv,
      &           j
-      Double precision 
+      Double precision
      &           rnorm , temp , eps23
       save       cnorm , getv0, initv , update, ushift,
-     &           rnorm , iter , kplusp, msglvl, nconv, 
+     &           rnorm , iter , kplusp, msglvl, nconv,
      &           nevbef, nev0 , np0   , eps23 , numcnv
 c
- 
+
 c     %-----------------------%
 c     | Local array arguments |
 c     %-----------------------%
@@ -250,7 +250,7 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   dcopy , pdgetv0 , pdnaitr , dnconv , 
+      external   dcopy , pdgetv0 , pdnaitr , dnconv ,
      &           pdneigh , pdngets , pdnapps ,
      &           pdvout , pivout, arscnd
 c
@@ -258,9 +258,9 @@ c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Double precision 
-     &           ddot , pdnorm2 , dlapy2 , pdlamch 
-      external   ddot , pdnorm2 , dlapy2 , pdlamch 
+      Double precision
+     &           ddot , pdnorm2 , dlapy2 , pdlamch
+      external   ddot , pdnorm2 , dlapy2 , pdlamch
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -273,11 +273,11 @@ c     | Executable Statements |
 c     %-----------------------%
 c
       if (ido .eq. 0) then
-c 
+c
          call arscnd (t0)
-c 
+c
          msglvl = mnaup2
-c 
+c
 c        %-------------------------------------%
 c        | Get the machine dependent constant. |
 c        %-------------------------------------%
@@ -300,7 +300,7 @@ c
          kplusp = nev + np
          nconv  = 0
          iter   = 0
-c 
+c
 c        %---------------------------------------%
 c        | Set flags for computing the first NEV |
 c        | steps of the Arnoldi factorization.   |
@@ -323,7 +323,7 @@ c
             initv = .false.
          end if
       end if
-c 
+c
 c     %---------------------------------------------%
 c     | Get a possibly random starting vector and   |
 c     | force it into the range of the operator OP. |
@@ -332,7 +332,7 @@ c
    10 continue
 c
       if (getv0) then
-         call pdgetv0  (comm, ido, bmat, 1, initv, n, 1, v, ldv, 
+         call pdgetv0  (comm, ido, bmat, 1, initv, n, 1, v, ldv,
      &                resid, rnorm, ipntr, workd, workl, info)
 c
          if (ido .ne. 99) go to 9000
@@ -340,7 +340,7 @@ c
          if (rnorm .eq. zero) then
 c
 c           %-----------------------------------------%
-c           | The initial vector is zero. Error exit. | 
+c           | The initial vector is zero. Error exit. |
 c           %-----------------------------------------%
 c
             info = -9
@@ -349,7 +349,7 @@ c
          getv0 = .false.
          ido  = 0
       end if
-c 
+c
 c     %-----------------------------------%
 c     | Back from reverse communication : |
 c     | continue with update step         |
@@ -369,15 +369,15 @@ c     | at the end of the current iteration |
 c     %-------------------------------------%
 c
       if (cnorm)  go to 100
-c 
+c
 c     %----------------------------------------------------------%
 c     | Compute the first NEV steps of the Arnoldi factorization |
 c     %----------------------------------------------------------%
 c
-      call pdnaitr  (comm, ido, bmat, n, 0, nev, mode, 
-     &             resid, rnorm, v, ldv, h, ldh, ipntr, 
+      call pdnaitr  (comm, ido, bmat, n, 0, nev, mode,
+     &             resid, rnorm, v, ldv, h, ldh, ipntr,
      &             workd, workl, info)
-c 
+c
 c     %---------------------------------------------------%
 c     | ido .ne. 99 implies use of reverse communication  |
 c     | to compute operations involving OP and possibly B |
@@ -391,7 +391,7 @@ c
          info = -9999
          go to 1200
       end if
-c 
+c
 c     %--------------------------------------------------------------%
 c     |                                                              |
 c     |           M A I N  ARNOLDI  I T E R A T I O N  L O O P       |
@@ -399,16 +399,16 @@ c     |           Each iteration implicitly restarts the Arnoldi     |
 c     |           factorization in place.                            |
 c     |                                                              |
 c     %--------------------------------------------------------------%
-c 
+c
  1000 continue
 c
          iter = iter + 1
 c
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, iter, ndigit, 
+            call pivout (comm, logfil, 1, iter, ndigit,
      &           '_naup2: **** Start of major iteration number ****')
          end if
-c 
+c
 c        %-----------------------------------------------------------%
 c        | Compute NP additional steps of the Arnoldi factorization. |
 c        | Adjust NP since NEV might have been updated by last call  |
@@ -418,9 +418,9 @@ c
          np  = kplusp - nev
 c
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, nev, ndigit, 
+            call pivout (comm, logfil, 1, nev, ndigit,
      &     '_naup2: The length of the current Arnoldi factorization')
-            call pivout (comm, logfil, 1, np, ndigit, 
+            call pivout (comm, logfil, 1, np, ndigit,
      &           '_naup2: Extend the Arnoldi factorization by')
          end if
 c
@@ -432,10 +432,10 @@ c
    20    continue
          update = .true.
 c
-         call pdnaitr  (comm, ido, bmat, n, nev, np, mode, 
+         call pdnaitr  (comm, ido, bmat, n, nev, np, mode,
      &                resid, rnorm, v, ldv,
      &                h, ldh, ipntr, workd, workl, info)
-c 
+c
 c        %---------------------------------------------------%
 c        | ido .ne. 99 implies use of reverse communication  |
 c        | to compute operations involving OP and possibly B |
@@ -452,16 +452,16 @@ c
          update = .false.
 c
          if (msglvl .gt. 1) then
-            call pdvout  (comm, logfil, 1, rnorm, ndigit, 
+            call pdvout  (comm, logfil, 1, rnorm, ndigit,
      &           '_naup2: Corresponding B-norm of the residual')
          end if
-c 
+c
 c        %--------------------------------------------------------%
 c        | Compute the eigenvalues and corresponding error bounds |
 c        | of the current upper Hessenberg matrix.                |
 c        %--------------------------------------------------------%
 c
-         call pdneigh  ( comm, rnorm, kplusp, h, ldh, ritzr, ritzi, 
+         call pdneigh  ( comm, rnorm, kplusp, h, ldh, ritzr, ritzi,
      &                  bounds, q, ldq, workl, ierr)
 c
          if (ierr .ne. 0) then
@@ -494,30 +494,30 @@ c
          nev = nev0
          np = np0
          numcnv = nev
-         call pdngets  ( comm, ishift, which, nev, np, ritzr, ritzi, 
+         call pdngets  ( comm, ishift, which, nev, np, ritzr, ritzi,
      &                  bounds, workl, workl(np+1))
          if (nev .eq. nev0+1) numcnv = nev0+1
-c 
+c
 c        %-------------------%
 c        | Convergence test. |
 c        %-------------------%
 c
          call dcopy  (nev, bounds(np+1), 1, workl(2*np+1), 1)
-         call dnconv  (nev, ritzr(np+1), ritzi(np+1), workl(2*np+1), 
+         call dnconv  (nev, ritzr(np+1), ritzi(np+1), workl(2*np+1),
      &        tol, nconv)
-c 
+c
          if (msglvl .gt. 2) then
             kp(1) = nev
             kp(2) = np
             kp(3) = numcnv
             kp(4) = nconv
-            call pivout (comm, logfil, 4, kp, ndigit, 
+            call pivout (comm, logfil, 4, kp, ndigit,
      &                  '_naup2: NEV, NP, NUMCNV, NCONV are')
             call pdvout  (comm, logfil, kplusp, ritzr, ndigit,
      &           '_naup2: Real part of the eigenvalues of H')
             call pdvout  (comm, logfil, kplusp, ritzi, ndigit,
      &           '_naup2: Imaginary part of the eigenvalues of H')
-            call pdvout  (comm, logfil, kplusp, bounds, ndigit, 
+            call pdvout  (comm, logfil, kplusp, bounds, ndigit,
      &          '_naup2: Ritz estimates of the current NCV Ritz values')
          end if
 c
@@ -538,11 +538,11 @@ c
                nev = nev + 1
             end if
  30      continue
-c     
-         if ( (nconv .ge. numcnv) .or. 
+c
+         if ( (nconv .ge. numcnv) .or.
      &        (iter .gt. mxiter) .or.
      &        (np .eq. 0) ) then
-c     
+c
             if (msglvl .gt. 4) then
                call dvout (logfil, kplusp, workl(kplusp**2+1), ndigit,
      &             '_naup2: Real part of the eig computed by _neigh:')
@@ -553,7 +553,7 @@ c
      &                     ndigit,
      &             '_naup2: Ritz estimates computed by _neigh:')
             end if
-c     
+c
 c           %------------------------------------------------%
 c           | Prepare to exit. Put the converged Ritz values |
 c           | and corresponding bounds in RITZ(1:NCONV) and  |
@@ -565,7 +565,7 @@ c           %------------------------------------------%
 c           |  Use h( 3,1 ) as storage to communicate  |
 c           |  rnorm to _neupd if needed               |
 c           %------------------------------------------%
- 
+
             h(3,1) = rnorm
 c
 c           %----------------------------------------------%
@@ -653,13 +653,13 @@ c
             end if
 c
 c           %------------------------------------%
-c           | Max iterations have been exceeded. | 
+c           | Max iterations have been exceeded. |
 c           %------------------------------------%
 c
             if (iter .gt. mxiter .and. nconv .lt. numcnv) info = 1
 c
 c           %---------------------%
-c           | No shifts to apply. | 
+c           | No shifts to apply. |
 c           %---------------------%
 c
             if (np .eq. 0 .and. nconv .lt. numcnv) info = 2
@@ -668,7 +668,7 @@ c
             go to 1100
 c
          else if ( (nconv .lt. numcnv) .and. (ishift .eq. 1) ) then
-c     
+c
 c           %-------------------------------------------------%
 c           | Do not have all the requested eigenvalues yet.  |
 c           | To prevent possible stagnation, adjust the size |
@@ -683,25 +683,25 @@ c
                nev = 2
             end if
             np = kplusp - nev
-c     
+c
 c           %---------------------------------------%
 c           | If the size of NEV was just increased |
 c           | resort the eigenvalues.               |
 c           %---------------------------------------%
-c     
-            if (nevbef .lt. nev) 
-     &         call pdngets (comm, ishift, which, nev, np, ritzr, ritzi, 
+c
+            if (nevbef .lt. nev)
+     &         call pdngets (comm, ishift, which, nev, np, ritzr, ritzi,
      &                      bounds, workl, workl(np+1))
 c
-         end if              
-c     
+         end if
+c
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, nconv, ndigit, 
+            call pivout (comm, logfil, 1, nconv, ndigit,
      &           '_naup2: no. of "converged" Ritz values at this iter.')
             if (msglvl .gt. 1) then
                kp(1) = nev
                kp(2) = np
-               call pivout (comm, logfil, 2, kp, ndigit, 
+               call pivout (comm, logfil, 2, kp, ndigit,
      &              '_naup2: NEV and NP are')
                call pdvout  (comm, logfil, nev, ritzr(np+1), ndigit,
      &              '_naup2: "wanted" Ritz values -- real part')
@@ -724,7 +724,7 @@ c
             ido = 3
             go to 9000
          end if
-c 
+c
    50    continue
 c
 c        %------------------------------------%
@@ -736,7 +736,7 @@ c
          ushift = .false.
 c
          if ( ishift .eq. 0 ) then
-c 
+c
 c            %----------------------------------%
 c            | Move the NP shifts from WORKL to |
 c            | RITZR, RITZI to free up WORKL    |
@@ -747,14 +747,14 @@ c
              call dcopy  (np, workl(np+1), 1, ritzi, 1)
          end if
 c
-         if (msglvl .gt. 2) then 
-            call pivout (comm, logfil, 1, np, ndigit, 
+         if (msglvl .gt. 2) then
+            call pivout (comm, logfil, 1, np, ndigit,
      &                  '_naup2: The number of shifts to apply ')
             call pdvout  (comm, logfil, np, ritzr, ndigit,
      &                  '_naup2: Real part of the shifts')
             call pdvout  (comm, logfil, np, ritzi, ndigit,
      &                  '_naup2: Imaginary part of the shifts')
-            if ( ishift .eq. 1 ) 
+            if ( ishift .eq. 1 )
      &          call pdvout  (comm, logfil, np, bounds, ndigit,
      &                  '_naup2: Ritz estimates of the shifts')
          end if
@@ -766,7 +766,7 @@ c        | matrix H.                                               |
 c        | The first 2*N locations of WORKD are used as workspace. |
 c        %---------------------------------------------------------%
 c
-         call pdnapps  (comm, n, nev, np, ritzr, ritzi, v, ldv, 
+         call pdnapps  (comm, n, nev, np, ritzr, ritzi, v, ldv,
      &                 h, ldh, resid, q, ldq, workl, workd)
 c
 c        %---------------------------------------------%
@@ -783,18 +783,18 @@ c
             ipntr(1) = n + 1
             ipntr(2) = 1
             ido = 2
-c 
+c
 c           %----------------------------------%
 c           | Exit in order to compute B*RESID |
 c           %----------------------------------%
-c 
+c
             go to 9000
          else if (bmat .eq. 'I') then
             call dcopy  (n, resid, 1, workd, 1)
          end if
-c 
+c
   100    continue
-c 
+c
 c        %----------------------------------%
 c        | Back from reverse communication; |
 c        | WORKD(1:N) := B*RESID            |
@@ -815,12 +815,12 @@ c
          cnorm = .false.
 c
          if (msglvl .gt. 2) then
-            call pdvout  (comm, logfil, 1, rnorm, ndigit, 
+            call pdvout  (comm, logfil, 1, rnorm, ndigit,
      &      '_naup2: B-norm of residual for compressed factorization')
             call pdmout  (comm, logfil, nev, nev, h, ldh, ndigit,
      &        '_naup2: Compressed upper Hessenberg matrix H')
          end if
-c 
+c
       go to 1000
 c
 c     %---------------------------------------------------------------%
@@ -833,7 +833,7 @@ c
 c
       mxiter = iter
       nev = numcnv
-c     
+c
  1200 continue
       ido = 99
 c
@@ -843,7 +843,7 @@ c     %------------%
 c
       call arscnd (t1)
       tnaup2 = t1 - t0
-c     
+c
  9000 continue
 c
 c     %----------------%

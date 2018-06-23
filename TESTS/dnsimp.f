@@ -45,7 +45,7 @@ c
 c\Example-1
 c     ... Suppose we want to solve A*x = lambda*x in regular mode,
 c         where A is obtained from the standard central difference
-c         discretization of the convection-diffusion operator 
+c         discretization of the convection-diffusion operator
 c                 (Laplacian u) + rho*(du / dx)
 c         on the unit square, with zero Dirichlet boundary condition.
 c
@@ -63,7 +63,7 @@ c     dlapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
 c     daxpy   Level 1 BLAS that computes y <- alpha*x+y.
 c     dnrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
-c     tv      Matrix vector multiplication routine that computes T*x, 
+c     tv      Matrix vector multiplication routine that computes T*x,
 c             where T is a tridiagonal matrix.  It is used in routine
 c             av.
 c
@@ -117,9 +117,9 @@ c
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
       Double precision
-     &                  ax(maxn), d(maxncv,3), resid(maxn), 
-     &                  v(ldv,maxncv), workd(3*maxn), 
-     &                  workev(3*maxncv), 
+     &                  ax(maxn), d(maxncv,3), resid(maxn),
+     &                  v(ldv,maxncv), workd(3*maxn),
+     &                  workev(3*maxncv),
      &                  workl(3*maxncv*maxncv+6*maxncv)
 c
 c     %---------------%
@@ -147,7 +147,7 @@ c     %-----------------------------%
 c
       Double precision
      &                  dlapy2, dnrm2
-      external          dlapy2, dnrm2, daxpy 
+      external          dlapy2, dnrm2, daxpy
 c
 c     %--------------------%
 c     | Intrinsic function |
@@ -155,7 +155,7 @@ c     %--------------------%
 c
       intrinsic         abs
 c
-c     Storage and variables for getting matrix from disk 
+c     Storage and variables for getting matrix from disk
 c
       integer dimA, sizeA
       parameter (dimA = 50)
@@ -200,8 +200,8 @@ c     %-------------------------------------------------%
 c     | The following sets dimensions for this problem. |
 c     %-------------------------------------------------%
 c
-      nx    = dimA 
-      n     = nx*nx 
+      nx    = dimA
+      n     = nx*nx
 c
 c     %-----------------------------------------------%
 c     |                                               |
@@ -283,8 +283,8 @@ c     | illustrated below.                                  |
 c     |                                                     |
 c     %-----------------------------------------------------%
 c
-      lworkl  = 3*ncv**2+6*ncv 
-      tol    = zero 
+      lworkl  = 3*ncv**2+6*ncv
+      tol    = zero
       ido    = 0
       info   = 0
 c
@@ -311,7 +311,7 @@ c
       iparam(7) = mode1
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  10   continue
@@ -323,8 +323,8 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dnaupd ( ido, bmat, n, which, nev, tol, resid, ncv, 
-     &                 v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call dnaupd ( ido, bmat, n, which, nev, tol, resid, ncv,
+     &                 v, ldv, iparam, ipntr, workd, workl, lworkl,
      &                 info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -336,7 +336,7 @@ c           | The user should supply his/her own        |
 c           | matrix vector multiplication routine here |
 c           | that takes workd(ipntr(1)) as the input   |
 c           | vector, and return the matrix vector      |
-c           | product to workd(ipntr(2)).               | 
+c           | product to workd(ipntr(2)).               |
 c           %-------------------------------------------%
 c
             call av (nx, A, workd(ipntr(1)), workd(ipntr(2)))
@@ -366,7 +366,7 @@ c
          print *, ' Check the documentation of _naupd'
          print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -385,10 +385,10 @@ c        |                                           |
 c        %-------------------------------------------%
 c
 c        change to .true. to invoke bug with latest ARPACK
-         rvec = .true. 
+         rvec = .true.
 c
-         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv, 
-     &        sigmar, sigmai, workev, bmat, n, which, nev, tol, 
+         call dneupd ( rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, n, which, nev, tol,
      &        resid, ncv, v, ldv, iparam, ipntr, workd, workl,
      &        lworkl, ierr )
 c
@@ -490,11 +490,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _NSIMP '
@@ -505,8 +505,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -522,17 +522,17 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
-c     matrix vector subroutine for Matrix Market format 
+c     matrix vector subroutine for Matrix Market format
 c
       subroutine av (nx, A, v, w)
       integer nx
       double precision A(nx*nx)
       double precision v(nx)
       double precision w(nx)
-      
+
       CALL DGEMV('N', nx, nx, 1.D0, A, nx, v, 1, 0.D0, w, 1)
 
       return

@@ -1,9 +1,9 @@
-      program ssdrv4 
+      program ssdrv4
 c
 c     Program to illustrate the idea of reverse communication
 c     in shift and invert mode for a generalized symmetric eigenvalue
-c     problem.  The following program uses the two LAPACK subroutines 
-c     sgttrf.f and sgttrs to factor and solve a tridiagonal system of 
+c     problem.  The following program uses the two LAPACK subroutines
+c     sgttrf.f and sgttrs to factor and solve a tridiagonal system of
 c     equations.
 c
 c     We implement example four of ex-sym.doc in DOCUMENTS directory
@@ -34,7 +34,7 @@ c     sscal   Level 1 BLAS that scales a vector by a scalar.
 c     snrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
 c     mv      Matrix vector multiplication routine that computes M*x.
-c 
+c
 c\Author
 c     Richard Lehoucq
 c     Danny Sorensen
@@ -51,7 +51,7 @@ c\Remarks
 c     1. None
 c
 c\EndLib
-c----------------------------------------------------------------------     
+c----------------------------------------------------------------------
 c
 c     %-----------------------------%
 c     | Define leading dimensions   |
@@ -63,7 +63,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxn, maxnev, maxncv, ldv
-      parameter        (maxn=256, maxnev=10, maxncv=25, 
+      parameter        (maxn=256, maxnev=10, maxncv=25,
      &                 ldv=maxn)
 c
 c     %--------------%
@@ -72,7 +72,7 @@ c     %--------------%
 c
       Real
      &                 v(ldv,maxncv), workl(maxncv*(maxncv+8)),
-     &                 workd(3*maxn), d(maxncv,2), resid(maxn), 
+     &                 workd(3*maxn), d(maxncv,2), resid(maxn),
      &                 ad(maxn), adl(maxn), adu(maxn), adu2(maxn)
       logical          select(maxncv)
       integer          iparam(11), ipntr(11), ipiv(maxn)
@@ -85,7 +85,7 @@ c
       integer          ido, n, nev, ncv, lworkl, info, j, ierr,
      &                 nconv, maxitr, ishfts, mode
       logical          rvec
-      Real    
+      Real
      &                 sigma, r1, r2, tol, h
 c
 c     %------------%
@@ -126,10 +126,10 @@ c     | The user can modify NEV, NCV, SIGMA to solve       |
 c     | problems of different sizes, and to get different  |
 c     | parts of the spectrum. However, The following      |
 c     | conditions must be satisfied:                      |
-c     |                   N <= MAXN,                       | 
+c     |                   N <= MAXN,                       |
 c     |                 NEV <= MAXNEV,                     |
-c     |             NEV + 1 <= NCV <= MAXNCV               | 
-c     %----------------------------------------------------% 
+c     |             NEV + 1 <= NCV <= MAXNCV               |
+c     %----------------------------------------------------%
 c
       n = 100
       nev = 4
@@ -146,7 +146,7 @@ c
       end if
       bmat = 'G'
       which = 'LM'
-      sigma = zero 
+      sigma = zero
 c
 c     %--------------------------------------------------%
 c     | The work array WORKL is used in SSAUPD as        |
@@ -161,7 +161,7 @@ c     | iteration.                                       |
 c     %--------------------------------------------------%
 c
       lworkl = ncv*(ncv+8)
-      tol = zero 
+      tol = zero
       ido = 0
       info = 0
 c
@@ -180,8 +180,8 @@ c
       mode   = 3
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------------------%
 c     | Call LAPACK routine to factor the tridiagonal matrix  |
@@ -197,10 +197,10 @@ c
       do 20 j=1,n
          ad(j) = two/h - sigma * r1
          adl(j) = -one/h - sigma * r2
- 20   continue 
+ 20   continue
       call scopy (n, adl, 1, adu, 1)
       call sgttrf (n, adl, ad, adu, adu2, ipiv, ierr)
-      if (ierr .ne. 0) then 
+      if (ierr .ne. 0) then
          print *, ' Error with _gttrf in _SDRV4.'
          go to 9000
       end if
@@ -238,12 +238,12 @@ c           %--------------------------------------------%
 c
             call mv (n, workd(ipntr(1)), workd(ipntr(2)))
 c
-            call sgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
-     &                   workd(ipntr(2)), n, ierr) 
-            if (ierr .ne. 0) then 
+            call sgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
+     &                   workd(ipntr(2)), n, ierr)
+            if (ierr .ne. 0) then
                print *, ' '
                print *, ' Error with _gttrs in _SDRV4. '
-               print *, ' ' 
+               print *, ' '
                go to 9000
             end if
 c
@@ -261,16 +261,16 @@ c           | M*x has been saved in workd(ipntr(3)).  |
 c           | the user only needs the linear system   |
 c           | solver here that takes workd(ipntr(3)   |
 c           | as input, and returns the result to     |
-c           | workd(ipntr(2)).                        | 
+c           | workd(ipntr(2)).                        |
 c           %-----------------------------------------%
 c
             call scopy ( n, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-            call sgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
+            call sgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
      &                   workd(ipntr(2)), n, ierr)
-            if (ierr .ne. 0) then 
+            if (ierr .ne. 0) then
                print *, ' '
                print *, ' Error with _gttrs in _SDRV4.'
-               print *, ' ' 
+               print *, ' '
                go to 9000
             end if
 c
@@ -298,7 +298,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-        end if 
+        end if
 c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
@@ -315,9 +315,9 @@ c
          print *, ' '
          print *, ' Error with _saupd, info = ',info
          print *, ' Check the documentation of _saupd '
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -332,7 +332,7 @@ c
          rvec = .true.
 c
          call sseupd ( rvec, 'All', select, d, v, ldv, sigma,
-     &        bmat, n, which, nev, tol, resid, ncv, v, ldv, 
+     &        bmat, n, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
 c
 c        %----------------------------------------------%
@@ -346,7 +346,7 @@ c        | corresponding to the eigenvalues in D is     |
 c        | returned in V.                               |
 c        %----------------------------------------------%
 c
-         if ( ierr .ne. 0 ) then 
+         if ( ierr .ne. 0 ) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -358,7 +358,7 @@ c
             print *, ' Check the documentation of _seupd '
             print *, ' '
 c
-         else 
+         else
 c
             nconv =  iparam(5)
             do 30 j=1, nconv
@@ -375,7 +375,7 @@ c              | indicates how many are    |
 c              | accurate to the requested |
 c              | tolerance)                |
 c              %---------------------------%
-c  
+c
                call av(n, v(1,j), workd)
                call mv(n, v(1,j), workd(n+1))
                call saxpy (n, -d(j,1), workd(n+1), 1, workd, 1)
@@ -414,7 +414,7 @@ c
      &               ' (NCV) is ', ncv
         print *, ' What portion of the spectrum: ', which
         print *, ' The number of converged Ritz values is ',
-     &             nconv 
+     &             nconv
         print *, ' The number of Implicit Arnoldi update',
      &           ' iterations taken is ', iparam(3)
         print *, ' The number of OP*x is ', iparam(9)
@@ -440,15 +440,15 @@ c
       integer         n, j
       Real
      &                v(n),w(n), one, four, six, h
-      parameter       (one = 1.0E+0, four = 4.0E+0, 
+      parameter       (one = 1.0E+0, four = 4.0E+0,
      &                 six = 6.0E+0)
 c
       w(1) =  four*v(1) + v(2)
       do 100 j = 2,n-1
-         w(j) = v(j-1) + four*v(j) + v(j+1) 
+         w(j) = v(j-1) + four*v(j) + v(j+1)
   100 continue
       j = n
-      w(j) = v(j-1) + four*v(j) 
+      w(j) = v(j-1) + four*v(j)
 c
 c     Scale the vector w by h.
 c
@@ -458,8 +458,8 @@ c
       end
 c------------------------------------------------------------------------
 c     matrix vector subroutine
-c     where the matrix is the finite element discretization of the 
-c     1 dimensional discrete Laplacian on [0,1] with zero Dirichlet 
+c     where the matrix is the finite element discretization of the
+c     1 dimensional discrete Laplacian on [0,1] with zero Dirichlet
 c     boundary condition using piecewise linear elements.
 c
       subroutine av (n, v, w)
@@ -470,10 +470,10 @@ c
 c
       w(1) =  two*v(1) - v(2)
       do 100 j = 2,n-1
-         w(j) = - v(j-1) + two*v(j) - v(j+1) 
+         w(j) = - v(j-1) + two*v(j) - v(j+1)
   100 continue
       j = n
-      w(j) = - v(j-1) + two*v(j) 
+      w(j) = - v(j-1) + two*v(j)
 c
 c     Scale the vector w by (1/h)
 c

@@ -1,4 +1,4 @@
-      program psntest1 
+      program psntest1
 c
 c     Message Passing Layer: BLACS
 c
@@ -26,13 +26,13 @@ c     psnorm2  Parallel version of Level 1 BLAS that computes the norm of a vect
 c     av       Distributed matrix vector multiplication routine that computes A*x.
 c
 c\Author
-c     Kristi Maschhoff 
+c     Kristi Maschhoff
 c     Dept. of Computational &
 c     Applied Mathematics
 c     Rice University
 c     Houston, Texas
 c
-c\SCCS Information: 
+c\SCCS Information:
 c FILE: %M%   SID: %I%   DATE OF SID: %G%   RELEASE: %R%
 c
 c\Remarks
@@ -43,7 +43,7 @@ c---------------------------------------------------------------------------
 c
       include 'debug-arpack.h'
       include 'stat.h'
- 
+
 c     %-----------------%
 c     | BLACS INTERFACE |
 c     %-----------------%
@@ -74,9 +74,9 @@ c
       integer           iparam(11), ipntr(14), iseed(4)
       logical           select(maxncv)
       Real
-     &                  ax(maxn), d(maxncv,3), resid(maxn), diag(maxn), 
-     &                  v(ldv,maxncv), workd(3*maxn), 
-     &                  workev(3*maxncv), 
+     &                  ax(maxn), d(maxncv,3), resid(maxn), diag(maxn),
+     &                  v(ldv,maxncv), workd(3*maxn),
+     &                  workev(3*maxncv),
      &                  workl(3*maxncv*maxncv+6*maxncv)
 c
 c     %---------------%
@@ -152,7 +152,7 @@ c
 c
       n     = 10000*nprocs
       nev   = 4
-      ncv   = 20 
+      ncv   = 20
 c
 c     %--------------------------------------%
 c     | Set up distribution of data to nodes |
@@ -190,18 +190,18 @@ c
       diag(4) = diag(4) + 1.01
 c
 c     %-----------------------------------------------------%
-c     | The work array WORKL is used in PSNAUPD as          |  
+c     | The work array WORKL is used in PSNAUPD as          |
 c     | workspace.  Its dimension LWORKL is set as          |
 c     | illustrated below.  The parameter TOL determines    |
 c     | the stopping criterion. If TOL<=0, machine          |
 c     | precision is used.  The variable IDO is used for    |
 c     | reverse communication, and is initially set to 0.   |
 c     | Setting INFO=0 indicates that a random vector is    |
-c     | generated in PSNAUPD to start the Arnoldi iteration.| 
+c     | generated in PSNAUPD to start the Arnoldi iteration.|
 c     %-----------------------------------------------------%
 c
-      lworkl  = 3*ncv**2+6*ncv 
-      tol    = zero 
+      lworkl  = 3*ncv**2+6*ncv
+      tol    = zero
       ido    = 0
       info   = 1
       do 50 j=1,nloc
@@ -223,11 +223,11 @@ c
       mode   = 1
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
+      iparam(3) = maxitr
       iparam(7) = mode
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  10   continue
@@ -239,7 +239,7 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call psnaupd(comm, ido, bmat, nloc, which, nev, tol, resid, 
+         call psnaupd(comm, ido, bmat, nloc, which, nev, tol, resid,
      &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -251,7 +251,7 @@ c           | The user should supply his/her own        |
 c           | matrix vector multiplication routine here |
 c           | that takes workd(ipntr(1)) as the input   |
 c           | vector, and return the matrix vector      |
-c           | product to workd(ipntr(2)).               | 
+c           | product to workd(ipntr(2)).               |
 c           %-------------------------------------------%
 c
             call av ( nloc, diag, workd(ipntr(1)), workd(ipntr(2)))
@@ -262,8 +262,8 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-      end if 
-c 
+      end if
+c
 c     %----------------------------------------%
 c     | Either we have convergence or there is |
 c     | an error.                              |
@@ -283,7 +283,7 @@ c
             print *, ' '
          endif
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -297,8 +297,8 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call psneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv, 
-     &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol, 
+         call psneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,
+     &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol,
      &        resid, ncv, v, ldv, iparam, ipntr, workd, workl,
      &        lworkl, ierr )
 c
@@ -328,7 +328,7 @@ c
              	print *, ' '
             endif
 c
-         else 
+         else
 c
              first  = .true.
              nconv  = iparam(5)
@@ -355,7 +355,7 @@ c                  %--------------------%
 c
                    call av( nloc, diag, v(1,j), ax)
                    call saxpy(nloc, -d(j,1), v(1,j), 1, ax, 1)
-                   d(j,3) = psnorm2( comm, nloc, ax, 1)                   
+                   d(j,3) = psnorm2( comm, nloc, ax, 1)
 c
                 else if (first) then
 c
@@ -363,9 +363,9 @@ c                  %------------------------%
 c                  | Ritz value is complex. |
 c                  | Residual of one Ritz   |
 c                  | value of the conjugate |
-c                  | pair is computed.      | 
+c                  | pair is computed.      |
 c                  %------------------------%
-c        
+c
                    call av( nloc, diag, v(1,j), ax)
                    call saxpy(nloc, -d(j,1), v(1,j), 1, ax, 1)
                    call saxpy(nloc, d(j,2), v(1,j+1), 1, ax, 1)
@@ -400,24 +400,24 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit
      &                  Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_NDRV1 '
          print *, '====== '
-         print *, ' ' 
+         print *, ' '
          print *, ' Size of the matrix is ', n
          print *, ' The number of processors is ', nprocs
          print *, ' The number of Ritz values requested is ', nev
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -441,7 +441,7 @@ c
       call BLACS_EXIT(0)
 c
       end
-c 
+c
 c==========================================================================
 c
 c     parallel matrix vector subroutine

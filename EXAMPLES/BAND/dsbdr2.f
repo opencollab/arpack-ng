@@ -1,12 +1,12 @@
-      program dsbdr2 
+      program dsbdr2
 c
 c     ... Construct the matrix A in LAPACK-style band form.
 c         The matrix A is derived from the discretization of
-c         the 2-dimensional Laplacian on the unit square 
+c         the 2-dimensional Laplacian on the unit square
 c         with zero Dirichlet boundary condition using standard
 c         central difference.
 c
-c     ... Call DSBAND  to find eigenvalues LAMBDA closest to 
+c     ... Call DSBAND  to find eigenvalues LAMBDA closest to
 c         SIGMA such that
 c                          A*x = x*LAMBDA.
 c
@@ -48,13 +48,13 @@ c     | MAXN   - Maximum size of the matrix |
 c     | MAXNEV - Maximum number of          |
 c     |          eigenvalues to be computed |
 c     | MAXNCV - Maximum number of Arnoldi  |
-c     |          vectors stored             | 
+c     |          vectors stored             |
 c     | MAXBDW - Maximum bandwidth          |
 c     %-------------------------------------%
 c
       integer          maxn, maxnev, maxncv, maxbdw, lda,
      &                 lworkl, ldv
-      parameter        ( maxn = 1000, maxnev = 25, maxncv=50, 
+      parameter        ( maxn = 1000, maxnev = 25, maxncv=50,
      &                   maxbdw=50, lda = maxbdw, ldv = maxn )
 c
 c     %--------------%
@@ -63,10 +63,10 @@ c     %--------------%
 c
       integer          iparam(11), iwork(maxn)
       logical          select(maxncv)
-      Double precision 
+      Double precision
      &                 a(lda,maxn), m(lda,maxn), rfac(lda,maxn),
-     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn), 
-     &                 v(ldv, maxncv), resid(maxn), d(maxncv, 2), 
+     &                 workl(3*maxncv*maxncv+6*maxncv), workd(3*maxn),
+     &                 v(ldv, maxncv), resid(maxn), d(maxncv, 2),
      &                 ax(maxn)
 c
 c     %---------------%
@@ -77,15 +77,15 @@ c
       integer          nev, ncv, ku, kl, info, i, j, ido,
      &                 n, nx, lo, isub, isup, idiag, maxitr, mode,
      &                 nconv
-      Double precision  
+      Double precision
      &                 tol, sigma, h2
       logical          rvec
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision  
+      Double precision
      &                 one, zero, two
       parameter        (one = 1.0D+0 , zero = 0.0D+0 , two = 2.0D+0 )
 c
@@ -93,9 +93,9 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision 
-     &                  dlapy2 , dnrm2 
-      external          dlapy2 , dnrm2 , daxpy , dgbmv  
+      Double precision
+     &                  dlapy2 , dnrm2
+      external          dlapy2 , dnrm2 , daxpy , dgbmv
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -118,13 +118,13 @@ c     | However, the following conditions must be        |
 c     | satisfied:                                       |
 c     |                   N <= MAXN                      |
 c     |                 NEV <= MAXNEV                    |
-c     |           NEV + 1 <= NCV <= MAXNCV               | 
-c     %--------------------------------------------------% 
+c     |           NEV + 1 <= NCV <= MAXNCV               |
+c     %--------------------------------------------------%
 c
-      nx  = 10 
+      nx  = 10
       n    = nx*nx
-      nev  = 4 
-      ncv  = 10 
+      nev  = 4
+      ncv  = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _SBDR2: N is greater than MAXN '
          go to 9000
@@ -151,7 +151,7 @@ c     | generated in DSAUPD  to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
       lworkl  = 3*ncv**2+6*ncv
-      tol  = zero 
+      tol  = zero
       ido  = 0
       info = 0
 c
@@ -167,7 +167,7 @@ c
       mode = 3
 c
       iparam(3) = maxitr
-      iparam(7) = mode 
+      iparam(7) = mode
 c
 c     %----------------------------------------%
 c     | Construct the matrix A in LAPACK-style |
@@ -188,10 +188,10 @@ c     | and subdiagonals within the band of |
 c     | matrices A and M.                   |
 c     %-------------------------------------%
 c
-      kl   = nx 
-      ku   = nx 
+      kl   = nx
+      ku   = nx
 c
-c     %---------------% 
+c     %---------------%
 c     | Main diagonal |
 c     %---------------%
 c
@@ -199,12 +199,12 @@ c
       idiag = kl+ku+1
       do 30 j = 1, n
          a(idiag,j) = 4.0D+0  / h2
-  30  continue 
-c 
+  30  continue
+c
 c     %-------------------------------------%
 c     | First subdiagonal and superdiagonal |
 c     %-------------------------------------%
-c 
+c
       isup = kl+ku
       isub = kl+ku+2
       do 50 i = 1, nx
@@ -212,8 +212,8 @@ c
         do 40 j = lo+1, lo+nx-1
            a(isup,j+1) = -one / h2
            a(isub,j) = -one / h2
-  40    continue      
-  50  continue 
+  40    continue
+  50  continue
 c
 c     %------------------------------------%
 c     | KL-th subdiagonal and KU-th super- |
@@ -227,8 +227,8 @@ c
          do 70 j = lo+1, lo+nx
             a(isup,nx+j)  = -one / h2
             a(isub,j) = -one / h2
- 70      continue 
- 80   continue 
+ 70      continue
+ 80   continue
 c
 c     %-------------------------------------%
 c     | Call DSBAND  to find eigenvalues and |
@@ -239,10 +239,10 @@ c     | first NCONV (=IPARAM(5)) columns of |
 c     | V.                                  |
 c     %-------------------------------------%
 c
-      rvec = .true. 
-      call dsband ( rvec,'A', select, d, v, ldv, sigma, n, a, m, 
-     &             lda, rfac, kl, ku, which, bmat, nev, tol, 
-     &             resid, ncv, v, ldv, iparam, workd, workl, lworkl, 
+      rvec = .true.
+      call dsband ( rvec,'A', select, d, v, ldv, sigma, n, a, m,
+     &             lda, rfac, kl, ku, which, bmat, nev, tol,
+     &             resid, ncv, v, ldv, iparam, workd, workl, lworkl,
      &             iwork, info)
 c
       if ( info .eq. 0) then
@@ -276,18 +276,18 @@ c        |    ||  A*x - lambda*x ||   |
 c        %----------------------------%
 c
          do 90 j = 1, nconv
-            call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                 a(kl+1,1), lda, v(1,j), 1, zero, 
+            call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                 a(kl+1,1), lda, v(1,j), 1, zero,
      &                 ax, 1)
             call daxpy (n, -d(j,1), v(1,j), 1, ax, 1)
             d(j,2) = dnrm2 (n, ax, 1)
             d(j,2) = d(j,2) / abs(d(j,1))
 c
- 90      continue 
+ 90      continue
 
          call dmout (6, nconv, 2, d, maxncv, -6,
      &             'Ritz values and relative residuals')
-      else 
+      else
 c
 c        %-------------------------------------%
 c        | Either convergence failed, or there |
@@ -298,8 +298,8 @@ c
           print *, ' '
           print *, ' Error with _sband, info= ', info
           print *, ' Check the documentation of _sband '
-          print *, ' ' 
+          print *, ' '
 c
       end if
 c
- 9000 end      
+ 9000 end
