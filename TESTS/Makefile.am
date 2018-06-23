@@ -10,7 +10,7 @@ TESTS = $(check_PROGRAMS)
 
 EXTRA_DIST = testA.mtx
 
-dnsimp_SOURCES = dnsimp.f mmio.f debug.h
+dnsimp_SOURCES = dnsimp.f mmio.f debug-arpack.h
 
 bug_1315_single_SOURCES = bug_1315_single.c
 bug_1315_double_SOURCES = bug_1315_double.c

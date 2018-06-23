@@ -11,7 +11,7 @@ NTEST = psntest1 pdntest1
 check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV) $(NTEST)
 TESTS = $(check_PROGRAMS)
 
-EXTRA_DIST = debug.h stat.h
+EXTRA_DIST = debug-arpack.h stat.h
 
 # Simple nonsymmetric problem using single precision
 psndrv1_SOURCES = psndrv1.f
