@@ -13,7 +13,7 @@
 *              If IDIGIT .LT. 0, printing is done with 72 columns.
 *              If IDIGIT .GT. 0, printing is done with 132 columns.
 *
-*\SCCS Information: 
+*\SCCS Information:
 * FILE: ivout.F   SID: 1.2   DATE OF SID: 3/19/97   RELEASE: 1
 *
 *-----------------------------------------------------------------------
@@ -131,7 +131,7 @@
       END IF
       END IF
       WRITE (LOUT,1004)
- 
+
       ENDIF
 *
  1000 FORMAT(1X,I4,' - ',I4,':',20(1X,I5))

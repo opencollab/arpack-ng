@@ -1,10 +1,10 @@
-      program dsbdr6 
+      program dsbdr6
 c
 c     ... Construct the matrix A in LAPACK-style band form.
 c         The matrix A is the 1-dimensional discrete Laplacian on [0,1]
 c         with zero Dirichlet boundary condition, M is the mass
 c         formed by using piecewise linear elements on [0,1].
-c 
+c
 c     ... Call DSBAND  with Cayley mode to find eigenvalues LAMBDA such that
 c                          A*x = LAMBDA*M*x.
 c
@@ -46,13 +46,13 @@ c     | MAXN   - Maximum size of the matrix |
 c     | MAXNEV - Maximum number of          |
 c     |          eigenvalues to be computed |
 c     | MAXNCV - Maximum number of Arnoldi  |
-c     |          vectors stored             | 
+c     |          vectors stored             |
 c     | MAXBDW - Maximum bandwidth          |
 c     %-------------------------------------%
 c
       integer          maxn, maxnev, maxncv, maxbdw, lda,
      &                 lworkl, ldv
-      parameter        ( maxn = 1000, maxnev = 25, maxncv=50, 
+      parameter        ( maxn = 1000, maxnev = 25, maxncv=50,
      &                   maxbdw=50, lda = maxbdw, ldv = maxn )
 c
 c     %--------------%
@@ -61,9 +61,9 @@ c     %--------------%
 c
       integer          iparam(11), iwork(maxn)
       logical          select(maxncv)
-      Double precision 
+      Double precision
      &                 a(lda,maxn), m(lda,maxn), rfac(lda,maxn),
-     &                 workl(maxncv*maxncv+8*maxncv), workd(3*maxn), 
+     &                 workl(maxncv*maxncv+8*maxncv), workd(3*maxn),
      &                 v(ldv, maxncv), resid(maxn), d(maxncv, 2),
      &                 ax(maxn), mx(maxn)
 c
@@ -74,15 +74,15 @@ c
       character        which*2, bmat
       integer          nev, ncv, ku, kl, info, j, ido,
      &                 n, isub, isup, idiag, maxitr, mode, nconv
-      Double precision  
+      Double precision
      &                 tol, h, sigma, r1, r2
       logical          rvec
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Double precision  
+      Double precision
      &                 one, zero, two, four, six
       parameter        (one = 1.0D+0 , zero = 0.0D+0 , two = 2.0D+0 ,
      &                  four = 4.0D+0 , six = 6.0D+0 )
@@ -91,9 +91,9 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Double precision 
-     &                  dlapy2 , dnrm2 
-      external          dlapy2 , dnrm2 , daxpy , dgbmv  
+      Double precision
+     &                  dlapy2 , dnrm2
+      external          dlapy2 , dnrm2 , daxpy , dgbmv
 c
 c     %--------------------%
 c     | Intrinsic function |
@@ -117,12 +117,12 @@ c     | the spectrum.  However, the following conditions |
 c     | must be satisfied:                               |
 c     |                   N <= MAXN                      |
 c     |                 NEV <= MAXNEV                    |
-c     |           NEV + 1 <= NCV <= MAXNCV               | 
-c     %--------------------------------------------------% 
+c     |           NEV + 1 <= NCV <= MAXNCV               |
+c     %--------------------------------------------------%
 c
       n    = 100
-      nev  = 4 
-      ncv  = 10 
+      nev  = 4
+      ncv  = 10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _SBDR6: N is greater than MAXN '
          go to 9000
@@ -149,7 +149,7 @@ c     | generated in DSAUPD  to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
       lworkl  = ncv**2+8*ncv
-      tol  = zero 
+      tol  = zero
       ido  = 0
       info = 0
 c
@@ -186,10 +186,10 @@ c     | and subdiagonals within the band of |
 c     | matrices A and M.                   |
 c     %-------------------------------------%
 c
-      kl   = 1 
-      ku   = 1 
+      kl   = 1
+      ku   = 1
 c
-c     %---------------% 
+c     %---------------%
 c     | Main diagonal |
 c     %---------------%
 c
@@ -199,12 +199,12 @@ c
       do 30 j = 1, n
          a(idiag,j) = two / h
          m(idiag,j) = r1 * h
-  30  continue 
-c 
+  30  continue
+c
 c     %-------------------------------------%
 c     | First subdiagonal and superdiagonal |
 c     %-------------------------------------%
-c 
+c
       r2 = one / six
       isup = kl+ku
       isub = kl+ku+2
@@ -225,9 +225,9 @@ c     | V.                                  |
 c     %-------------------------------------%
 c
       rvec = .true.
-      call dsband ( rvec, 'A', select, d, v, ldv, sigma, n, a, m, lda, 
-     &             rfac, kl, ku, which, bmat, nev, tol, 
-     &             resid, ncv, v, ldv, iparam, workd, workl, lworkl, 
+      call dsband ( rvec, 'A', select, d, v, ldv, sigma, n, a, m, lda,
+     &             rfac, kl, ku, which, bmat, nev, tol,
+     &             resid, ncv, v, ldv, iparam, workd, workl, lworkl,
      &             iwork, info)
 c
       if ( info .eq. 0) then
@@ -261,21 +261,21 @@ c        |    ||  A*x - lambda*x ||   |
 c        %----------------------------%
 c
          do 90 j = 1, nconv
-            call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                 a(kl+1,1), lda, v(1,j), 1, zero, 
+            call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                 a(kl+1,1), lda, v(1,j), 1, zero,
      &                 ax, 1)
-            call dgbmv ('Notranspose', n, n, kl, ku, one, 
-     &                 m(kl+1,1), lda, v(1,j), 1, zero, 
+            call dgbmv ('Notranspose', n, n, kl, ku, one,
+     &                 m(kl+1,1), lda, v(1,j), 1, zero,
      &                 mx, 1)
             call daxpy (n, -d(j,1), mx, 1, ax, 1)
             d(j,2) = dnrm2 (n, ax, 1)
             d(j,2) = d(j,2) / abs(d(j,1))
 c
- 90      continue 
+ 90      continue
 
          call dmout (6, nconv, 2, d, maxncv, -6,
      &             'Ritz values and relative residuals')
-      else 
+      else
 c
 c        %-------------------------------------%
 c        | Either convergence failed, or there |
@@ -286,8 +286,8 @@ c
           print *, ' '
           print *, ' Error with _band, info= ', info
           print *, ' Check the documentation of _band '
-          print *, ' ' 
+          print *, ' '
 c
       end if
 c
- 9000 end      
+ 9000 end

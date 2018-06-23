@@ -1,7 +1,7 @@
       program cndrv3
 c
 c     Simple program to illustrate the idea of reverse communication
-c     in inverse mode for a generalized complex nonsymmetric eigenvalue 
+c     in inverse mode for a generalized complex nonsymmetric eigenvalue
 c     problem.
 c
 c     We implement example three of ex-complex.doc in DOCUMENTS directory
@@ -11,8 +11,8 @@ c     ... Suppose we want to solve A*x = lambda*B*x in regular mode,
 c         where A and B are derived from the finite element discretization
 c         of the 1-dimensional convection-diffusion operator
 c                   (d^2u/dx^2) + rho*(du/dx)
-c         on the interval [0,1] with zero boundary condition using 
-c         piecewise linear elements. 
+c         on the interval [0,1] with zero boundary condition using
+c         piecewise linear elements.
 c
 c     ... OP = inv[M]*A  and  B = M.
 c
@@ -60,7 +60,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -69,13 +69,13 @@ c     %--------------%
 c
       integer           iparam(11), ipntr(14), ipiv(maxn)
       logical           select(maxncv)
-      Complex 
+      Complex
      &                  ax(maxn), mx(maxn), d(maxncv), resid(maxn),
-     &                  v(ldv,maxncv), workd(3*maxn), 
+     &                  v(ldv,maxncv), workd(3*maxn),
      &                  workev(2*maxncv),
      &                  workl(3*maxncv*maxncv+5*maxncv),
      &                  dd(maxn), dl(maxn), du(maxn), du2(maxn)
-      Real             
+      Real
      &                  rwork(maxn), rd(maxncv,3)
 c
 c     %---------------%
@@ -85,9 +85,9 @@ c
       character         bmat*1, which*2
       integer           ido, n, nev, ncv, lworkl, info, ierr, j,
      &                  nconv, maxitr, ishfts, mode
-      Complex            
+      Complex
      &                  sigma, h
-      Real 
+      Real
      &                  tol
       logical           rvec
 c
@@ -95,7 +95,7 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex   
+      Complex
      &                  zero, one
       parameter         (zero = (0.0E+0, 0.0E+0) ,
      &                   one = (1.0E+0, 0.0E+0) )
@@ -104,7 +104,7 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Real  
+      Real
      &                  scnrm2, slapy2
       external          caxpy, ccopy, scnrm2, cgttrf, cgttrs,
      &                  slapy2
@@ -126,9 +126,9 @@ c     |                  NEV <= MAXNEV,                    |
 c     |              NEV + 2 <= NCV <= MAXNCV              |
 c     %----------------------------------------------------%
 c
-      n     = 100 
-      nev   = 4 
-      ncv   = 20 
+      n     = 100
+      nev   = 4
+      ncv   = 20
       if ( n .gt. maxn ) then
          print *, ' ERROR with _NDRV3: N is greater than MAXN '
          go to 9000
@@ -154,15 +154,15 @@ c
       do 20 j = 1, n-1
          dl(j) = one*h
          dd(j) = (4.0E+0, 0.0E+0) *h
-         du(j) = one*h 
-  20  continue 
-      dd(n) = (4.0E+0, 0.0E+0) *h 
+         du(j) = one*h
+  20  continue
+      dd(n) = (4.0E+0, 0.0E+0) *h
 c
-      call cgttrf(n, dl, dd, du, du2, ipiv, ierr) 
+      call cgttrf(n, dl, dd, du, du2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
-         print*, ' ERROR with _gttrf. ' 
-         print*, ' ' 
+         print*, ' ERROR with _gttrf. '
+         print*, ' '
          go to 9000
       end if
 c
@@ -177,8 +177,8 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in CNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+5*ncv 
-      tol    = 0.0 
+      lworkl = 3*ncv**2+5*ncv
+      tol    = 0.0
       ido    = 0
       info   = 0
 c
@@ -197,8 +197,8 @@ c
       mode   = 2
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr  
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
 c     | M A I N   L O O P (Reverse communication) |
@@ -207,14 +207,14 @@ c
  10   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine CNAUPD and take | 
+c        | Repeatedly call the routine CNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call cnaupd ( ido, bmat, n, which, nev, tol, resid, ncv, 
-     &        v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call cnaupd ( ido, bmat, n, which, nev, tol, resid, ncv,
+     &        v, ldv, iparam, ipntr, workd, workl, lworkl,
      &        rwork, info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -233,8 +233,8 @@ c
             call cgttrs('N', n, 1, dl, dd, du, du2, ipiv,
      &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
-               print*, ' ' 
-               print*, ' ERROR with _gttrs. ' 
+               print*, ' '
+               print*, ' ERROR with _gttrs. '
                print*, ' '
                go to 9000
             end if
@@ -268,7 +268,7 @@ c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
 c     | an error.                               |
-c     %-----------------------------------------% 
+c     %-----------------------------------------%
 c
       if ( info .lt. 0 ) then
 c
@@ -280,24 +280,24 @@ c
          print *, ' '
          print *, ' Error with _naupd, info = ',info
          print *, ' Check the documentation of _naupd.'
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using CNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call cneupd ( rvec, 'A', select, d, v, ldv, sigma, 
-     &        workev, bmat, n, which, nev, tol, resid, ncv, v, 
+         call cneupd ( rvec, 'A', select, d, v, ldv, sigma,
+     &        workev, bmat, n, which, nev, tol, resid, ncv, v,
      &        ldv, iparam, ipntr, workd, workl, lworkl, rwork,
      &        ierr )
 c
@@ -318,8 +318,8 @@ c           %------------------------------------%
 c           | Error condition:                   |
 c           | Check the documentation of CNEUPD. |
 c           %------------------------------------%
-c 
-            print *, ' ' 
+c
+            print *, ' '
             print *, ' Error with _neupd, info = ', ierr
             print *, ' Check the documentation of _neupd'
             print *, ' '
@@ -327,7 +327,7 @@ c
          else
 c
             nconv = iparam(5)
-            do 80 j=1, nconv 
+            do 80 j=1, nconv
 c
 c              %---------------------------%
 c              | Compute the residual norm |
@@ -369,11 +369,11 @@ c
             print *, ' Maximum number of iterations reached.'
             print *, ' '
          else if ( info .eq. 3) then
-            print *, ' ' 
+            print *, ' '
             print *, ' No shifts could be applied during implicit',
      &               ' Arnoldi update, try increasing NCV.'
             print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_NDRV3 '
@@ -384,8 +384,8 @@ c
          print *, ' The number of Arnoldi vectors generated ',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -397,21 +397,21 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector multiplication subroutine
 c
       subroutine av (n, v, w)
       integer           n, j
-      Complex             
-     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho 
+      Complex
+     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho
       parameter         (one = (1.0E+0, 0.0E+0) ,
      &                   two = (2.0E+0, 0.0E+0) ,
      &                   rho = (1.0E+1, 0.0E+0) )
 c
 c     Compute the matrix vector multiplication y<---A*x
-c     where A is the stiffness matrix formed by using piecewise linear 
+c     where A is the stiffness matrix formed by using piecewise linear
 c     elements on [0,1].
 c
       h = one / cmplx(n+1)
@@ -422,28 +422,28 @@ c
 c
       w(1) =  dd*v(1) + du*v(2)
       do 10 j = 2,n-1
-         w(j) = dl*v(j-1) + dd*v(j) + du*v(j+1) 
- 10   continue 
-      w(n) =  dl*v(n-1) + dd*v(n) 
+         w(j) = dl*v(j-1) + dd*v(j) + du*v(j+1)
+ 10   continue
+      w(n) =  dl*v(n-1) + dd*v(n)
       return
       end
 c------------------------------------------------------------------------
       subroutine mv (n, v, w)
       integer           n, j
-      Complex  
+      Complex
      &                  v(n), w(n), one, four, h
-      parameter         (one = (1.0E+0, 0.0E+0) , 
+      parameter         (one = (1.0E+0, 0.0E+0) ,
      &                   four = (4.0E+0, 0.0E+0) )
 c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is the mass matrix formed by using piecewise linear elements 
+c     where M is the mass matrix formed by using piecewise linear elements
 c     on [0,1].
-c 
+c
       w(1) =  four*v(1) + one*v(2)
       do 10 j = 2,n-1
-         w(j) = one*v(j-1) + four*v(j) + one*v(j+1) 
- 10   continue 
-      w(n) =  one*v(n-1) + four*v(n) 
+         w(j) = one*v(j-1) + four*v(j) + one*v(j+1)
+ 10   continue
+      w(n) =  one*v(n-1) + four*v(n)
 c
       h = one / cmplx(n+1)
       call cscal(n, h, w, 1)

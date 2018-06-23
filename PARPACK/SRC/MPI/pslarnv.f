@@ -9,7 +9,7 @@ c
 c  Parallel Version of ARPACK utility routine slarnv
 c
 c  PSLARNV returns a vector of n (nloc) random real numbers from a uniform or
-c  normal distribution. It is assumed that X is distributed across a 1-D array 
+c  normal distribution. It is assumed that X is distributed across a 1-D array
 c  of processors ( nprocs < 1000 )
 c
 c\Arguments
@@ -37,14 +37,14 @@ c\Author: Kristi Maschhoff
 c
 c\Details
 c
-c  Simple parallel version of LAPACK auxiliary routine slarnv 
+c  Simple parallel version of LAPACK auxiliary routine slarnv
 c  for X distributed across a 1-D array of processors.
 c  This routine calls the auxiliary routine SLARNV to generate random
 c  real numbers from a uniform (0,1) distribution. Output is consistent
-c  with serial version. 
+c  with serial version.
 c
-c\SCCS Information: 
-c FILE: larnv.F   SID: 1.4   DATE OF SID: 04/16/99   
+c\SCCS Information:
+c FILE: larnv.F   SID: 1.4   DATE OF SID: 04/16/99
 c
 c-----------------------------------------------------------------------
 c
@@ -60,7 +60,7 @@ c     .. Scalar Arguments ..
 c     ..
 c     .. Array Arguments ..
       integer			iseed( 4 )
-      Real			
+      Real
      &                  x( * )
 c     ..
 c     .. External Subroutines ..

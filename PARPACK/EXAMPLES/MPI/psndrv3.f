@@ -9,12 +9,12 @@ c     We implement example three of ex-nonsym.doc in DOCUMENTS directory
 c
 c\Example-3
 c     ... Suppose we want to solve A*x = lambda*B*x in inverse mode,
-c         where A is derived from the 1-dimensional convection-diffusion 
-c         operator on the interval [0,1] with zero boundary condition, 
+c         where A is derived from the 1-dimensional convection-diffusion
+c         operator on the interval [0,1] with zero boundary condition,
 c         and M is the tridiagonal matrix with 4 on the diagonal and 1
-c         on the subdiagonals. 
+c         on the subdiagonals.
 c     ... So OP = inv[M]*A  and  B = M.
-c     ... Use mode 2 of PSNAUPD. 
+c     ... Use mode 2 of PSNAUPD.
 c
 c\BeginLib
 c
@@ -58,11 +58,11 @@ c
       include 'mpif.h'
       include 'debug-arpack.h'
       include 'stat.h'
- 
+
 c     %---------------%
 c     | MPI INTERFACE |
 c     %---------------%
- 
+
       integer           comm, myid, nprocs, rc, nloc
 c
 c     %-----------------------------%
@@ -75,7 +75,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -86,7 +86,7 @@ c
       logical           select(maxncv)
       Real
      &                  ax(maxn), mx(maxn), d(maxncv, 3), resid(maxn),
-     &                  v(ldv,maxncv), workd(3*maxn), 
+     &                  v(ldv,maxncv), workd(3*maxn),
      &                  workev(3*maxncv),
      &                  workl(3*maxncv*maxncv+6*maxncv),
      &                  md(maxn), me(maxn-1), temp(maxn), temp_buf(maxn)
@@ -98,22 +98,22 @@ c
       character         bmat*1, which*2
       integer           ido, n, nev, ncv, lworkl, info, ierr, j,
      &                  nconv, maxitr, ishfts, mode, blk
-      Real           
-     &                  tol, sigmar, sigmai 
+      Real
+     &                  tol, sigmar, sigmai
       logical           first, rvec
 c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Real  
+      Real
      &                  zero, one
       parameter         (zero = 0.0, one = 1.0)
 c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
-      Real 
+      Real
      &                  psnorm2, slapy2
       external          saxpy, psnorm2, spttrf, spttrs, slapy2
 c
@@ -143,9 +143,9 @@ c     |                  NEV <= MAXNEV,                    |
 c     |              NEV + 2 <= NCV <= MAXNCV              |
 c     %----------------------------------------------------%
 c
-      n     = 100 
-      nev   = 4 
-      ncv   = 20 
+      n     = 100
+      nev   = 4
+      ncv   = 20
 c
 c     %--------------------------------------%
 c     | Set up distribution of data to nodes |
@@ -179,16 +179,16 @@ c     | spttrf.                                             |
 c     %-----------------------------------------------------%
 c
       do 20 j = 1, n-1
-         md(j) = 4.0 
-         me(j) = one 
-  20  continue 
-      md(n) = 4.0*one 
-c 
+         md(j) = 4.0
+         me(j) = one
+  20  continue
+      md(n) = 4.0*one
+c
       call spttrf(n, md, me, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
-         print*, ' ERROR with _pttrf. ' 
-         print*, ' ' 
+         print*, ' ERROR with _pttrf. '
+         print*, ' '
          go to 9000
       end if
 c
@@ -203,8 +203,8 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in SNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+6*ncv 
-      tol    = 0.0 
+      lworkl = 3*ncv**2+6*ncv
+      tol    = 0.0
       ido    = 0
       info   = 0
 c
@@ -222,9 +222,9 @@ c
       maxitr = 300
       mode   = 2
 c
-      iparam(1) = ishfts 
-      iparam(3) = maxitr  
-      iparam(7) = mode 
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
 c     | M A I N   L O O P (Reverse communication) |
@@ -233,14 +233,14 @@ c
  10   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine SNAUPD and take | 
+c        | Repeatedly call the routine SNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call psnaupd( comm, ido, bmat, nloc, which, nev, tol, resid, 
-     &                 ncv, v, ldv, iparam, ipntr, workd, 
+         call psnaupd( comm, ido, bmat, nloc, which, nev, tol, resid,
+     &                 ncv, v, ldv, iparam, ipntr, workd,
      &                 workl, lworkl, info )
 c
          if (ido .eq. -1 .or. ido .eq. 1) then
@@ -267,13 +267,13 @@ c======== Hack for Linear system ======= ccc
             call spttrs(n, 1, md, me, temp, n,
      &                  ierr)
             if ( ierr .ne. 0 ) then
-               print*, ' ' 
-               print*, ' ERROR with _pttrs. ' 
+               print*, ' '
+               print*, ' ERROR with _pttrs. '
                print*, ' '
                go to 9000
             end if
             do 16 j=1,nloc
-               workd(ipntr(2) + j - 1 ) = temp(myid*blk + j) 
+               workd(ipntr(2) + j - 1 ) = temp(myid*blk + j)
    16       continue
 c
 c           %-----------------------------------------%
@@ -306,7 +306,7 @@ c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
 c     | an error.                               |
-c     %-----------------------------------------% 
+c     %-----------------------------------------%
 c
       if ( info .lt. 0 ) then
 c
@@ -319,23 +319,23 @@ c
             print *, ' '
             print *, ' Error with _naupd, info = ', info
             print *, ' Check the documentation of _naupd.'
-            print *, ' ' 
+            print *, ' '
          endif
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using SNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
 c
          rvec = .true.
-         call psneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv, 
+         call psneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,
      &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol,
      &        resid, ncv, v, ldv, iparam, ipntr, workd,
      &        workl, lworkl, ierr )
@@ -360,13 +360,13 @@ c           | Check the documentation of SNEUPD. |
 c           %------------------------------------%
 c
             if ( myid .eq. 0 ) then
-               print *, ' ' 
+               print *, ' '
                print *, ' Error with _neupd, info = ', ierr
                print *, ' Check the documentation of _neupd'
                print *, ' '
             endif
 c
-         else 
+         else
 c
             first = .true.
             nconv = iparam(5)
@@ -444,11 +444,11 @@ c
             print *, ' Maximum number of iterations reached.'
             print *, ' '
          else if ( info .eq. 3) then
-            print *, ' ' 
+            print *, ' '
             print *, ' No shifts could be applied during implicit
      &                 Arnoldi update, try increasing NCV.'
             print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_NDRV3 '
@@ -460,8 +460,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -484,13 +484,13 @@ c
       call MPI_FINALIZE(rc)
 c
       end
-c 
+c
 c==========================================================================
 c
 c     parallel matrix vector multiplication subroutine
 c
 c     Compute the matrix vector multiplication y<---A*x
-c     where A is a n by n nonsymmetric tridiagonal matrix derived 
+c     where A is a n by n nonsymmetric tridiagonal matrix derived
 c     from the central difference discretization of the 1-dimensional
 c     convection diffusion operator on the interval [0,1] with
 c     zero Dirichlet boundary condition.
@@ -503,10 +503,10 @@ c     .. MPI Declarations ...
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, n, j, next, prev
-      Real            
-     &                  v(nloc), w(nloc), one, two, dd, dl, du, 
+      Real
+     &                  v(nloc), w(nloc), one, two, dd, dl, du,
      &                  s, h, rho, mv_buf
-      parameter         ( rho = 10.0, one = 1.0, 
+      parameter         ( rho = 10.0, one = 1.0,
      &                    two = 2.0)
 c
       call MPI_COMM_RANK( comm, myid, ierr )
@@ -519,9 +519,9 @@ c
 c
       w(1) =  dd*v(1) + du*v(2)
       do 10 j = 2,nloc-1
-         w(j) = dl*v(j-1) + dd*v(j) + du*v(j+1) 
- 10   continue 
-      w(nloc) =  dl*v(nloc-1) + dd*v(nloc) 
+         w(j) = dl*v(j-1) + dd*v(j) + du*v(j+1)
+ 10   continue
+      w(nloc) =  dl*v(nloc-1) + dd*v(nloc)
 c
       next = myid + 1
       prev = myid - 1
@@ -548,20 +548,20 @@ c
       return
       end
 c------------------------------------------------------------------------
-c 
+c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is a n by n tridiagonal matrix with 4 on the 
+c     where M is a n by n tridiagonal matrix with 4 on the
 c     diagonal, 1 on the subdiagonal and the superdiagonal.
-c 
+c
       subroutine mv (comm, nloc, v, w)
-c 
+c
 c     .. MPI Declarations ...
       include           'mpif.h'
       integer           comm, nprocs, myid, ierr,
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, j, next, prev
-      Real 
+      Real
      &                  v(nloc), w(nloc), one, four, mv_buf
       parameter         ( one = 1.0, four = 4.0)
 c
@@ -570,9 +570,9 @@ c
 c
       w(1) =  four*v(1) + one*v(2)
       do 10 j = 2,nloc-1
-         w(j) = one*v(j-1) + four*v(j) + one*v(j+1) 
- 10   continue 
-      w(nloc) =  one*v(nloc-1) + four*v(nloc) 
+         w(j) = one*v(j-1) + four*v(j) + one*v(j+1)
+ 10   continue
+      w(nloc) =  one*v(nloc-1) + four*v(nloc)
 c
       next = myid + 1
       prev = myid - 1
@@ -601,7 +601,7 @@ c
 c------------------------------------------------------------
       subroutine mv2 (comm, n, v, w)
       integer           n, j, comm
-      Real 
+      Real
      &                  v(n), w(n)
       do 10 j=1,n
          w(j) = v(j)

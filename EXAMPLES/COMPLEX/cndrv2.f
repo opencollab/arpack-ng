@@ -1,7 +1,7 @@
       program cndrv2
 c
 c     Simple program to illustrate the idea of reverse communication
-c     in shift-invert mode for a standard complex nonsymmetric eigenvalue 
+c     in shift-invert mode for a standard complex nonsymmetric eigenvalue
 c     problem.
 c
 c     We implement example two of ex-complex.doc in DOCUMENTS directory
@@ -60,7 +60,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -69,14 +69,14 @@ c     %--------------%
 c
       integer           iparam(11), ipntr(14), ipiv(maxn)
       logical           select(maxncv)
-      Complex 
+      Complex
      &                  ax(maxn), d(maxncv), resid(maxn),
      &                  v(ldv, maxncv), workd(3*maxn),
      &                  workev(2*maxncv),
      &                  workl(3*maxncv*maxncv+5*maxncv),
      &                  dd(maxn), dl(maxn), du(maxn),
      &                  du2(maxn)
-      Real 
+      Real
      &                  rwork(maxn), rd(maxncv,3)
 c
 c     %---------------%
@@ -86,11 +86,11 @@ c
       character         bmat*1, which*2
       integer           ido, n, nev, ncv, lworkl, info, j, ierr,
      &                  nconv, maxitr, ishfts, mode
-      Complex  
+      Complex
      &                  h, h2, s, sigma, s1, s2, s3, rho
       common            /convct/ rho
 c
-      Real 
+      Real
      &                  tol
       logical           rvec
 c
@@ -98,9 +98,9 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex  
-     &                   one, zero, two        
-      parameter         (one = (1.0E+0, 0.0E+0) , 
+      Complex
+     &                   one, zero, two
+      parameter         (one = (1.0E+0, 0.0E+0) ,
      &                   zero = (0.0E+0, 0.0E+0) ,
      &                   two = (2.0E+0, 0.0E+0) )
 c
@@ -108,7 +108,7 @@ c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Real 
+      Real
      &                  scnrm2, slapy2
       external          cgttrf, cgttrs, caxpy, ccopy, scnrm2,
      &                  slapy2
@@ -160,22 +160,22 @@ c     | the interval [0, 1] with zero Dirichlet boundary   |
 c     | condition.                                         |
 c     %----------------------------------------------------%
 c
-      rho = (1.0E+1, 0.0E+0) 
+      rho = (1.0E+1, 0.0E+0)
       h = one / cmplx(n+1)
       h2 = h*h
       s = rho / two
 c
-      s1 = -one/h2 - s/h 
+      s1 = -one/h2 - s/h
       s2 = two/h2 - sigma
-      s3 = -one/h2 + s/h  
+      s3 = -one/h2 + s/h
 c
       do 10 j = 1, n-1
-         dl(j) = s1 
+         dl(j) = s1
          dd(j) = s2
          du(j) = s3
-  10  continue 
-      dd(n) = s2 
-c 
+  10  continue
+      dd(n) = s2
+c
       call cgttrf(n, dl, dd, du, du2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
@@ -195,8 +195,8 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in CNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+5*ncv 
-      tol    = 0.0 
+      lworkl = 3*ncv**2+5*ncv
+      tol    = 0.0
       ido    = 0
       info   = 0
 c
@@ -214,18 +214,18 @@ c
       maxitr = 300
       mode   = 3
 c
-      iparam(1) = ishfts 
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
-c     | M A I N   L O O P (Reverse communication) | 
+c     | M A I N   L O O P (Reverse communication) |
 c     %-------------------------------------------%
 c
  20   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine CNAUPD and take | 
+c        | Repeatedly call the routine CNAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
@@ -247,8 +247,8 @@ c           %-------------------------------------------%
 c
             call ccopy( n, workd(ipntr(1)),1, workd(ipntr(2)), 1)
 c
-            call cgttrs('N', n, 1, dl, dd, du, du2, ipiv, 
-     &                  workd(ipntr(2)), n, ierr) 
+            call cgttrs('N', n, 1, dl, dd, du, du2, ipiv,
+     &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _gttrs in _NDRV2.'
@@ -279,23 +279,23 @@ c
          print *, ' '
          print *, ' Error with _naupd, info = ',info
          print *, ' Check the documentation in _naupd.'
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using CNEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
-c 
+c
          rvec = .true.
 c
-         call cneupd (rvec, 'A', select, d, v, ldv, sigma, 
+         call cneupd (rvec, 'A', select, d, v, ldv, sigma,
      &                workev, bmat, n, which, nev, tol,
      &                resid, ncv, v, ldv, iparam, ipntr, workd,
      &                workl, lworkl, rwork, ierr)
@@ -312,19 +312,19 @@ c        | returned in V.                               |
 c        %----------------------------------------------%
 c
          if ( ierr .ne. 0) then
-c 
+c
 c           %------------------------------------%
-c           | Error condition:                   | 
+c           | Error condition:                   |
 c           | Check the documentation of CNEUPD. |
 c           %------------------------------------%
-c 
+c
             print *, ' '
             print *, ' Error with _neupd, info = ', ierr
             print *, ' Check the documentation of _neupd. '
             print *, ' '
          else
 c
-            nconv = iparam(5) 
+            nconv = iparam(5)
             do 60 j=1, nconv
 c
 c              %---------------------------%
@@ -366,11 +366,11 @@ c
              print *, ' Maximum number of iterations reached.'
              print *, ' '
          else if ( info .eq. 3) then
-             print *, ' ' 
+             print *, ' '
              print *, ' No shifts could be applied during implicit',
      &                ' Arnoldi update, try increasing NCV.'
              print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, '_NDRV2 '
@@ -381,8 +381,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -405,7 +405,7 @@ c     matrix vector multiplication subroutine
 c
       subroutine av (n, v, w)
       integer           n, j
-      Complex  
+      Complex
      &                   v(n), w(n), rho, two, one, dd, dl, du, s, h,
      &                   h2
       parameter         (one = (1.0E+0, 0.0E+0) ,

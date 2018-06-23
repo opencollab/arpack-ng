@@ -1,4 +1,4 @@
-      program ssdrv1 
+      program ssdrv1
 c
 c     Simple program to illustrate the idea of reverse communication
 c     in regular mode for a standard symmetric eigenvalue problem.
@@ -26,7 +26,7 @@ c             Ritz vectors.
 c     snrm2   Level 1 BLAS that computes the norm of a vector.
 c     saxpy   Level 1 BLAS that computes y <- alpha*x+y.
 c     av      Matrix vector multiplication routine that computes A*x.
-c     tv      Matrix vector multiplication routine that computes T*x, 
+c     tv      Matrix vector multiplication routine that computes T*x,
 c             where T is a tridiagonal matrix.  It is used in routine
 c             av.
 c
@@ -59,7 +59,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxn, maxnev, maxncv, ldv
-      parameter       (maxn=256, maxnev=10, maxncv=25, 
+      parameter       (maxn=256, maxnev=10, maxncv=25,
      $                 ldv=maxn )
 c
 c     %--------------%
@@ -78,10 +78,10 @@ c     | Local Scalars |
 c     %---------------%
 c
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, ierr, j, 
+      integer          ido, n, nev, ncv, lworkl, info, ierr, j,
      &                 nx, nconv, maxitr, mode, ishfts
       logical          rvec
-      Real      
+      Real
      &                 tol, sigma
 c
 c     %------------%
@@ -91,12 +91,12 @@ c
       Real
      &                 zero
       parameter        (zero = 0.0E+0)
-c  
+c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Real           
+      Real
      &                 snrm2
       external         snrm2, saxpy
 c
@@ -122,15 +122,15 @@ c     | modify NEV, NCV, WHICH to solve problems of        |
 c     | different sizes, and to get different parts of the |
 c     | spectrum.  However, The following conditions must  |
 c     | be satisfied:                                      |
-c     |                   N <= MAXN,                       | 
+c     |                   N <= MAXN,                       |
 c     |                 NEV <= MAXNEV,                     |
-c     |             NEV + 1 <= NCV <= MAXNCV               | 
-c     %----------------------------------------------------% 
+c     |             NEV + 1 <= NCV <= MAXNCV               |
+c     %----------------------------------------------------%
 c
       nx = 10
       n = nx*nx
-      nev =  4 
-      ncv =  10 
+      nev =  4
+      ncv =  10
       if ( n .gt. maxn ) then
          print *, ' ERROR with _SDRV1: N is greater than MAXN '
          go to 9000
@@ -157,7 +157,7 @@ c     | iteration.                                       |
 c     %--------------------------------------------------%
 c
       lworkl = ncv*(ncv+8)
-      tol = zero 
+      tol = zero
       info = 0
       ido = 0
 c
@@ -174,10 +174,10 @@ c
       ishfts = 1
       maxitr = 300
       mode   = 1
-c      
-      iparam(1) = ishfts 
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+c
+      iparam(1) = ishfts
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %-------------------------------------------%
 c     | M A I N   L O O P (Reverse communication) |
@@ -186,13 +186,13 @@ c
  10   continue
 c
 c        %---------------------------------------------%
-c        | Repeatedly call the routine SSAUPD and take | 
+c        | Repeatedly call the routine SSAUPD and take |
 c        | actions indicated by parameter IDO until    |
 c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call ssaupd ( ido, bmat, n, which, nev, tol, resid, 
+         call ssaupd ( ido, bmat, n, which, nev, tol, resid,
      &                 ncv, v, ldv, iparam, ipntr, workd, workl,
      &                 lworkl, info )
 c
@@ -216,7 +216,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-         end if 
+         end if
 c
 c     %----------------------------------------%
 c     | Either we have convergence or there is |
@@ -235,22 +235,22 @@ c
          print *, ' Check documentation in _saupd '
          print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
 c        | Post-Process using SSEUPD.                |
 c        |                                           |
-c        | Computed eigenvalues may be extracted.    |  
+c        | Computed eigenvalues may be extracted.    |
 c        |                                           |
 c        | Eigenvectors may also be computed now if  |
-c        | desired.  (indicated by rvec = .true.)    | 
+c        | desired.  (indicated by rvec = .true.)    |
 c        %-------------------------------------------%
-c           
+c
          rvec = .true.
 c
-         call sseupd ( rvec, 'All', select, d, v, ldv, sigma, 
-     &        bmat, n, which, nev, tol, resid, ncv, v, ldv, 
+         call sseupd ( rvec, 'All', select, d, v, ldv, sigma,
+     &        bmat, n, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
 
 c        %----------------------------------------------%
@@ -318,11 +318,11 @@ c
             print *, ' Maximum number of iterations reached.'
             print *, ' '
          else if ( info .eq. 3) then
-            print *, ' ' 
+            print *, ' '
             print *, ' No shifts could be applied during implicit',
      &               ' Arnoldi update, try increasing NCV.'
             print *, ' '
-         end if      
+         end if
 c
          print *, ' '
          print *, ' _SDRV1 '
@@ -333,8 +333,8 @@ c
          print *, ' The number of Arnoldi vectors generated',
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ', 
-     &              nconv 
+         print *, ' The number of converged Ritz values is ',
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -350,17 +350,17 @@ c
  9000 continue
 c
       end
-c 
+c
 c ------------------------------------------------------------------
 c     matrix vector subroutine
 c
 c     The matrix used is the 2 dimensional discrete Laplacian on unit
 c     square with zero Dirichlet boundary condition.
 c
-c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block 
+c     Computes w <--- OP*v, where OP is the nx*nx by nx*nx block
 c     tridiagonal matrix
 c
-c                  | T -I          | 
+c                  | T -I          |
 c                  |-I  T -I       |
 c             OP = |   -I  T       |
 c                  |        ...  -I|
@@ -372,7 +372,7 @@ c
       integer           nx, j, lo, n2
       Real
      &                  v(nx*nx), w(nx*nx), one, h2
-      parameter         ( one = 1.0E+0 ) 
+      parameter         ( one = 1.0E+0 )
 c
       call tv(nx,v(1),w(1))
       call saxpy(nx, -one, v(nx+1), 1, w(1), 1)
@@ -382,7 +382,7 @@ c
          call tv(nx, v(lo+1), w(lo+1))
          call saxpy(nx, -one, v(lo-nx+1), 1, w(lo+1), 1)
          call saxpy(nx, -one, v(lo+nx+1), 1, w(lo+1), 1)
-  10  continue 
+  10  continue
 c
       lo = (nx-1)*nx
       call tv(nx, v(lo+1), w(lo+1))
@@ -392,14 +392,14 @@ c     Scale the vector w by (1/h^2), where h is the mesh size
 c
       n2 = nx*nx
       h2 = one / real((nx+1)*(nx+1))
-      call sscal(n2, one/h2, w, 1) 
+      call sscal(n2, one/h2, w, 1)
       return
       end
 c
 c-------------------------------------------------------------------
       subroutine tv (nx, x, y)
 c
-      integer           nx, j 
+      integer           nx, j
       Real
      &                  x(nx), y(nx), dd, dl, du
 c
@@ -408,19 +408,19 @@ c
       parameter        (one = 1.0E+0 )
 c
 c     Compute the matrix vector multiplication y<---T*x
-c     where T is a nx by nx tridiagonal matrix with DD on the 
+c     where T is a nx by nx tridiagonal matrix with DD on the
 c     diagonal, DL on the subdiagonal, and DU on the superdiagonal.
-c     
+c
 c
       dd  = 4.0E+0
-      dl  = -one 
+      dl  = -one
       du  = -one
-c 
+c
       y(1) =  dd*x(1) + du*x(2)
       do 10 j = 2,nx-1
-         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1) 
- 10   continue 
-      y(nx) =  dl*x(nx-1) + dd*x(nx) 
+         y(j) = dl*x(j-1) + dd*x(j) + du*x(j+1)
+ 10   continue
+      y(nx) =  dl*x(nx-1) + dd*x(nx)
       return
       end
 

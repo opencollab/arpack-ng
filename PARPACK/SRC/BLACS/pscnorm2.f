@@ -57,7 +57,7 @@ c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Real       
+      Real
      &             scnrm2
       External     scnrm2
 c

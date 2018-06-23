@@ -16,7 +16,7 @@
 *              If IDIGIT .LT. 0, printing is done with 72 columns.
 *              If IDIGIT .GT. 0, printing is done with 132 columns.
 *
-*\SCCS Information: 
+*\SCCS Information:
 * FILE: mout.F   SID: 1.2   DATE OF SID: 3/19/97   RELEASE: 1
 *
 *-----------------------------------------------------------------------
@@ -38,7 +38,7 @@
       INTEGER            IDIGIT, LDA, LOUT, M, N
 *     ..
 *     .. Array Arguments ..
-      Double precision 
+      Double precision
      &                   A( LDA, * )
 *     ..
 *     .. Local Scalars ..

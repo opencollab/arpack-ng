@@ -58,7 +58,7 @@ c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Double precision       
+      Double precision
      &             dnrm2
       External     dnrm2
 c

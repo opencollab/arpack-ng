@@ -1,7 +1,7 @@
 c
 c   Flags for parallel execution
 c   to be cleared on each new execution of parpack
-c   
+c
 c
       subroutine pcontext
       include 'pcontext.h'

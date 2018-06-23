@@ -16,7 +16,7 @@ c\Arguments
 c  COMM    MPI Communicator for the processor grid.  (INPUT)
 c
 c  RNORM   Real scalar.  (INPUT)
-c          Residual norm corresponding to the current upper Hessenberg 
+c          Residual norm corresponding to the current upper Hessenberg
 c          matrix H.
 c
 c  N       Integer.  (INPUT)
@@ -34,8 +34,8 @@ c          On output, RITZ(1:N) contains the eigenvalues of H.
 c
 c  BOUNDS  Complex array of length N.  (OUTPUT)
 c          On output, BOUNDS contains the Ritz estimates associated with
-c          the eigenvalues held in RITZ.  This is equal to RNORM 
-c          times the last components of the eigenvectors corresponding 
+c          the eigenvalues held in RITZ.  This is equal to RNORM
+c          times the last components of the eigenvectors corresponding
 c          to the eigenvalues in RITZ.
 c
 c  Q       Complex N by N array.  (WORKSPACE)
@@ -52,7 +52,7 @@ c          of H and also in the calculation of the eigenvectors of H.
 c
 c  RWORK   Real  work array of length N (WORKSPACE)
 c          Private (replicated) array on each PE or array allocated on
-c          the front end. 
+c          the front end.
 c
 c  IERR    Integer.  (OUTPUT)
 c          Error exit flag from clahqr or ctrevc.
@@ -81,15 +81,15 @@ c             in upper triangular form
 c     ccopy   Level 1 BLAS that copies one vector to another.
 c     csscal  Level 1 BLAS that scales a complex vector by a real number.
 c     scnrm2  Level 1 BLAS that computes the norm of a vector.
-c     
+c
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
 c     Richard Lehoucq              CRPC / Rice University
 c     Dept. of Computational &     Houston, Texas
-c     Applied Mathematics 
-c     Rice University           
-c     Houston, Texas 
+c     Applied Mathematics
+c     Rice University
+c     Houston, Texas
 c
 c\Parallel Modifications
 c     Kristi Maschhoff
@@ -97,7 +97,7 @@ c
 c\Revision history:
 c     Starting Point: Serial Complex Code FILE: neigh.F   SID: 2.1
 c
-c\SCCS Information: 
+c\SCCS Information:
 c FILE: neigh.F   SID: 1.2   DATE OF SID: 4/19/96
 c
 c\Remarks
@@ -107,7 +107,7 @@ c\EndLib
 c
 c-----------------------------------------------------------------------
 c
-      subroutine pcneigh (comm, rnorm, n, h, ldh, ritz, bounds, 
+      subroutine pcneigh (comm, rnorm, n, h, ldh, ritz, bounds,
      &                   q, ldq, workl, rwork, ierr)
 c
 c     %--------------------%
@@ -128,30 +128,30 @@ c     | Scalar Arguments |
 c     %------------------%
 c
       integer    ierr, n, ldh, ldq
-      Real     
+      Real
      &           rnorm
 c
 c     %-----------------%
 c     | Array Arguments |
 c     %-----------------%
 c
-      Complex     
+      Complex
      &           bounds(n), h(ldh,n), q(ldq,n), ritz(n),
-     &           workl(n*(n+3)) 
-      Real 
+     &           workl(n*(n+3))
+      Real
      &           rwork(n)
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex     
+      Complex
      &           one, zero
       Real
      &           rone
       parameter  (one = (1.0, 0.0), zero = (0.0, 0.0),
      &           rone = 1.0)
-c 
+c
 c     %------------------------%
 c     | Local Scalars & Arrays |
 c     %------------------------%
@@ -167,14 +167,14 @@ c     %----------------------%
 c     | External Subroutines |
 c     %----------------------%
 c
-      external   clacpy, clahqr, csscal, ctrevc, ccopy, 
+      external   clacpy, clahqr, csscal, ctrevc, ccopy,
      &           pcmout, pcvout, arscnd
 c
 c     %--------------------%
 c     | External Functions |
 c     %--------------------%
 c
-      Real 
+      Real
      &           scnrm2
       external   scnrm2
 c
@@ -190,17 +190,17 @@ c     %-------------------------------%
 c
       call arscnd (t0)
       msglvl = mceigh
-c 
+c
       if (msglvl .gt. 2) then
-          call pcmout (comm, logfil, n, n, h, ldh, ndigit, 
+          call pcmout (comm, logfil, n, n, h, ldh, ndigit,
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
-c 
+c
 c     %----------------------------------------------------------%
 c     | 1. Compute the eigenvalues, the last components of the   |
 c     |    corresponding Schur vectors and the full Schur form T |
 c     |    of the current upper Hessenberg matrix H.             |
-c     |    clahqr returns the full Schur form of H               | 
+c     |    clahqr returns the full Schur form of H               |
 c     |    in WORKL(1:N**2), and the Schur vectors in q.         |
 c     %----------------------------------------------------------%
 c
@@ -222,7 +222,7 @@ c     |    apply the Schur vectors to get the corresponding      |
 c     |    eigenvectors.                                         |
 c     %----------------------------------------------------------%
 c
-      call ctrevc ('Right', 'Back', select, n, workl, n, vl, n, q, 
+      call ctrevc ('Right', 'Back', select, n, workl, n, vl, n, q,
      &             ldq, n, n, workl(n*n+1), rwork, ierr)
 c
       if (ierr .ne. 0) go to 9000

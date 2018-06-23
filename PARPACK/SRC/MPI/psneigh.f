@@ -17,7 +17,7 @@ c\Arguments
 c  COMM    MPI Communicator for the processor grid.  (INPUT)
 c
 c  RNORM   Real scalar.  (INPUT)
-c          Residual norm corresponding to the current upper Hessenberg 
+c          Residual norm corresponding to the current upper Hessenberg
 c          matrix H.
 c
 c  N       Integer.  (INPUT)
@@ -31,13 +31,13 @@ c          Leading dimension of H exactly as declared in the calling
 c          program.
 c
 c  RITZR,  Real arrays of length N.  (OUTPUT)
-c  RITZI   On output, RITZR(1:N) (resp. RITZI(1:N)) contains the real 
+c  RITZI   On output, RITZR(1:N) (resp. RITZI(1:N)) contains the real
 c          (respectively imaginary) parts of the eigenvalues of H.
 c
 c  BOUNDS  Real array of length N.  (OUTPUT)
 c          On output, BOUNDS contains the Ritz estimates associated with
-c          the eigenvalues RITZR and RITZI.  This is equal to RNORM 
-c          times the last components of the eigenvectors corresponding 
+c          the eigenvalues RITZR and RITZI.  This is equal to RNORM
+c          times the last components of the eigenvectors corresponding
 c          to the eigenvalues in RITZR and RITZI.
 c
 c  Q       Real N by N array.  (WORKSPACE)
@@ -78,15 +78,15 @@ c     sgemv   Level 2 BLAS routine for matrix vector multiplication.
 c     scopy   Level 1 BLAS that copies one vector to another .
 c     snrm2   Level 1 BLAS that computes the norm of a vector.
 c     sscal   Level 1 BLAS that scales a vector.
-c     
+c
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
 c     Richard Lehoucq              Cray Research, Inc. &
 c     Dept. of Computational &     CRPC / Rice University
 c     Applied Mathematics          Houston, Texas
-c     Rice University           
-c     Houston, Texas    
+c     Rice University
+c     Houston, Texas
 c
 c\Parallel Modifications
 c     Kristi Maschhoff
@@ -94,8 +94,8 @@ c
 c\Revision history:
 c     Starting Point: Serial Code FILE: neigh.F   SID: 2.2
 c
-c\SCCS Information: 
-c FILE: neigh.F   SID: 1.2   DATE OF SID: 2/22/96   
+c\SCCS Information:
+c FILE: neigh.F   SID: 1.2   DATE OF SID: 2/22/96
 c
 c\Remarks
 c     None
@@ -104,7 +104,7 @@ c\EndLib
 c
 c-----------------------------------------------------------------------
 c
-      subroutine psneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds, 
+      subroutine psneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds,
      &                    q, ldq, workl, ierr)
 c
 c     %--------------------%
@@ -125,32 +125,32 @@ c     | Scalar Arguments |
 c     %------------------%
 c
       integer    ierr, n, ldh, ldq
-      Real     
+      Real
      &           rnorm
 c
 c     %-----------------%
 c     | Array Arguments |
 c     %-----------------%
 c
-      Real     
+      Real
      &           bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),
      &           workl(n*(n+3))
-c 
+c
 c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Real     
+      Real
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
-c 
+c
 c     %------------------------%
 c     | Local Scalars & Arrays |
 c     %------------------------%
 c
       logical    select(1)
       integer    i, iconj, msglvl
-      Real     
+      Real
      &           temp, vl(1)
 c
 c     %----------------------%
@@ -185,12 +185,12 @@ c     %-------------------------------%
 c
       call arscnd (t0)
       msglvl = mneigh
-c 
+c
       if (msglvl .gt. 2) then
-          call psmout (comm, logfil, n, n, h, ldh, ndigit, 
+          call psmout (comm, logfil, n, n, h, ldh, ndigit,
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
-c 
+c
 c     %-----------------------------------------------------------%
 c     | 1. Compute the eigenvalues, the last components of the    |
 c     |    corresponding Schur vectors and the full Schur form T  |
@@ -244,7 +244,7 @@ c
 c           %----------------------%
 c           | Real eigenvalue case |
 c           %----------------------%
-c    
+c
             temp = snrm2( n, q(1,i), 1 )
             call sscal ( n, one / temp, q(1,i), 1 )
          else
@@ -258,7 +258,7 @@ c           | square root of two.                       |
 c           %-------------------------------------------%
 c
             if (iconj .eq. 0) then
-               temp = slapy2( snrm2( n, q(1,i), 1 ), 
+               temp = slapy2( snrm2( n, q(1,i), 1 ),
      &                        snrm2( n, q(1,i+1), 1 ) )
                call sscal ( n, one / temp, q(1,i), 1 )
                call sscal ( n, one / temp, q(1,i+1), 1 )
@@ -266,7 +266,7 @@ c
             else
                iconj = 0
             end if
-         end if         
+         end if
    10 continue
 c
       call sgemv ('T', n, n, one, q, ldq, bounds, 1, zero, workl, 1)
@@ -287,7 +287,7 @@ c
 c           %----------------------%
 c           | Real eigenvalue case |
 c           %----------------------%
-c    
+c
             bounds(i) = rnorm * abs( workl(i) )
          else
 c

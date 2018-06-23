@@ -1,9 +1,9 @@
-      program dsdrv5 
+      program dsdrv5
 c
 c     Program to illustrate the idea of reverse communication
 c     in Buckling mode for a generalized symmetric eigenvalue
-c     problem.  The following program uses the two LAPACK subroutines 
-c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of 
+c     problem.  The following program uses the two LAPACK subroutines
+c     dgttrf.f and dgttrs.f to factor and solve a tridiagonal system of
 c     equations.
 c
 c     We implement example five of ex-sym.doc in DOCUMENTS directory
@@ -21,8 +21,8 @@ c
 c\BeginLib
 c
 c\References:
-c  1. R.G. Grimes, J.G. Lewis and H.D. Simon, "A Shifted Block Lanczos 
-c     Algorithm for Solving Sparse Symmetric Generalized Eigenproblems", 
+c  1. R.G. Grimes, J.G. Lewis and H.D. Simon, "A Shifted Block Lanczos
+c     Algorithm for Solving Sparse Symmetric Generalized Eigenproblems",
 c     SIAM J. Matr. Anal. Apps.,  January (1993).
 c
 c\Routines called:
@@ -34,7 +34,7 @@ c     dgttrs  LAPACK tridiagonal solve routine.
 c     daxpy   Level 1 BLAS that computes y <- alpha*x+y.
 c     dcopy   Level 1 BLAS that copies one vector to another.
 c     dscal   Level 1 BLAS that scales a vector by a scalar.
-c     dnrm2   Level 1 BLAS that computes the norm of a vector.   
+c     dnrm2   Level 1 BLAS that computes the norm of a vector.
 c     av      Matrix vector multiplication routine that computes A*x.
 c     mv      Matrix vector multiplication routine that computes M*x.
 c
@@ -54,7 +54,7 @@ c\Remarks
 c     1. None
 c
 c\EndLib
-c----------------------------------------------------------------------     
+c----------------------------------------------------------------------
 c
 c     %-----------------------------%
 c     | Define leading dimensions   |
@@ -66,7 +66,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer          maxn, maxnev, maxncv, ldv
-      parameter        (maxn=256, maxnev=10, maxncv=25, 
+      parameter        (maxn=256, maxnev=10, maxncv=25,
      &                 ldv=maxn)
 c
 c     %--------------%
@@ -75,7 +75,7 @@ c     %--------------%
 c
       Double precision
      &                 v(ldv,maxncv), workl(maxncv*(maxncv+8)),
-     &                 workd(3*maxn), d(maxncv,2), resid(maxn), 
+     &                 workd(3*maxn), d(maxncv,2), resid(maxn),
      &                 ad(maxn), adl(maxn), adu(maxn), adu2(maxn),
      &                 ax(maxn), mx(maxn)
       logical          select(maxncv)
@@ -89,7 +89,7 @@ c
       integer          ido, n, nev, ncv, lworkl, info, j, ierr,
      &                 nconv, maxitr, ishfts, mode
       logical          rvec
-      Double precision    
+      Double precision
      &                 h, sigma, r1, r2, tol
 c
 c     %------------%
@@ -130,12 +130,12 @@ c     | NCV, SIGMA to solve problems of different sizes, |
 c     | and to get different parts of the spectrum.      |
 c     | However, The following conditions must be        |
 c     | satisfied:                                       |
-c     |                 N <= MAXN,                       | 
+c     |                 N <= MAXN,                       |
 c     |               NEV <= MAXNEV,                     |
 c     |           NEV + 1 <= NCV <= MAXNCV               |
-c     |                                                  | 
+c     |                                                  |
 c     | The  shift SIGMA cannot be zero!!!               |
-c     %--------------------------------------------------% 
+c     %--------------------------------------------------%
 c
       n = 100
       nev = 4
@@ -152,7 +152,7 @@ c
       end if
       bmat = 'G'
       which = 'LM'
-      sigma = one 
+      sigma = one
 c
 c     %-----------------------------------------------------%
 c     | The work array WORKL is used in DSAUPD as           |
@@ -166,7 +166,7 @@ c     | generated in DSAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
       lworkl = ncv*(ncv+8)
-      tol = zero 
+      tol = zero
       ido = 0
       info = 0
 c
@@ -185,8 +185,8 @@ c
       mode   = 4
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %------------------------------------------------------%
 c     | Call LAPACK routine to factor the tridiagonal matrix |
@@ -203,10 +203,10 @@ c
       do 20 j=1,n
          ad(j) = two / h - sigma * r1
          adl(j) = -one / h- sigma * r2
- 20   continue 
+ 20   continue
       call dcopy (n, adl, 1, adu, 1)
       call dgttrf (n, adl, ad, adu, adu2, ipiv, ierr)
-      if (ierr .ne. 0) then 
+      if (ierr .ne. 0) then
          print *, ' '
          print *, ' Error with _gttrf in _SDRV5.'
          print *, ' '
@@ -226,8 +226,8 @@ c        | either convergence is indicated or maxitr   |
 c        | has been exceeded.                          |
 c        %---------------------------------------------%
 c
-         call dsaupd ( ido, bmat, n, which, nev, tol, resid, 
-     &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, 
+         call dsaupd ( ido, bmat, n, which, nev, tol, resid,
+     &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl,
      &        info )
 c
          if (ido .eq. -1) then
@@ -246,10 +246,10 @@ c           %-------------------------------------------%
 c
             call av (n, workd(ipntr(1)), workd(ipntr(2)))
 c
-            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
+            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
      &                   workd(ipntr(2)), n, ierr)
-            if (ierr .ne. 0) then 
-               print *, ' ' 
+            if (ierr .ne. 0) then
+               print *, ' '
                print *, ' Error with _gttrs in SDRV5.'
                print *, ' '
                go to 9000
@@ -273,9 +273,9 @@ c           | workd(ipntr(2)).                         |
 c           %------------------------------------------%
 c
             call dcopy ( n, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv, 
+            call dgttrs ('Notranspose', n, 1, adl, ad, adu, adu2, ipiv,
      &                   workd(ipntr(2)), n, ierr)
-            if (ierr .ne. 0) then 
+            if (ierr .ne. 0) then
                print *, ' '
                print *, ' Error with _gttrs in _SDRV5.'
                print *, ' '
@@ -306,7 +306,7 @@ c           %-----------------------------------------%
 c
             go to 10
 c
-         end if 
+         end if
 c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
@@ -323,9 +323,9 @@ c
          print *, ' '
          print *, ' Error with _saupd, info = ',info
          print *, ' Check the documentation of _saupd '
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -339,11 +339,11 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call dseupd ( rvec, 'All', select, d, v, ldv, sigma, 
-     &        bmat, n, which, nev, tol, resid, ncv, v, ldv, 
+         call dseupd ( rvec, 'All', select, d, v, ldv, sigma,
+     &        bmat, n, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
 c
-         if (ierr .ne. 0) then 
+         if (ierr .ne. 0) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -357,7 +357,7 @@ c
 c
          else
 c
-            nconv =  iparam(5) 
+            nconv =  iparam(5)
             do 30 j=1, nconv
 c
 c              %---------------------------%
@@ -412,7 +412,7 @@ c
      &            ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
          print *, ' The number of converged Ritz values is ',
-     &              nconv 
+     &              nconv
          print *, ' The number of Implicit Arnoldi update',
      &            ' iterations taken is', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
@@ -432,7 +432,7 @@ c
 c------------------------------------------------------------------------
 c     Matrix vector subroutine
 c     where the matrix is the 1-dimensional mass matrix
-c     arising from using piecewise linear finite elements on the 
+c     arising from using piecewise linear finite elements on the
 c     interval [0,1].
 c
       subroutine mv (n, v, w)
@@ -444,10 +444,10 @@ c
 c
       w(1) =  four*v(1) + v(2)
       do 100 j = 2,n-1
-         w(j) = v(j-1) + four*v(j) + v(j+1) 
+         w(j) = v(j-1) + four*v(j) + v(j+1)
   100 continue
       j = n
-      w(j) = v(j-1) + four*v(j) 
+      w(j) = v(j-1) + four*v(j)
 c
 c     Scale the vector w by h.
 c
@@ -470,10 +470,10 @@ c
 c
       w(1) =  two*v(1) - v(2)
       do 100 j = 2,n-1
-         w(j) = - v(j-1) + two*v(j) - v(j+1) 
+         w(j) = - v(j-1) + two*v(j) - v(j+1)
   100 continue
       j = n
-      w(j) = - v(j-1) + two*v(j) 
+      w(j) = - v(j-1) + two*v(j)
 c
 c     Scale the vector w by (1/h)
 c

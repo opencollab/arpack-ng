@@ -1,7 +1,7 @@
       program cndrv4
 c
 c     Simple program to illustrate the idea of reverse communication
-c     in shift and invert mode for a generalized complex nonsymmetric 
+c     in shift and invert mode for a generalized complex nonsymmetric
 c     eigenvalue problem.
 c
 c     We implement example four of ex-complex.doc in DOCUMENTS directory
@@ -11,7 +11,7 @@ c     ... Suppose we want to solve A*x = lambda*B*x in shift-invert mode,
 c         where A and B are derived from a finite element discretization
 c         of a 1-dimensional convection-diffusion operator
 c                         (d^2u/dx^2) + rho*(du/dx)
-c         on the interval [0,1] with zero boundary condition using 
+c         on the interval [0,1] with zero boundary condition using
 c         piecewise linear elements.
 c
 c     ... where the shift sigma is a complex number.
@@ -36,15 +36,15 @@ c     av      Matrix vector multiplication routine that computes A*x.
 c     mv      Matrix vector multiplication routine that computes M*x.
 c
 c\Author
-c     Danny Sorensen               
-c     Richard Lehoucq 
-c     Chao Yang             
-c     Dept. of Computational &     
-c     Applied Mathematics          
-c     Rice University           
-c     Houston, Texas    
+c     Danny Sorensen
+c     Richard Lehoucq
+c     Chao Yang
+c     Dept. of Computational &
+c     Applied Mathematics
+c     Rice University
+c     Houston, Texas
 c
-c\SCCS Information: @(#) 
+c\SCCS Information: @(#)
 c FILE: ndrv4.F   SID: 2.4   DATE OF SID: 10/18/00   RELEASE: 2
 c
 c\Remarks
@@ -63,7 +63,7 @@ c     | MAXNCV: Maximum NCV allowed |
 c     %-----------------------------%
 c
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25, 
+      parameter         (maxn=256, maxnev=10, maxncv=25,
      &                   ldv=maxn )
 c
 c     %--------------%
@@ -72,14 +72,14 @@ c     %--------------%
 c
       integer           iparam(11), ipntr(14), ipiv(maxn)
       logical           select(maxncv)
-      Complex  
-     &                  ax(maxn), mx(maxn), d(maxncv), 
+      Complex
+     &                  ax(maxn), mx(maxn), d(maxncv),
      &                  v(ldv,maxncv), workd(3*maxn), resid(maxn),
      &                  workev(2*maxncv),
      &                  workl(3*maxncv*maxncv+5*maxncv),
      &                  dd(maxn), dl(maxn), du(maxn),
      &                  du2(maxn)
-      Real 
+      Real
      &                  rwork(maxn), rd(maxncv,3)
 c
 c     %---------------%
@@ -89,20 +89,20 @@ c
       character         bmat*1, which*2
       integer           ido, n, nev, ncv, lworkl, info, j, ierr,
      &                  nconv, maxitr, ishfts, mode
-      Complex  
+      Complex
      &                  rho, h, s,
      &                  sigma, s1, s2, s3
       common            /convct/ rho
 c
-      Real 
+      Real
      &                  tol
-      logical           rvec 
-c 
+      logical           rvec
+c
 c     %-----------------------------%
 c     | BLAS & LAPACK routines used |
 c     %-----------------------------%
 c
-      Real 
+      Real
      &                  scnrm2, slapy2
       external          scnrm2, caxpy, ccopy, cgttrf, cgttrs,
      &                  slapy2
@@ -111,10 +111,10 @@ c     %------------%
 c     | Parameters |
 c     %------------%
 c
-      Complex  
+      Complex
      &                   one, zero, two, four, six
       parameter         (one = (1.0E+0, 0.0E+0) ,
-     &                   zero = (0.0E+0, 0.0E+0) , 
+     &                   zero = (0.0E+0, 0.0E+0) ,
      &                   two = (2.0E+0, 0.0E+0) ,
      &                   four = (4.0E+0, 0.0E+0) ,
      &                   six = (6.0E+0, 0.0E+0) )
@@ -138,7 +138,7 @@ c     |                   NEV <= MAXNEV,                   |
 c     |               NEV + 2 <= NCV <= MAXNCV             |
 c     %----------------------------------------------------%
 c
-      n     = 100 
+      n     = 100
       nev   = 4
       ncv   = 20
       if ( n .gt. maxn ) then
@@ -153,7 +153,7 @@ c
       end if
       bmat  = 'G'
       which = 'LM'
-      sigma = one 
+      sigma = one
 c
 c     %--------------------------------------------------%
 c     | Construct C = A - SIGMA*M in COMPLEX arithmetic. |
@@ -164,11 +164,11 @@ c     | central difference discretization of the 1-d     |
 c     | convection-diffusion operator u``+ rho*u` on the |
 c     | interval [0, 1] with zero Dirichlet boundary     |
 c     | condition.  The matrix M is chosen to be the     |
-c     | symmetric tridiagonal matrix with 4.0 on the     | 
-c     | diagonal and 1.0 on the off-diagonals.           | 
+c     | symmetric tridiagonal matrix with 4.0 on the     |
+c     | diagonal and 1.0 on the off-diagonals.           |
 c     %--------------------------------------------------%
 c
-      rho = (1.0E+1, 0.0E+0) 
+      rho = (1.0E+1, 0.0E+0)
       h = one / cmplx(n+1)
       s = rho / two
 c
@@ -177,12 +177,12 @@ c
       s3 = -one/h + s - sigma*h/six
 c
       do 10 j = 1, n-1
-	 dl(j) = s1 
+	 dl(j) = s1
 	 dd(j) = s2
 	 du(j) = s3
-  10  continue 
-      dd(n) = s2 
-c 
+  10  continue
+      dd(n) = s2
+c
       call cgttrf(n, dl, dd, du, du2, ipiv, ierr)
       if ( ierr .ne. 0 ) then
          print*, ' '
@@ -202,7 +202,7 @@ c     | Setting INFO=0 indicates that a random vector is    |
 c     | generated in CNAUPD to start the Arnoldi iteration. |
 c     %-----------------------------------------------------%
 c
-      lworkl = 3*ncv**2+5*ncv 
+      lworkl = 3*ncv**2+5*ncv
       tol    = 0.0
       ido    = 0
       info   = 0
@@ -222,11 +222,11 @@ c
       mode   = 3
 c
       iparam(1) = ishfts
-      iparam(3) = maxitr 
-      iparam(7) = mode 
+      iparam(3) = maxitr
+      iparam(7) = mode
 c
 c     %------------------------------------------%
-c     | M A I N   L O O P(Reverse communication) | 
+c     | M A I N   L O O P(Reverse communication) |
 c     %------------------------------------------%
 c
  20   continue
@@ -258,14 +258,14 @@ c           | workd(ipntr(2)).                          |
 c           %-------------------------------------------%
 c
             call mv (n, workd(ipntr(1)), workd(ipntr(2)))
-            call cgttrs('N', n, 1, dl, dd, du, du2, ipiv, 
+            call cgttrs('N', n, 1, dl, dd, du, du2, ipiv,
      &                  workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _gttrs in _NDRV4.'
                print*, ' '
                go to 9000
-            end if 
+            end if
 c
 c           %-----------------------------------------%
 c           | L O O P   B A C K to call CNAUPD again. |
@@ -285,7 +285,7 @@ c           | workd(ipntr(2)).                        |
 c           %-----------------------------------------%
 c
             call ccopy( n, workd(ipntr(3)), 1, workd(ipntr(2)), 1)
-            call cgttrs ('N', n, 1, dl, dd, du, du2, ipiv, 
+            call cgttrs ('N', n, 1, dl, dd, du, du2, ipiv,
      &                   workd(ipntr(2)), n, ierr)
             if ( ierr .ne. 0 ) then
                print*, ' '
@@ -317,8 +317,8 @@ c           %-----------------------------------------%
 c
             go to 20
 c
-         end if 
-c 
+         end if
+c
 c     %-----------------------------------------%
 c     | Either we have convergence, or there is |
 c     | an error.                               |
@@ -334,9 +334,9 @@ c
          print *, ' '
          print *, ' Error with _naupd, info = ', info
          print *, ' Check the documentation of _naupd.'
-         print *, ' ' 
+         print *, ' '
 c
-      else 
+      else
 c
 c        %-------------------------------------------%
 c        | No fatal errors occurred.                 |
@@ -350,9 +350,9 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call cneupd (rvec, 'A', select, d, v, ldv, sigma, 
-     &        workev, bmat, n, which, nev, tol, resid, ncv, v, 
-     &        ldv, iparam, ipntr, workd, workl, lworkl, rwork, 
+         call cneupd (rvec, 'A', select, d, v, ldv, sigma,
+     &        workev, bmat, n, which, nev, tol, resid, ncv, v,
+     &        ldv, iparam, ipntr, workd, workl, lworkl, rwork,
      &        ierr)
 c
 c        %----------------------------------------------%
@@ -367,7 +367,7 @@ c        | returned in V.                               |
 c        %----------------------------------------------%
 c
          if ( ierr .ne. 0) then
-c 
+c
 c           %------------------------------------%
 c           | Error condition:                   |
 c           | Check the documentation of CNEUPD. |
@@ -438,27 +438,27 @@ c
  9000 continue
 c
       end
-c 
+c
 c==========================================================================
 c
 c     matrix vector multiplication subroutine
 c
       subroutine mv (n, v, w)
       integer           n, j
-      Complex  
+      Complex
      &                  v(n), w(n), one, four, six, h
       parameter         (one = (1.0E+0, 0.0E+0) ,
      &                   four = (4.0E+0, 0.0E+0) ,
      &                   six = (6.0E+0, 0.0E+0) )
 c
 c     Compute the matrix vector multiplication y<---M*x
-c     where M is a n by n symmetric tridiagonal matrix with 4 on the 
+c     where M is a n by n symmetric tridiagonal matrix with 4 on the
 c     diagonal, 1 on the subdiagonal and superdiagonal.
-c 
+c
       w(1) =  ( four*v(1) + one*v(2) ) / six
       do 40 j = 2,n-1
          w(j) = ( one*v(j-1) + four*v(j) + one*v(j+1) ) / six
- 40   continue 
+ 40   continue
       w(n) =  ( one*v(n-1) + four*v(n) ) / six
 c
       h = one / cmplx(n+1)
@@ -468,9 +468,9 @@ c
 c------------------------------------------------------------------
       subroutine av (n, v, w)
       integer           n, j
-      Complex  
-     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho 
-      parameter         (one = (1.0E+0, 0.0E+0) , 
+      Complex
+     &                  v(n), w(n), one, two, dd, dl, du, s, h, rho
+      parameter         (one = (1.0E+0, 0.0E+0) ,
      &                   two = (2.0E+0, 0.0E+0) )
       common            /convct/ rho
 c
