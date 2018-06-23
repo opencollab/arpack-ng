@@ -169,7 +169,7 @@ c     | time spent in the various stages of computation |
 c     | given by setting mnaupd = 1.                    |
 c     %-------------------------------------------------%
 c
-      include 'debug-arpack.h'
+      include 'debug.h'
       ndigit = -3
       logfil = 6
       mnaitr = 0

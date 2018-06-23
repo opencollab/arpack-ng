@@ -26,7 +26,7 @@ CSRC += icbpcn.f90
 ZSRC += icbpzn.f90
 endif
 
-EXTRA_DIST = debug-arpack.h stat.h pcontext.h
+EXTRA_DIST = debug.h stat.h pcontext.h
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@_noopt.la
 libparpack@LIBSUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f

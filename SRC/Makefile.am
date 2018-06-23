@@ -21,7 +21,7 @@ CSRC += icbacn.f90
 ZSRC += icbazn.f90
 endif
 
-EXTRA_DIST = debug-arpack.h stat.h version.h
+EXTRA_DIST = debug.h stat.h version.h
 
 lib_LTLIBRARIES = libarpack@LIBSUFFIX@.la
 libarpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)

@@ -4,7 +4,7 @@
  The following statements may be used within the calling program to 
  initiate and request this output.
 
-      include 'debug-arpack.h'
+      include 'debug.h'
       ndigit = -3
       logfil = 6
       msgets = 0
@@ -63,13 +63,13 @@
  once some familiarity has been gained with the routines. 
 
  The include statement sets up the storage declarations that are
- solely associated with this trace debugging feature. "debug-arpack.h"
+ solely associated with this trace debugging feature. "debug.h"
  has the following structure:
 
 ---------------------------------------------------------------------
 c
 c\SCCS Information: @(#) 
-c FILE: debug-arpack.h   SID: 2.3   DATE OF SID: 11/16/95   RELEASE: 2 
+c FILE: debug.h   SID: 2.3   DATE OF SID: 11/16/95   RELEASE: 2 
 c
 c     %---------------------------------%
 c     | See debug.doc for documentation |

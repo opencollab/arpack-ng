@@ -188,7 +188,7 @@ c     | time spent in the various stages of computation |
 c     | given by setting msaupd = 1.                    |
 c     %-------------------------------------------------%
 c
-      include 'debug-arpack.h'
+      include 'debug.h'
       ndigit = -3
       logfil = 6
       msgets = 0

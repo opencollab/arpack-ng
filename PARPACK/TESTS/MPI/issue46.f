@@ -25,7 +25,7 @@ c     Create commuticator to run arnoldi only on the first CPU
 
       subroutine parnoldi(comm)
       include 'mpif.h'
-      include 'debug-arpack.h'
+      include 'debug.h'
       include 'stat.h'
 
       integer           comm, myid, nprocs, rc, nloc

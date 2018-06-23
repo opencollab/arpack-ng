@@ -13,7 +13,7 @@ check_PROGRAMS += icb_parpack_c
 check_PROGRAMS += icb_parpack_cpp
 endif
 
-EXTRA_DIST = debug-arpack.h stat.h
+EXTRA_DIST = debug.h stat.h
 
 issue46_SOURCES= issue46.f
 

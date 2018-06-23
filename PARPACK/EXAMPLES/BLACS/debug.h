@@ -1,6 +1,6 @@
 c
 c\SCCS Information: @(#) 
-c FILE: debug-arpack.h   SID: 2.3   DATE OF SID: 11/16/95   RELEASE: 2 
+c FILE: debug.h   SID: 2.3   DATE OF SID: 11/16/95   RELEASE: 2 
 c
 c     %---------------------------------%
 c     | See debug.doc for documentation |
