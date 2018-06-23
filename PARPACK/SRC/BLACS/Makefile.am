@@ -12,7 +12,7 @@ CSRC = pcnaitr.f pcnapps.f pcnaup2.f pcnaupd.f pcneigh.f pcneupd.f pcngets.f \
 ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.f pzlarnv.f pdznorm2.f
 
-EXTRA_DIST = debug.h stat.h
+EXTRA_DIST = debug-arpack.h stat.h
 
 lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
 libparpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)

@@ -54,7 +54,7 @@ c
 c-----------------------------------------------------------------------
 c
       include 'mpif.h'
-      include 'debug.h'
+      include 'debug-arpack.h'
       include 'stat.h'
  
 c     %---------------%
