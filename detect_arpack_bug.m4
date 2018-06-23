@@ -8,7 +8,7 @@ dnl allocated arrays in Fortran does not?
 dnl
 dnl This code is not used by arpack-ng itself.
 dnl This is a macro for applications using arpack to detect that the version
-dnl of arpack behave correcly (ie not arpack-ng)
+dnl of arpack behave correctly (ie not arpack-ng)
 dnl This is the work of Rik <rik@octave.org>
 dnl 
 dnl This code is released under the same license as arpack
