@@ -9,8 +9,6 @@ arpack-ng - 3.6.2
 
 arpack-ng - 3.6.1
 
- * Rename debug.h to debug-arpack.h to avoid collision (Closes #126)
-
  [ Ruslan Kabatsayev ]
  * Fix a regression on i386 and other archs (Closes #123)
 

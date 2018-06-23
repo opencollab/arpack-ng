@@ -166,7 +166,7 @@ if(ICB)
   endif()
 endif()
 
-install(FILES debug-arpack.h DESTINATION include/arpack)
+install(FILES debug.h DESTINATION include/arpack)
 if(ICB)
   install(FILES debug_c.h DESTINATION include/arpack)
   install(FILES debug_c.hpp DESTINATION include/arpack)
@@ -447,7 +447,7 @@ set(CMAKE_CTEST_COMMAND ctest -V)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
 
-add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug-arpack.h)
+add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
 set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
 target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_custom_command(TARGET dnsimp_test POST_BUILD

@@ -57,7 +57,7 @@ c\EndLib
 c---------------------------------------------------------------------------
 c
       include 'mpif.h'
-      include 'debug-arpack.h'
+      include 'debug.h'
       include 'stat.h'
 
 c     %---------------%
