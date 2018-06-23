@@ -1,5 +1,5 @@
  [ Franck Houssen ]
- * CMake install: move headers into a dedicated directory (local/include/arpack).
+ * Install: move headers into a dedicated directory (local/include/arpack).
 
 arpack-ng - 3.6.2
 
