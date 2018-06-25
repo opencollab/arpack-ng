@@ -11,10 +11,13 @@ addons:
       - gfortran
       - gcc
       - g++
+      - openmpi-bin
+      - libopenmpi-dev
+      - cmake
+      - automake
+      - autoconf
       - libblas-dev
       - liblapack-dev
-      - libopenmpi-dev
-      - openmpi-bin
 
 env:
   - BUILD=cmake

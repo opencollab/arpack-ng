@@ -138,7 +138,6 @@ if test x"$enable_icb" != x"no"; then
 
   AC_PROG_CC
   AC_PROG_CXX
-  AX_CXX_COMPILE_STDCXX(11, ext)
   AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
@@ -159,7 +158,7 @@ if test x"$enable_icb" != x"no"; then
     AC_LANG_PUSH([C++])
     AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))
     AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
-    CXX="$MPICXX -std=gnu++11"
+    CXX=$MPICXX
     AC_LANG_POP([C++])
 
     AC_LANG_PUSH([C])
@@ -179,6 +178,7 @@ if test x"$enable_icb" != x"no"; then
                   )
     AC_LANG_POP([C])
   fi
+  AX_CXX_COMPILE_STDCXX(11)
 fi
 
 dnl Add support for debuging arpack
