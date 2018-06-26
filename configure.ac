@@ -8,8 +8,10 @@ AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 dnl Checks for standard programs.
+dnl Autoconf was designed with the fundamental fact that compiler (= language support) is NOT an option.
 AC_PROG_FC
 AC_PROG_CC
+AC_PROG_CXX
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
@@ -112,7 +114,10 @@ AC_ARG_ENABLE([icb],
               [AC_HELP_STRING([--enable-icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
-              [])
+              [AS_VAR_SET([enable_icb], [no])])
+
+AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
+
 if test x"$enable_icb" != x"no"; then
   AC_LANG_PUSH([Fortran])
   AC_MSG_CHECKING([for iso_c_binding module compilation])
@@ -136,9 +141,6 @@ if test x"$enable_icb" != x"no"; then
                 )
   AC_LANG_POP([Fortran])
 
-  AC_PROG_CC
-  AC_PROG_CXX
-  AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
@@ -226,6 +228,8 @@ AC_MSG_RESULT([
 Configuration summary for $PACKAGE_NAME ($VERSION)
 --------------------------------------------------
 Installation prefix : $prefix
+MPI enabled         : $enable_mpi
+ICB enabled         : $enable_icb
 FC                  : $FC
 FCFLAGS             : $FCFLAGS
 CC                  : $CC

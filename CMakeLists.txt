@@ -600,6 +600,8 @@ endfunction(cprsummary)
 
 message("-- Configuration summary for arpack-ng-${arpack_ng_VERSION}:")
 message("   -- prefix: ${CMAKE_INSTALL_PREFIX}")
+message("   -- MPI: ${MPI}")
+message("   -- ICB: ${ICB}")
 cprsummary("FC" "${CMAKE_Fortran_COMPILER}"
                 "${CMAKE_Fortran_FLAGS_DEBUG}"
                 "${CMAKE_Fortran_FLAGS_MINSIZEREL}"
