@@ -114,7 +114,7 @@ AC_ARG_ENABLE([icb],
               [AC_HELP_STRING([--enable-icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
-              [])
+              [AS_VAR_SET([enable_icb], [no])])
 
 AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 
