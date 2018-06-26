@@ -220,3 +220,21 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
 AC_OUTPUT
+
+AC_MSG_RESULT([
+--------------------------------------------------
+Configuration summary for $PACKAGE_NAME ($VERSION)
+--------------------------------------------------
+Installation prefix : $prefix
+FC                  : $FC
+FCFLAGS             : $FCFLAGS
+CC                  : $CC
+CFLAGS              : $CFLAGS
+CXX                 : $CXX
+CXXFLAGS            : $CXXFLAGS
+BLAS                : $BLAS_LIBS
+LAPACK              : $LAPACK_LIBS
+--------------------------------------------------
+Configuration OK
+--------------------------------------------------
+])

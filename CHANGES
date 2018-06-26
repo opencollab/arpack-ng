@@ -2,9 +2,10 @@ arpack-ng - 3.6.2
 
  * Remove all trailing whitespaces
 
-[ Franck Houssen ]
+ [ Franck Houssen ]
  * Install: move headers into a dedicated directory (local/include/arpack).
    (Closes #126)
+ * Add configuration summary.
 
  -- Sylvestre Ledru <sylvestre@debian.org> Sat, 23 Jun 2018 14:56:54 +0200
 
