@@ -8,8 +8,10 @@ AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 dnl Checks for standard programs.
+dnl Autoconf was designed with the fundamental fact that compiler (= language support) is NOT an option.
 AC_PROG_FC
 AC_PROG_CC
+AC_PROG_CXX
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
@@ -139,8 +141,6 @@ if test x"$enable_icb" != x"no"; then
                 )
   AC_LANG_POP([Fortran])
 
-  AC_PROG_CC
-  AC_PROG_CXX
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
