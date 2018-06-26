@@ -97,6 +97,7 @@ if (MPI)
 
     if(ICB)
         include_directories(${MPI_C_INCLUDE_PATH})
+        include_directories(${MPI_CXX_INCLUDE_PATH})
         check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h" MPI_Comm_c2f_FOUND)
         if(NOT ${MPI_Comm_c2f_FOUND})
           message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
