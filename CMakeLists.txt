@@ -571,3 +571,60 @@ if (COVERALLS)
         "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
 endif()
 
+function(libsummary title include libraries)
+    message("   -- ${title}:")
+    foreach(inc ${include})
+        message("      -- compile: ${inc}")
+    endforeach()
+    foreach(lib ${libraries})
+        message("      -- link:    ${lib}")
+    endforeach()
+endfunction(libsummary)
+
+function(cprsummary title compiler debug_flags minsizerel_flags release_flags relwithdebinfo_flags more_flags)
+    message("   -- ${title}:      ${compiler}")
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR "${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+        message("   -- ${title}FLAGS: ${debug_flags} ${more_flags}")
+    endif()
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" OR "${CMAKE_BUILD_TYPE}" STREQUAL "MINSIZEREL")
+        message("   -- ${title}FLAGS: ${minsizerel_flags} ${more_flags}")
+    endif()
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Release" OR "${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+        message("   -- ${title}FLAGS: ${release_flags} ${more_flags}")
+    endif()
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" OR "${CMAKE_BUILD_TYPE}" STREQUAL "RELWITHDEBINFO")
+        message("   -- ${title}FLAGS: ${relwithdebinfo_flags} ${more_flags}")
+    endif()
+endfunction(cprsummary)
+
+message("-- Configuration summary for arpack-ng-${arpack_ng_VERSION}:")
+message("   -- prefix: ${CMAKE_INSTALL_PREFIX}")
+cprsummary("FC" "${CMAKE_Fortran_COMPILER}"
+                "${CMAKE_Fortran_FLAGS_DEBUG}"
+                "${CMAKE_Fortran_FLAGS_MINSIZEREL}"
+                "${CMAKE_Fortran_FLAGS_RELEASE}"
+                "${CMAKE_Fortran_FLAGS_RELWITHDEBINFO}"
+                "${CMAKE_Fortran_FLAGS}")
+if (ICB)
+    cprsummary("CC" "${CMAKE_C_COMPILER}"
+                    "${CMAKE_C_FLAGS_DEBUG}"
+                    "${CMAKE_C_FLAGS_MINSIZEREL}"
+                    "${CMAKE_C_FLAGS_RELEASE}"
+                    "${CMAKE_C_FLAGS_RELWITHDEBINFO}"
+                    "${CMAKE_C_FLAGS}")
+    cprsummary("CXX" "${CMAKE_CXX_COMPILER}"
+                     "${CMAKE_CXX_FLAGS_DEBUG}"
+                     "${CMAKE_CXX_FLAGS_MINSIZEREL}"
+                     "${CMAKE_CXX_FLAGS_RELEASE}"
+                     "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+                     "${CMAKE_CXX_FLAGS}")
+endif()
+if (MPI)
+    libsummary("MPIFC" "${MPI_Fortran_INCLUDE_PATH}" "${MPI_Fortran_LIBRARIES}")
+    if (ICB)
+        libsummary("MPICC" "${MPI_C_INCLUDE_PATH}" "${MPI_C_LIBRARIES}")
+        libsummary("MPICXX" "${MPI_CXX_INCLUDE_PATH}" "${MPI_CXX_LIBRARIES}")
+    endif()
+endif()
+libsummary("BLAS" "" "${BLAS_LIBRARIES}")
+libsummary("LAPACK" "" "${LAPACK_LIBRARIES}")
