@@ -113,6 +113,9 @@ AC_ARG_ENABLE([icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [])
+
+AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
+
 if test x"$enable_icb" != x"no"; then
   AC_LANG_PUSH([Fortran])
   AC_MSG_CHECKING([for iso_c_binding module compilation])
@@ -138,7 +141,6 @@ if test x"$enable_icb" != x"no"; then
 
   AC_PROG_CC
   AC_PROG_CXX
-  AM_CONDITIONAL([ICB], [true])
   AC_CONFIG_FILES([arpack.h:arpack.h])
   AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
