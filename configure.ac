@@ -228,6 +228,8 @@ AC_MSG_RESULT([
 Configuration summary for $PACKAGE_NAME ($VERSION)
 --------------------------------------------------
 Installation prefix : $prefix
+MPI enabled         : $enable_mpi
+ICB enabled         : $enable_icb
 FC                  : $FC
 FCFLAGS             : $FCFLAGS
 CC                  : $CC
