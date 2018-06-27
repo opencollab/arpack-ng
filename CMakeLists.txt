@@ -80,7 +80,57 @@ if (ICB)
     else()
       message("-- Fortran compiler does support iso_c_binding.")
     endif()
-endif()
+else()
+    # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap...
+
+    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -ffixed-line-length-none")
+    elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp -extend-source")
+    else ()
+      message(WARNING "build script does not know how to enable your Fortran compiler's preprocessor and support for lines longer than 72 characters: set them manually via FFLAGS.")
+    endif ()
+
+    set(SCALARFUNS naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb)
+    set(COMPLEXFUNS, naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc)
+
+    set(BLASFUNS1 axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs)
+    set(BLASFUNS2 dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap)
+    set(BLASFUNS3 dotc geru unm2r)
+    set(BLASFUNS4 COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV)
+    set(BLASFUNS5 scnrm2 dznrm2 csscal zdscal)
+
+    if (SYMBOLSUFFIX)
+        foreach (f IN LISTS SCALARFUNS BLASFUNS1 BLASFUNS2)
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ds${f}=s${f}${SYMBOLSUFFIX} -Dd${f}=d${f}${SYMBOLSUFFIX}")
+        endforeach ()
+
+        foreach (f IN LISTS COMPLEXFUNS BLASFUNS1 BLASFUNS3)
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Dc${f}=c${f}${SYMBOLSUFFIX} -Dz${f}=z${f}${SYMBOLSUFFIX}")
+        endforeach ()
+
+        foreach (f IN LISTS BLASFUNS4)
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DS${f}=S${f}${SYMBOLSUFFIX} -DD${f}=D${f}${SYMBOLSUFFIX}")
+        endforeach ()
+
+        foreach (f IN LISTS BLASFUNS5)
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
+        endforeach ()
+    endif ()
+
+    set(CFUNS sgemm snaupd sneupd dnaupd dneupd cheev)
+    foreach (f IN LISTS CFUNS)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
+        list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
+    endforeach ()
+
+    include(FortranCInterface)
+    FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
+
+    FortranCInterface_VERIFY()
+endif ()
 
 #if (SYSTEM_BLAS)
     find_package(BLAS REQUIRED)
@@ -215,51 +265,6 @@ if (INTERFACE64)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBLASINT=int64_t")
 endif ()
 
-if (SYMBOLSUFFIX)
-    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -ffixed-line-length-none")
-    elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp -extend-source")
-    else ()
-      message(WARNING "build script does not know how to enable your Fortran compiler's preprocessor and support for lines longer than 72 characters: set them manually via FFLAGS.")
-    endif ()
-
-    set(SCALARFUNS naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb)
-    set(COMPLEXFUNS, naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc)
-
-    set(BLASFUNS1 axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs)
-    set(BLASFUNS2 dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap)
-    set(BLASFUNS3 dotc geru unm2r)
-    set(BLASFUNS4 COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV)
-    set(BLASFUNS5 scnrm2 dznrm2 csscal zdscal)
-
-    foreach (f IN LISTS SCALARFUNS BLASFUNS1 BLASFUNS2)
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ds${f}=s${f}${SYMBOLSUFFIX} -Dd${f}=d${f}${SYMBOLSUFFIX}")
-    endforeach ()
-
-    foreach (f IN LISTS COMPLEXFUNS BLASFUNS1 BLASFUNS3)
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Dc${f}=c${f}${SYMBOLSUFFIX} -Dz${f}=z${f}${SYMBOLSUFFIX}")
-    endforeach ()
-
-    foreach (f IN LISTS BLASFUNS4)
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DS${f}=S${f}${SYMBOLSUFFIX} -DD${f}=D${f}${SYMBOLSUFFIX}")
-    endforeach ()
-
-    foreach (f IN LISTS BLASFUNS5)
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
-    endforeach ()
-endif ()
-
-set(CFUNS sgemm snaupd sneupd dnaupd dneupd cheev)
-foreach (f IN LISTS CFUNS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
-  list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
-endforeach ()
-
-include(FortranCInterface)
-FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ############################
