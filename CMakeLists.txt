@@ -461,13 +461,15 @@ add_custom_command(TARGET dnsimp_test POST_BUILD
 )
 add_test(dnsimp_tst Tests/dnsimp)
 
-add_executable(bug_1315_single TESTS/bug_1315_single.c)
-target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1315_single_tst Tests/bug_1315_single)
+if (NOT ICB)
+    add_executable(bug_1315_single TESTS/bug_1315_single.c)
+    target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
+    add_test(bug_1315_single_tst Tests/bug_1315_single)
 
-add_executable(bug_1315_double TESTS/bug_1315_double.c)
-target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1315_double_tst Tests/bug_1315_double)
+    add_executable(bug_1315_double TESTS/bug_1315_double.c)
+    target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
+    add_test(bug_1315_double_tst Tests/bug_1315_double)
+endif()
 
 add_executable(bug_1323 TESTS/bug_1323.f)
 target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})

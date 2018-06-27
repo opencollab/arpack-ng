@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+// This test calls fortran from C the old-fashion cumbersome way.
+// Note: icb_arpack_c tests the same kind of things using ICB.
+
 #ifdef INCLUDE_FCMANGLE
 #include "FCMangle.h"
 #endif
