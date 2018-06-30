@@ -19,60 +19,14 @@ addons:
       - libblas-dev
       - liblapack-dev
 
-env:
-  - BUILD=cmake
-  - BUILD=configure
-
-script:
-  # CMAKE
-  - if [ "$BUILD" == "cmake" ]; then mkdir build ; fi
-  - if [ "$BUILD" == "cmake" ]; then cd build ; fi
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=OFF .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=ON  .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON  -D ICB=OFF .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=ON  -D ICB=ON  .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=OFF -D ICB=OFF .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch.
-  - if [ "$BUILD" == "cmake" ]; then cmake -D BUILD_SHARED_LIBS=ON -D MPI=OFF -D ICB=ON  .. ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all ; fi
-  - if [ "$BUILD" == "cmake" ]; then make test ; fi
-  - if [ "$BUILD" == "cmake" ]; then rm -fr * ; fi # Restart cmake from scratch for code coverage
-  - if [ "$BUILD" == "cmake" ]; then cmake -D EXAMPLES=ON -DCOVERALLS=ON -D MPI=ON -D ICB=ON ..  ; fi
-  - if [ "$BUILD" == "cmake" ]; then make all test coveralls VERBOSE=1 ; fi
-  # CONFIGURE
-  - if [ "$BUILD" == "configure" ]; then ./bootstrap ; fi
-  - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi ; fi
-  - if [ "$BUILD" == "configure" ]; then make all ; fi
-  - if [ "$BUILD" == "configure" ]; then make check ; fi
-  - if [ "$BUILD" == "configure" ]; then make distcheck ; fi
-  - if [ "$BUILD" == "configure" ]; then ./configure --enable-mpi --enable-icb ; fi
-  - if [ "$BUILD" == "configure" ]; then make all ; fi
-  - if [ "$BUILD" == "configure" ]; then make check ; fi
-  - if [ "$BUILD" == "configure" ]; then ./configure --enable-icb ; fi
-  - if [ "$BUILD" == "configure" ]; then make all ; fi
-  - if [ "$BUILD" == "configure" ]; then make check ; fi
-  - if [ "$BUILD" == "configure" ]; then ./configure ; fi
-  - if [ "$BUILD" == "configure" ]; then make all ; fi
-  - if [ "$BUILD" == "configure" ]; then make check ; fi
+jobs:
+  include:
+    - script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=OFF               .. && make VERBOSE=1 && make test;
+    - script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF               .. && make VERBOSE=1 && make test;
+    - script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=ON                .. && make VERBOSE=1 && make test;
+    - script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON                .. && make VERBOSE=1 && make test;
+    - script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON -DCOVERALLS=ON .. && make VERBOSE=1 && make test;
+    - script: ./bootstrap && ./configure                                                                && make VERBOSE=1 && make check && make distcheck;
+    - script: ./bootstrap && ./configure --enable-mpi                                                   && make VERBOSE=1 && make check && make distcheck;
+    - script: ./bootstrap && ./configure              --enable-icb                                      && make VERBOSE=1 && make check && make distcheck;
+    - script: ./bootstrap && ./configure --enable-mpi --enable-icb                                      && make VERBOSE=1 && make check && make distcheck;
