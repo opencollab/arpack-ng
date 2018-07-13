@@ -13,6 +13,9 @@ AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
 
+dnl Set the SONAME
+AC_SUBST([SONAME], [2:1])
+
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
