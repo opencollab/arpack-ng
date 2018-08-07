@@ -1,3 +1,6 @@
+ [ Marco Caliari ]
+ * Give up forcing the initial residual to be in the range of the operator OP after a restart (Closes: #142).
+
 arpack-ng - 3.6.2
 
  * Remove all trailing whitespaces

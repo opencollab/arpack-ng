@@ -483,6 +483,14 @@ add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
 target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 add_test(bug_79_double_complex_tst Tests/bug_79_double_complex)
 
+add_executable(bug_142 TESTS/bug_142.f)
+target_link_libraries(bug_142 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
+add_test(bug_142_tst Tests/bug_142)
+
+add_executable(bug_142_gen TESTS/bug_142_gen.f)
+target_link_libraries(bug_142_gen arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
+add_test(bug_142_gen_tst Tests/bug_142_gen)
+
 if(MPI)
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
   target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})

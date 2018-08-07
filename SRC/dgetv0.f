@@ -242,12 +242,16 @@ c        | the generalized problem when B is possibly (singular).   |
 c        %----------------------------------------------------------%
 c
          call arscnd (t2)
-         nopx = nopx + 1
-         ipntr(1) = 1
-         ipntr(2) = n + 1
-         call dcopy (n, resid, 1, workd, 1)
-         ido = -1
-         go to 9000
+         if (itry .eq. 1) then
+            nopx = nopx + 1
+            ipntr(1) = 1
+            ipntr(2) = n + 1
+            call dcopy (n, resid, 1, workd, 1)
+            ido = -1
+            go to 9000
+         else if (itry .gt. 1 .and. bmat .eq. 'G') then
+            call dcopy (n, resid, 1, workd(n + 1), 1)
+         end if
       end if
 c
 c     %-----------------------------------------%
@@ -274,7 +278,7 @@ c     %------------------------------------------------------%
 c
       call arscnd (t2)
       first = .TRUE.
-      call dcopy (n, workd(n+1), 1, resid, 1)
+      if (itry .eq. 1) call dcopy (n, workd(n + 1), 1, resid, 1)
       if (bmat .eq. 'G') then
          nbx = nbx + 1
          ipntr(1) = n + 1
