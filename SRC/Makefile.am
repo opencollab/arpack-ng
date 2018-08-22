@@ -25,7 +25,7 @@ EXTRA_DIST = debug.h stat.h version.h
 
 lib_LTLIBRARIES = libarpack@LIBSUFFIX@.la
 libarpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
-libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_init.f90
+libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_init.f
 if ICB
 libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
 libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/stat_icb.f90
