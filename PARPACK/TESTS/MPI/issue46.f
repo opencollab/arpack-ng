@@ -255,7 +255,7 @@ c        %-------------------------------------------%
 c
          rvec = .true.
 c
-         call pdseupd ( comm, rvec, 'All', select,
+         call pdseupd ( comm, rvec, 'A', select,
      &        d, v, ldv, sigma,
      &        bmat, nloc, which, nev, tol, resid, ncv, v, ldv,
      &        iparam, ipntr, workd, workl, lworkl, ierr )
