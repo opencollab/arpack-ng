@@ -113,7 +113,7 @@ void complex_symmetric_runner() {
 
   float tol = 0.0f;
   bool rvec = true;
-  float sigma = 0.0f;
+  std::complex<float> sigma(0.0f, 0.0f);
 
   std::vector<std::complex<float>> resid(N);
   std::vector<std::complex<float>> V(ncv * N);

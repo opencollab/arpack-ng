@@ -116,7 +116,7 @@ int zn() {
   int select[ncv];
   double _Complex z[(N+1)*(nev+1)];
   BLASINT ldz = N+1;
-  double sigma=0;
+  double _Complex sigma=0. + I*0.;
   int k;
   for (k=0; k < 3*N; ++k )
     workd[k] = 0;
