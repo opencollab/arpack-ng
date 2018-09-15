@@ -174,13 +174,13 @@ endif()
 #    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
 #endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
-file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/SRC/*.f)
+file(GLOB arpacksrc_STAT_SRCS dbgini.f staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
 
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_init.f90 debug_icb.f90 stat_icb.f90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_init.f90 debug_icb.f90 stat_icb.f90)
+  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_icb.f90 stat_icb.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_icb.f90 stat_icb.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -202,7 +202,7 @@ set(arpackutil_STAT_SRCS
 
 if (MPI)
     file(GLOB parpackutil_STAT_SRCS PARPACK/UTIL/MPI/*.f)
-    file(GLOB parpacksrc_STAT_SRCS PARPACK/SRC/MPI/*.f)
+    file(GLOB parpacksrc_STAT_SRCS dbgini.f staini.f PARPACK/SRC/MPI/*.f)
 endif()
 
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
