@@ -24,6 +24,9 @@ if test x"$INTERFACE64" == x"1"; then
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FFLAGS="$FFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FFLAGS="$FFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.])))
+  AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FCFLAGS="$FCFLAGS -fdefault-integer-8",
+                        AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
+                                              AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
   CFLAGS="$CFLAGS -DBLASINT=int64_t"
 fi
 
