@@ -120,7 +120,7 @@ void complex_symmetric_runner() {
   BLASINT const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
   Real const tol = 0.0;
-  Real const sigma = 0.0;
+  std::complex<Real> const sigma(0.0, 0.0);
 
   bool const rvec = true;
 
