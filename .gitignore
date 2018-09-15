@@ -40,6 +40,8 @@ TESTS/bug_58_double
 TESTS/bug_79_double_complex
 TESTS/icb_arpack_c
 TESTS/icb_arpack_cpp
+TESTS/bug_142
+TESTS/bug_142_gen
 EXAMPLES/BAND/[sd][sn]bdr[123456]
 EXAMPLES/BAND/[cz]nbdr[1234]
 EXAMPLES/COMPLEX/[cz]ndrv[1234]
