@@ -9,8 +9,12 @@ CNDRV = pcndrv1
 ZNDRV = pzndrv1
 
 check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV)
-# Disable tests for now. Needs to be run using mpirun
-#TESTS = $(check_PROGRAMS)
+
+# Run MPI tests with "mpirun -n 2"
+LOG_COMPILER = mpirun
+LOG_FLAGS = -n 2
+
+TESTS = $(check_PROGRAMS)
 
 EXTRA_DIST = debug.h stat.h
 
