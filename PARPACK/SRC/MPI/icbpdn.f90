@@ -27,7 +27,7 @@ subroutine pdnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
 end subroutine pdnaupd_c
 
 subroutine pdneupd_c(comm, rvec, howmny, select,                  &
-                     dr, di, z, ldz, sigmar, sigmai,              &
+                     dr, di, z, ldz, sigmar, sigmai, workev,      &
                      bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, info)   &
                      bind(c, name="pdneupd_c")
@@ -43,6 +43,7 @@ subroutine pdneupd_c(comm, rvec, howmny, select,                  &
   integer(kind=c_int),    value,               intent(in)    :: ldz
   real(kind=c_double),    value,               intent(in)    :: sigmar
   real(kind=c_double),    value,               intent(in)    :: sigmai
+  real(kind=c_double),    dimension(3*ncv),    intent(out)   :: workev
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
@@ -59,7 +60,7 @@ subroutine pdneupd_c(comm, rvec, howmny, select,                  &
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
   call pdneupd(comm, rvec, howmny, select,                  &
-               dr, di, z, ldz, sigmar, sigmai,              &
+               dr, di, z, ldz, sigmar, sigmai, workev,      &
                bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
 end subroutine pdneupd_c

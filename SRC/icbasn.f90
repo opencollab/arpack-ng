@@ -26,7 +26,7 @@ subroutine snaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
 end subroutine snaupd_c
 
 subroutine sneupd_c(rvec, howmny, select,                        &
-                    dr, di, z, ldz, sigmar, sigmai,              &
+                    dr, di, z, ldz, sigmar, sigmai, workev,      &
                     bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                     iparam, ipntr, workd, workl, lworkl, info)   &
                     bind(c, name="sneupd_c")
@@ -41,6 +41,7 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   integer(kind=c_int),    value,               intent(in)    :: ldz
   real(kind=c_float),     value,               intent(in)    :: sigmar
   real(kind=c_float),     value,               intent(in)    :: sigmai
+  real(kind=c_float),     dimension(3*ncv),    intent(out)   :: workev
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
@@ -57,7 +58,7 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
   call sneupd(rvec, howmny, select,                        &
-              dr, di, z, ldz, sigmar, sigmai,              &
+              dr, di, z, ldz, sigmar, sigmai, workev,      &
               bmat, n, which, nev, tol, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine sneupd_c
