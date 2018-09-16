@@ -1,3 +1,6 @@
+ [ Franck Houssen ]
+ * Add Fortran common initialization (block data).
+
  [ Marco Caliari ]
  * Give up forcing the initial residual to be in the range of the operator OP after a restart (Closes: #142).
 
