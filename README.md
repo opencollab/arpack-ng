@@ -16,22 +16,21 @@ Important Features:
 * Example driver routines that may be used as templates to implement numerous
   Shift-Invert strategies for all problem types, data types and precision.
 
-This project is a joint project between Debian, Octave and Scilab in order to
+This project started as a joint project between Debian, Octave and Scilab in order to
 provide a common and maintained version of arpack.
+This is now a community project maintained by a few volunteers.
 
 Indeed, no single release has been published by Rice university for the last
 few years and since many software (Octave, Scilab, R, Matlab...) forked it and
 implemented their own modifications, arpack-ng aims to tackle this by providing
-a common repository and maintained versions.
+a common repository, maintained versions with a testsuite.
 
 arpack-ng is replacing arpack almost everywhere.
-
 
 1. You have successfully unbundled ARPACK-NG and are now in the ARPACK-NG
    directory that was created for you.
 
-2.
-   The directory SRC contains the top level routines including
+2. The directory SRC contains the top level routines including
    the highest level reverse communication interface routines
 
 * ssaupd, dsaupd - symmetric single and double precision
@@ -70,9 +69,9 @@ arpack-ng is replacing arpack almost everywhere.
 
    The following instructions explain how to make the ARPACK library.
 
-4. Unlike ARPACK, ARPACK-NG is providing autotools based build system
-   and iso_c_binding support (which enables to call fortran subroutines
-   natively from C or C++).
+4. Unlike ARPACK, ARPACK-NG is providing autotools and cmake based build
+   system and iso_c_binding support (which enables to call fortran 
+   subroutines natively from C or C++).
 
 Therefore, the classical commands should work as expected:
    
@@ -120,13 +119,5 @@ To get iso_c_binding support:
    for templates on how to invoke the computational modes of ARPACK.
    Also look in the README.MD file for explanations concerning the
    other documents.
-
-Authors:
-* Danny Sorensen   at  sorensen@caam.rice.edu
-* Richard Lehoucq  at  rblehou@sandia.gov
-* Chao Yang        at  cyang@lbl.gov
-* Kristi Maschhoff at  kristyn@tera.com
-* Sylvestre Ledru  at  sylvestre@debian.org (current maintainer)
-* Allan Cornet
-
+ 
  Good luck and enjoy.
