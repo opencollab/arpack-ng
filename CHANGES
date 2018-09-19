@@ -1,8 +1,12 @@
- [ Franck Houssen ]
+arpack-ng - 3.6.3
+
+[ Franck Houssen ]
  * Add Fortran common initialization (block data).
 
  [ Marco Caliari ]
  * Give up forcing the initial residual to be in the range of the operator OP after a restart (Closes: #142).
+
+ -- Sylvestre Ledru <sylvestre@debian.org> Wed, 19 Sep 2018 09:59:59 +0200
 
 arpack-ng - 3.6.2
 
