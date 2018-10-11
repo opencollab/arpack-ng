@@ -18,6 +18,8 @@ addons:
       - autoconf
       - libblas-dev
       - liblapack-dev
+      - diffutils
+      - findutils
 
 jobs:
   include:
@@ -30,3 +32,9 @@ jobs:
     - script: ./bootstrap && ./configure --enable-mpi                                                   && make VERBOSE=1 && make check && make distcheck;
     - script: ./bootstrap && ./configure              --enable-icb                                      && make VERBOSE=1 && make check && make distcheck;
     - script: ./bootstrap && ./configure --enable-mpi --enable-icb                                      && make VERBOSE=1 && make check && make distcheck;
+
+after_failure:
+
+  # show build error or test log to know what is wrong if errors occured.
+  - if [[ -f build/Testing/Temporary/LastTest.log ]]; then tail -n 250 build/Testing/Temporary/LastTest.log; fi
+  - find . -name test-suite.log | xargs tail -n 250
