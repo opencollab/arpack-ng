@@ -36,5 +36,5 @@ jobs:
 after_failure:
 
   # show build error or test log to know what is wrong if errors occured.
-  - if [[ -f build/Testing/Temporary/LastTest.log ]]; then tail -n 250 build/Testing/Temporary/LastTest.log; fi
-  - find . -name test-suite.log | xargs tail -n 250
+  - if [[ -f $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log ]]; then tail -n 300 $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log; fi
+  - find . -name test-suite.log | xargs tail -n 300
