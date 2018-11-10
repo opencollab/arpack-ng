@@ -140,13 +140,14 @@ inline void naupd(int& ido, bmat const bmat_option, int n,
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select, float* dr,
-                  float* di, float* z, int ldz, float sigmar, float sigmai,
+                  float* di, float* z, int ldz,
+                  float sigmar, float sigmai, float * workev,
                   bmat const bmat_option, int n, which const ritz_option,
                   int nev, float tol, float* resid, int ncv, float* v, int ldv,
                   int* iparam, int* ipntr, float* workd, float* workl,
                   int lworkl, int& info) {
   internal::sneupd_c(rvec, internal::convert_to_char(howmny_option), select, dr,
-                     di, z, ldz, sigmar, sigmai,
+                     di, z, ldz, sigmar, sigmai, workev,
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
                      ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
@@ -162,13 +163,14 @@ inline void naupd(int& ido, bmat const bmat_option, int n,
 }
 
 inline void neupd(bool rvec, howmny const howmny_option, int* select,
-                  double* dr, double* di, double* z, int ldz, double sigmar,
-                  double sigmai, bmat const bmat_option, int n,
+                  double* dr, double* di, double* z, int ldz,
+                  double sigmar, double sigmai, double * workev,
+                  bmat const bmat_option, int n,
                   which const ritz_option, int nev, double tol, double* resid,
                   int ncv, double* v, int ldv, int* iparam, int* ipntr,
                   double* workd, double* workl, int lworkl, int& info) {
   internal::dneupd_c(rvec, internal::convert_to_char(howmny_option), select, dr,
-                     di, z, ldz, sigmar, sigmai,
+                     di, z, ldz, sigmar, sigmai, workev,
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol, resid,
                      ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
