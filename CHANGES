@@ -1,8 +1,14 @@
+arpack-ng - 3.6.4
+
+[ Franck Houssen ]
+ * [BUG FIX] ICB: missing workev for *[ds]neupd (real+not-sym) => API/ABI change for *[ds]neupd_c.
+
+ -- Sylvestre Ledru <sylvestre@debian.org> Sat, 10 Nov 2018 09:28:08 +0100
+
 arpack-ng - 3.6.3
 
 [ Franck Houssen ]
  * Add Fortran common initialization (block data).
- * [BUG FIX] ICB: missing workev for *[ds]neupd (real+not-sym) => API/ABI change for *[ds]neupd_c.
 
  [ Marco Caliari ]
  * Give up forcing the initial residual to be in the range of the operator OP after a restart (Closes: #142).
