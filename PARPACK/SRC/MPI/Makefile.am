@@ -36,13 +36,13 @@ lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
 libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/staini.f
-if ICB
-libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
-libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/stat_icb.f90
-endif
 libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
 	$(top_builddir)/SRC/libarpack@LIBSUFFIX@.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
 libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
+if ICB
+libparpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
+libarpack@LIBSUFFIX@_la_FCFLAGS = -I$(top_builddir) -I$(top_builddir)/ICB
+endif

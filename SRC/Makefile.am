@@ -27,9 +27,9 @@ lib_LTLIBRARIES = libarpack@LIBSUFFIX@.la
 libarpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
 libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/staini.f
-if ICB
-libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/debug_icb.f90
-libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/stat_icb.f90
-endif
 libarpack@LIBSUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
 libarpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
+if ICB
+libarpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
+libarpack@LIBSUFFIX@_la_FCFLAGS = -I$(top_builddir) -I$(top_builddir)/ICB
+endif

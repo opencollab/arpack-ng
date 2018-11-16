@@ -91,8 +91,8 @@ if test x"$enable_icb" != x"no"; then
                 )
   AC_LANG_POP([Fortran])
 
-  AC_CONFIG_FILES([arpack.h:arpack.h])
-  AC_CONFIG_FILES([arpack.hpp:arpack.hpp])
+  AC_CONFIG_FILES([ICB/arpack.h:ICB/arpack.h])
+  AC_CONFIG_FILES([ICB/arpack.hpp:ICB/arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
     AC_LANG_PUSH([Fortran])
     AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
@@ -100,8 +100,8 @@ if test x"$enable_icb" != x"no"; then
     AC_FC_WRAPPERS dnl set FCLIBS
     AC_LANG_POP([Fortran])
 
-    AC_CONFIG_FILES([parpack.h:parpack.h])
-    AC_CONFIG_FILES([parpack.hpp:parpack.hpp])
+    AC_CONFIG_FILES([ICB/parpack.h:ICB/parpack.h])
+    AC_CONFIG_FILES([ICB/parpack.hpp:ICB/parpack.hpp])
     AC_LANG_PUSH([C])
     AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))
     AC_SUBST([MPI_C_LIBS], ["$MPILIBS $FCLIBS"])
@@ -191,22 +191,21 @@ fi
 dnl Add support for debuging arpack
 AC_CONFIG_FILES([debug.h:debug.h])
 if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([debug_c.h:debug_c.h])
-  AC_CONFIG_FILES([debug_c.hpp:debug_c.hpp])
+  AC_CONFIG_FILES([ICB/debug_c.h:ICB/debug_c.h])
+  AC_CONFIG_FILES([ICB/debug_c.hpp:ICB/debug_c.hpp])
 fi
 
 dnl Add support for arpack statistics
 AC_CONFIG_FILES([stat.h:stat.h])
 if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([stat_c.h:stat_c.h])
-  AC_CONFIG_FILES([stat_c.hpp:stat_c.hpp])
+  AC_CONFIG_FILES([ICB/stat_c.h:ICB/stat_c.h])
+  AC_CONFIG_FILES([ICB/stat_c.hpp:ICB/stat_c.hpp])
 fi
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
-	Makefile
 	SRC/Makefile
 	UTIL/Makefile
 	TESTS/Makefile
@@ -217,6 +216,12 @@ AC_CONFIG_FILES([
 	EXAMPLES/SIMPLE/Makefile
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
+])
+if test x"$enable_icb" != x"no"; then
+  AC_CONFIG_FILES([ICB/Makefile])
+fi
+if test x"$enable_mpi" != x"no"; then
+AC_CONFIG_FILES([
 	PARPACK/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
@@ -226,7 +231,10 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
-AC_OUTPUT
+fi
+AC_OUTPUT([
+	Makefile
+])
 
 AC_MSG_RESULT([
 --------------------------------------------------
