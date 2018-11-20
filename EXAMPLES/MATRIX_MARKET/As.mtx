@@ -1,0 +1,69 @@
+%% MatrixMarket matrix coordinate double symmetric
+% This example is 0-based without (optional) nnz
+%
+% This is a 1D laplacian matrix (fixed at first end <=> invertible)
+%
+%              1                              1          
+%              .                             .--.        
+%             / \                            |  |        
+%            /   \ 0                       0 |  |        
+%  phi_i  --o  o  o--o--  =>  grad(phi_i)  --o  o  o--o--
+%              i  j                            i|  |j    
+%                                               |  |     
+%                                               .--.     
+%                                                -1.     
+%
+%                 1                              1       
+%                 .                             .--.     
+%                / \                            |  |     
+%               /   \ 0                        i|  |j    
+%  phi_j  --o--o  o  o--  =>  grad(phi_j)  --o--o  o  o--
+%              i  j                                |  | 0
+%                                                  |  |  
+%                                                  .--.  
+%                                                   -1.  
+%
+%                  i     j
+%              | l_ii  l_ij | i
+%  laplacian = |            |
+%              | l_ji  l_jj | j
+%
+%  distance(i, j) = d = 1.
+%
+%  l_ii = int_[i,j](grad(phi_i).grad(phi_i)) = d*(-1.)*(-1.) =  1.
+%  l_ij = int_[i,j](grad(phi_i).grad(phi_j)) = d*(-1.)*( 1.) = -1.
+%  l_ji = int_[i,j](grad(phi_j).grad(phi_i)) = d*( 1.)*(-1.) = -1.
+%  l_jj = int_[i,j](grad(phi_j).grad(phi_j)) = d*( 1.)*( 1.) =  1.
+%
+% A <=> assembly of {kappa*laplacian}
+%       where kappa = 100
+%
+% n m [nnz]
+% i j Aij
+
+8 8
+
+0  0    1.
+1  1  200.
+2  2  200.
+3  3  200.
+4  4  200.
+5  5  200.
+6  6  200.
+7  7  100.
+
+1  0     0.00
+2  1  -100.00
+3  2  -100.00
+4  3  -100.00
+5  4  -100.00
+6  5  -100.00
+7  6  -100.00
+
+0  1     0.00
+1  2  -100.00
+2  3  -100.00
+3  4  -100.00
+4  5  -100.00
+5  6  -100.00
+6  7  -100.00

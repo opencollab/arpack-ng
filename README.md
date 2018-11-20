@@ -15,6 +15,8 @@ Important Features:
 * Routines for The Singular Value Decomposition.
 * Example driver routines that may be used as templates to implement numerous
   Shift-Invert strategies for all problem types, data types and precision.
+* arpackmm: utility to test arpack with matrix market files.
+  Note: to run this utility, you need the eigen library (to handle RCI).
 
 This project started as a joint project between Debian, Octave and Scilab in order to
 provide a common and maintained version of arpack.

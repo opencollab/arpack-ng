@@ -20,6 +20,7 @@ addons:
       - liblapack-dev
       - diffutils
       - findutils
+      - libeigen3-dev
 
 stages:
   # order stages
@@ -62,6 +63,9 @@ jobs:
     script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=OFF -D ICB=ON  .. && make VERBOSE=1 && make test  && make package_source;
   - stage: xenial
     dist: xenial
+    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=OFF -DICBEXMM=ON .. && make VERBOSE=1 && make test  && make package_source;
+  - stage: xenial
+    dist: xenial
     script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. && make VERBOSE=1 && make test  && make package_source;
   - stage: xenial
     dist: xenial
@@ -74,11 +78,14 @@ jobs:
     script: ./bootstrap && ./configure              --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
   - stage: xenial
     dist: xenial
+    script: ./bootstrap && ./configure              --enable-icb-exmm                   && make VERBOSE=1 && make check && make distcheck;
+  - stage: xenial
+    dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
   # xenial <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: xenial
-    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON .. && make VERBOSE=1 && make test;
+    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. && make VERBOSE=1 && make test;
 
 after_failure:
 
