@@ -44,5 +44,5 @@ libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
 if ICB
 libparpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libarpack@LIBSUFFIX@_la_FCFLAGS = -I$(top_builddir) -I$(top_builddir)/ICB
+libarpack@LIBSUFFIX@_la_FCFLAGS = -I$(top_srcdir)/ICB
 endif

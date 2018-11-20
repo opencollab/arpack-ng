@@ -28,11 +28,11 @@ bug_142_gen_SOURCES = bug_142_gen.f
 if ICB
 icb_arpack_c_SOURCES = icb_arpack_c.c
 icb_arpack_c_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
-icb_arpack_c_CFLAGS = -I$(top_builddir)/ICB
+icb_arpack_c_CFLAGS = -I$(top_srcdir)/ICB
 
 icb_arpack_cpp_SOURCES = icb_arpack_cpp.cpp
 icb_arpack_cpp_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
-icb_arpack_cpp_CPPFLAGS = -I$(top_builddir)/ICB
+icb_arpack_cpp_CPPFLAGS = -I$(top_srcdir)/ICB
 else
 bug_1315_single_SOURCES = bug_1315_single.c
 bug_1315_double_SOURCES = bug_1315_double.c

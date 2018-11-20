@@ -91,8 +91,6 @@ if test x"$enable_icb" != x"no"; then
                 )
   AC_LANG_POP([Fortran])
 
-  AC_CONFIG_FILES([ICB/arpack.h:ICB/arpack.h])
-  AC_CONFIG_FILES([ICB/arpack.hpp:ICB/arpack.hpp])
   if test x"$enable_mpi" != x"no"; then
     AC_LANG_PUSH([Fortran])
     AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
@@ -100,8 +98,6 @@ if test x"$enable_icb" != x"no"; then
     AC_FC_WRAPPERS dnl set FCLIBS
     AC_LANG_POP([Fortran])
 
-    AC_CONFIG_FILES([ICB/parpack.h:ICB/parpack.h])
-    AC_CONFIG_FILES([ICB/parpack.hpp:ICB/parpack.hpp])
     AC_LANG_PUSH([C])
     AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))
     AC_SUBST([MPI_C_LIBS], ["$MPILIBS $FCLIBS"])
@@ -186,20 +182,6 @@ else
   AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
   dnl Needed for BLAS check and for tests (even when suffix is empty)
   CFLAGS="$CFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
-fi
-
-dnl Add support for debuging arpack
-AC_CONFIG_FILES([debug.h:debug.h])
-if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([ICB/debug_c.h:ICB/debug_c.h])
-  AC_CONFIG_FILES([ICB/debug_c.hpp:ICB/debug_c.hpp])
-fi
-
-dnl Add support for arpack statistics
-AC_CONFIG_FILES([stat.h:stat.h])
-if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([ICB/stat_c.h:ICB/stat_c.h])
-  AC_CONFIG_FILES([ICB/stat_c.hpp:ICB/stat_c.hpp])
 fi
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
