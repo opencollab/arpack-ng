@@ -179,8 +179,8 @@ file(GLOB arpacksrc_STAT_SRCS dbgini.f staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.f90 debug_icb.f90 stat_icb.f90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 debug_icb.f90 stat_icb.f90)
+  file(GLOB arpacksrc_ICB SRC/icba*.f90 ICB/debug_icb.f90 ICB/stat_icb.f90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 ICB/debug_icb.f90 ICB/stat_icb.f90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -209,24 +209,24 @@ endif()
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
 if(ICB)
-  install(FILES arpack.h DESTINATION include/arpack)
-  install(FILES arpack.hpp DESTINATION include/arpack)
+  install(FILES ICB/arpack.h DESTINATION include/arpack)
+  install(FILES ICB/arpack.hpp DESTINATION include/arpack)
   if (MPI)
-    install(FILES parpack.h DESTINATION include/arpack)
-    install(FILES parpack.hpp DESTINATION include/arpack)
+    install(FILES ICB/parpack.h DESTINATION include/arpack)
+    install(FILES ICB/parpack.hpp DESTINATION include/arpack)
   endif()
 endif()
 
 install(FILES debug.h DESTINATION include/arpack)
 if(ICB)
-  install(FILES debug_c.h DESTINATION include/arpack)
-  install(FILES debug_c.hpp DESTINATION include/arpack)
+  install(FILES ICB/debug_c.h DESTINATION include/arpack)
+  install(FILES ICB/debug_c.hpp DESTINATION include/arpack)
 endif()
 
 install(FILES stat.h DESTINATION include/arpack)
 if(ICB)
-  install(FILES stat_c.h DESTINATION include/arpack)
-  install(FILES stat_c.hpp DESTINATION include/arpack)
+  install(FILES ICB/stat_c.h DESTINATION include/arpack)
+  install(FILES ICB/stat_c.hpp DESTINATION include/arpack)
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})
@@ -499,23 +499,23 @@ endif()
 
 if(ICB)
   add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
-  target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.h
+  target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
   target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
   add_test(icb_arpack_c_tst Tests/icb_arpack_c)
 
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
-  target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}) # Get arpack.hpp
+  target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
   target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
   add_test(icb_arpack_cpp_tst Tests/icb_arpack_cpp)
 
   if (MPI)
     add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
-    target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_C_INCLUDE_DIRS}) # Get parpack.h mpi.h
+    target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${MPI_C_INCLUDE_DIRS}) # Get parpack.h mpi.h
     target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_C_LIBRARIES})
     add_test(icb_parpack_c_tst mpirun -n 2 Tests/icb_parpack_c)
 
     add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
-    target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR} ${MPI_CXX_INCLUDE_DIRS}) # Get parpack.hpp mpi.h
+    target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${MPI_CXX_INCLUDE_DIRS}) # Get parpack.hpp mpi.h
     target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_CXX_LIBRARIES})
     add_test(icb_parpack_cpp_tst mpirun -n 2 Tests/icb_parpack_cpp)
   endif()
