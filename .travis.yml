@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 
 language: c
 
@@ -22,12 +22,16 @@ addons:
       - findutils
       - libeigen3-dev
 
+services:
+  - docker
+
 stages:
   # order stages
   - name: precise
   - name: trusty
   - name: xenial
   - name: coverage
+  - name: interface64
 
 jobs:
   include:
@@ -86,6 +90,44 @@ jobs:
   - stage: coverage
     dist: xenial
     script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. && make VERBOSE=1 && make test;
+  # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
+  - stage: interface64
+    allow_failure:
+    dist: xenial
+    script: |
+      sudo docker pull debian                                                                                           \
+      &&                                                                                                                \
+      sudo docker run debian /bin/bash -c                                                                               \
+      "cat /etc/os-release                                                                                           && \
+       more /etc/apt/sources.list                                                                                    && \
+       sed -e 's/stretch/testing/'            -i /etc/apt/sources.list                                               && \
+       sed -e 's/main/main non-free contrib/' -i /etc/apt/sources.list                                               && \
+       more /etc/apt/sources.list                                                                                    && \
+       export DEBIAN_FRONTEND=noninteractive                                                                         && \
+       apt-get -y                                                                 update                             && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
+       cat /etc/os-release                                                                                           && \
+       apt-get -y install dialog apt-utils                                                                           && \
+       echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
+       apt-get -y install build-essential                                                                            && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libeigen3-dev            && \
+       cd /tmp                                                                                                       && \
+       git clone https://github.com/fghoussen/arpack-ng                                                              && \
+       cd arpack-ng                                                                                                  && \
+       git checkout ilp64                                                                                            && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
+       ./bootstrap                                                                                                   && \
+       export FFLAGS='-I/usr/include/mkl'                                                                            && \
+       export FCFLAGS='-I/usr/include/mkl'                                                                           && \
+       export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                               && \
+       export INTERFACE64=1                                                                                          && \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 -enable-icb-exmm --enable-mpi                    \
+                   --disable-dependency-tracking                                                                     && \
+       export VERBOSE=1                                                                                              && \
+       make all                                                                                                      && \
+       make check"
 
 after_failure:
 

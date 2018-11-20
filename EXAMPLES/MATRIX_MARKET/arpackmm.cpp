@@ -213,8 +213,8 @@ class options {
 
     string fileA;
     string fileB;
-    int nbEV;
-    int nbCV;
+    a_int nbEV;
+    a_int nbCV;
     bool stdPb; // Standard or generalized (= not standard).
     bool symPb;
     string mag; // Magnitude <=> "which" arpack parameter.
@@ -249,8 +249,8 @@ int readMatrixMarket(string const & fileName, EigMatR & M, int const & verbose, 
   ifstream inp(fileName);
   if (!inp) {cerr << "Error: can not open " << fileName << endl; return 1;}
 
-  unsigned int l = 0, n = 0, m = 0, nnz = 0;
-  vector<unsigned int> i, j;
+  a_uint l = 0, n = 0, m = 0, nnz = 0;
+  vector<a_uint> i, j;
   vector<double> Mij;
   do {
     // Skip comments.
@@ -276,7 +276,7 @@ int readMatrixMarket(string const & fileName, EigMatR & M, int const & verbose, 
       }
     }
     else { // Body.
-      unsigned int k = 0, l = 0;
+      a_uint k = 0, l = 0;
       double Mkl = 0.;
       inpSS >> k >> l >> Mkl;
       if (!inpSS) {cerr << "Error: bad line (" << fileName << ", line " << l << ")" << endl; return 1;}
@@ -329,40 +329,40 @@ int arpackSolve(options const & opt, int const & mode,
   // dgetv0 rely on resid/v: resid/v should be initialized to 0.0 to avoid "bad" starting random vectors.
 
   char const * which = opt.mag.c_str();
-  int ido = 0; // First call to arpack.
+  a_int ido = 0; // First call to arpack.
   char const * iMat = "I";
   char const * gMat = "G";
   char const * bMat = (mode == 1) ? iMat : gMat;
-  int nbDim = A.rows();
-  double * resid = new double[nbDim]; for (int n = 0; n < nbDim; n++) resid[n] = 0.; // Avoid "bad" starting vector.
+  a_int nbDim = A.rows();
+  double * resid = new double[nbDim]; for (a_int n = 0; n < nbDim; n++) resid[n] = 0.; // Avoid "bad" starting vector.
   if (opt.restart) {
     ifstream rfs("resid.out");
     if (rfs.is_open()) {
-      for (int n = 0; n < nbDim; n++) rfs >> resid[n];
+      for (a_int n = 0; n < nbDim; n++) rfs >> resid[n];
       if (opt.verbose >= 2) {
         cout << endl;
         cout << "resid:" << endl;
-        for (int n = 0; n < nbDim; n++) cout << resid[n] << endl;
+        for (a_int n = 0; n < nbDim; n++) cout << resid[n] << endl;
         cout << endl;
       }
     }
   }
-  int ldv = nbDim;
-  double * v = new double[ldv*opt.nbCV]; for (int n = 0; n < ldv*opt.nbCV; n++) v[n] = 0.; // Avoid "bad" starting vector.
+  a_int ldv = nbDim;
+  double * v = new double[ldv*opt.nbCV]; for (a_int n = 0; n < ldv*opt.nbCV; n++) v[n] = 0.; // Avoid "bad" starting vector.
   if (opt.restart) {
     ifstream vfs("v.out");
     if (vfs.is_open()) {
-      int nbCV = 0; vfs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;
-      for (int n = 0; n < ldv*nbCV; n++) vfs >> v[n];
+      a_int nbCV = 0; vfs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;
+      for (a_int n = 0; n < ldv*nbCV; n++) vfs >> v[n];
       if (opt.verbose >= 2) {
         cout << endl;
         cout << "v:" << endl;
-        for (int n = 0; n < ldv*nbCV; n++) cout << v[n] << endl;
+        for (a_int n = 0; n < ldv*nbCV; n++) cout << v[n] << endl;
         cout << endl;
       }
     }
   }
-  int iparam[11];
+  a_int iparam[11];
   iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
   iparam[2] = opt.maxIt; // Maximum number of iterations.
   iparam[3] = 1; // Block size.
@@ -390,12 +390,12 @@ int arpackSolve(options const & opt, int const & mode,
     if(solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
   }
   else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; return 1;}
-  int ipntr[14];
+  a_int ipntr[14];
   double * workd = new double[3*nbDim];
-  int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
+  a_int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
   lworkl++; // The documentation says "LWORKL must be at least ..."
   double * workl = new double[lworkl];
-  int info = 0; // Use random initial residual vector.
+  a_int info = 0; // Use random initial residual vector.
   if (opt.restart) info = 1;
 
   // Arpack solve.
@@ -422,8 +422,8 @@ int arpackSolve(options const & opt, int const & mode,
 
     auto start = chrono::high_resolution_clock::now();
 
-    int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
-    int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
+    a_int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
+    a_int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
 
     EigMpVR X(workd + xIdx, nbDim); // Arpack provides X.
     EigMpVR Y(workd + yIdx, nbDim); // Arpack provides Y.
@@ -456,7 +456,7 @@ int arpackSolve(options const & opt, int const & mode,
         if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
       }
       else if (iparam[6] == 3) {
-        int zIdx = ipntr[2] - 1;        // 0-based (Fortran is 1-based).
+        a_int zIdx = ipntr[2] - 1;      // 0-based (Fortran is 1-based).
         EigMpVR Z(workd + zIdx, nbDim); // Arpack provides Z.
         Y = solver.solve(Z);            // Y = (A - sigma * B)^-1 * B * X.
         if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
@@ -479,12 +479,12 @@ int arpackSolve(options const & opt, int const & mode,
   out.nbIt = iparam[2]; // Actual number of iterations.
   bool rvec = true;
   char const * howmny = "A";
-  int * select = new int[opt.nbCV]; for (int n = 0; n < opt.nbCV; n++) select[n] = 1;
-  int const nbZ = nbDim*(opt.nbEV+1); // Caution: opt.nbEV+1 for dneupd.
-  double * z = new double[nbZ]; for (int n = 0; n < nbZ; n++) z[n] = 0.;
-  int ldz = nbDim;
+  a_int * select = new a_int[opt.nbCV]; for (a_int n = 0; n < opt.nbCV; n++) select[n] = 1;
+  a_int const nbZ = nbDim*(opt.nbEV+1); // Caution: opt.nbEV+1 for dneupd.
+  double * z = new double[nbZ]; for (a_int n = 0; n < nbZ; n++) z[n] = 0.;
+  a_int ldz = nbDim;
   if (opt.symPb) {
-    double * d = new double[opt.nbEV]; for (int k = 0; k < opt.nbEV; k++) d[k] = 0.;
+    double * d = new double[opt.nbEV]; for (a_int k = 0; k < opt.nbEV; k++) d[k] = 0.;
 
     dseupd_c(rvec, howmny, select, d, z, ldz, opt.sigmaReal,
              bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
@@ -493,16 +493,16 @@ int arpackSolve(options const & opt, int const & mode,
 
     // Arpack compute the whole spectrum.
 
-    int nbConv = iparam[4];
+    a_int nbConv = iparam[4];
     out.val.reserve(nbConv);
-    for (int i = 0; d && i < nbConv; i++) {
+    for (a_int i = 0; d && i < nbConv; i++) {
       complex<double> lambda(d[i], 0.);
       out.val.push_back(lambda);
       if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
     }
 
     out.vec.reserve(nbConv);
-    for (int i = 0; z && i < nbConv; i++) {
+    for (a_int i = 0; z && i < nbConv; i++) {
       EigVecR V = EigMpVR(z + i*nbDim, nbDim);
       out.vec.push_back(V.cast<complex<double>>());
       if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
@@ -511,8 +511,8 @@ int arpackSolve(options const & opt, int const & mode,
     if (d) {delete [] d; d = NULL;}
   }
   else {
-    double * dr = new double[opt.nbEV+1]; for (int k = 0; k < opt.nbEV+1; k++) dr[k] = 0.;
-    double * di = new double[opt.nbEV+1]; for (int k = 0; k < opt.nbEV+1; k++) di[k] = 0.;
+    double * dr = new double[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) dr[k] = 0.;
+    double * di = new double[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) di[k] = 0.;
     double * workev = new double[3*opt.nbCV];
 
     dneupd_c(rvec, howmny, select, dr, di, z, ldz, opt.sigmaReal, opt.sigmaImag, workev,
@@ -522,9 +522,9 @@ int arpackSolve(options const & opt, int const & mode,
 
     // Arpack compute only half of the spectrum.
 
-    int nbConv = iparam[4];
+    a_int nbConv = iparam[4];
     out.val.reserve(nbConv);
-    for (int i = 0; dr && di && i <= nbConv/2; i++) { // Scan first half of the spectrum.
+    for (a_int i = 0; dr && di && i <= nbConv/2; i++) { // Scan first half of the spectrum.
       // Get first half of the spectrum.
 
       complex<double> lambda(dr[i], di[i]);
@@ -538,7 +538,7 @@ int arpackSolve(options const & opt, int const & mode,
     }
 
     out.vec.reserve(nbConv);
-    for (int i = 0; z && i <= nbConv/2; i++) { // Scan half spectrum.
+    for (a_int i = 0; z && i <= nbConv/2; i++) { // Scan half spectrum.
       // Get first half of the spectrum.
 
       EigVecR Vr = EigMpVR(z + (2*i+0)*nbDim, nbDim); // Real part.
@@ -560,8 +560,8 @@ int arpackSolve(options const & opt, int const & mode,
     if (di)     {delete [] di;     di     = NULL;}
   }
 
-  ofstream rfs("resid.out"); for (int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
-  ofstream vfs("v.out"); vfs << opt.nbCV << endl; for (int n = 0; n < ldv*opt.nbCV; n++) vfs << v[n] << endl;
+  ofstream rfs("resid.out"); for (a_int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
+  ofstream vfs("v.out"); vfs << opt.nbCV << endl; for (a_int n = 0; n < ldv*opt.nbCV; n++) vfs << v[n] << endl;
 
   // Clean.
 

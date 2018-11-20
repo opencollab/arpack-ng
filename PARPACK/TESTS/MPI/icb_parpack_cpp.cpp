@@ -21,10 +21,6 @@
 #include "debug_c.hpp"  // debug parpack.
 #include "stat_c.hpp"   // arpack statistics.
 
-#ifndef BLASINT
-#define BLASINT int
-#endif
-
 void diagonal_matrix_vector_product(float const* const x, float* const y) {
   for (int i = 0; i < 1000; ++i) {
     y[i] = static_cast<float>(i + 1) * x[i];
@@ -32,18 +28,18 @@ void diagonal_matrix_vector_product(float const* const x, float* const y) {
 }
 
 void real_symmetric_runner() {
-  BLASINT N = 1000;
-  BLASINT nev = 3;
-  BLASINT ncv = 2 * nev + 1;
-  BLASINT ldz = N + 1;
-  BLASINT lworkl = 3 * (ncv * ncv) + 6 * ncv;
-  BLASINT ldv = N;
+  a_int N = 1000;
+  a_int nev = 3;
+  a_int ncv = 2 * nev + 1;
+  a_int ldz = N + 1;
+  a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
+  a_int ldv = N;
 
   bool rvec = true;
   float tol = 0.0f;
   float sigma = 0.0f;
 
-  std::array<BLASINT, 14> ipntr;
+  std::array<a_int, 14> ipntr;
 
   std::vector<float> workd(3 * N, 0.0f);
   std::vector<float> workl(3 * (ncv * ncv) + 6 * ncv, 0.0f);
@@ -51,14 +47,14 @@ void real_symmetric_runner() {
   std::vector<float> d(nev + 1);
   std::vector<float> z((N + 1) * (nev + 1));
   std::vector<float> resid(N);
-  std::vector<int> select(ncv);
+  std::vector<a_int> select(ncv);
 
-  BLASINT info = 0;
+  a_int info = 0;
 
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  std::array<BLASINT, 11> iparam;
+  std::array<a_int, 11> iparam;
   iparam[0] = 1;
   iparam[2] = 10 * N;
   iparam[3] = 1;
@@ -67,7 +63,7 @@ void real_symmetric_runner() {
 
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
 
-  BLASINT ido = 0;
+  a_int ido = 0;
 
   while (ido != 99) {
     arpack::saupd(MCW, ido, arpack::bmat::identity, N,
@@ -105,11 +101,11 @@ void diagonal_matrix_vector_product(std::complex<float> const* const x,
 }
 
 void complex_symmetric_runner() {
-  BLASINT N = 1000;
-  BLASINT nev = 1;
-  BLASINT ncv = 2 * nev + 1;
-  BLASINT ldv = N;
-  BLASINT ldz = N + 1;
+  a_int N = 1000;
+  a_int nev = 1;
+  a_int ncv = 2 * nev + 1;
+  a_int ldv = N;
+  a_int ldz = N + 1;
 
   float tol = 0.0f;
   bool rvec = true;
@@ -120,31 +116,31 @@ void complex_symmetric_runner() {
   std::vector<std::complex<float>> workd(3 * N);
   std::vector<std::complex<float>> d(nev + 1);
   std::vector<std::complex<float>> z((N + 1) * (nev + 1));
-  std::vector<int> select(ncv);
+  std::vector<a_int> select(ncv);
 
-  BLASINT lworkl = 3 * (ncv * ncv) + 6 * ncv;
+  a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
   std::vector<std::complex<float>> workl(lworkl);
 
   std::vector<std::complex<float>> rwork(ncv);
   std::vector<std::complex<float>> workev(2 * ncv);
 
-  BLASINT info = 0;
+  a_int info = 0;
 
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  std::array<BLASINT, 11> iparam;
+  std::array<a_int, 11> iparam;
   iparam[0] = 1;
   iparam[2] = 10 * N;
   iparam[3] = 1;
   iparam[4] = 0;  // number of ev found by arpack.
   iparam[6] = 1;
 
-  std::array<BLASINT, 14> ipntr;
+  std::array<a_int, 14> ipntr;
 
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
 
-  BLASINT ido = 0;
+  a_int ido = 0;
 
   while (ido != 99) {
     arpack::naupd(MCW, ido, arpack::bmat::identity, N,

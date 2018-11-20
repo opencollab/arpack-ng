@@ -4,6 +4,7 @@ arpack-ng - 3.6.4
  * [BUG FIX] ICB: missing workev for *[ds]neupd (real+not-sym) => API/ABI change for *[ds]neupd_c.
  * [BUG FIX] autotools - make distcheck: fix circular dependencies.
  * arpackmm: utility to test arpack with matrix market files.
+ * ICB: add ILP64 support.
 
  -- Sylvestre Ledru <sylvestre@debian.org> Sat, 10 Nov 2018 09:28:08 +0100
 

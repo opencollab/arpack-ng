@@ -11,7 +11,7 @@ endif
 endif
 
 noinst_LTLIBRARIES = libdbgicb.la libstaicb.la
-libdbgicb_la_SOURCES = debug_icb.f90
+libdbgicb_la_SOURCES = debug_icb.F90
 libdbgicb_la_FCFLAGS = -I$(top_builddir)
-libstaicb_la_SOURCES = stat_icb.f90
+libstaicb_la_SOURCES = stat_icb.F90
 libstaicb_la_FCFLAGS = -I$(top_builddir)

@@ -19,10 +19,6 @@
 #include "debug_c.hpp"  // debug arpack.
 #include "stat_c.hpp"   // arpack statistics.
 
-#ifndef BLASINT
-#define BLASINT int
-#endif
-
 template<typename Real>
 void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
   for (int i = 0; i < 1000; ++i) {
@@ -32,15 +28,15 @@ void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
 
 template<typename Real>
 void real_symmetric_runner() {
-  BLASINT const N = 1000;
-  BLASINT const nev = 9;
+  a_int const N = 1000;
+  a_int const nev = 9;
 
-  BLASINT const ncv = 2 * nev + 1;
-  BLASINT const ldv = N;
+  a_int const ncv = 2 * nev + 1;
+  a_int const ldv = N;
 
-  BLASINT const ldz = N + 1;
+  a_int const ldz = N + 1;
 
-  BLASINT const lworkl = 3 * (ncv * ncv) + 6 * ncv;
+  a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
   Real const tol = 0.0;
   Real const sigma = 0.0;
@@ -54,7 +50,7 @@ void real_symmetric_runner() {
   std::vector<Real> d((nev + 1));
   std::vector<Real> z((N + 1) * (nev + 1));
 
-  std::array<BLASINT, 11> iparam{};
+  std::array<a_int, 11> iparam{};
 
   iparam[0] = 1;
   iparam[2] = 10 * N;
@@ -62,9 +58,9 @@ void real_symmetric_runner() {
   iparam[4] = 0;  // number of ev found by arpack.
   iparam[6] = 1;
 
-  std::array<BLASINT, 14> ipntr{};
+  std::array<a_int, 14> ipntr{};
 
-  BLASINT info = 0, ido = 0;
+  a_int info = 0, ido = 0;
 
   while (ido != 99) {
     arpack::saupd(ido, arpack::bmat::identity, N,
@@ -81,7 +77,7 @@ void real_symmetric_runner() {
     throw std::domain_error("Error inside ARPACK routines");
   }
 
-  std::vector<int> select(ncv);
+  std::vector<a_int> select(ncv);
 
   arpack::seupd(rvec, arpack::howmny::ritz_vectors, select.data(), d.data(),
                 z.data(), ldz, sigma, arpack::bmat::identity, N,
@@ -109,15 +105,15 @@ void diagonal_matrix_vector_product(std::complex<Real> const* const x,
 
 template<typename Real>
 void complex_symmetric_runner() {
-  BLASINT const N = 1000;
-  BLASINT const nev = 9;
+  a_int const N = 1000;
+  a_int const nev = 9;
 
-  BLASINT const ncv = 2 * nev + 1;
-  BLASINT const ldv = N;
+  a_int const ncv = 2 * nev + 1;
+  a_int const ldv = N;
 
-  BLASINT const ldz = N + 1;
+  a_int const ldz = N + 1;
 
-  BLASINT const lworkl = 3 * (ncv * ncv) + 6 * ncv;
+  a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
   Real const tol = 0.0;
   std::complex<Real> const sigma(0.0, 0.0);
@@ -133,16 +129,16 @@ void complex_symmetric_runner() {
   std::vector<Real> rwork(ncv);
   std::vector<std::complex<Real>> workev(2 * ncv);
 
-  std::array<BLASINT, 11> iparam{};
+  std::array<a_int, 11> iparam{};
   iparam[0] = 1;
   iparam[2] = 10 * N;
   iparam[3] = 1;
   iparam[4] = 0;  // number of ev found by arpack.
   iparam[6] = 1;
 
-  std::array<BLASINT, 14> ipntr{};
+  std::array<a_int, 14> ipntr{};
 
-  BLASINT info = 0, ido = 0;
+  a_int info = 0, ido = 0;
 
   while (ido != 99) {
     arpack::naupd(ido, arpack::bmat::identity, N,
@@ -159,7 +155,7 @@ void complex_symmetric_runner() {
     throw std::domain_error("Error inside ARPACK routines");
   }
 
-  std::vector<int> select(ncv);
+  std::vector<a_int> select(ncv);
 
   arpack::neupd(rvec, arpack::howmny::ritz_vectors, select.data(), d.data(),
                 z.data(), ldz, sigma, workev.data(), arpack::bmat::identity, N,

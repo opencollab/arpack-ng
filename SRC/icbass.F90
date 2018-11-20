@@ -1,11 +1,11 @@
-! icbp : iso_c_binding for parpack
+! icba : iso_c_binding for arpack
 
-subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-                     iparam, ipntr, workd, workl, lworkl, info)              &
-                     bind(c, name="pssaupd_c")
+subroutine ssaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+                    iparam, ipntr, workd, workl, lworkl, info)        &
+                    bind(c, name="ssaupd_c")
   use :: iso_c_binding
   implicit none
-  integer(kind=c_int),    value,               intent(in)    :: comm
+#include "arpackdef.h"
   integer(kind=c_int),                         intent(inout) :: ido
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
@@ -22,17 +22,17 @@ subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call pssaupd(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-               iparam, ipntr, workd, workl, lworkl, info)
-end subroutine pssaupd_c
+  call ssaupd(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+              iparam, ipntr, workd, workl, lworkl, info)
+end subroutine ssaupd_c
 
-subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
-                     bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-                     iparam, ipntr, workd, workl, lworkl, info)   &
-                     bind(c, name="psseupd_c")
+subroutine sseupd_c(rvec, howmny, select, d, z, ldz, sigma,      &
+                    bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+                    iparam, ipntr, workd, workl, lworkl, info)   &
+                    bind(c, name="sseupd_c")
   use :: iso_c_binding
   implicit none
-  integer(kind=c_int),    value,               intent(in)    :: comm
+#include "arpackdef.h"
   logical(kind=c_bool),   value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
   logical(kind=c_bool),   dimension(ncv),      intent(in)    :: select
@@ -55,7 +55,7 @@ subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call psseupd(comm, rvec, howmny, select, d, z, ldz, sigma,&
-               bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-               iparam, ipntr, workd, workl, lworkl, info)
-end subroutine psseupd_c
+  call sseupd(rvec, howmny, select, d, z, ldz, sigma,      &
+              bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+              iparam, ipntr, workd, workl, lworkl, info)
+end subroutine sseupd_c

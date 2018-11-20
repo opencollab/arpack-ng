@@ -1,3 +1,5 @@
+#include "arpackdef.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -16,18 +18,15 @@
  * This is not efficient since the problem is
  * symmetric but is done to exhibit the bug.
  */
-#ifndef BLASINT
-#define BLASINT int
-#endif
 
-extern void snaupd(BLASINT *, char *, BLASINT *, char *, BLASINT *,
-		   float *, float *, BLASINT *, float *,
-		   BLASINT *, BLASINT *, BLASINT *, float *,
-		   float *, BLASINT *, BLASINT *);
+extern void snaupd(a_int *, char *, a_int *, char *, a_int *,
+		   float *, float *, a_int *, float *,
+		   a_int *, a_int *, a_int *, float *,
+		   float *, a_int *, a_int *);
 
-extern void sneupd( BLASINT*, char*, BLASINT *, float *, float *, float *, BLASINT*, float *,
-		float *, float *, char *, BLASINT *, char *, BLASINT *, float *, float *, BLASINT *,
-		float *, BLASINT *, BLASINT *, BLASINT *, float *, float *, BLASINT *, BLASINT * );
+extern void sneupd( a_int*, char*, a_int *, float *, float *, float *, a_int*, float *,
+		float *, float *, char *, a_int *, char *, a_int *, float *, float *, a_int *,
+		float *, a_int *, a_int *, a_int *, float *, float *, a_int *, a_int * );
 
 
 void matVec(float * x, float * y) {
@@ -37,26 +36,26 @@ void matVec(float * x, float * y) {
 };
 
 int main() {
-  BLASINT ido = 0;
+  a_int ido = 0;
   char bmat[] = "I";
-  BLASINT N = 1000;
+  a_int N = 1000;
   char which[] = "LM";
-  BLASINT nev = 9;
+  a_int nev = 9;
   float tol = 0;
   float resid[N];
-  BLASINT ncv = 2*nev+1;
+  a_int ncv = 2*nev+1;
   float V[ncv*N];
-  BLASINT ldv = N;
-  BLASINT iparam[11];
-  BLASINT ipntr[14];
+  a_int ldv = N;
+  a_int iparam[11];
+  a_int ipntr[14];
   float workd[3*N];
-  BLASINT rvec = 1;
+  a_int rvec = 1;
   char howmny[] = "A";
   float* dr = (float*) malloc((nev+1)*sizeof(float));
   float* di = (float*) malloc((nev+1)*sizeof(float));
-  BLASINT select[3*ncv];
+  a_int select[3*ncv];
   float z[(N+1)*(nev+1)];
-  BLASINT ldz = N+1;
+  a_int ldz = N+1;
   float sigmar=0;
   float sigmai=0;
   float workev[3*ncv];
@@ -66,8 +65,8 @@ int main() {
   float workl[3*(ncv*ncv) + 6*ncv];
   for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0;
-  BLASINT lworkl = 3*(ncv*ncv) + 6*ncv;
-  BLASINT info = 0;
+  a_int lworkl = 3*(ncv*ncv) + 6*ncv;
+  a_int info = 0;
 
   iparam[0] = 1;
   iparam[2] = 10*N;

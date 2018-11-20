@@ -15,10 +15,10 @@ ZSRC = znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f zstatn.f \
        zgetv0.f zsortc.f
 
 if ICB
-SSRC += icbass.f90 icbasn.f90
-DSRC += icbads.f90 icbadn.f90
-CSRC += icbacn.f90
-ZSRC += icbazn.f90
+SSRC += icbass.F90 icbasn.F90
+DSRC += icbads.F90 icbadn.F90
+CSRC += icbacn.F90
+ZSRC += icbazn.F90
 endif
 
 EXTRA_DIST = debug.h stat.h version.h

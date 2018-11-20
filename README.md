@@ -17,6 +17,21 @@ Important Features:
   Shift-Invert strategies for all problem types, data types and precision.
 * arpackmm: utility to test arpack with matrix market files.
   Note: to run this utility, you need the eigen library (to handle RCI).
+* ILP64 support:
+  * users: set INTERFACE64 at configure time.
+  * developpers:
+    * all files which needs ILP64 support must include "arpackdef.h".
+    * when coding, use a_int (defined in arpackdef.h) instead of int.
+      a_int stands for "architecture int": it's #defined to int or int64_t according
+      to the architecture.
+  * example: to test arpack with sequential ILP64 MKL assuming you use gnu compilers
+    ~/arpack-ng> ./bootstrap
+    ~/arpack-ng> export FFLAGS='-I/usr/include/mkl'
+    ~/arpack-ng> export FCFLAGS='-I/usr/include/mkl'
+    ~/arpack-ng> export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'
+    ~/arpack-ng> export INTERFACE64=1
+    ~/arpack-ng> ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
+    ~/arpack-ng> make all check
 
 This project started as a joint project between Debian, Octave and Scilab in order to
 provide a common and maintained version of arpack.

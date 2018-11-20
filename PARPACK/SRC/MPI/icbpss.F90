@@ -1,10 +1,11 @@
 ! icbp : iso_c_binding for parpack
 
-subroutine psnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, info)              &
-                     bind(c, name="psnaupd_c")
+                     bind(c, name="pssaupd_c")
   use :: iso_c_binding
   implicit none
+#include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   integer(kind=c_int),                         intent(inout) :: ido
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
@@ -22,28 +23,25 @@ subroutine psnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call psnaupd(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+  call pssaupd(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
-end subroutine psnaupd_c
+end subroutine pssaupd_c
 
-subroutine psneupd_c(comm, rvec, howmny, select,                  &
-                     dr, di, z, ldz, sigmar, sigmai, workev,      &
+subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
                      bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, info)   &
-                     bind(c, name="psneupd_c")
+                     bind(c, name="psseupd_c")
   use :: iso_c_binding
   implicit none
+#include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   logical(kind=c_bool),   value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
   logical(kind=c_bool),   dimension(ncv),      intent(in)    :: select
-  real(kind=c_float),     dimension(nev+1),    intent(out)   :: dr
-  real(kind=c_float),     dimension(nev+1),    intent(out)   :: di
-  real(kind=c_float),     dimension(n, nev+1), intent(out)   :: z
+  real(kind=c_float),     dimension(nev),      intent(out)   :: d
+  real(kind=c_float),     dimension(n, nev),   intent(out)   :: z
   integer(kind=c_int),    value,               intent(in)    :: ldz
-  real(kind=c_float),     value,               intent(in)    :: sigmar
-  real(kind=c_float),     value,               intent(in)    :: sigmai
-  real(kind=c_float),     dimension(3*ncv),    intent(out)   :: workev
+  real(kind=c_float),     value,               intent(in)    :: sigma
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
@@ -59,8 +57,7 @@ subroutine psneupd_c(comm, rvec, howmny, select,                  &
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call psneupd(comm, rvec, howmny, select,                  &
-               dr, di, z, ldz, sigmar, sigmai, workev,      &
+  call psseupd(comm, rvec, howmny, select, d, z, ldz, sigma,&
                bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
-end subroutine psneupd_c
+end subroutine psseupd_c
