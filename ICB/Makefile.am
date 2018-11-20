@@ -10,15 +10,6 @@ arpack_include_HEADERS += parpack.h parpack.hpp
 endif
 endif
 
-if ICB
-EXTRA_DIST = debug_c.h debug_c.hpp
-EXTRA_DIST += stat_c.h stat_c.hpp
-EXTRA_DIST += arpack.h arpack.hpp
-if MPI
-EXTRA_DIST += parpack.h parpack.hpp
-endif
-endif
-
 noinst_LTLIBRARIES = libdbgicb.la libstaicb.la
 libdbgicb_la_SOURCES = debug_icb.f90
 libdbgicb_la_FCFLAGS = -I$(top_builddir)
