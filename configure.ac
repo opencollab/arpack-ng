@@ -225,6 +225,8 @@ Configuration summary for $PACKAGE_NAME ($VERSION)
 Installation prefix : $prefix
 MPI enabled         : $enable_mpi
 ICB enabled         : $enable_icb
+F77                 : $F77
+FFLAGS              : $FFLAGS
 FC                  : $FC
 FCFLAGS             : $FCFLAGS
 CC                  : $CC
