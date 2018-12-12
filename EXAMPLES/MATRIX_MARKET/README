@@ -1,0 +1,22 @@
+arpackmm: utility to test arpack with matrix market files.
+
+This is meant to run arpack with different options to find
+what are the ones that are the best for your particular
+problem.
+
+Typically: computing small eigen values may breakdown and/or
+be slow (arpack is good at finding large eigen values only).
+To compute small eigen values, it may be a better choice
+to look for large eigen values with invert or shift+invert.
+
+If solve breaks down, you may increase --nbCV, try --restart,
+play with --shiftReal/Imag and/or --invert.
+
+To build this utility, you need:
+- to use a fortran compiler which supports iso_c_binding.
+- to have installed eigen3 (to deal with the RCI).
+- to configure arpack-ng this way:
+  - autotools:
+    ~arpack-ng> ./configure --enable-icb-exmm; make all check
+  - cmake:
+    ~arpack-ng/build> cmake -D ICBEXMM=ON ..; make all test

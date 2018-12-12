@@ -66,8 +66,40 @@ AC_ARG_ENABLE([icb],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [AS_VAR_SET([enable_icb], [no])])
 
-AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
+dnl See if compiling matrix market example based on ICB
+AC_ARG_ENABLE([icb-exmm],
+              [AC_HELP_STRING([--enable-icb-exmm],
+                              [matrix market example based on ISO_C_BINDING])],
+              [
+               AS_VAR_SET([enable_icb_exmm], [$enableval])
+               AS_VAR_SET([enable_icb], [$enableval])
+              ],
+              [AS_VAR_SET([enable_icb_exmm], [no])])
 
+AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
+if test x"$enable_icb_exmm" != x"no"; then
+  PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2]) dnl Go get eigen3.pc
+  AC_SUBST([EIGEN3_CFLAGS]) dnl Define EIGEN3_CFLAGS in Makefile.am
+  dnl TODO: How to pass /path/to/eigen from EIGEN3_CFLAGS to AC_CHECK_HEADERS ?...
+  dnl AC_CHECK_HEADERS(
+  dnl                  [eigen3/Eigen/Sparse], [],
+  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/Sparse not found])]
+  dnl                 )
+  dnl AC_CHECK_HEADERS(
+  dnl                  [eigen3/Eigen/IterativeLinearSolvers], [],
+  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/IterativeLinearSolvers not found])]
+  dnl                 )
+  dnl AC_CHECK_HEADERS(
+  dnl                  [eigen3/Eigen/SparseLU], [],
+  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseLU not found])]
+  dnl                 )
+  dnl AC_CHECK_HEADERS(
+  dnl                  [eigen3/Eigen/SparseQR], [],
+  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseQR not found])]
+  dnl                 )
+fi
+
+AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 if test x"$enable_icb" != x"no"; then
   AC_LANG_PUSH([Fortran])
   AC_MSG_CHECKING([for iso_c_binding module compilation])
@@ -202,6 +234,9 @@ AC_CONFIG_FILES([
 if test x"$enable_icb" != x"no"; then
   AC_CONFIG_FILES([ICB/Makefile])
 fi
+if test x"$enable_icb_exmm" != x"no"; then
+  AC_CONFIG_FILES([EXAMPLES/MATRIX_MARKET/Makefile])
+fi
 if test x"$enable_mpi" != x"no"; then
 AC_CONFIG_FILES([
 	PARPACK/Makefile
@@ -235,6 +270,7 @@ CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
+EIGEN               : $EIGEN3_CFLAGS
 --------------------------------------------------
 Configuration OK
 --------------------------------------------------
