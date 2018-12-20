@@ -1,0 +1,62 @@
+%% MatrixMarket matrix coordinate double general
+% This example is 1-based with (optional) nnz
+%
+% This is a 1D mass matrix
+%
+%              1        
+%              .        
+%             / \       
+%            /   \ 0    
+%  phi_i  --o  o  o--o--
+%              i  j     
+%
+%                 1     
+%                 .     
+%                / \    
+%               /   \ 0 
+%  phi_j  --o--o  o  o--
+%              i  j     
+%
+%                i     j
+%            | i_ii  i_ij | i
+%  inertia = |            |
+%            | i_ji  i_jj | j
+%
+%  distance(i, j) = d = 1.
+%
+%  i_ii = int_[i,j](phi_i.phi_i) = int_[i,j]((1-x)(1-x)) = i_jj (area under the curve)
+%  i_ij = int_[i,j](phi_i.phi_j) = int_[i,j]((1-x)   x ) = i_ji
+%  i_ji = int_[i,j](phi_j.phi_i) = int_[i,j](   x (1-x)) = d*1./6.
+%  i_jj = int_[i,j](phi_j.phi_j) = int_[i,j](   x    x ) = d*1./3.
+%
+% B <=> mass assembly
+%
+% n m [nnz]
+% i j Bij
+
+8 8 22
+
+1  1  (0.333, 0.)
+2  2  (0.333, 0.)
+3  3  (0.333, 0.)
+4  4  (0.333, 0.)
+5  5  (0.333, 0.)
+6  6  (0.333, 0.)
+7  7  (0.333, 0.)
+8  8  (0.333, 0.)
+
+2  1  (0.166, 0.)
+3  2  (0.166, 0.)
+4  3  (0.166, 0.)
+5  4  (0.166, 0.)
+6  5  (0.166, 0.)
+7  6  (0.166, 0.)
+8  7  (0.166, 0.)
+
+1  2  (0.166, 0.)
+2  3  (0.166, 0.)
+3  4  (0.166, 0.)
+4  5  (0.166, 0.)
+5  6  (0.166, 0.)
+6  7  (0.166, 0.)
+7  8  (0.166, 0.)

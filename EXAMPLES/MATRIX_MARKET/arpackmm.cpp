@@ -14,6 +14,7 @@
 #include <limits> // epsilon.
 #include <cmath> // fabs.
 #include <iomanip> // setw.
+#include <cassert> // assert.
 #include "arpack.h"
 #include "debug_c.hpp"
 
@@ -24,18 +25,22 @@
 
 using namespace std;
 
-typedef Eigen::SparseMatrix<        double>                     EigMatR; // Real.
-typedef Eigen::Triplet     <        double>                     EigCooR; // Real.
-typedef Eigen::SparseMatrix<complex<double>>                    EigMatC; // Complex.
-typedef Eigen::Triplet     <complex<double>>                    EigCooC; // Complex.
-typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecR; // Real.
-typedef Eigen::Map         <EigVecR>                            EigMpVR; // Real.
-typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecC; // Complex.
-typedef Eigen::Map         <EigVecC>                            EigMpVC; // Complex.
-typedef Eigen::BiCGSTAB         <EigMatR>                       EigBiCG;
-typedef Eigen::ConjugateGradient<EigMatR>                       EigCG;
-typedef Eigen::SparseLU<EigMatR, Eigen::COLAMDOrdering<int>>    EigSLU;
-typedef Eigen::SparseQR<EigMatR, Eigen::COLAMDOrdering<int>>    EigSQR;
+typedef Eigen::SparseMatrix<        double>                     EigMatR;  // Real.
+typedef Eigen::Triplet     <        double>                     EigCooR;  // Real.
+typedef Eigen::SparseMatrix<complex<double>>                    EigMatC;  // Complex.
+typedef Eigen::Triplet     <complex<double>>                    EigCooC;  // Complex.
+typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecR;  // Real.
+typedef Eigen::Map         <EigVecR>                            EigMpVR;  // Real.
+typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecC;  // Complex.
+typedef Eigen::Map         <EigVecC>                            EigMpVC;  // Complex.
+typedef Eigen::BiCGSTAB         <EigMatR>                       EigBiCGR; // Real.
+typedef Eigen::ConjugateGradient<EigMatR>                       EigCGR;   // Real.
+typedef Eigen::SparseLU<EigMatR, Eigen::COLAMDOrdering<int>>    EigSLUR;  // Real.
+typedef Eigen::SparseQR<EigMatR, Eigen::COLAMDOrdering<int>>    EigSQRR;  // Real.
+typedef Eigen::BiCGSTAB         <EigMatC>                       EigBiCGC; // Complex.
+typedef Eigen::ConjugateGradient<EigMatC>                       EigCGC;   // Complex.
+typedef Eigen::SparseLU<EigMatC, Eigen::COLAMDOrdering<int>>    EigSLUC;  // Complex.
+typedef Eigen::SparseQR<EigMatC, Eigen::COLAMDOrdering<int>>    EigSQRC;  // Complex.
 
 class options {
   public:
@@ -46,6 +51,7 @@ class options {
       nbCV = 2*nbEV + 1;
       stdPb = true; // Standard or generalized (= not standard).
       symPb = true;
+      cpxPb = false;
       mag = string("LM"); // Large magnitude.
       shiftReal = false; shiftImag = false;
       sigmaReal = 0.; sigmaImag = 0.; // Eigen value translation: look for lambda+sigma instead of lambda.
@@ -82,6 +88,10 @@ class options {
           fileB = "B.mtx";
         }
         if (clo == "--nonSymPb") symPb = false;
+        if (clo == "--cpxPb") {
+          symPb = false;
+          cpxPb = true;
+        }
         if (clo == "--mag") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           mag = argv[a]; // small mag (likely poor perf) <=> large mag + invert (likely good perf).
@@ -173,8 +183,10 @@ class options {
       cout << "                 default: 2*nbEV+1" << endl;
       cout << "  --genPb:       generalized problem." << endl;
       cout << "                 default: standard problem" << endl;
-      cout << "  --nonSymPb:    non symmetric problem." << endl;
-      cout << "                 default: symmetric problem" << endl;
+      cout << "  --nonSymPb:    non symmetric problem (<=> use dn[ae]upd)." << endl;
+      cout << "                 default: symmetric problem (<=> use ds[ae]upd)" << endl;
+      cout << "  --cpxPb:       complex (non symmetric) problem (<=> use zn[ae]upd)." << endl;
+      cout << "                 default: false (<=> use d*[ae]upd)" << endl;
       cout << "  --mag M:       set magnitude of eigen values to look for (LM, SM, LR, SR, LI, SI)." << endl;
       cout << "                 default: large magnitude (LM)" << endl;
       cout << "  --shiftReal S: real shift where sigma = S (look for lambda+S instead of lambda)." << endl;
@@ -217,6 +229,7 @@ class options {
     a_int nbCV;
     bool stdPb; // Standard or generalized (= not standard).
     bool symPb;
+    bool cpxPb;
     string mag; // Magnitude <=> "which" arpack parameter.
     bool shiftReal, shiftImag;
     double sigmaReal, sigmaImag; // Eigen value translation: look for lambda+sigma instead of lambda.
@@ -245,13 +258,18 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   return ostr;
 }
 
-int readMatrixMarket(string const & fileName, EigMatR & M, int const & verbose, string const & msg) {
+void makeZero(        double  & zero) {zero = 0.;}
+
+void makeZero(complex<double> & zero) {zero = complex<double>(0., 0.);}
+
+template<typename RC, typename EM, typename EC>
+int readMatrixMarket(string const & fileName, EM & M, int const & verbose, string const & msg) {
   ifstream inp(fileName);
   if (!inp) {cerr << "Error: can not open " << fileName << endl; return 1;}
 
   a_uint l = 0, n = 0, m = 0, nnz = 0;
   vector<a_uint> i, j;
-  vector<double> Mij;
+  vector<RC> Mij;
   do {
     // Skip comments.
 
@@ -277,7 +295,8 @@ int readMatrixMarket(string const & fileName, EigMatR & M, int const & verbose, 
     }
     else { // Body.
       a_uint k = 0, l = 0;
-      double Mkl = 0.;
+      RC zero; makeZero(zero);
+      RC Mkl = zero;
       inpSS >> k >> l >> Mkl;
       if (!inpSS) {cerr << "Error: bad line (" << fileName << ", line " << l << ")" << endl; return 1;}
       i.push_back(k);
@@ -297,8 +316,8 @@ int readMatrixMarket(string const & fileName, EigMatR & M, int const & verbose, 
 
   // Create matrix from file.
 
-  M = EigMatR(n, m); // Set matrice dimensions.
-  vector<EigCooR> triplets;
+  M = EM(n, m); // Set matrice dimensions.
+  vector<EC> triplets;
   triplets.reserve(nnz);
   for (size_t k = 0; k < nnz; k++) triplets.emplace_back(i[k], j[k], Mij[k]);
   M.setFromTriplets(triplets.begin(), triplets.end()); // Set all (i, j, Mij).
@@ -319,170 +338,35 @@ class arpackEV { // Arpack eigen values / vectors.
     double rciTime;
 };
 
-template<typename SLV>
-int arpackSolve(options const & opt, int const & mode,
-                EigMatR const & A, EigMatR const & B, SLV & solver, arpackEV & out) {
-  // Arpack set up.
-
-  // Note: all in/out parameters (all but work*) passed to d[sn][ae]upd are set to 0. before use.
-  // d[sn][ae]upd uses dgetv0 to generate a random starting vector (when info is initialized to 0).
-  // dgetv0 rely on resid/v: resid/v should be initialized to 0.0 to avoid "bad" starting random vectors.
-
-  char const * which = opt.mag.c_str();
-  a_int ido = 0; // First call to arpack.
-  char const * iMat = "I";
-  char const * gMat = "G";
-  char const * bMat = (mode == 1) ? iMat : gMat;
-  a_int nbDim = A.rows();
-  double * resid = new double[nbDim]; for (a_int n = 0; n < nbDim; n++) resid[n] = 0.; // Avoid "bad" starting vector.
-  if (opt.restart) {
-    ifstream rfs("resid.out");
-    if (rfs.is_open()) {
-      for (a_int n = 0; n < nbDim; n++) rfs >> resid[n];
-      if (opt.verbose >= 2) {
-        cout << endl;
-        cout << "resid:" << endl;
-        for (a_int n = 0; n < nbDim; n++) cout << resid[n] << endl;
-        cout << endl;
-      }
-    }
+void arpackAUPD(options const & opt,
+                a_int * ido, char const * bMat, a_int nbDim, char const * which, double * resid, double * v,
+                a_int ldv, a_int * iparam, a_int * ipntr, double * workd, double * workl, a_int lworkl, double * & rwork,
+                a_int * info) {
+  assert(rwork == NULL);
+  if (opt.symPb) {
+    dsaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
   }
-  a_int ldv = nbDim;
-  double * v = new double[ldv*opt.nbCV]; for (a_int n = 0; n < ldv*opt.nbCV; n++) v[n] = 0.; // Avoid "bad" starting vector.
-  if (opt.restart) {
-    ifstream vfs("v.out");
-    if (vfs.is_open()) {
-      a_int nbCV = 0; vfs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;
-      for (a_int n = 0; n < ldv*nbCV; n++) vfs >> v[n];
-      if (opt.verbose >= 2) {
-        cout << endl;
-        cout << "v:" << endl;
-        for (a_int n = 0; n < ldv*nbCV; n++) cout << v[n] << endl;
-        cout << endl;
-      }
-    }
+  else {
+    dnaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
   }
-  a_int iparam[11];
-  iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
-  iparam[2] = opt.maxIt; // Maximum number of iterations.
-  iparam[3] = 1; // Block size.
-  iparam[4] = 0; // Number of ev found by arpack.
-  if (mode == 1) {
-    iparam[6] = mode;
-  }
-  else if (mode == 2 || mode == 3) {
-    if (mode == 2) { // Regular mode.
-      iparam[6] = mode;
-      solver.compute(B);
-    }
-    else { // Shift invert mode.
-      iparam[6] = mode;
-      if (!opt.shiftImag) {
-        if (fabs(opt.sigmaReal) < numeric_limits<double>::epsilon()) solver.compute(A);
-        else solver.compute(A - opt.sigmaReal * B); // Only real shift.
-      }
-      else {
-        complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
-        EigMatC S = A.cast<complex<double>>() - sigma * B.cast<complex<double>>();
-        solver.compute(S.real()); // S: shifted matrix is real.
-      }
-    }
-    if(solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
-  }
-  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; return 1;}
-  a_int ipntr[14];
-  double * workd = new double[3*nbDim];
-  a_int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
-  lworkl++; // The documentation says "LWORKL must be at least ..."
-  double * workl = new double[lworkl];
-  a_int info = 0; // Use random initial residual vector.
-  if (opt.restart) info = 1;
+}
 
-  // Arpack solve.
+void arpackAUPD(options const & opt,
+                a_int * ido, char const * bMat, a_int nbDim, char const * which, complex<double> * resid, complex<double> * v,
+                a_int ldv, a_int * iparam, a_int * ipntr, complex<double> * workd, complex<double> * workl, a_int lworkl, double * & rwork,
+                a_int * info) {
+  if (!rwork) rwork = new double[opt.nbCV];
+  znaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, reinterpret_cast<_Complex double*>(resid), opt.nbCV,
+           reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr, reinterpret_cast<_Complex double*>(workd),
+           reinterpret_cast<_Complex double*>(workl), lworkl, rwork, info);
+}
 
-  do {
-    // Call arpack.
-
-    if (opt.symPb) {
-      dsaupd_c(&ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-      if (info ==  1) cerr << "Error: dsaupd - KO: maximum number of iterations taken. Increase --maxIt..." << endl;
-      if (info ==  2) cerr << "Error: dsaupd - KO: no shifts could be applied. Increase --nbCV..." << endl;
-      if (info == -9) cerr << "Error: dsaupd - KO: starting vector is zero. Retry: play with shift..." << endl;
-      if (info < 0) {cerr << "Error: dsaupd - KO with info " << info << ", nbIt " << iparam[2] << endl; return 1;}
-    }
-    else {
-      dnaupd_c(&ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-      if (info ==  1) cerr << "Error: dnaupd - KO: maximum number of iterations taken. Increase --maxIt..." << endl;
-      if (info ==  2) cerr << "Error: dnaupd - KO: no shifts could be applied. Increase --nbCV..." << endl;
-      if (info == -9) cerr << "Error: dnaupd - KO: starting vector is zero. Retry: play with shift..." << endl;
-      if (info < 0) {cerr << "Error: dnaupd - KO with info " << info << ", nbIt " << iparam[2] << endl; return 1;}
-    }
-
-    // Reverse Communication Interface: perform actions according to arpack.
-
-    auto start = chrono::high_resolution_clock::now();
-
-    a_int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
-    a_int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
-
-    EigMpVR X(workd + xIdx, nbDim); // Arpack provides X.
-    EigMpVR Y(workd + yIdx, nbDim); // Arpack provides Y.
-
-    if (ido == -1) {
-      if (iparam[6] == 1) {
-        Y = A * X;
-      }
-      else if (iparam[6] == 2) {
-        Y = A * X;
-        auto YY = Y; // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
-        Y = solver.solve(YY); // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
-      }
-      else if (iparam[6] == 3) {
-        auto Z = B * X;      // Z = B * X.
-        Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
-      }
-    }
-    else if (ido == 1) {
-      if (iparam[6] == 1) {
-        Y = A * X;
-      }
-      else if (iparam[6] == 2) {
-        Y = A * X;
-        if (opt.symPb) X = Y; // Remark 5 in dsaupd documentation.
-        auto YY = Y; // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
-        Y = solver.solve(YY);  // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
-      }
-      else if (iparam[6] == 3) {
-        a_int zIdx = ipntr[2] - 1;      // 0-based (Fortran is 1-based).
-        EigMpVR Z(workd + zIdx, nbDim); // Arpack provides Z.
-        Y = solver.solve(Z);            // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
-      }
-    }
-    else if (ido == 2) {
-      if      (iparam[6] == 1) Y =     X; // Y = I * X.
-      else if (iparam[6] == 2) Y = B * X; // Y = B * X.
-      else if (iparam[6] == 3) Y = B * X; // Y = B * X.
-    }
-    else if (ido != 99) {cerr << "Error: unexpected ido " << ido << " - KO" << endl; return 1;}
-
-    auto stop = chrono::high_resolution_clock::now();
-    out.rciTime += chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
-
-  } while (ido != 99);
-
-  // Get arpack results (computed eigen values and vectors).
-
-  out.nbIt = iparam[2]; // Actual number of iterations.
-  bool rvec = true;
-  char const * howmny = "A";
-  a_int * select = new a_int[opt.nbCV]; for (a_int n = 0; n < opt.nbCV; n++) select[n] = 1;
-  a_int const nbZ = nbDim*(opt.nbEV+1); // Caution: opt.nbEV+1 for dneupd.
-  double * z = new double[nbZ]; for (a_int n = 0; n < nbZ; n++) z[n] = 0.;
-  a_int ldz = nbDim;
+int arpackEUPD(options const & opt, arpackEV & out,
+               bool rvec, char const * howmny, a_int const * select, double * z,
+               a_int ldz, char const * bMat, a_int nbDim, char const * which, double * resid, double * v,
+               a_int ldv, a_int * iparam, a_int * ipntr, double * workd, double * workl, a_int lworkl, double * rwork,
+               a_int & info) {
+  assert(rwork == NULL);
   if (opt.symPb) {
     double * d = new double[opt.nbEV]; for (a_int k = 0; k < opt.nbEV; k++) d[k] = 0.;
 
@@ -517,7 +401,7 @@ int arpackSolve(options const & opt, int const & mode,
 
     dneupd_c(rvec, howmny, select, dr, di, z, ldz, opt.sigmaReal, opt.sigmaImag, workev,
              bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-    if (info == -14) cerr << "Error: dneupd - KO: dnaupd did not find any eigenvalues to sufficient accuracy" << endl;
+    if (info == -14) cerr << "Error: dneupd - KO: [dz]naupd did not find any eigenvalues to sufficient accuracy" << endl;
     if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dneupd - KO with info " << info << endl; return 1;}
 
     // Arpack compute only half of the spectrum.
@@ -560,11 +444,252 @@ int arpackSolve(options const & opt, int const & mode,
     if (di)     {delete [] di;     di     = NULL;}
   }
 
+  return 0;
+}
+
+int arpackEUPD(options const & opt, arpackEV & out,
+               bool rvec, char const * howmny, a_int const * select, complex<double> * z,
+               a_int ldz, char const * bMat, a_int nbDim, char const * which, complex<double> * resid, complex<double> * v,
+               a_int ldv, a_int * iparam, a_int * ipntr, complex<double> * workd, complex<double> * workl, a_int lworkl, double * rwork,
+               a_int & info) {
+  complex<double> * d = new complex<double>[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) d[k] = complex<double>(0., 0.);
+  complex<double> * workev = new complex<double>[2*opt.nbCV];
+
+  complex<double> sigma = complex<double>(opt.sigmaReal, opt.sigmaImag);
+  zneupd_c(rvec, howmny, select, reinterpret_cast<_Complex double*>(d), reinterpret_cast<_Complex double*>(z), ldz,
+           reinterpret_cast<_Complex double &>(sigma), reinterpret_cast<_Complex double*>(workev),
+           bMat, nbDim, which, opt.nbEV, opt.tol, reinterpret_cast<_Complex double*>(resid), opt.nbCV,
+           reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
+           reinterpret_cast<_Complex double*>(workd), reinterpret_cast<_Complex double*>(workl), lworkl, rwork, &info);
+  if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
+  if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
+
+  // Arpack compute the whole spectrum.
+
+  a_int nbConv = iparam[4];
+  out.val.reserve(nbConv);
+  for (a_int i = 0; d && i < nbConv; i++) {
+    complex<double> lambda = d[i];
+    out.val.push_back(lambda);
+    if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+
+  out.vec.reserve(nbConv);
+  for (a_int i = 0; z && i < nbConv; i++) {
+    EigVecC V = EigMpVC(z + i*nbDim, nbDim);
+    out.vec.push_back(V);
+    if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+
+  if (workev) {delete [] workev; workev = NULL;}
+  if (d)      {delete [] d;           d = NULL;}
+
+  return 0;
+}
+
+template<typename SLV> int arpackMode(options const & opt, int const mode,
+                                      EigMatR const & A, EigMatR const & B, SLV & solver) {
+  int rc = 1;
+
+  if (mode == 1) {
+    rc = 0;
+  }
+  else if (mode == 2 || mode == 3) {
+    if (mode == 2) { // Regular mode.
+      solver.compute(B);
+    }
+    else { // Shift invert mode.
+      if (!opt.shiftImag) { // Real shift only.
+        double sigma = opt.sigmaReal;
+        auto S = A - sigma * B;
+        solver.compute(S);
+      }
+      else { // Complex (real/imaginary) shift.
+        complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
+        auto S = A.cast<complex<double>>() - sigma * B.cast<complex<double>>();
+        solver.compute(S.real()); // Real part of shifted matrix.
+      }
+    }
+
+    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
+    rc = 0;
+  }
+  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
+
+  return rc;
+}
+
+template<typename SLV> int arpackMode(options const & opt, int const mode,
+                                      EigMatC const & A, EigMatC const & B, SLV & solver) {
+  int rc = 1;
+
+  if (mode == 1) {
+    rc = 0;
+  }
+  else if (mode == 2 || mode == 3) {
+    if (mode == 2) { // Regular mode.
+      solver.compute(B);
+    }
+    else { // Shift invert mode.
+      complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
+      auto S = A - sigma * B;
+      solver.compute(S);
+    }
+
+    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
+    rc = 0;
+  }
+  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
+
+  return rc;
+}
+
+template<typename RC, typename EM, typename EV, typename SLV>
+int arpackSolve(options const & opt, int const & mode,
+                EM const & A, EM const & B, SLV & solver, arpackEV & out) {
+  // Arpack set up.
+
+  // Note: all in/out parameters (all but work*) passed to d[sn][ae]upd are set to 0. before use.
+  // d[sn][ae]upd uses dgetv0 to generate a random starting vector (when info is initialized to 0).
+  // dgetv0 rely on resid/v: resid/v should be initialized to 0.0 to avoid "bad" starting random vectors.
+
+  char const * which = opt.mag.c_str();
+  a_int ido = 0; // First call to arpack.
+  char const * iMat = "I";
+  char const * gMat = "G";
+  char const * bMat = (mode == 1) ? iMat : gMat;
+  a_int nbDim = A.rows();
+  RC zero; makeZero(zero);
+  RC * resid = new RC[nbDim]; for (a_int n = 0; n < nbDim; n++) resid[n] = zero; // Avoid "bad" starting vector.
+  if (opt.restart) {
+    ifstream rfs("resid.out");
+    if (rfs.is_open()) {
+      for (a_int n = 0; n < nbDim; n++) rfs >> resid[n];
+      if (opt.verbose >= 2) {
+        cout << endl;
+        cout << "resid:" << endl;
+        for (a_int n = 0; n < nbDim; n++) cout << resid[n] << endl;
+        cout << endl;
+      }
+    }
+  }
+  a_int ldv = nbDim;
+  RC * v = new RC[ldv*opt.nbCV]; for (a_int n = 0; n < ldv*opt.nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
+  if (opt.restart) {
+    ifstream vfs("v.out");
+    if (vfs.is_open()) {
+      a_int nbCV = 0; vfs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;
+      for (a_int n = 0; n < ldv*nbCV; n++) vfs >> v[n];
+      if (opt.verbose >= 2) {
+        cout << endl;
+        cout << "v:" << endl;
+        for (a_int n = 0; n < ldv*nbCV; n++) cout << v[n] << endl;
+        cout << endl;
+      }
+    }
+  }
+  a_int iparam[11];
+  iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
+  iparam[2] = opt.maxIt; // Maximum number of iterations.
+  iparam[3] = 1; // Block size.
+  iparam[4] = 0; // Number of ev found by arpack.
+  iparam[6] = mode;
+  int rc = arpackMode<SLV>(opt, mode, A, B, solver);
+  if (rc != 0) {cerr << "Error: bad arpack mode" << endl; return rc;}
+  a_int ipntr[14];
+  RC * workd = new RC[3*nbDim];
+  a_int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
+  lworkl++; // The documentation says "LWORKL must be at least ..."
+  RC * workl = new RC[lworkl];
+  a_int info = 0; // Use random initial residual vector.
+  if (opt.restart) info = 1;
+
+  // Arpack solve.
+
+  double * rwork = NULL;
+  do {
+    // Call arpack.
+
+    arpackAUPD(opt, &ido, bMat, nbDim, which, resid, v, ldv, iparam, ipntr, workd, workl, lworkl, rwork, &info);
+    if (info ==  1) cerr << "Error: [dz][sn]aupd - KO: maximum number of iterations taken. Increase --maxIt..." << endl;
+    if (info ==  3) cerr << "Error: [dz][sn]aupd - KO: no shifts could be applied. Increase --nbCV..." << endl;
+    if (info == -9) cerr << "Error: [dz][sn]aupd - KO: starting vector is zero. Retry: play with shift..." << endl;
+    if (info < 0) {cerr << "Error: [dz][sn]aupd - KO with info " << info << ", nbIt " << iparam[2] << endl; return 1;}
+
+    // Reverse Communication Interface: perform actions according to arpack.
+
+    auto start = chrono::high_resolution_clock::now();
+
+    a_int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
+    a_int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
+
+    EV X(workd + xIdx, nbDim); // Arpack provides X.
+    EV Y(workd + yIdx, nbDim); // Arpack provides Y.
+
+    if (ido == -1) {
+      if (iparam[6] == 1) {
+        Y = A * X;
+      }
+      else if (iparam[6] == 2) {
+        Y = A * X;
+        auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
+        Y = solver.solve(YY); // Y = B^-1 * A * X.
+        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+      }
+      else if (iparam[6] == 3) {
+        auto Z = B * X;      // Z = B * X.
+        Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
+        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+      }
+    }
+    else if (ido == 1) {
+      if (iparam[6] == 1) {
+        Y = A * X;
+      }
+      else if (iparam[6] == 2) {
+        Y = A * X;
+        if (opt.symPb) X = Y; // Remark 5 in dsaupd documentation.
+        auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
+        Y = solver.solve(YY); // Y = B^-1 * A * X.
+        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+      }
+      else if (iparam[6] == 3) {
+        a_int zIdx = ipntr[2] - 1; // 0-based (Fortran is 1-based).
+        EV Z(workd + zIdx, nbDim); // Arpack provides Z.
+        Y = solver.solve(Z);       // Y = (A - sigma * B)^-1 * B * X.
+        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+      }
+    }
+    else if (ido == 2) {
+      if      (iparam[6] == 1) Y =     X; // Y = I * X.
+      else if (iparam[6] == 2) Y = B * X; // Y = B * X.
+      else if (iparam[6] == 3) Y = B * X; // Y = B * X.
+    }
+    else if (ido != 99) {cerr << "Error: unexpected ido " << ido << " - KO" << endl; return 1;}
+
+    auto stop = chrono::high_resolution_clock::now();
+    out.rciTime += chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+
+  } while (ido != 99);
+
+  // Get arpack results (computed eigen values and vectors).
+
+  out.nbIt = iparam[2]; // Actual number of iterations.
+  bool rvec = true;
+  char const * howmny = "A";
+  a_int * select = new a_int[opt.nbCV]; for (a_int n = 0; n < opt.nbCV; n++) select[n] = 1;
+  a_int const nbZ = nbDim*(opt.nbEV+1); // Caution: opt.nbEV+1 for dneupd.
+  RC * z = new RC[nbZ]; for (a_int n = 0; n < nbZ; n++) z[n] = zero;
+  a_int ldz = nbDim;
+  rc = arpackEUPD(opt, out, rvec, howmny, select, z, ldz, bMat, nbDim, which, resid, v, ldv, iparam, ipntr, workd, workl, lworkl, rwork, info);
+  if (rc != 0) {cerr << "Error: bad arpack eupd" << endl; return rc;}
+
   ofstream rfs("resid.out"); for (a_int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
   ofstream vfs("v.out"); vfs << opt.nbCV << endl; for (a_int n = 0; n < ldv*opt.nbCV; n++) vfs << v[n] << endl;
 
   // Clean.
 
+  if (rwork)  {delete [] rwork;  rwork  = NULL;}
   if (z)      {delete [] z;      z      = NULL;}
   if (select) {delete [] select; select = NULL;}
   if (workl)  {delete [] workl;  workl  = NULL;}
@@ -575,7 +700,8 @@ int arpackSolve(options const & opt, int const & mode,
   return 0;
 }
 
-int checkArpackEigVec(options const & opt, EigMatR & A, EigMatR const & B, arpackEV const & out) {
+template<typename EM>
+int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV const & out) {
   // Check eigen vectors.
 
   if (opt.check && out.vec.size() == 0) {
@@ -597,8 +723,8 @@ int checkArpackEigVec(options const & opt, EigMatR & A, EigMatR const & B, arpac
     }
 
     if (opt.check) {
-      EigVecC left = A.cast<complex<double>>() * V;
-      EigVecC right = opt.stdPb ? V : B.cast<complex<double>>() * V;
+      EigVecC left = A.template cast<complex<double>>() * V;
+      EigVecC right = opt.stdPb ? V : B.template cast<complex<double>>() * V;
       right *= lambda;
       EigVecC diff = left - right;
       if (diff.norm() > sqrt(opt.tol)) {
@@ -624,8 +750,12 @@ int checkArpackEigVec(options const & opt, EigMatR & A, EigMatR const & B, arpac
   return 0;
 }
 
-template<typename SLV>
-int arpackSolve(options const & opt, EigMatR & A, EigMatR const & B,
+void makeSigma(options const & opt,         double  & sigma) {sigma = opt.sigmaReal;}
+
+void makeSigma(options const & opt, complex<double> & sigma) {sigma = complex<double>(opt.sigmaReal, opt.sigmaImag);}
+
+template<typename RC, typename EM, typename EV, typename SLV>
+int arpackSolve(options const & opt, EM & A, EM const & B,
                 SLV & solver, arpackEV & out) {
   // If needed, transform the initial problem into a new one that arpack can handle.
 
@@ -638,9 +768,10 @@ int arpackSolve(options const & opt, EigMatR & A, EigMatR const & B,
   if (opt.stdPb) {
     mode = 1;
     if (shiftReal && !shiftImag) {
-      EigMatR I(A.rows(), A.cols());
+      EM I(A.rows(), A.cols());
       I.setIdentity();
-      A -= opt.sigmaReal*I;
+      RC sigma; makeSigma(opt, sigma);
+      A -= sigma*I;
       backTransform = true;
     }
   }
@@ -658,7 +789,7 @@ int arpackSolve(options const & opt, EigMatR & A, EigMatR const & B,
     cout << ", backTransform " << (backTransform ? "yes" : "no") << endl;
   }
 
-  int rc = arpackSolve<SLV>(opt, mode, A, B, solver, out);
+  int rc = arpackSolve<RC, EM, EV, SLV>(opt, mode, A, B, solver, out);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   if (opt.verbose >= 1) {
@@ -671,29 +802,30 @@ int arpackSolve(options const & opt, EigMatR & A, EigMatR const & B,
 
   if (backTransform) {
     for (size_t i = 0; i < out.val.size(); i++) out.val[i] += opt.sigmaReal;
-    EigMatR I(A.rows(), A.cols());
+    EM I(A.rows(), A.cols());
     I.setIdentity();
-    A += opt.sigmaReal*I; // For later checks.
+    RC sigma; makeSigma(opt, sigma);
+    A += sigma*I; // For later checks.
   }
 
   // Check.
 
-  return checkArpackEigVec(opt, A, B, out);
+  return checkArpackEigVec<EM>(opt, A, B, out);
 }
 
-template<typename SLV>
+template<typename RC, typename EM, typename EC, typename EV, typename SLV>
 int arpackSolve(options & opt, SLV & solver) {
   // Read A.
 
-  EigMatR A;
-  int rc = readMatrixMarket(opt.fileA, A, opt.verbose, "A:");
+  EM A;
+  int rc = readMatrixMarket<RC, EM, EC>(opt.fileA, A, opt.verbose, "A:");
   if (rc != 0) {cerr << "Error: read A KO" << endl; return rc;}
 
   // Read B.
 
-  EigMatR B;
+  EM B;
   if (!opt.stdPb) {
-    rc = readMatrixMarket(opt.fileB, B, opt.verbose, "B:");
+    rc = readMatrixMarket<RC, EM, EC>(opt.fileB, B, opt.verbose, "B:");
     if (rc != 0) {cerr << "Error: read B KO" << endl; return rc;}
   }
 
@@ -710,13 +842,45 @@ int arpackSolve(options & opt, SLV & solver) {
   arpackEV out;
   out.rciTime = 0.;
   auto start = chrono::high_resolution_clock::now();
-  rc = arpackSolve<SLV>(opt, A, B, solver, out);
+  rc = arpackSolve<RC, EM, EV, SLV>(opt, A, B, solver, out);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
   auto stop = chrono::high_resolution_clock::now();
   double fullTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
   cout << endl;
   cout << "OUT: nb EV found " << out.val.size() << ", nb iterations " << out.nbIt << endl;
   cout << "OUT: full time " << fullTime << " s, RCI time " << out.rciTime << " s" << endl;
+
+  return 0;
+}
+
+template<typename RC, typename EM, typename EC, typename EV,
+         typename SLVBCG, typename SLVCG, typename SLVSLU, typename SLVSQR>
+int arpackSolve(options & opt) {
+  // Solve with arpack.
+
+  int rc = 0;
+  if (opt.slv == "BiCG") {
+    SLVBCG solver;
+    solver.setTolerance(opt.slvTol);
+    solver.setMaxIterations(opt.slvMaxIt);
+    rc = arpackSolve<RC, EM, EC, EV, SLVBCG>(opt, solver);
+  }
+  else if (opt.slv == "CG") {
+    SLVCG solver;
+    solver.setTolerance(opt.slvTol);
+    solver.setMaxIterations(opt.slvMaxIt);
+    rc = arpackSolve<RC, EM, EC, EV, SLVCG>(opt, solver);
+  }
+  else if (opt.slv == "LU") {
+    SLVSLU solver;
+    rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
+  }
+  else if (opt.slv == "QR") {
+    SLVSQR solver;
+    rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
+  }
+  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;
 }
@@ -729,29 +893,8 @@ int main(int argc, char ** argv) {
   if (rc != 0) {cerr << "Error: read cmd line KO" << endl; return rc;}
   cout << opt; // Print options.
 
-  // Solve with arpack.
-
-  if (opt.slv == "BiCG") {
-    EigBiCG solver;
-    solver.setTolerance(opt.slvTol);
-    solver.setMaxIterations(opt.slvMaxIt);
-    rc = arpackSolve<EigBiCG>(opt, solver);
-  }
-  else if (opt.slv == "CG") {
-    EigCG solver;
-    solver.setTolerance(opt.slvTol);
-    solver.setMaxIterations(opt.slvMaxIt);
-    rc = arpackSolve<EigCG>(opt, solver);
-  }
-  else if (opt.slv == "LU") {
-    EigSLU solver;
-    rc = arpackSolve<EigSLU>(opt, solver);
-  }
-  else if (opt.slv == "QR") {
-    EigSQR solver;
-    rc = arpackSolve<EigSQR>(opt, solver);
-  }
-  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+  if (opt.cpxPb) rc = arpackSolve<complex<double>, EigMatC, EigCooC, EigMpVC, EigBiCGC, EigCGC, EigSLUC, EigSQRC>(opt);
+  else           rc = arpackSolve<        double , EigMatR, EigCooR, EigMpVR, EigBiCGR, EigCGR, EigSLUR, EigSQRR>(opt);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;
