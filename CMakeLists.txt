@@ -209,8 +209,8 @@ file(GLOB arpacksrc_STAT_SRCS dbgini.f staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.f90 ICB/debug_icb.f90 ICB/stat_icb.f90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.f90 ICB/debug_icb.f90 ICB/stat_icb.f90)
+  file(GLOB arpacksrc_ICB SRC/icba*.F90 ICB/debug_icb.F90 ICB/stat_icb.F90)
+  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.F90 ICB/debug_icb.F90 ICB/stat_icb.F90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -291,9 +291,12 @@ if (INTERFACE64)
     else ()
       message(WARNING "build script does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.")
     endif ()
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBLASINT=int64_t")
 endif ()
+
+message("-- Generating arpackdef.h")
+configure_file(arpackdef.cmake.h.in "${PROJECT_BINARY_DIR}/arpackdef.h")
+include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h
+install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION include/arpack)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -658,6 +661,7 @@ message("-- Configuration summary for arpack-ng-${arpack_ng_VERSION}:")
 message("   -- prefix: ${CMAKE_INSTALL_PREFIX}")
 message("   -- MPI: ${MPI}")
 message("   -- ICB: ${ICB}")
+message("   -- INTERFACE64: ${INTERFACE64}")
 cprsummary("FC" "${CMAKE_Fortran_COMPILER}"
                 "${CMAKE_Fortran_FLAGS_DEBUG}"
                 "${CMAKE_Fortran_FLAGS_MINSIZEREL}"

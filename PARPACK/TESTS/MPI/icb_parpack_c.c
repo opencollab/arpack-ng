@@ -21,9 +21,6 @@
  * A*x = lambda*x where A is the diagonal matrix
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
  * */
-#ifndef BLASINT
-#define BLASINT int
-#endif
 
 void dMatVec(double * x, double * y) {
   int i;
@@ -32,25 +29,25 @@ void dMatVec(double * x, double * y) {
 };
 
 int ds() {
-  BLASINT ido = 0;
+  a_int ido = 0;
   char bmat[] = "I";
-  BLASINT N = 1000;
+  a_int N = 1000;
   char which[] = "LM";
-  BLASINT nev = 3;
+  a_int nev = 3;
   double tol = 0;
   double resid[N];
-  BLASINT ncv = 2*nev+1;
+  a_int ncv = 2*nev+1;
   double V[ncv*N];
-  BLASINT ldv = N;
-  BLASINT iparam[11];
-  BLASINT ipntr[14];
+  a_int ldv = N;
+  a_int iparam[11];
+  a_int ipntr[14];
   double workd[3*N];
   bool rvec = true;
   char howmny[] = "A";
   double* d = (double*) malloc((nev+1)*sizeof(double));
-  int select[ncv];
+  a_int select[ncv];
   double z[(N+1)*(nev+1)];
-  BLASINT ldz = N+1;
+  a_int ldz = N+1;
   double sigma=0;
   int k;
   for (k=0; k < 3*N; ++k )
@@ -58,8 +55,8 @@ int ds() {
   double workl[3*(ncv*ncv) + 6*ncv];
   for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0;
-  BLASINT lworkl = 3*(ncv*ncv) + 6*ncv;
-  BLASINT info = 0;
+  a_int lworkl = 3*(ncv*ncv) + 6*ncv;
+  a_int info = 0;
   int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   iparam[0] = 1;
@@ -101,25 +98,25 @@ void zMatVec(double _Complex * x, double _Complex * y) {
 };
 
 int zn() {
-  BLASINT ido = 0;
+  a_int ido = 0;
   char bmat[] = "I";
-  BLASINT N = 1000;
+  a_int N = 1000;
   char which[] = "LM";
-  BLASINT nev = 1;
+  a_int nev = 1;
   double tol = 0;
   double _Complex resid[N];
-  BLASINT ncv = 2*nev+1;
+  a_int ncv = 2*nev+1;
   double _Complex V[ncv*N];
-  BLASINT ldv = N;
-  BLASINT iparam[11];
-  BLASINT ipntr[14];
+  a_int ldv = N;
+  a_int iparam[11];
+  a_int ipntr[14];
   double _Complex workd[3*N];
   bool rvec = true;
   char howmny[] = "A";
   double _Complex* d = (double _Complex*) malloc((nev+1)*sizeof(double _Complex));
-  int select[ncv];
+  a_int select[ncv];
   double _Complex z[(N+1)*(nev+1)];
-  BLASINT ldz = N+1;
+  a_int ldz = N+1;
   double _Complex sigma=0. + I*0.;
   int k;
   for (k=0; k < 3*N; ++k )
@@ -127,10 +124,10 @@ int zn() {
   double _Complex workl[3*(ncv*ncv) + 6*ncv];
   for (k=0; k < 3*(ncv*ncv) + 6*ncv; ++k )
     workl[k] = 0. + I * 0.;
-  BLASINT lworkl = 3*(ncv*ncv) + 6*ncv;
+  a_int lworkl = 3*(ncv*ncv) + 6*ncv;
   double _Complex rwork[ncv];
   double _Complex workev[2*ncv];
-  BLASINT info = 0;
+  a_int info = 0;
   int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   iparam[0] = 1;

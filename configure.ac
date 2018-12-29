@@ -4,6 +4,7 @@ AC_CONFIG_SRCDIR([SRC/version.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
+AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -27,7 +28,10 @@ if test x"$INTERFACE64" == x"1"; then
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FCFLAGS="$FCFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
-  CFLAGS="$CFLAGS -DBLASINT=int64_t"
+
+  AC_DEFINE([INTERFACE64],[1],['INTERFACE64 is enabled']) # Add a #define (or #undef) for INTERFACE64 in arpackdef.autotools.h.in (autoheader)
+else
+  INTERFACE64=0
 fi
 
 AC_ARG_VAR(LIBSUFFIX, [suffix to add to ARPACK libraries names])
@@ -253,6 +257,10 @@ AC_OUTPUT([
 	Makefile
 ])
 
+# After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
+
+AX_GEN_ARPACKDEF()
+
 AC_MSG_RESULT([
 --------------------------------------------------
 Configuration summary for $PACKAGE_NAME ($VERSION)
@@ -260,6 +268,7 @@ Configuration summary for $PACKAGE_NAME ($VERSION)
 Installation prefix : $prefix
 MPI enabled         : $enable_mpi
 ICB enabled         : $enable_icb
+INTERFACE64         : $INTERFACE64
 F77                 : $F77
 FFLAGS              : $FFLAGS
 FC                  : $FC
@@ -271,6 +280,8 @@ CXXFLAGS            : $CXXFLAGS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
+LIBS                : $LIBS
+LDADD               : $LDADD
 --------------------------------------------------
 Configuration OK
 --------------------------------------------------

@@ -3,7 +3,15 @@ c----------- Example to reproduce issue#46 -------------------------------------
 c
       program issue46
       include 'mpif.h'
-      integer ierr, comm, color, key, myid, nprocs, cnprocs
+c     %-------------------------------%
+c     | MPI INTERFACE                 |
+c     | ILP64 is not supported by MPI |
+c     | integer*4 must be imposed in  |
+c     | all calls involving MPI.      |
+c     |                               |
+c     | Use ierr for MPI calls.       |
+c     %-------------------------------%
+      integer*4 ierr, comm, myid, nprocs, cnprocs, color
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs, ierr )
@@ -18,7 +26,8 @@ c     Create commuticator to run arnoldi only on the first CPU
       call MPI_COMM_SIZE( comm, cnprocs, ierr )
       if(color .eq. 1) call parnoldi(comm)
       call MPI_Barrier(MPI_COMM_WORLD, ierr)
-      call parnoldi(MPI_COMM_WORLD)
+      comm = MPI_COMM_WORLD
+      call parnoldi(comm)
       call MPI_FINALIZE(ierr)
       end
 
@@ -28,7 +37,7 @@ c     Create commuticator to run arnoldi only on the first CPU
       include 'debug.h'
       include 'stat.h'
 
-      integer           comm, myid, nprocs, rc, nloc
+      integer*4         comm, myid, nprocs, rc, ierr
 c
 c     %-----------------------------%
 c     | Define leading dimensions   |
@@ -54,12 +63,15 @@ c
       logical          select(maxncv)
       integer          iparam(11), ipntr(11)
 c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
+c     %------------------------------------%
+c     | Local Scalars                      |
+c     |                                    |
+c     | Use info if ILP64 can be supported |
+c     | (call to BLAS, LAPACK, ARPACK).    |
+c     %------------------------------------%
 c
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, ierr, j,
+      integer          ido, n, nev, ncv, lworkl, info, nloc, j,
      &                 nx, nconv, maxitr, mode, ishfts
       logical          rvec
       Double precision
@@ -258,7 +270,7 @@ c
          call pdseupd ( comm, rvec, 'A', select,
      &        d, v, ldv, sigma,
      &        bmat, nloc, which, nev, tol, resid, ncv, v, ldv,
-     &        iparam, ipntr, workd, workl, lworkl, ierr )
+     &        iparam, ipntr, workd, workl, lworkl, info )
 c        %----------------------------------------------%
 c        | Eigenvalues are returned in the first column |
 c        | of the two dimensional array D and the       |
@@ -270,7 +282,7 @@ c        | corresponding to the eigenvalues in D is     |
 c        | returned in V.                               |
 c        %----------------------------------------------%
 c
-         if ( ierr .ne. 0) then
+         if ( info .ne. 0) then
 c
 c            %------------------------------------%
 c            | Error condition:                   |
@@ -280,7 +292,7 @@ c
 c
             if ( myid .eq. 0 ) then
              	print *, ' '
-             	print *, ' Error with _seupd, info = ', ierr
+             	print *, ' Error with _seupd, info = ', info
              	print *, ' Check the documentation of _seupd. '
              	print *, ' '
             endif
@@ -385,7 +397,7 @@ c
 c
 c     .. MPI Declarations ...
       include           'mpif.h'
-      integer           comm, nprocs, myid, ierr,
+      integer*4         comm, nprocs, myid, ierr,
      &                  status(MPI_STATUS_SIZE)
       integer           nloc, nx, np, j, lo, next, prev
       Double precision

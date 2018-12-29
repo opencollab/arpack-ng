@@ -20,10 +20,10 @@ ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.f pzlarnv.f pdznorm2.f
 
 if ICB
-SSRC += icbpss.f90 icbpsn.f90
-DSRC += icbpds.f90 icbpdn.f90
-CSRC += icbpcn.f90
-ZSRC += icbpzn.f90
+SSRC += icbpss.F90 icbpsn.F90
+DSRC += icbpds.F90 icbpdn.F90
+CSRC += icbpcn.F90
+ZSRC += icbpzn.F90
 endif
 
 EXTRA_DIST = debug.h stat.h pcontext.h

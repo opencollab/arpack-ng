@@ -1,11 +1,11 @@
-! icbp : iso_c_binding for parpack
+! icba : iso_c_binding for arpack
 
-subroutine pznaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-                     iparam, ipntr, workd, workl, lworkl, rwork, info)       &
-                     bind(c, name="pznaupd_c")
+subroutine znaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+                    iparam, ipntr, workd, workl, lworkl, rwork, info) &
+                    bind(c, name="znaupd_c")
   use :: iso_c_binding
   implicit none
-  integer(kind=c_int),              value,              intent(in)    :: comm
+#include "arpackdef.h"
   integer(kind=c_int),                                  intent(inout) :: ido
   character(kind=c_char),           dimension(1),       intent(in)    :: bmat
   integer(kind=c_int),              value,              intent(in)    :: n
@@ -21,19 +21,19 @@ subroutine pznaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   complex(kind=c_double_complex),   dimension(3*n),     intent(out)   :: workd
   complex(kind=c_double_complex),   dimension(lworkl),  intent(out)   :: workl
   integer(kind=c_int),              value,              intent(in)    :: lworkl
-  complex(kind=c_double_complex),   dimension(ncv),     intent(out)   :: rwork
+  real(kind=c_double),              dimension(ncv),     intent(out)   :: rwork
   integer(kind=c_int),                                  intent(inout) :: info
-  call pznaupd(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
-               iparam, ipntr, workd, workl, lworkl, rwork, info)
-end subroutine pznaupd_c
+  call znaupd(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+              iparam, ipntr, workd, workl, lworkl, rwork, info)
+end subroutine znaupd_c
 
-subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
-                     bmat, n, which, nev, tol, resid, ncv, v, ldv,        &
-                     iparam, ipntr, workd, workl, lworkl, rwork, info)    &
-                     bind(c, name="pzneupd_c")
+subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
+                    bmat, n, which, nev, tol, resid, ncv, v, ldv,    &
+                    iparam, ipntr, workd, workl, lworkl, rwork, info)&
+                    bind(c, name="zneupd_c")
   use :: iso_c_binding
   implicit none
-  integer(kind=c_int),              value,              intent(in)    :: comm
+#include "arpackdef.h"
   logical(kind=c_bool),             value,              intent(in)    :: rvec
   character(kind=c_char),           dimension(1),       intent(in)    :: howmny
   logical(kind=c_bool),             dimension(ncv),     intent(in)    :: select
@@ -56,9 +56,9 @@ subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   complex(kind=c_double_complex),   dimension(3*n),     intent(out)   :: workd
   complex(kind=c_double_complex),   dimension(lworkl),  intent(out)   :: workl
   integer(kind=c_int),              value,              intent(in)    :: lworkl
-  complex(kind=c_double_complex),   dimension(ncv),     intent(out)   :: rwork
-  integer(kind=c_int),                                  intent(inout) :: info
-  call pzneupd(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
-               bmat, n, which, nev, tol, resid, ncv, v, ldv,        &
-               iparam, ipntr, workd, workl, lworkl, rwork, info)
-end subroutine pzneupd_c
+  real(kind=c_double),              dimension(ncv),     intent(out)   :: rwork
+  integer(kind=c_int),                               intent(inout) :: info
+  call zneupd(rvec, howmny, select, d, z, ldz, sigma, workev,&
+              bmat, n, which, nev, tol, resid, ncv, v, ldv,  &
+              iparam, ipntr, workd, workl, lworkl, rwork, info)
+end subroutine zneupd_c

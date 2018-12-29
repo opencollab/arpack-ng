@@ -60,11 +60,17 @@ c
       include 'debug.h'
       include 'stat.h'
 c
-c     %---------------%
-c     | MPI INTERFACE |
-c     %---------------%
+c     %-------------------------------%
+c     | MPI INTERFACE                 |
+c     | ILP64 is not supported by MPI |
+c     | integer*4 must be imposed in  |
+c     | all calls involving MPI.      |
+c     |                               |
+c     | Use ierr for MPI calls.       |
+c     %-------------------------------%
 
-      integer           comm, myid, nprocs, rc, nloc
+      integer*4         comm, myid, nprocs, rc, ierr
+
 c     %-----------------------------%
 c     | Define maximum dimensions   |
 c     | for all arrays.             |
@@ -91,13 +97,16 @@ c
       Real
      &                  rwork(maxncv), rd(maxncv,3)
 c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
+c     %------------------------------------%
+c     | Local Scalars                      |
+c     |                                    |
+c     | Use info if ILP64 can be supported |
+c     | (call to BLAS, LAPACK, ARPACK).    |
+c     %------------------------------------%
 c
       character         bmat*1, which*2
       integer           ido, n, nx, nev, ncv, lworkl, info, j,
-     &                  ierr, nconv, maxitr, ishfts, mode
+     &                  nloc, nconv, maxitr, ishfts, mode
       Complex
      &                  sigma
       Real
@@ -284,7 +293,7 @@ c
          call pcneupd (comm, rvec, 'A', select, d, v, ldv, sigma,
      &        workev, bmat, nloc, which, nev, tol, resid, ncv,
      &        v, ldv, iparam, ipntr, workd, workl, lworkl,
-     &        rwork, ierr)
+     &        rwork, info)
 c
 c        %----------------------------------------------%
 c        | Eigenvalues are returned in the one          |
@@ -297,7 +306,7 @@ c        | corresponding to the eigenvalues in D is     |
 c        | returned in V.                               |
 c        %----------------------------------------------%
 c
-         if ( ierr .ne. 0) then
+         if ( info .ne. 0) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -306,7 +315,7 @@ c           %------------------------------------%
 c
             if ( myid .eq. 0 ) then
                 print *, ' '
-                print *, ' Error with _neupd, info = ', ierr
+                print *, ' Error with _neupd, info = ', info
                 print *, ' Check the documentation of _neupd. '
                 print *, ' '
             endif
@@ -424,7 +433,7 @@ c----------------------------------------------------------------------------
 c
 c     .. MPI Declarations ...
       include           'mpif.h'
-      integer           comm, nprocs, myid, ierr,
+      integer*4         comm, nprocs, myid, ierr,
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, nx, np, j, lo, next, prev

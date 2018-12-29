@@ -59,11 +59,17 @@ c
       include 'debug.h'
       include 'stat.h'
 
-c     %---------------%
-c     | MPI INTERFACE |
-c     %---------------%
+c     %-------------------------------%
+c     | MPI INTERFACE                 |
+c     | ILP64 is not supported by MPI |
+c     | integer*4 must be imposed in  |
+c     | all calls involving MPI.      |
+c     |                               |
+c     | Use ierr for MPI calls.       |
+c     %-------------------------------%
 
-      integer           comm, myid, nprocs, rc, nloc
+      integer*4         comm, myid, nprocs, rc, ierr
+
 c
 c     %-----------------------------%
 c     | Define leading dimensions   |
@@ -91,12 +97,15 @@ c
      &                  workl(3*maxncv*maxncv+6*maxncv),
      &                  md(maxn), me(maxn-1), temp(maxn), temp_buf(maxn)
 c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
+c     %------------------------------------%
+c     | Local Scalars                      |
+c     |                                    |
+c     | Use info if ILP64 can be supported |
+c     | (call to BLAS, LAPACK, ARPACK).    |
+c     %------------------------------------%
 c
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, ierr, j,
+      integer           ido, n, nev, ncv, lworkl, info, nloc, j,
      &                  nconv, maxitr, ishfts, mode, blk
       Double precision
      &                  tol, sigmar, sigmai
@@ -184,8 +193,8 @@ c
   20  continue
       md(n) = 4.0*one
 c
-      call dpttrf(n, md, me, ierr)
-      if ( ierr .ne. 0 ) then
+      call dpttrf(n, md, me, info)
+      if ( info .ne. 0 ) then
          print*, ' '
          print*, ' ERROR with _pttrf. '
          print*, ' '
@@ -265,8 +274,8 @@ c======== Hack for Linear system ======= ccc
             call MPI_ALLREDUCE( temp_buf, temp, n,
      &            MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             call dpttrs(n, 1, md, me, temp, n,
-     &                  ierr)
-            if ( ierr .ne. 0 ) then
+     &                  info)
+            if ( info .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _pttrs. '
                print*, ' '
@@ -338,7 +347,7 @@ c
          call pdneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,
      &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol,
      &        resid, ncv, v, ldv, iparam, ipntr, workd,
-     &        workl, lworkl, ierr )
+     &        workl, lworkl, info )
 c
 c        %-----------------------------------------------%
 c        | The real part of the eigenvalue is returned   |
@@ -352,7 +361,7 @@ c        | for the invariant subspace corresponding to   |
 c        | the eigenvalues in D is returned in V.        |
 c        %-----------------------------------------------%
 c
-         if ( ierr .ne. 0 ) then
+         if ( info .ne. 0 ) then
 c
 c           %------------------------------------%
 c           | Error condition:                   |
@@ -361,7 +370,7 @@ c           %------------------------------------%
 c
             if ( myid .eq. 0 ) then
                print *, ' '
-               print *, ' Error with _neupd, info = ', ierr
+               print *, ' Error with _neupd, info = ', info
                print *, ' Check the documentation of _neupd'
                print *, ' '
             endif
@@ -499,7 +508,7 @@ c
 c
 c     .. MPI Declarations ...
       include           'mpif.h'
-      integer           comm, nprocs, myid, ierr,
+      integer*4         comm, nprocs, myid, ierr,
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, n, j, next, prev
@@ -557,7 +566,7 @@ c
 c
 c     .. MPI Declarations ...
       include           'mpif.h'
-      integer           comm, nprocs, myid, ierr,
+      integer*4         comm, nprocs, myid, ierr,
      &                  status(MPI_STATUS_SIZE)
 c
       integer           nloc, j, next, prev
