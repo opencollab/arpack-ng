@@ -1,12 +1,23 @@
-arpack-ng - 3.6.4
+arpack-ng - 3.7.0
 
 [ Franck Houssen ]
  * [BUG FIX] ICB: missing workev for *[ds]neupd (real+not-sym) => API/ABI change for *[ds]neupd_c.
  * [BUG FIX] autotools - make distcheck: fix circular dependencies.
  * arpackmm: utility to test arpack with matrix market files.
  * ICB: add ILP64 support.
+    The idea is:
+    - cmake      generates arpackdef.h from arpackdef.cmake.h.in
+    - autoheader generates arpackdef.h from arpackdef.autotools.h[.in]
+    - arpack includes arpackdef.h when/where needed:
+      - #define provide c_int/a_int according to architecture.
+      - all f90 who need to include "arpackdef.h" must be moved to F90.
+        Note: by convention, F90 are preprocessed (f90 are not).
+    - MPI does not support ILP64: integer*4 must be imposed in all
+      calls involving MPI (f90 example/test code).
+    To enable ILP64 users to compile/link, arpackdef.h is added in
+    the arpack installation (make install).
 
- -- Sylvestre Ledru <sylvestre@debian.org> Sat, 10 Nov 2018 09:28:08 +0100
+ -- Sylvestre Ledru <sylvestre@debian.org> Sat, 29 Dec 2018 13:56:09 +0100
 
 arpack-ng - 3.6.3
 
