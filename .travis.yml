@@ -113,9 +113,9 @@ jobs:
        apt-get -y install build-essential                                                                            && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libeigen3-dev            && \
        cd /tmp                                                                                                       && \
-       git clone https://github.com/fghoussen/arpack-ng                                                              && \
+       git clone https://github.com/opencollab/arpack-ng                                                             && \
        cd arpack-ng                                                                                                  && \
-       git checkout ilp64                                                                                            && \
+       git checkout master                                                                                           && \
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
        ./bootstrap                                                                                                   && \
