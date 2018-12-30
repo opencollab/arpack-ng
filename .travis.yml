@@ -112,12 +112,14 @@ jobs:
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libeigen3-dev            && \
+       /usr/sbin/useradd nonroot                                                                                     && \
+       su nonroot                                                                                                    && \
        cd /tmp                                                                                                       && \
        git clone https://github.com/opencollab/arpack-ng                                                             && \
        cd arpack-ng                                                                                                  && \
        git checkout master                                                                                           && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am                     && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am                        && \
        ./bootstrap                                                                                                   && \
        export FFLAGS='-I/usr/include/mkl'                                                                            && \
        export FCFLAGS='-I/usr/include/mkl'                                                                           && \
