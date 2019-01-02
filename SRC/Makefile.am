@@ -31,5 +31,4 @@ libarpack@LIBSUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_
 libarpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
 if ICB
 libarpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libarpack@LIBSUFFIX@_la_FCFLAGS = -I$(top_builddir) -I$(top_builddir)/ICB
 endif
