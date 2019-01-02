@@ -3,8 +3,6 @@ AC_INIT([ARPACK-NG],[3.6.3],[https://github.com/opencollab/arpack-ng/issues/],[a
 AC_CONFIG_SRCDIR([SRC/version.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
-AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -60,9 +58,6 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 	AC_LANG_POP([Fortran 77])
 ])
 
-AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
-AM_CONDITIONAL([BLACS], [false])
-
 dnl See if compiling with ISO_C_BINDING support
 AC_ARG_ENABLE([icb],
               [AC_HELP_STRING([--enable-icb],
@@ -80,7 +75,6 @@ AC_ARG_ENABLE([icb-exmm],
               ],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
-AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 if test x"$enable_icb_exmm" != x"no"; then
   PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2]) dnl Go get eigen3.pc
   AC_SUBST([EIGEN3_CFLAGS]) dnl Define EIGEN3_CFLAGS in Makefile.am
@@ -103,7 +97,6 @@ if test x"$enable_icb_exmm" != x"no"; then
   dnl                 )
 fi
 
-AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 if test x"$enable_icb" != x"no"; then
   AC_LANG_PUSH([Fortran])
   AC_MSG_CHECKING([for iso_c_binding module compilation])
@@ -139,6 +132,7 @@ if test x"$enable_icb" != x"no"; then
     AC_SUBST([MPI_C_LIBS], ["$MPILIBS $FCLIBS"])
     CC=$MPICC
     AC_LANG_POP([C])
+
     AC_LANG_PUSH([C++])
     AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))
     AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
@@ -220,9 +214,13 @@ else
   CFLAGS="$CFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
 fi
 
+AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
+AM_CONDITIONAL([BLACS], [false])
+AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
+AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
+
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
-
 AC_CONFIG_FILES([
 	Makefile
 	ICB/Makefile
@@ -246,6 +244,8 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
+AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
+AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AC_OUTPUT
 
 # After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
