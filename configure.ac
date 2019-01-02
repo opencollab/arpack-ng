@@ -224,6 +224,7 @@ m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
+	Makefile
 	SRC/Makefile
 	UTIL/Makefile
 	TESTS/Makefile
@@ -253,9 +254,7 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
 fi
-AC_OUTPUT([
-	Makefile
-])
+AC_OUTPUT
 
 # After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
 
