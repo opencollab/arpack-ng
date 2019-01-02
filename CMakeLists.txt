@@ -575,6 +575,7 @@ include(GNUInstallDirs)
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix \${prefix})
 set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 # TODO: Fill these in with something appropriate.
 #set(PACKAGE_VERSION)
