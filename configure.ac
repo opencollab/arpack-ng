@@ -225,8 +225,9 @@ AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"]
 
 AC_CONFIG_FILES([
 	Makefile
-	SRC/Makefile
+	ICB/Makefile
 	UTIL/Makefile
+	SRC/Makefile
 	TESTS/Makefile
 	EXAMPLES/Makefile
 	EXAMPLES/BAND/Makefile
@@ -235,15 +236,7 @@ AC_CONFIG_FILES([
 	EXAMPLES/SIMPLE/Makefile
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
-])
-if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([ICB/Makefile])
-fi
-if test x"$enable_icb_exmm" != x"no"; then
-  AC_CONFIG_FILES([EXAMPLES/MATRIX_MARKET/Makefile])
-fi
-if test x"$enable_mpi" != x"no"; then
-AC_CONFIG_FILES([
+	EXAMPLES/MATRIX_MARKET/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
@@ -253,7 +246,6 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
-fi
 AC_OUTPUT
 
 # After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
