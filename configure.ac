@@ -65,19 +65,16 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 
 dnl See if compiling with ISO_C_BINDING support
 AC_ARG_ENABLE([icb],
-              [AC_HELP_STRING([--enable-icb],
+              [AS_HELP_STRING([--enable-icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
-              [AS_VAR_SET([enable_icb], [$enableval])],
+              [],
               [AS_VAR_SET([enable_icb], [no])])
 
 dnl See if compiling matrix market example based on ICB
 AC_ARG_ENABLE([icb-exmm],
-              [AC_HELP_STRING([--enable-icb-exmm],
+              [AS_HELP_STRING([--enable-icb-exmm],
                               [matrix market example based on ISO_C_BINDING])],
-              [
-               AS_VAR_SET([enable_icb_exmm], [$enableval])
-               AS_VAR_SET([enable_icb], [$enableval])
-              ],
+              [AS_VAR_SET([enable_icb], [$enableval])],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
 if test x"$enable_icb_exmm" != x"no"; then
