@@ -20,12 +20,17 @@ AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
 if test x"$INTERFACE64" == x"1"; then
+  AC_LANG_PUSH([Fortran 77])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FFLAGS="$FFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FFLAGS="$FFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.])))
+  AC_LANG_POP([Fortran 77])
+
+  AC_LANG_PUSH([Fortran])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FCFLAGS="$FCFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
+  AC_LANG_POP([Fortran])
 
   AC_DEFINE([INTERFACE64],[1],['INTERFACE64 is enabled']) # Add a #define (or #undef) for INTERFACE64 in arpackdef.autotools.h.in (autoheader)
 else
@@ -165,9 +170,11 @@ else
     AC_FC_LINE_LENGTH(unlimited)
     FFLAGS="$FFLAGS $ac_cv_fc_line_length"
 
+    AC_LANG_PUSH([Fortran 77])
     AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS="$FFLAGS -cpp",
                           AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS="$FFLAGS -fpp",
                                                 AC_MSG_WARN([configure does not know how to enable your Fortran compiler's preprocessor: set it manually via FFLAGS.])))
+    AC_LANG_POP([Fortran 77])
 
     SCALARFUNS="naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb"
     COMPLEXFUNS="naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc"
@@ -211,7 +218,7 @@ else
   AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupdsuff)
   AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
   dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CFLAGS="$CFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
+  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
 fi
 
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
@@ -254,7 +261,7 @@ AX_GEN_ARPACKDEF()
 
 AC_MSG_RESULT([
 --------------------------------------------------
-Configuration summary for $PACKAGE_NAME ($VERSION)
+Configuration summary for $PACKAGE_STRING
 --------------------------------------------------
 Installation prefix : $prefix
 MPI enabled         : $enable_mpi
@@ -268,6 +275,7 @@ CC                  : $CC
 CFLAGS              : $CFLAGS
 CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
+CPPFLAGS            : $CPPFLAGS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
