@@ -8,10 +8,8 @@ else
 check_PROGRAMS += bug_1315_single
 check_PROGRAMS += bug_1315_double
 endif
-
+dist_check_DATA = testA.mtx
 TESTS = $(check_PROGRAMS)
-
-EXTRA_DIST = testA.mtx
 
 dnsimp_SOURCES = dnsimp.f mmio.f debug.h
 

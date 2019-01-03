@@ -248,7 +248,12 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
-AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
+AC_CONFIG_LINKS([
+	TESTS/testA.mtx:TESTS/testA.mtx
+	EXAMPLES/MATRIX_MARKET/An.mtx:EXAMPLES/MATRIX_MARKET/An.mtx
+	EXAMPLES/MATRIX_MARKET/As.mtx:EXAMPLES/MATRIX_MARKET/As.mtx
+	EXAMPLES/MATRIX_MARKET/B.mtx:EXAMPLES/MATRIX_MARKET/B.mtx
+])
 AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AC_OUTPUT
 
