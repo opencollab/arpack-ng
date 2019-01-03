@@ -11,6 +11,7 @@ dnl Autoconf was designed with the fundamental fact that compiler (= language su
 AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
+PKG_PROG_PKG_CONFIG
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
