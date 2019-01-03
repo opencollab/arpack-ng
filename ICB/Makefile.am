@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)
+
 pkgincludedir = $(includedir)/arpack
 
 pkginclude_HEADERS = debug_c.h debug_c.hpp
@@ -9,6 +11,4 @@ endif
 
 noinst_LTLIBRARIES = libdbgicb.la libstaicb.la
 libdbgicb_la_SOURCES = debug_icb.F90
-libdbgicb_la_CPPFLAGS = -I$(top_srcdir)
 libstaicb_la_SOURCES = stat_icb.F90
-libstaicb_la_CPPFLAGS = -I$(top_srcdir)

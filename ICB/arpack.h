@@ -1,7 +1,7 @@
-#include "arpackdef.h"
-
 #ifndef __ARPACK_H__
 #define __ARPACK_H__
+
+#include "arpackdef.h"
 
 #ifdef __cplusplus
 extern "C" {

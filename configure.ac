@@ -31,8 +31,6 @@ if test x"$INTERFACE64" == x"1"; then
                         AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
   AC_LANG_POP([Fortran])
-
-  AC_DEFINE([INTERFACE64],[1],['INTERFACE64 is enabled']) # Add a #define (or #undef) for INTERFACE64 in arpackdef.autotools.h.in (autoheader)
 else
   INTERFACE64=0
 fi
@@ -226,6 +224,7 @@ AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 AC_CONFIG_FILES([
+	arpackdef.h
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile
@@ -254,12 +253,7 @@ AC_CONFIG_LINKS([
 	EXAMPLES/MATRIX_MARKET/As.mtx:EXAMPLES/MATRIX_MARKET/As.mtx
 	EXAMPLES/MATRIX_MARKET/B.mtx:EXAMPLES/MATRIX_MARKET/B.mtx
 ])
-AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AC_OUTPUT
-
-# After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
-
-AX_GEN_ARPACKDEF()
 
 AC_MSG_RESULT([
 --------------------------------------------------

@@ -284,6 +284,7 @@ if (MPI)
 endif ()
 
 if (INTERFACE64)
+    set(INTERFACE64 1)
     if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fdefault-integer-8")
     elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
@@ -291,10 +292,12 @@ if (INTERFACE64)
     else ()
       message(WARNING "build script does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.")
     endif ()
+else ()
+    set(INTERFACE64 0)
 endif ()
 
 message("-- Generating arpackdef.h")
-configure_file(arpackdef.cmake.h.in "${PROJECT_BINARY_DIR}/arpackdef.h")
+configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
 include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h
 install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION include/arpack)
 
