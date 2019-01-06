@@ -578,6 +578,11 @@ int arpackSolve(options const & opt, int const & mode,
 int checkArpackEigVec(options const & opt, EigMatR & A, EigMatR const & B, arpackEV const & out) {
   // Check eigen vectors.
 
+  if (opt.check && out.vec.size() == 0) {
+    cerr << "Error: no eigen value / vector found" << endl;
+    return 1;
+  }
+
   for (size_t i = 0; i < out.vec.size(); i++) {
     EigVecC V = out.vec[i];
     complex<double> lambda = out.val[i];
