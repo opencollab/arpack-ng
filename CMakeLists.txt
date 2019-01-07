@@ -574,22 +574,6 @@ endif()
 # 'make install' to the correct location
 include(GNUInstallDirs)
 
-# Convert variable names to those expected by the .pc file.
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix \${prefix})
-set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
-set(PACKAGE_NAME ${PROJECT_NAME})
-# TODO: Fill these in with something appropriate.
-#set(PACKAGE_VERSION)
-#set(PACKAGE_URL)
-#set(LAPACK_LIBS)
-#set(BLAS_LIBS)
-configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
-
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -619,6 +603,21 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
+
+# Convert variable names to those expected by the .pc file.
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix \${prefix})
+set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
+set(PACKAGE_NAME ${PROJECT_NAME})
+set(PACKAGE_VERSION ${arpack_ng_VERSION})
+set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
+# TODO: Fill these in with something appropriate.
+#set(LAPACK_LIBS)
+#set(BLAS_LIBS)
+configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 
 # We don't want this to run on every build.
