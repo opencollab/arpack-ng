@@ -1,5 +1,5 @@
 AC_PREREQ(2.67)
-AC_INIT([ARPACK-NG],[3.6.3],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
+AC_INIT([ARPACK-NG],[3.7.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
 AC_CONFIG_SRCDIR([SRC/version.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
