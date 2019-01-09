@@ -77,25 +77,24 @@ AC_ARG_ENABLE([icb-exmm],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
 if test x"$enable_icb_exmm" != x"no"; then
-  PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2]) dnl Go get eigen3.pc
-  AC_SUBST([EIGEN3_CFLAGS]) dnl Define EIGEN3_CFLAGS in Makefile.am
-  dnl TODO: How to pass /path/to/eigen from EIGEN3_CFLAGS to AC_CHECK_HEADERS ?...
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/Sparse], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/Sparse not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/IterativeLinearSolvers], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/IterativeLinearSolvers not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/SparseLU], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseLU not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/SparseQR], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseQR not found])]
-  dnl                 )
+	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2])
+	AC_LANG_PUSH([C++])
+	CPPFLAGS_SAVE=$CPPFLAGS
+	CPPFLAGS=$EIGEN3_CFLAGS
+	AC_CHECK_HEADER([Eigen/Sparse],
+		[],
+		[AC_MSG_ERROR([Eigen/Sparse not found])])
+	AC_CHECK_HEADER([Eigen/IterativeLinearSolvers],
+		[],
+		[AC_MSG_ERROR([Eigen/IterativeLinearSolvers not found])])
+	AC_CHECK_HEADER([Eigen/SparseLU],
+		[],
+		[AC_MSG_ERROR([Eigen/SparseLU not found])])
+	AC_CHECK_HEADER([Eigen/SparseQR],
+		[],
+		[AC_MSG_ERROR([Eigen/SparseQR not found])])
+	CPPFLAGS=$CPPFLAGS_SAVE
+	AC_LANG_POP([C++])
 fi
 
 if test x"$enable_icb" != x"no"; then
