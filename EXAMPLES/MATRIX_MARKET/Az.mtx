@@ -1,0 +1,79 @@
+%% MatrixMarket matrix coordinate double symmetric
+% This example is 0-based without (optional) nnz
+%
+% This is a 1D diffusive laplacian matrix (fixed at first end <=> invertible)
+%
+%              1                              1          
+%              .                             .--.        
+%             / \                            |  |        
+%            /   \ 0                       0 |  |        
+%  phi_i  --o  o  o--o--  =>  grad(phi_i)  --o  o  o--o--
+%              i  j                            i|  |j    
+%                                               |  |     
+%                                               .--.     
+%                                                -1.     
+%
+%                 1                              1       
+%                 .                             .--.     
+%                / \                            |  |     
+%               /   \ 0                        i|  |j    
+%  phi_j  --o--o  o  o--  =>  grad(phi_j)  --o--o  o  o--
+%              i  j                                |  | 0
+%                                                  |  |  
+%                                                  .--.  
+%                                                   -1.  
+%
+%                  i     j
+%              | l_ii  l_ij | i
+%  laplacian = |            |
+%              | l_ji  l_jj | j
+%
+%  distance(i, j) = d = 1.
+%
+%  l_ii = int_[i,j](grad(phi_i).grad(phi_i)) = d*(-1.)*(-1.) =  1.
+%  l_ij = int_[i,j](grad(phi_i).grad(phi_j)) = d*(-1.)*( 1.) = -1.
+%  l_ji = int_[i,j](grad(phi_j).grad(phi_i)) = d*( 1.)*(-1.) = -1.
+%  l_jj = int_[i,j](grad(phi_j).grad(phi_j)) = d*( 1.)*( 1.) =  1.
+%
+%                i     j
+%              | d_ii  d_ij | i
+%  diffusion = |            |
+%              | d_ji  d_jj | j
+%
+%  d_ii = int_[i,j](phi_i.grad(phi_i)) = int_[i,j]((1-x)*(-1.)) = -d*0.5  = -0.5
+%  d_ij = int_[i,j](phi_i.grad(phi_j)) = int_[i,j]((1-x)*( 1.)) =  d*0.5  =  0.5
+%  d_ji = int_[i,j](phi_j.grad(phi_i)) = int_[i,j](   x *(-1.)) = -d*0.5  = -0.5
+%  d_jj = int_[i,j](phi_j.grad(phi_j)) = int_[i,j](   x *( 1.)) =  d*0.5  =  0.5
+%
+% A <=> assembly of {kappa*laplacian + rho*diffusion}
+%       where kappa = 100 and rho = 2
+%
+% n m [nnz]
+% i j Aij
+
+8 8
+
+0  0  (  1., 0.)
+1  1  (200., 0.)
+2  2  (200., 0.)
+3  3  (200., 0.)
+4  4  (200., 0.)
+5  5  (200., 0.)
+6  6  (200., 0.)
+7  7  (101., 0.)
+
+1  0  (   0., 0.)
+2  1  (-101., 0.)
+3  2  (-101., 0.)
+4  3  (-101., 0.)
+5  4  (-101., 0.)
+6  5  (-101., 0.)
+7  6  (-101., 0.)
+
+0  1  (  0., 0.)
+1  2  (-99., 0.)
+2  3  (-99., 0.)
+3  4  (-99., 0.)
+4  5  (-99., 0.)
+5  6  (-99., 0.)
+6  7  (-99., 0.)

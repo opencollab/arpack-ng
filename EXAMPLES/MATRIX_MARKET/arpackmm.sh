@@ -1,13 +1,13 @@
 #!/bin/bash -eu
 
-for symPb in "--A As.mtx" "--nonSymPb --A An.mtx"
+for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx --B Bz.mtx"
 do
   for genPb in "" "--genPb"
   do
     for smallMag in "" "--mag SM --noCheck" # SM is known to be difficult to converge.
     do
       export shiftOpt=""
-      if [[ "$symPb" == *nonSymPb* ]]; then
+      if [[ "$eigPb" == *nonSymPb* ]]; then
         if [[ "$genPb" == *genPb* ]]; then
           export shiftOpt="--shiftReal 2.5 --shiftImag 2.5 --tol 0.5" # Relax tolerance, tricky to converge.
         else
@@ -34,8 +34,14 @@ do
                 export extraGenPb="$shiftOpt" # Force shift if genPb.
               fi
 
+              if [[ "$slv" == *CG* ]]; then
+                if [[ "$eigPb" == *nonSymPb* ]]; then
+                  continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                fi
+              fi
+
               # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-              export CMD="./arpackmm $symPb $genPb $smallMag $shiftRI $invert $tol $slv $extraGenPb --nbCV 6 --verbose 3"
+              export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $extraGenPb --nbCV 6 --verbose 3"
               echo "$CMD"
               eval "$CMD"
               echo ""
