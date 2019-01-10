@@ -27,7 +27,7 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "" "--slv CG --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv LU --slvDrtPvtThd 1.e-06" "--slv QR"
+            for slv in "" "--slv CG" "--slv LU" "--slv QR"
             do
               export extraGenPb=""
               if [[ "$genPb" == *genPb* ]]; then

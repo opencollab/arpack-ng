@@ -156,7 +156,7 @@ if test x"$enable_icb" != x"no"; then
                   )
     AC_LANG_POP([C])
   fi
-  AX_CXX_COMPILE_STDCXX(14)
+  AX_CXX_COMPILE_STDCXX(11)
 else
   # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap...
 
