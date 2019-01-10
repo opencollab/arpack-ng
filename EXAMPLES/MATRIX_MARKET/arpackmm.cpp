@@ -15,6 +15,7 @@
 #include <cmath> // fabs.
 #include <iomanip> // setw.
 #include <cassert> // assert.
+#include <memory> // unique_ptr.
 #include "arpack.h"
 #include "debug_c.hpp"
 
@@ -59,8 +60,9 @@ class options {
       tol = 1.e-06;
       maxIt = 100;
       slv = "BiCG";
-      slvTol = 1.e-06;
-      slvMaxIt = 100;
+      slvItrTol = nullptr;
+      slvItrMaxIt = nullptr;
+      slvDrtPvtThd = nullptr;
       check = true;
       verbose = 0;
       debug = 0;
@@ -125,15 +127,26 @@ class options {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           slv = argv[a];
         }
-        if (clo == "--slvTol") {
+        if (clo == "--slvItrTol") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           stringstream t(argv[a]);
-          t >> slvTol; if (!t) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          double tol = 0.;
+          t >> tol; if (!t) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          slvItrTol = make_unique<double>(tol);
         }
-        if (clo == "--slvMaxIt") {
+        if (clo == "--slvItrMaxIt") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           stringstream mi(argv[a]);
-          mi >> slvMaxIt; if (!mi) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          int maxIt = 0;
+          mi >> maxIt; if (!mi) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          slvItrMaxIt = make_unique<int>(maxIt);
+        }
+        if (clo == "--slvDrtPvtThd") {
+          a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
+          stringstream t(argv[a]);
+          double thd = 0.;
+          t >> thd; if (!t) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          slvDrtPvtThd = make_unique<double>(thd);
         }
         if (clo == "--noCheck") check = false;
         if (clo == "--verbose") {
@@ -173,50 +186,52 @@ class options {
     int usage(int rc = 1) {
       cout << "Usage: running arpack to check for eigen values/vectors." << endl;
       cout << endl;
-      cout << "  --A F:         file name of matrix A such that A X = lambda X. (standard)" << endl;
-      cout << "                 default: A.mtx" << endl;
-      cout << "  --B F:         file name of matrix B such that A X = lambda B X. (generalized)" << endl;
-      cout << "                 default: N.A. for standard problem, or, B.mtx for generalized problem" << endl;
-      cout << "  --nbEV:        number of eigen values/vectors to compute." << endl;
-      cout << "                 default: 1" << endl;
-      cout << "  --nbCV:        number of columns of the matrix V." << endl;
-      cout << "                 default: 2*nbEV+1" << endl;
-      cout << "  --genPb:       generalized problem." << endl;
-      cout << "                 default: standard problem" << endl;
-      cout << "  --nonSymPb:    non symmetric problem (<=> use dn[ae]upd)." << endl;
-      cout << "                 default: symmetric problem (<=> use ds[ae]upd)" << endl;
-      cout << "  --cpxPb:       complex (non symmetric) problem (<=> use zn[ae]upd)." << endl;
-      cout << "                 default: false (<=> use d*[ae]upd)" << endl;
-      cout << "  --mag M:       set magnitude of eigen values to look for (LM, SM, LR, SR, LI, SI)." << endl;
-      cout << "                 default: large magnitude (LM)" << endl;
-      cout << "  --shiftReal S: real shift where sigma = S (look for lambda+S instead of lambda)." << endl;
-      cout << "                 default: no shift, S = 0." << endl;
-      cout << "  --shiftImag S: imaginary shift where sigma = S (look for lambda+S instead of lambda)." << endl;
-      cout << "                 default: no shift, S = 0." << endl;
-      cout << "  --invert:      invert mode (look for 1./lambda instead of lambda)." << endl;
-      cout << "                 default: no invert" << endl;
-      cout << "  --tol T:       tolerance T." << endl;
-      cout << "                 default: 1.e-06" << endl;
-      cout << "  --maxIt M:     maximum iterations M." << endl;
-      cout << "                 default: 100" << endl;
-      cout << "  --slv S:       solver (BiCG, CG, LU)" << endl;
-      cout << "                   BiCG: iterative method, any matrices" << endl;
-      cout << "                     CG: iterative method, sym matrices only" << endl;
-      cout << "                     LU:    direct method, any matrices" << endl;
-      cout << "                     QR:    direct method, any matrices" << endl;
-      cout << "                 default: BiCG" << endl;
-      cout << "  --slvTol T:    tolerance T (if iterative method)." << endl;
-      cout << "                 default: 1.e-06" << endl;
-      cout << "  --slvMaxIt M:  maximum iterations M (if iterative method)." << endl;
-      cout << "                 default: 100" << endl;
-      cout << "  --noCheck:     check arpack eigen values/vectors." << endl;
-      cout << "                 default: check" << endl;
-      cout << "  --verbose V:   verbosity level (up to 3)." << endl;
-      cout << "                 default: 0" << endl;
-      cout << "  --debug D:     debug level (up to 3)." << endl;
-      cout << "                 default: 0" << endl;
-      cout << "  --restart:     restart from previous run (which had produced resid.out and v.out)." << endl;
-      cout << "                 default: false" << endl;
+      cout << "  --A F:            file name of matrix A such that A X = lambda X. (standard)" << endl;
+      cout << "                    default: A.mtx" << endl;
+      cout << "  --B F:            file name of matrix B such that A X = lambda B X. (generalized)" << endl;
+      cout << "                    default: N.A. for standard problem, or, B.mtx for generalized problem" << endl;
+      cout << "  --nbEV:           number of eigen values/vectors to compute." << endl;
+      cout << "                    default: 1" << endl;
+      cout << "  --nbCV:           number of columns of the matrix V." << endl;
+      cout << "                    default: 2*nbEV+1" << endl;
+      cout << "  --genPb:          generalized problem." << endl;
+      cout << "                    default: standard problem" << endl;
+      cout << "  --nonSymPb:       non symmetric problem (<=> use dn[ae]upd)." << endl;
+      cout << "                    default: symmetric problem (<=> use ds[ae]upd)" << endl;
+      cout << "  --cpxPb:          complex (non symmetric) problem (<=> use zn[ae]upd)." << endl;
+      cout << "                    default: false (<=> use d*[ae]upd)" << endl;
+      cout << "  --mag M:          set magnitude of eigen values to look for (LM, SM, LR, SR, LI, SI)." << endl;
+      cout << "                    default: large magnitude (LM)" << endl;
+      cout << "  --shiftReal S:    real shift where sigma = S (look for lambda+S instead of lambda)." << endl;
+      cout << "                    default: no shift, S = 0." << endl;
+      cout << "  --shiftImag S:    imaginary shift where sigma = S (look for lambda+S instead of lambda)." << endl;
+      cout << "                    default: no shift, S = 0." << endl;
+      cout << "  --invert:         invert mode (look for 1./lambda instead of lambda)." << endl;
+      cout << "                    default: no invert" << endl;
+      cout << "  --tol T:          tolerance T." << endl;
+      cout << "                    default: 1.e-06" << endl;
+      cout << "  --maxIt M:        maximum iterations M." << endl;
+      cout << "                    default: 100" << endl;
+      cout << "  --slv S:          solver (BiCG, CG, LU)" << endl;
+      cout << "                      BiCG: iterative method, any matrices" << endl;
+      cout << "                        CG: iterative method, sym matrices only" << endl;
+      cout << "                        LU:    direct method, any matrices" << endl;
+      cout << "                        QR:    direct method, any matrices" << endl;
+      cout << "                    default: BiCG" << endl;
+      cout << "  --slvItrTol T:    solver tolerance T (for iterative solvers)." << endl;
+      cout << "                    default: eigen default value" << endl;
+      cout << "  --slvItrMaxIt M:  solver maximum iterations M (for iterative solvers)." << endl;
+      cout << "                    default: eigen default value" << endl;
+      cout << "  --slvDrtPvtThd T: solver pivot threshold T (for direct solvers)." << endl;
+      cout << "                    default: eigen default value" << endl;
+      cout << "  --noCheck:        check arpack eigen values/vectors." << endl;
+      cout << "                    default: check" << endl;
+      cout << "  --verbose V:      verbosity level (up to 3)." << endl;
+      cout << "                    default: 0" << endl;
+      cout << "  --debug D:        debug level (up to 3)." << endl;
+      cout << "                    default: 0" << endl;
+      cout << "  --restart:        restart from previous run (which had produced resid.out and v.out)." << endl;
+      cout << "                    default: false" << endl;
       if (rc == 0) exit(0);
       return rc;
     };
@@ -237,8 +252,9 @@ class options {
     double tol;
     int maxIt;
     string slv;
-    double slvTol;
-    int slvMaxIt;
+    unique_ptr<double> slvItrTol;
+    unique_ptr<int> slvItrMaxIt;
+    unique_ptr<double> slvDrtPvtThd;
     bool check;
     int verbose;
     int debug;
@@ -252,7 +268,10 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << "OPT: shiftReal " << (opt.shiftReal ? "yes" : "no") << ", sigmaReal " << opt.sigmaReal;
   ostr << ", shiftImag " << (opt.shiftImag ? "yes" : "no") << ", sigmaImag " << opt.sigmaImag;
   ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol << ", maxIt " << opt.maxIt << endl;
-  ostr << "OPT: slv " << opt.slv << ", slvTol " << opt.slvTol << ", slvMaxIt " << opt.slvMaxIt;
+  ostr << "OPT: slv " << opt.slv;
+  if (opt.slvItrTol)    ostr << ", slvItrTol "    << *opt.slvItrTol;
+  if (opt.slvItrMaxIt)  ostr << ", slvItrMaxIt "  << *opt.slvItrMaxIt;
+  if (opt.slvDrtPvtThd) ostr << ", slvDrtPvtThd " << *opt.slvDrtPvtThd;
   ostr << ", check " << (opt.check ? "yes" : "no") << ", verbose " << opt.verbose << ", debug " << opt.debug;
   ostr << ", restart " << (opt.restart ? "yes" : "no") << endl;
   return ostr;
@@ -634,12 +653,18 @@ int arpackSolve(options const & opt, int const & mode,
         Y = A * X;
         auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
         Y = solver.solve(YY); // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+        if(solver.info() != Eigen::Success) {
+          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
+          return 1;
+        }
       }
       else if (iparam[6] == 3) {
         auto Z = B * X;      // Z = B * X.
         Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+        if(solver.info() != Eigen::Success) {
+          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
+          return 1;
+        }
       }
     }
     else if (ido == 1) {
@@ -651,13 +676,19 @@ int arpackSolve(options const & opt, int const & mode,
         if (opt.symPb) X = Y; // Remark 5 in dsaupd documentation.
         auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
         Y = solver.solve(YY); // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+        if(solver.info() != Eigen::Success) {
+          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
+          return 1;
+        }
       }
       else if (iparam[6] == 3) {
         a_int zIdx = ipntr[2] - 1; // 0-based (Fortran is 1-based).
         EV Z(workd + zIdx, nbDim); // Arpack provides Z.
         Y = solver.solve(Z);       // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {cerr << "Error: solve KO - increase --slvMaxIt and/or relax --slvTol, or, change --slv" << endl; return 1;}
+        if(solver.info() != Eigen::Success) {
+          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
+          return 1;
+        }
       }
     }
     else if (ido == 2) {
@@ -861,22 +892,24 @@ int arpackSolve(options & opt) {
   int rc = 0;
   if (opt.slv == "BiCG") {
     SLVBCG solver;
-    solver.setTolerance(opt.slvTol);
-    solver.setMaxIterations(opt.slvMaxIt);
+    if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
+    if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
     rc = arpackSolve<RC, EM, EC, EV, SLVBCG>(opt, solver);
   }
   else if (opt.slv == "CG") {
     SLVCG solver;
-    solver.setTolerance(opt.slvTol);
-    solver.setMaxIterations(opt.slvMaxIt);
+    if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
+    if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
     rc = arpackSolve<RC, EM, EC, EV, SLVCG>(opt, solver);
   }
   else if (opt.slv == "LU") {
     SLVSLU solver;
+    if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
     rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
   }
   else if (opt.slv == "QR") {
     SLVSQR solver;
+    if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
     rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
   }
   else {cerr << "Error: unknown solver - KO" << endl; return 1;}
