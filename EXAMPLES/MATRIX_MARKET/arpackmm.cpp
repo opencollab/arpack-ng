@@ -59,6 +59,7 @@ class options {
       invert = false; // Eigen value invertion: look for 1./lambda instead of lambda.
       tol = 1.e-06;
       maxIt = 100;
+      schur = false; // Compute Ritz vectors.
       slv = "BiCG";
       slvItrTol = nullptr;
       slvItrMaxIt = nullptr;
@@ -215,6 +216,17 @@ class options {
       cout << "                    default: 1.e-06" << endl;
       cout << "  --maxIt M:        maximum iterations M." << endl;
       cout << "                    default: 100" << endl;
+      cout << "  --schur:          compute Schur vectors." << endl;
+      cout << "                      the Schur decomposition is such that A = Q^H x T x Q where:" << endl;
+      cout << "                        - the H superscript refers to the Hermitian transpose: Q^H = (Q^t)^*." << endl;
+      cout << "                        - Q is unitary: Q is such that Q^H x Q = I." << endl;
+      cout << "                        - T is an upper-triangular matrix whose diagonal elements are the eigenvalues of A." << endl;
+      cout << "                      every square matrix has a Schur decomposition: columns of Q are the Schur vectors." << endl;
+      cout << "                      for a general matrix A, there is no relation between Schur vectors of A and eigenvectors of A." << endl;
+      cout << "                      if q_j is the i-th Schur vector, then A x q_j is a linear combination of q_1, ..., q_j." << endl;
+      cout << "                      Schur vectors q_1, q_2, ..., q_j span an invariant subspace of A." << endl;
+      cout << "                      the Schur vectors and eigenvectors of A are the same if A is a normal matrix." << endl;
+      cout << "                    default: compute Ritz vectors (approximations of eigen vectors)" << endl;
       cout << "  --slv S:          solver (BiCG, CG, LU)" << endl;
       cout << "                      BiCG: iterative method, any matrices" << endl;
       cout << "                        CG: iterative method, sym matrices only" << endl;
@@ -228,6 +240,7 @@ class options {
       cout << "  --slvDrtPvtThd T: solver pivot threshold T (for direct solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
       cout << "  --noCheck:        check arpack eigen values/vectors." << endl;
+      cout << "                    check will fail if Schur vectors are computed and A is NOT a normal matrix." << endl;
       cout << "                    default: check" << endl;
       cout << "  --verbose V:      verbosity level (up to 3)." << endl;
       cout << "                    default: 0" << endl;
@@ -254,6 +267,7 @@ class options {
     bool invert; // Eigen value invertion: look for 1./lambda instead of lambda.
     double tol;
     int maxIt;
+    bool schur;
     string slv;
     unique_ptr<double> slvItrTol;
     unique_ptr<int> slvItrMaxIt;
@@ -270,7 +284,8 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << ", symPb " << (opt.symPb ? "yes" : "no") << ", mag " << opt.mag << endl;
   ostr << "OPT: shiftReal " << (opt.shiftReal ? "yes" : "no") << ", sigmaReal " << opt.sigmaReal;
   ostr << ", shiftImag " << (opt.shiftImag ? "yes" : "no") << ", sigmaImag " << opt.sigmaImag;
-  ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol << ", maxIt " << opt.maxIt << endl;
+  ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol << ", maxIt " << opt.maxIt;
+  ostr << ", " << (opt.schur ? "Schur" : "Ritz") << " vectors" << endl;
   ostr << "OPT: slv " << opt.slv;
   if (opt.slvItrTol)    ostr << ", slvItrTol "    << *opt.slvItrTol;
   if (opt.slvItrMaxIt)  ostr << ", slvItrMaxIt "  << *opt.slvItrMaxIt;
@@ -710,7 +725,9 @@ int arpackSolve(options const & opt, int const & mode,
 
   out.nbIt = iparam[2]; // Actual number of iterations.
   bool rvec = true;
-  char const * howmny = "A";
+  char const * howmnyA = "A"; // Ritz vectors.
+  char const * howmnyP = "P"; // Schur vectors.
+  char const * howmny = opt.schur ? howmnyP : howmnyA;
   a_int * select = new a_int[opt.nbCV]; for (a_int n = 0; n < opt.nbCV; n++) select[n] = 1;
   a_int const nbZ = nbDim*(opt.nbEV+1); // Caution: opt.nbEV+1 for dneupd.
   RC * z = new RC[nbZ]; for (a_int n = 0; n < nbZ; n++) z[n] = zero;
@@ -738,8 +755,10 @@ template<typename EM>
 int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV const & out) {
   // Check eigen vectors.
 
+  string rs = opt.schur ? "Schur" : "Ritz";
+
   if (opt.check && out.vec.size() == 0) {
-    cerr << "Error: no eigen value / vector found" << endl;
+    cerr << "Error: no " << rs << " value / vector found" << endl;
     return 1;
   }
 
@@ -748,10 +767,10 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
     complex<double> lambda = out.val[i];
     if (opt.verbose >= 1) {
       cout << endl;
-      cout << "eigen value " << setw(3) << i << ": " << lambda << endl;
+      cout << rs << " value " << setw(3) << i << ": " << lambda << endl;
       if (opt.verbose >= 2) {
         cout << endl;
-        cout << "eigen vector " << setw(3) << i << " (norm " << V.norm() << "): " << endl;
+        cout << rs << " vector " << setw(3) << i << " (norm " << V.norm() << "): " << endl;
         cout << endl << V << endl;
       }
     }
@@ -762,7 +781,7 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
       right *= lambda;
       EigVecC diff = left - right;
       if (diff.norm() > sqrt(opt.tol)) {
-        cerr << endl << "Error: bad eigen vector " << setw(3) << i << " (norm " << V.norm() << "):" << endl;
+        cerr << endl << "Error: bad vector " << setw(3) << i << " (norm " << V.norm() << "):" << endl;
         cerr << endl << V << endl;
         cerr << endl << "Error: left side (A*V - norm " << left.norm() << "):" << endl;
         cerr << endl << left << endl;
@@ -774,7 +793,7 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
       }
       else {
         if (opt.verbose >= 1) {
-          cout << endl << "eigen value/vector " << setw(3) << i << ": check OK";
+          cout << endl << rs << " value/vector " << setw(3) << i << ": check OK";
           cout << ", diff (norm " << diff.norm() << ", sqrt(tol) " << sqrt(opt.tol) << ")" << endl;
         }
       }
