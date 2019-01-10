@@ -35,6 +35,10 @@ stages:
 
 jobs:
   include:
+  # xenial <=> coverage: "recent" systems with ICB
+  - stage: coverage
+    dist: xenial
+    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. && make && make test coveralls > /dev/null;  
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
@@ -86,10 +90,6 @@ jobs:
   - stage: xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
-  # xenial <=> coverage: "recent" systems with ICB
-  - stage: coverage
-    dist: xenial
-    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. && make && make test coveralls > /dev/null;
   # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
   - stage: interface64
     allow_failure:
