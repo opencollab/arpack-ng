@@ -1,7 +1,7 @@
-#include "arpackdef.h"
-
 #ifndef __PARPACK_H__
 #define __PARPACK_H__
+
+#include "arpackdef.h"
 
 /*
  * IMPORTANT: MPI communicators MUST be passed from C to Fortran using MPI_Comm_c2f.

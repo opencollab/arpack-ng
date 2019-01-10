@@ -20,4 +20,4 @@ libparpack@LIBSUFFIX@_la_LIBADD = \
 	$(top_builddir)/PARPACK/UTIL/BLACS/libparpackutil.la \
 	$(top_builddir)/SRC/libarpack@LIBSUFFIX@.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS)
-libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 2:0
+libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1

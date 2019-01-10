@@ -16,7 +16,7 @@ LOG_FLAGS = -n 2
 
 TESTS = $(check_PROGRAMS)
 
-EXTRA_DIST = debug.h stat.h
+EXTRA_DIST = debug.h stat.h README.CALLING-PARPACK-FROM-C-OR-CPP
 
 # Simple nonsymmetric problem using single precision
 psndrv1_SOURCES = psndrv1.f

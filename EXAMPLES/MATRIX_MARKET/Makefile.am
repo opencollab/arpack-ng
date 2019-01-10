@@ -1,12 +1,13 @@
-if ICBEXMM
-LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
+LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
+AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)/ICB $(EIGEN3_CFLAGS)
 
 EXTRA_DIST = README
 
 check_PROGRAMS = arpackmm
+dist_check_SCRIPTS = arpackmm.sh
+dist_check_DATA = An.mtx As.mtx B.mtx
 TESTS = arpackmm.sh
 
 arpackmm_SOURCES = arpackmm.cpp
-arpackmm_CPPFLAGS = -I$(top_builddir)/ICB $(EIGEN3_CFLAGS)
-arpackmm_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
-endif
+
+CLEANFILES = resid.out v.out

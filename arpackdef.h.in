@@ -1,7 +1,7 @@
 #ifndef __ARPACKDEF_H__
 #define __ARPACKDEF_H__
 
-#cmakedefine01 INTERFACE64
+#define INTERFACE64 @INTERFACE64@
 
 #if INTERFACE64
 #define c_int  c_int64_t

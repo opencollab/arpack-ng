@@ -262,7 +262,7 @@ endif()
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
-set_target_properties(arpack PROPERTIES VERSION 2.0.0)
+set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
 
 if (MPI)
@@ -279,11 +279,12 @@ if (MPI)
     target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     target_link_libraries(parpack arpack)
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
-    set_target_properties(parpack PROPERTIES VERSION 2.0.0)
+    set_target_properties(parpack PROPERTIES VERSION 2.1.0)
     set_target_properties(parpack PROPERTIES SOVERSION 2)
 endif ()
 
 if (INTERFACE64)
+    set(INTERFACE64 1)
     if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fdefault-integer-8")
     elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
@@ -291,10 +292,12 @@ if (INTERFACE64)
     else ()
       message(WARNING "build script does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.")
     endif ()
+else ()
+    set(INTERFACE64 0)
 endif ()
 
 message("-- Generating arpackdef.h")
-configure_file(arpackdef.cmake.h.in "${PROJECT_BINARY_DIR}/arpackdef.h")
+configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
 include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h
 install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION include/arpack)
 
@@ -571,21 +574,6 @@ endif()
 # 'make install' to the correct location
 include(GNUInstallDirs)
 
-# Convert variable names to those expected by the .pc file.
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix \${prefix})
-set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(PACKAGE_NAME ${PROJECT_NAME})
-# TODO: Fill these in with something appropriate.
-#set(PACKAGE_VERSION)
-#set(PACKAGE_URL)
-#set(LAPACK_LIBS)
-#set(BLAS_LIBS)
-configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
-
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -602,7 +590,7 @@ endif ()
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake") # find_package(arpack-ng)
 set(arpack_ng_MAJOR_VERSION 3)
-set(arpack_ng_MINOR_VERSION 6)
+set(arpack_ng_MINOR_VERSION 7)
 set(arpack_ng_PATCH_VERSION 0)
 set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
@@ -615,6 +603,21 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
+
+# Convert variable names to those expected by the .pc file.
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix \${prefix})
+set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
+set(PACKAGE_NAME ${PROJECT_NAME})
+set(PACKAGE_VERSION ${arpack_ng_VERSION})
+set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
+# TODO: Fill these in with something appropriate.
+#set(LAPACK_LIBS)
+#set(BLAS_LIBS)
+configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 
 # We don't want this to run on every build.

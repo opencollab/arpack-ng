@@ -1,7 +1,7 @@
-#include "arpackdef.h"
-
 #ifndef __PARPACK_HPP__
 #define __PARPACK_HPP__
+
+#include "arpackdef.h"
 
 #include "arpack.hpp"
 

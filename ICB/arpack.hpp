@@ -1,7 +1,7 @@
-#include "arpackdef.h"
-
 #ifndef __ARPACK_HPP__
 #define __ARPACK_HPP__
+
+#include "arpackdef.h"
 
 #include <complex.h>
 #include <complex>

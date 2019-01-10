@@ -1,10 +1,8 @@
 AC_PREREQ(2.67)
-AC_INIT([ARPACK-NG],[3.6.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
+AC_INIT([ARPACK-NG],[3.7.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
 AC_CONFIG_SRCDIR([SRC/version.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_LINKS([TESTS/testA.mtx:TESTS/testA.mtx])
-AC_CONFIG_HEADER([arpackdef.autotools.h]) # Autoheader : generate arpackdef.autotools.h.in to handle #ifdef
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -13,6 +11,7 @@ dnl Autoconf was designed with the fundamental fact that compiler (= language su
 AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
+PKG_PROG_PKG_CONFIG
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
@@ -22,14 +21,17 @@ AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
 if test x"$INTERFACE64" == x"1"; then
+  AC_LANG_PUSH([Fortran 77])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FFLAGS="$FFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FFLAGS="$FFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.])))
+  AC_LANG_POP([Fortran 77])
+
+  AC_LANG_PUSH([Fortran])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FCFLAGS="$FCFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
-
-  AC_DEFINE([INTERFACE64],[1],['INTERFACE64 is enabled']) # Add a #define (or #undef) for INTERFACE64 in arpackdef.autotools.h.in (autoheader)
+  AC_LANG_POP([Fortran])
 else
   INTERFACE64=0
 fi
@@ -60,50 +62,41 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 	AC_LANG_POP([Fortran 77])
 ])
 
-AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
-AM_CONDITIONAL([BLACS], [false])
-
 dnl See if compiling with ISO_C_BINDING support
 AC_ARG_ENABLE([icb],
-              [AC_HELP_STRING([--enable-icb],
+              [AS_HELP_STRING([--enable-icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
-              [AS_VAR_SET([enable_icb], [$enableval])],
+              [],
               [AS_VAR_SET([enable_icb], [no])])
 
 dnl See if compiling matrix market example based on ICB
 AC_ARG_ENABLE([icb-exmm],
-              [AC_HELP_STRING([--enable-icb-exmm],
+              [AS_HELP_STRING([--enable-icb-exmm],
                               [matrix market example based on ISO_C_BINDING])],
-              [
-               AS_VAR_SET([enable_icb_exmm], [$enableval])
-               AS_VAR_SET([enable_icb], [$enableval])
-              ],
+              [AS_VAR_SET([enable_icb], [$enableval])],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
-AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 if test x"$enable_icb_exmm" != x"no"; then
-  PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2]) dnl Go get eigen3.pc
-  AC_SUBST([EIGEN3_CFLAGS]) dnl Define EIGEN3_CFLAGS in Makefile.am
-  dnl TODO: How to pass /path/to/eigen from EIGEN3_CFLAGS to AC_CHECK_HEADERS ?...
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/Sparse], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/Sparse not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/IterativeLinearSolvers], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/IterativeLinearSolvers not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/SparseLU], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseLU not found])]
-  dnl                 )
-  dnl AC_CHECK_HEADERS(
-  dnl                  [eigen3/Eigen/SparseQR], [],
-  dnl                  [AC_MSG_ERROR([Error: eigen3/Eigen/SparseQR not found])]
-  dnl                 )
+	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2])
+	AC_LANG_PUSH([C++])
+	CPPFLAGS_SAVE=$CPPFLAGS
+	CPPFLAGS=$EIGEN3_CFLAGS
+	AC_CHECK_HEADER([Eigen/Sparse],
+		[],
+		[AC_MSG_ERROR([Eigen/Sparse not found])])
+	AC_CHECK_HEADER([Eigen/IterativeLinearSolvers],
+		[],
+		[AC_MSG_ERROR([Eigen/IterativeLinearSolvers not found])])
+	AC_CHECK_HEADER([Eigen/SparseLU],
+		[],
+		[AC_MSG_ERROR([Eigen/SparseLU not found])])
+	AC_CHECK_HEADER([Eigen/SparseQR],
+		[],
+		[AC_MSG_ERROR([Eigen/SparseQR not found])])
+	CPPFLAGS=$CPPFLAGS_SAVE
+	AC_LANG_POP([C++])
 fi
 
-AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 if test x"$enable_icb" != x"no"; then
   AC_LANG_PUSH([Fortran])
   AC_MSG_CHECKING([for iso_c_binding module compilation])
@@ -139,6 +132,7 @@ if test x"$enable_icb" != x"no"; then
     AC_SUBST([MPI_C_LIBS], ["$MPILIBS $FCLIBS"])
     CC=$MPICC
     AC_LANG_POP([C])
+
     AC_LANG_PUSH([C++])
     AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))
     AC_SUBST([MPI_CXX_LIBS], ["$MPILIBS $FCLIBS"])
@@ -171,9 +165,11 @@ else
     AC_FC_LINE_LENGTH(unlimited)
     FFLAGS="$FFLAGS $ac_cv_fc_line_length"
 
+    AC_LANG_PUSH([Fortran 77])
     AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS="$FFLAGS -cpp",
                           AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS="$FFLAGS -fpp",
                                                 AC_MSG_WARN([configure does not know how to enable your Fortran compiler's preprocessor: set it manually via FFLAGS.])))
+    AC_LANG_POP([Fortran 77])
 
     SCALARFUNS="naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb"
     COMPLEXFUNS="naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc"
@@ -217,15 +213,22 @@ else
   AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupdsuff)
   AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
   dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CFLAGS="$CFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
+  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
 fi
+
+AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
+AM_CONDITIONAL([BLACS], [false])
+AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
+AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
-
 AC_CONFIG_FILES([
-	SRC/Makefile
+	arpackdef.h
+	Makefile
+	ICB/Makefile
 	UTIL/Makefile
+	SRC/Makefile
 	TESTS/Makefile
 	EXAMPLES/Makefile
 	EXAMPLES/BAND/Makefile
@@ -234,15 +237,7 @@ AC_CONFIG_FILES([
 	EXAMPLES/SIMPLE/Makefile
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
-])
-if test x"$enable_icb" != x"no"; then
-  AC_CONFIG_FILES([ICB/Makefile])
-fi
-if test x"$enable_icb_exmm" != x"no"; then
-  AC_CONFIG_FILES([EXAMPLES/MATRIX_MARKET/Makefile])
-fi
-if test x"$enable_mpi" != x"no"; then
-AC_CONFIG_FILES([
+	EXAMPLES/MATRIX_MARKET/Makefile
 	PARPACK/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
@@ -252,18 +247,17 @@ AC_CONFIG_FILES([
 	PARPACK/EXAMPLES/MPI/Makefile
 	PARPACK/EXAMPLES/BLACS/Makefile
 ])
-fi
-AC_OUTPUT([
-	Makefile
+AC_CONFIG_LINKS([
+	TESTS/testA.mtx:TESTS/testA.mtx
+	EXAMPLES/MATRIX_MARKET/An.mtx:EXAMPLES/MATRIX_MARKET/An.mtx
+	EXAMPLES/MATRIX_MARKET/As.mtx:EXAMPLES/MATRIX_MARKET/As.mtx
+	EXAMPLES/MATRIX_MARKET/B.mtx:EXAMPLES/MATRIX_MARKET/B.mtx
 ])
-
-# After AC_OUTPUT (autoconf is done) : generate arpackdef.h (for fortran) from arpackdef.autotools.h.in (for C)
-
-AX_GEN_ARPACKDEF()
+AC_OUTPUT
 
 AC_MSG_RESULT([
 --------------------------------------------------
-Configuration summary for $PACKAGE_NAME ($VERSION)
+Configuration summary for $PACKAGE_STRING
 --------------------------------------------------
 Installation prefix : $prefix
 MPI enabled         : $enable_mpi
@@ -277,6 +271,7 @@ CC                  : $CC
 CFLAGS              : $CFLAGS
 CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
+CPPFLAGS            : $CPPFLAGS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
