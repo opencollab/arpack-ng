@@ -93,7 +93,7 @@ endif ()
 if (ICB)
     enable_language(C CXX) # For testing binding with c/c++.
 
-    set(CMAKE_CXX_STANDARD 11) # OK, since cmake-3.1 only.
+    set(CMAKE_CXX_STANDARD 14) # OK, since cmake-3.1 only.
 
     file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
          "
