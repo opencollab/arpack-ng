@@ -17,6 +17,10 @@ arpack-ng - 3.7.0
     To enable ILP64 users to compile/link, arpackdef.h is added in
     the arpack installation (make install).
 
+ [ Kyle Guinn ]
+ * Autoconf/Automake simplifications and fixes.
+ * Simplify the generation of arpackdef.h.
+
  -- Sylvestre Ledru <sylvestre@debian.org> Sat, 29 Dec 2018 13:56:09 +0100
 
 arpack-ng - 3.6.3
