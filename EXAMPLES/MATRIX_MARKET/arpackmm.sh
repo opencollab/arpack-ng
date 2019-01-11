@@ -29,32 +29,35 @@ do
           do
             for slv in "" "--slv CG --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv LU --slvDrtPvtThd 1.e-06" "--slv QR"
             do
-              export extraGenPb=""
-              if [[ "$genPb" == *genPb* ]]; then
-                export extraGenPb="$shiftOpt" # Force shift if genPb.
-              fi
-
-              if [[ "$slv" == *CG* ]]; then
-                if [[ "$eigPb" == *nonSymPb* ]]; then
-                  continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+              for rs in "" "--schur"
+              do
+                export extraGenPb=""
+                if [[ "$genPb" == *genPb* ]]; then
+                  export extraGenPb="$shiftOpt" # Force shift if genPb.
                 fi
-              fi
 
-              # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-              export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $extraGenPb --nbCV 6 --verbose 3"
-              echo "$CMD"
-              eval "$CMD"
-              echo ""
-              echo "========================================================================================"
-              echo ""
+                if [[ "$slv" == *CG* ]]; then
+                  if [[ "$eigPb" == *nonSymPb* ]]; then
+                    continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                  fi
+                fi
 
-              # Run arpackmm: re-run with restart.
-              export CMD="$CMD --restart"
-              echo "$CMD"
-              eval "$CMD"
-              echo ""
-              echo "========================================================================================"
-              echo ""
+                # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
+                export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $extraGenPb $rs --nbCV 6 --verbose 3"
+                echo "$CMD"
+                eval "$CMD"
+                echo ""
+                echo "========================================================================================"
+                echo ""
+
+                # Run arpackmm: re-run with restart.
+                export CMD="$CMD --restart"
+                echo "$CMD"
+                eval "$CMD"
+                echo ""
+                echo "========================================================================================"
+                echo ""
+              done
             done
           done
         done
