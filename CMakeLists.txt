@@ -34,7 +34,8 @@ if (COVERALLS)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    set(EXTRA_LDLAGS "${EXTRA_LDLAGS} -lgcov")
+    # The no space is by design: issue in cmake. See CMP0004.
+    set(EXTRA_LDLAGS "${EXTRA_LDLAGS}-lgcov")
 endif()
 
 function(prefixlist list_name prefix)
