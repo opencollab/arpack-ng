@@ -635,7 +635,7 @@ if (COVERALLS)
     # Create the coveralls target.
     # Also lists the c/cpp files for test purposes
     coveralls_setup(
-        "${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${parpacksrc_DIR} ${parpackutil_DIR} TESTS/icb_arpack_c.c TESTS/icb_arpack_cpp.cpp" # The source files.
+        "${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${parpacksrc_DIR} ${parpackutil_DIR} ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp" # The source files.
         ON                 # If we should upload.
         "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
 endif()
