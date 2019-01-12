@@ -19,7 +19,7 @@ Important Features:
   Note: to run this utility, you need the eigen library (to handle RCI).
 * ILP64 support:
   * users: set INTERFACE64 at configure time.
-  * developpers:
+  * developers:
     * all files which needs ILP64 support must include "arpackdef.h".
     * when coding, use a_int (defined in arpackdef.h) instead of int.
       a_int stands for "architecture int": it's #defined to int or int64_t according
