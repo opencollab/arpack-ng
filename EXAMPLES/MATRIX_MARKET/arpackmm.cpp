@@ -42,6 +42,12 @@ typedef Eigen::BiCGSTAB         <EigMatC>                       EigBiCGC; // Com
 typedef Eigen::ConjugateGradient<EigMatC>                       EigCGC;   // Complex.
 typedef Eigen::SparseLU<EigMatC, Eigen::COLAMDOrdering<int>>    EigSLUC;  // Complex.
 typedef Eigen::SparseQR<EigMatC, Eigen::COLAMDOrdering<int>>    EigSQRC;  // Complex.
+typedef Eigen::IncompleteLUT<        double>                                  EigILUR;     // Real.
+typedef Eigen::IncompleteLUT<complex<double>>                                 EigILUC;     // Complex.
+typedef Eigen::BiCGSTAB         <EigMatR,                            EigILUR> EigBiCGILUR; // Real.
+typedef Eigen::ConjugateGradient<EigMatR, Eigen::Lower|Eigen::Upper, EigILUR> EigCGILUR;   // Real.
+typedef Eigen::BiCGSTAB         <EigMatC,                            EigILUC> EigBiCGILUC; // Complex.
+typedef Eigen::ConjugateGradient<EigMatC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
 
 class options {
   public:
@@ -63,6 +69,7 @@ class options {
       slv = "BiCG";
       slvItrTol = nullptr;
       slvItrMaxIt = nullptr;
+      slvItrPC = "diag";
       slvDrtPvtThd = nullptr;
       check = true;
       verbose = 0;
@@ -143,6 +150,11 @@ class options {
           mi >> maxIt; if (!mi) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
           slvItrMaxIt = unique_ptr<int>(new int);
           if (slvItrMaxIt) *slvItrMaxIt = maxIt;
+        }
+        if (clo == "--slvItrPC") {
+          a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
+          stringstream pc(argv[a]);
+          pc >> slvItrPC; if (!pc) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
         }
         if (clo == "--slvDrtPvtThd") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
@@ -237,6 +249,13 @@ class options {
       cout << "                    default: eigen default value" << endl;
       cout << "  --slvItrMaxIt M:  solver maximum iterations M (for iterative solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
+      cout << "  --slvItrPC PC:    solver preconditioner (for iterative solvers)." << endl;
+      cout << "                      PC preconditioner:" << endl;
+      cout << "                        diag:    eigen diagonal preconditioner (Jacobi)." << endl;
+      cout << "                        ILU#D#F: eigen ILU preconditioner." << endl;
+      cout << "                          D: drop tolerance." << endl;
+      cout << "                          F: fill factor." << endl;
+      cout << "                    default: diagonal preconditioner (Jacobi)" << endl;
       cout << "  --slvDrtPvtThd T: solver pivot threshold T (for direct solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
       cout << "  --noCheck:        check arpack eigen values/vectors." << endl;
@@ -272,6 +291,7 @@ class options {
     unique_ptr<double> slvItrTol;
     unique_ptr<int> slvItrMaxIt;
     unique_ptr<double> slvDrtPvtThd;
+    string slvItrPC;
     bool check;
     int verbose;
     int debug;
@@ -286,7 +306,7 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << ", shiftImag " << (opt.shiftImag ? "yes" : "no") << ", sigmaImag " << opt.sigmaImag;
   ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol << ", maxIt " << opt.maxIt;
   ostr << ", " << (opt.schur ? "Schur" : "Ritz") << " vectors" << endl;
-  ostr << "OPT: slv " << opt.slv;
+  ostr << "OPT: slv " << opt.slv << ", slvItrPC " << opt.slvItrPC;
   if (opt.slvItrTol)    ostr << ", slvItrTol "    << *opt.slvItrTol;
   if (opt.slvItrMaxIt)  ostr << ", slvItrMaxIt "  << *opt.slvItrMaxIt;
   if (opt.slvDrtPvtThd) ostr << ", slvDrtPvtThd " << *opt.slvDrtPvtThd;
@@ -907,24 +927,14 @@ int arpackSolve(options & opt, SLV & solver) {
 }
 
 template<typename RC, typename EM, typename EC, typename EV,
-         typename SLVBCG, typename SLVCG, typename SLVSLU, typename SLVSQR>
+         typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU,
+         typename SLVSLU, typename SLVSQR>
 int arpackSolve(options & opt) {
   // Solve with arpack.
 
   int rc = 0;
-  if (opt.slv == "BiCG") {
-    SLVBCG solver;
-    if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
-    if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-    rc = arpackSolve<RC, EM, EC, EV, SLVBCG>(opt, solver);
-  }
-  else if (opt.slv == "CG") {
-    SLVCG solver;
-    if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
-    if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-    rc = arpackSolve<RC, EM, EC, EV, SLVCG>(opt, solver);
-  }
-  else if (opt.slv == "LU") {
+
+  if (opt.slv == "LU") {
     SLVSLU solver;
     if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
     rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
@@ -934,7 +944,67 @@ int arpackSolve(options & opt) {
     if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
     rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
   }
-  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+  else { // Iterative solvers.
+    stringstream clo(opt.slvItrPC);
+    string slvItrPC; getline(clo, slvItrPC, '#');
+
+    unique_ptr<double> slvItrILUDropTol;
+    if (slvItrPC == "ILU") {
+      string dropTol; getline(clo, dropTol, '#');
+      double iluDropTol = 1.; stringstream dt(dropTol); dt >> iluDropTol;
+      if (dt) { // Valid value read.
+        slvItrILUDropTol = unique_ptr<double>(new double);
+        if (slvItrILUDropTol) *slvItrILUDropTol = iluDropTol;
+      }
+    }
+
+    unique_ptr<int> slvItrILUFillFactor;
+    if (slvItrPC == "ILU") {
+      string fillFactor; getline(clo, fillFactor);
+      int iluFillFactor = 2; stringstream ff(fillFactor); ff >> iluFillFactor;
+      if (ff) { // Valid value read.
+        slvItrILUFillFactor = unique_ptr<int>(new int);
+        if (slvItrILUFillFactor) *slvItrILUFillFactor = iluFillFactor;
+      }
+    }
+
+    if (opt.slv == "BiCG") {
+      if (slvItrPC == "diag") {
+        SLVBCG solver;
+        if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
+        if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
+        rc = arpackSolve<RC, EM, EC, EV, SLVBCG>(opt, solver);
+      }
+      else if (slvItrPC == "ILU") {
+        SLVBCGILU solver;
+        if (opt.slvItrTol)       solver.setTolerance(*opt.slvItrTol);
+        if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
+        if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
+        if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
+        rc = arpackSolve<RC, EM, EC, EV, SLVBCGILU>(opt, solver);
+      }
+      else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
+    }
+    else if (opt.slv == "CG") {
+      if (slvItrPC == "diag") {
+        SLVCG solver;
+        if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
+        if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
+        rc = arpackSolve<RC, EM, EC, EV, SLVCG>(opt, solver);
+      }
+      else if (slvItrPC == "ILU") {
+        SLVCGILU solver;
+        if (opt.slvItrTol)       solver.setTolerance(*opt.slvItrTol);
+        if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
+        if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
+        if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
+        rc = arpackSolve<RC, EM, EC, EV, SLVCGILU>(opt, solver);
+      }
+      else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
+    }
+    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+  }
+
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;
@@ -948,8 +1018,10 @@ int main(int argc, char ** argv) {
   if (rc != 0) {cerr << "Error: read cmd line KO" << endl; return rc;}
   cout << opt; // Print options.
 
-  if (opt.cpxPb) rc = arpackSolve<complex<double>, EigMatC, EigCooC, EigMpVC, EigBiCGC, EigCGC, EigSLUC, EigSQRC>(opt);
-  else           rc = arpackSolve<        double , EigMatR, EigCooR, EigMpVR, EigBiCGR, EigCGR, EigSLUR, EigSQRR>(opt);
+  if (opt.cpxPb) rc = arpackSolve<complex<double>, EigMatC, EigCooC, EigMpVC,
+                                  EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC, EigSLUC, EigSQRC>(opt);
+  else           rc = arpackSolve<        double , EigMatR, EigCooR, EigMpVR,
+                                  EigBiCGR, EigBiCGILUR, EigCGR, EigCGILUR, EigSLUR, EigSQRR>(opt);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;
