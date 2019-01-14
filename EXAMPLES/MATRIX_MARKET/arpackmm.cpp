@@ -74,7 +74,6 @@ class options {
       slvItrTol = nullptr;
       slvItrMaxIt = nullptr;
       slvItrPC = "diag";
-      slvDrtPvtThd = nullptr;
       check = true;
       verbose = 0;
       debug = 0;
@@ -160,14 +159,6 @@ class options {
           stringstream pc(argv[a]);
           pc >> slvItrPC; if (!pc) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
         }
-        if (clo == "--slvDrtPvtThd") {
-          a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
-          stringstream t(argv[a]);
-          double thd = 0.;
-          t >> thd; if (!t) {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
-          slvDrtPvtThd = unique_ptr<double>(new double);
-          if (slvDrtPvtThd) *slvDrtPvtThd = thd;
-        }
         if (clo == "--noCheck") check = false;
         if (clo == "--verbose") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
@@ -246,8 +237,10 @@ class options {
       cout << "  --slv S:          solver (BiCG, CG, LU)" << endl;
       cout << "                      BiCG:     iterative method, any matrices" << endl;
       cout << "                      CG:       iterative method, sym matrices only" << endl;
-      cout << "                      LU:       direct method, any matrices" << endl;
-      cout << "                      QR:       direct method, any matrices" << endl;
+      cout << "                      LU#P:     direct method, any matrices (pivoting needed)" << endl;
+      cout << "                        P:        pivoting threshold" << endl;
+      cout << "                      QR#P:     direct method, any matrices (pivoting needed)" << endl;
+      cout << "                        P:        pivoting threshold" << endl;
       cout << "                      LLT#O#S:  direct method, SPD matrices only (pivoting not needed)" << endl;
       cout << "                        O:        shift offset" << endl;
       cout << "                        S:        shift scale" << endl;
@@ -266,8 +259,6 @@ class options {
       cout << "                          D:       drop tolerance." << endl;
       cout << "                          F:       fill factor." << endl;
       cout << "                    default: diagonal preconditioner (Jacobi)" << endl;
-      cout << "  --slvDrtPvtThd T: solver pivot threshold T (for direct solvers)." << endl;
-      cout << "                    default: eigen default value" << endl;
       cout << "  --noCheck:        check arpack eigen values/vectors." << endl;
       cout << "                    check will fail if Schur vectors are computed and A is NOT a normal matrix." << endl;
       cout << "                    default: check" << endl;
@@ -300,7 +291,6 @@ class options {
     string slv;
     unique_ptr<double> slvItrTol;
     unique_ptr<int> slvItrMaxIt;
-    unique_ptr<double> slvDrtPvtThd;
     string slvItrPC;
     bool check;
     int verbose;
@@ -319,7 +309,6 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << "OPT: slv " << opt.slv << ", slvItrPC " << opt.slvItrPC;
   if (opt.slvItrTol)    ostr << ", slvItrTol "    << *opt.slvItrTol;
   if (opt.slvItrMaxIt)  ostr << ", slvItrMaxIt "  << *opt.slvItrMaxIt;
-  if (opt.slvDrtPvtThd) ostr << ", slvDrtPvtThd " << *opt.slvDrtPvtThd;
   ostr << ", check " << (opt.check ? "yes" : "no") << ", verbose " << opt.verbose << ", debug " << opt.debug;
   ostr << ", restart " << (opt.restart ? "yes" : "no") << endl;
   return ostr;
@@ -944,15 +933,29 @@ int arpackSolve(options & opt) {
 
   int rc = 0;
 
-  if (opt.slv == "LU") {
-    SLVSLU solver;
-    if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
-    rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
-  }
-  else if (opt.slv == "QR") {
-    SLVSQR solver;
-    if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
-    rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
+  if (opt.slv.find("LU") != string::npos || opt.slv.find("QR") != string::npos) {
+    stringstream clo(opt.slv);
+    string slv; getline(clo, slv, '#');
+
+    unique_ptr<double> slvDrtPvtThd = nullptr;
+    string pivot; getline(clo, pivot);
+    double pivotThd = 0.; stringstream pt(pivot); pt >> pivotThd;
+    if (pt) { // Valid value read.
+      slvDrtPvtThd = unique_ptr<double>(new double);
+      if (slvDrtPvtThd) *slvDrtPvtThd = pivotThd;
+    }
+
+    if (slv == "LU") {
+      SLVSLU solver;
+      if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
+      rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
+    }
+    else if (slv == "QR") {
+      SLVSQR solver;
+      if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
+      rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
+    }
+    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
   else if (opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos) {
     stringstream clo(opt.slv);
