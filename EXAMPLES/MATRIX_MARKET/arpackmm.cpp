@@ -48,6 +48,10 @@ typedef Eigen::BiCGSTAB         <EigMatR,                            EigILUR> Ei
 typedef Eigen::ConjugateGradient<EigMatR, Eigen::Lower|Eigen::Upper, EigILUR> EigCGILUR;   // Real.
 typedef Eigen::BiCGSTAB         <EigMatC,                            EigILUC> EigBiCGILUC; // Complex.
 typedef Eigen::ConjugateGradient<EigMatC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
+typedef Eigen::SimplicialLLT<EigMatR,  Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTR;  // Real.
+typedef Eigen::SimplicialLLT<EigMatC,  Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTC;  // Complex.
+typedef Eigen::SimplicialLDLT<EigMatR, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTR; // Real.
+typedef Eigen::SimplicialLDLT<EigMatC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTC; // Complex.
 
 class options {
   public:
@@ -240,10 +244,16 @@ class options {
       cout << "                      the Schur vectors and eigenvectors of A are the same if A is a normal matrix." << endl;
       cout << "                    default: compute Ritz vectors (approximations of eigen vectors)" << endl;
       cout << "  --slv S:          solver (BiCG, CG, LU)" << endl;
-      cout << "                      BiCG: iterative method, any matrices" << endl;
-      cout << "                        CG: iterative method, sym matrices only" << endl;
-      cout << "                        LU:    direct method, any matrices" << endl;
-      cout << "                        QR:    direct method, any matrices" << endl;
+      cout << "                      BiCG:     iterative method, any matrices" << endl;
+      cout << "                      CG:       iterative method, sym matrices only" << endl;
+      cout << "                      LU:       direct method, any matrices" << endl;
+      cout << "                      QR:       direct method, any matrices" << endl;
+      cout << "                      LLT#O#S:  direct method, SPD matrices only (pivoting not needed)" << endl;
+      cout << "                        O:        shift offset" << endl;
+      cout << "                        S:        shift scale" << endl;
+      cout << "                      LDLT#O#S: direct method, SPD matrices only (pivoting not needed)" << endl;
+      cout << "                        O:        shift offset" << endl;
+      cout << "                        S:        shift scale" << endl;
       cout << "                    default: BiCG" << endl;
       cout << "  --slvItrTol T:    solver tolerance T (for iterative solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
@@ -253,8 +263,8 @@ class options {
       cout << "                      PC preconditioner:" << endl;
       cout << "                        diag:    eigen diagonal preconditioner (Jacobi)." << endl;
       cout << "                        ILU#D#F: eigen ILU preconditioner." << endl;
-      cout << "                          D: drop tolerance." << endl;
-      cout << "                          F: fill factor." << endl;
+      cout << "                          D:       drop tolerance." << endl;
+      cout << "                          F:       fill factor." << endl;
       cout << "                    default: diagonal preconditioner (Jacobi)" << endl;
       cout << "  --slvDrtPvtThd T: solver pivot threshold T (for direct solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
@@ -928,7 +938,7 @@ int arpackSolve(options & opt, SLV & solver) {
 
 template<typename RC, typename EM, typename EC, typename EV,
          typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU,
-         typename SLVSLU, typename SLVSQR>
+         typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
 int arpackSolve(options & opt) {
   // Solve with arpack.
 
@@ -943,6 +953,32 @@ int arpackSolve(options & opt) {
     SLVSQR solver;
     if (opt.slvDrtPvtThd) solver.setPivotThreshold(*opt.slvDrtPvtThd);
     rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
+  }
+  else if (opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos) {
+    stringstream clo(opt.slv);
+    string slv; getline(clo, slv, '#');
+
+    unique_ptr<double> slvOffset = unique_ptr<double>(new double);
+    string offset; getline(clo, offset, '#');
+    double shiftOffset = 0.; stringstream so(offset); so >> shiftOffset; if (!so) shiftOffset = 0.;
+    if (slvOffset) *slvOffset = shiftOffset;
+
+    unique_ptr<double> slvScale = unique_ptr<double>(new double);
+    string scale; getline(clo, scale);
+    double shiftScale = 1.; stringstream ss(scale); ss >> shiftScale; if (!ss) shiftScale = 1.;
+    if (slvScale) *slvScale = shiftScale;
+
+    if (slv == "LLT") {
+      SLVSLLT solver;
+      if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
+      rc = arpackSolve<RC, EM, EC, EV, SLVSLLT>(opt, solver);
+    }
+    else if (slv == "LDLT") {
+      SLVSLDLT solver;
+      if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
+      rc = arpackSolve<RC, EM, EC, EV, SLVSLDLT>(opt, solver);
+    }
+    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
   else { // Iterative solvers.
     stringstream clo(opt.slvItrPC);
@@ -1019,9 +1055,11 @@ int main(int argc, char ** argv) {
   cout << opt; // Print options.
 
   if (opt.cpxPb) rc = arpackSolve<complex<double>, EigMatC, EigCooC, EigMpVC,
-                                  EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC, EigSLUC, EigSQRC>(opt);
+                                  EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC,
+                                  EigSLUC, EigSQRC, EigSLLTC, EigSLDLTC>(opt);
   else           rc = arpackSolve<        double , EigMatR, EigCooR, EigMpVR,
-                                  EigBiCGR, EigBiCGILUR, EigCGR, EigCGILUR, EigSLUR, EigSQRR>(opt);
+                                  EigBiCGR, EigBiCGILUR, EigCGR, EigCGILUR,
+                                  EigSLUR, EigSQRR, EigSLLTR, EigSLDLTR>(opt);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;

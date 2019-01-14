@@ -1,6 +1,7 @@
 
 [ Franck Houssen ]
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
+ * arpackmm: add --slv LLT LDLT (for SPD matrices).
 
 arpack-ng - 3.7.0
 
