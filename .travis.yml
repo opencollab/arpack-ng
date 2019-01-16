@@ -30,6 +30,8 @@ stages:
   - name: precise
   - name: trusty
   - name: xenial
+  - name: openblas
+  - name: atlas
   - name: coverage
   - name: interface64
 
@@ -86,6 +88,14 @@ jobs:
   - stage: xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
+  # xenial: test openblas support with autoconf
+  - stage: openblas
+    dist: xenial
+    script: sudo apt-get -y install libopenblas-dev && ./bootstrap && ./configure --enable-openblas --enable-mpi --enable-icb && make VERBOSE=1 && make check && make distcheck;
+  # xenial: test atlas support with autoconf
+  - stage: atlas
+    dist: xenial
+    script: sudo apt-get -y install libatlas-base-dev && ./bootstrap && ./configure --enable-atlas --enable-mpi --enable-icb && make VERBOSE=1 && make check && make distcheck;
   # xenial <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: xenial

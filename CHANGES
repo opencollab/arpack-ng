@@ -1,6 +1,7 @@
 
 [ Franck Houssen ]
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
+ * Add --enable-atlas/openblas in configure script for convenience.
 
 arpack-ng - 3.7.0
 

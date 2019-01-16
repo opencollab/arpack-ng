@@ -86,8 +86,8 @@ void real_symmetric_runner() {
                 workl.data(), lworkl, info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << "rank " << rank << " - " << d[i] << std::endl;
-    if (std::abs(d[i] - static_cast<float>(1000 - (nev - 1) + i)) > 1e-1) {
+    std::cout << "rank " << rank << " - " << d[i] << " vs " << static_cast<float>(1000 - (nev - 1) + i) << std::endl;
+    if (std::abs(d[i] - static_cast<float>(1000 - (nev - 1) + i)) > 1.) { // Simple precision, relax tol.
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -165,10 +165,11 @@ void complex_symmetric_runner() {
                 info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << "rank " << rank << " - " << std::real(d[i]) << " "
-              << std::imag(d[i]) << '\n';
-    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - i)) > 1e-1 ||
-        std::abs(std::imag(d[i]) - static_cast<float>(1000 - i)) > 1e-1) {
+    std::cout << "rank " << rank << " - " << std::real(d[i]) << " " << std::imag(d[i])
+              <<                    " vs " << static_cast<float>(1000 - i) << " " << static_cast<float>(1000 - i)
+              << '\n';
+    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - i)) > 1. ||
+        std::abs(std::imag(d[i]) - static_cast<float>(1000 - i)) > 1.) { // Simple precision, relax tol.
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }

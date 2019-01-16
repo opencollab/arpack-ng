@@ -13,6 +13,11 @@ AC_PROG_CC
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
 
+dnl See if we can find a default BLAS/LAPACK if no preference (MKL, OpenBLAS, ...).
+dnl The default search policy looks for several possible BLAS (OpenBLAS, Atlas, MKL, ...).
+dnl The BLAS/LAPACK picked up is the first one found.
+dnl If you get Atlas, but you want OpenBLAS: use --enable-openblas.
+
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
@@ -35,6 +40,52 @@ if test x"$INTERFACE64" == x"1"; then
 else
   INTERFACE64=0
 fi
+
+dnl See if we want to use OpenBLAS (instead of default found)
+AC_ARG_ENABLE([openblas],
+              [AC_HELP_STRING([--enable-openblas],
+                              [force using OpenBLAS bypassing default search policy.])],
+              [AS_VAR_SET([enable_openblas], [yes])],
+              [AS_VAR_SET([enable_openblas], [no])])
+AS_IF([test x"$enable_openblas" != x"no"],
+      [
+       dnl Go get blas-openblas.pc file.
+       PKG_CHECK_MODULES([OPENBLAS_BLAS], [blas-openblas])
+
+       FFLAGS="$OPENBLAS_BLAS_CFLAGS $FFLAGS"
+       FCFLAGS="$OPENBLAS_BLAS_CFLAGS $FCFLAGS"
+       BLAS_LIBS="$OPENBLAS_BLAS_LIBS"
+
+       dnl Go get lapack-openblas.pc file.
+       PKG_CHECK_MODULES([OPENBLAS_LAPACK], [lapack-openblas])
+
+       FFLAGS="$OPENBLAS_LAPACK_CFLAGS $FFLAGS"
+       FCFLAGS="$OPENBLAS_LAPACK_CFLAGS $FCFLAGS"
+       LAPACK_LIBS="$OPENBLAS_LAPACK_LIBS"
+      ])
+
+dnl See if we want to use Atlas (instead of default found)
+AC_ARG_ENABLE([atlas],
+              [AC_HELP_STRING([--enable-atlas],
+                              [force using Atlas bypassing default search policy.])],
+              [AS_VAR_SET([enable_atlas], [yes])],
+              [AS_VAR_SET([enable_atlas], [no])])
+AS_IF([test x"$enable_atlas" != x"no"],
+      [
+       dnl Go get blas-atlas.pc file.
+       PKG_CHECK_MODULES([ATLAS_BLAS], [blas-atlas])
+
+       FFLAGS="$ATLAS_BLAS_CFLAGS $FFLAGS"
+       FCFLAGS="$ATLAS_BLAS_CFLAGS $FCFLAGS"
+       BLAS_LIBS="$ATLAS_BLAS_LIBS"
+
+       dnl Go get lapack-atlas.pc file.
+       PKG_CHECK_MODULES([ATLAS_LAPACK], [lapack-atlas])
+
+       FFLAGS="$ATLAS_LAPACK_CFLAGS $FFLAGS"
+       FCFLAGS="$ATLAS_LAPACK_CFLAGS $FCFLAGS"
+       LAPACK_LIBS="$ATLAS_LAPACK_LIBS"
+      ])
 
 AC_ARG_VAR(LIBSUFFIX, [suffix to add to ARPACK libraries names])
 AC_ARG_VAR(SYMBOLSUFFIX, [suffix to add to ARPACK, BLAS and LAPACK function names])

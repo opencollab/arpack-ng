@@ -27,7 +27,7 @@ void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
 }
 
 template<typename Real>
-void real_symmetric_runner() {
+void real_symmetric_runner(double tol_check) {
   a_int const N = 1000;
   a_int const nev = 9;
 
@@ -88,7 +88,7 @@ void real_symmetric_runner() {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
-    if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > 1e-1) {
+    if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -104,7 +104,7 @@ void diagonal_matrix_vector_product(std::complex<Real> const* const x,
 }
 
 template<typename Real>
-void complex_symmetric_runner() {
+void complex_symmetric_runner(double tol_check) {
   a_int const N = 1000;
   a_int const nev = 9;
 
@@ -166,8 +166,8 @@ void complex_symmetric_runner() {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
-    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - i)) > 1e-1 ||
-        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - i)) > 1e-1) {
+    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - i)) > tol_check ||
+        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - i)) > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -177,8 +177,8 @@ int main() {
   sstats_c();
 
   // arpack without debug
-  real_symmetric_runner<float>();
-  real_symmetric_runner<double>();
+  real_symmetric_runner<float>(1.); // Simple precision, relax tol.
+  real_symmetric_runner<double>(1.e-6);
 
   int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
   float tsaupd_c, tsaup2_c, tsaitr_c, tseigt_c, tsgets_c, tsapps_c, tsconv_c;
@@ -200,8 +200,8 @@ int main() {
           1);
 
   // arpack with debug
-  complex_symmetric_runner<float>();
-  complex_symmetric_runner<double>();
+  complex_symmetric_runner<float>(1.); // Simple precision, relax tol.
+  complex_symmetric_runner<double>(1.e-6);
 
   return 0;
 }
