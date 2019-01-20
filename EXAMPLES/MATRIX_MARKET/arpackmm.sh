@@ -27,9 +27,11 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "         --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv CG --slvItrTol 1.e-06 --slvItrMaxIt 100" \
-                       "         --slvItrPC ILU"                       "--slv CG --slvItrPC ILU#1.e-06#2"              \
-                       "--slv LU --slvDrtPvtThd 1.e-06"                "--slv QR --slvDrtPvtThd 1.e-06"
+            for slv in "           --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv   CG --slvItrTol 1.e-06 --slvItrMaxIt 100" \
+                       "           --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
+                       "--slv   LU"                                      "--slv   QR#1.e-06"                               \
+                       "--slv  LLT"                                      "--slv  LLT#0.#1."                                \
+                       "--slv LDLT"                                      "--slv LDLT#0.#1."
             do
               for rs in "" "--schur"
               do
@@ -41,6 +43,12 @@ do
                 if [[ "$slv" == *CG* ]]; then
                   if [[ "$eigPb" == *nonSymPb* ]]; then
                     continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                  fi
+                fi
+
+                if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
+                  if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
+                    continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
                   fi
                 fi
 
