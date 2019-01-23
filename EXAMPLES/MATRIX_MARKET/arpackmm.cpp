@@ -342,7 +342,8 @@ class options {
 ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << "OPT: A " << opt.fileA << ", B " << opt.fileB;
   ostr << ", nbEV " << opt.nbEV << ", nbCV " << opt.nbCV << ", stdPb " << (opt.stdPb ? "yes" : "no");
-  ostr << ", symPb " << (opt.symPb ? "yes" : "no") << ", mag " << opt.mag << endl;
+  ostr << ", symPb " << (opt.symPb ? "yes" : "no") <<  ", cpxPb " << (opt.cpxPb ? "yes" : "no");
+  ostr <<  ", simplePrec " << (opt.simplePrec ? "yes" : "no") << ", mag " << opt.mag << endl;
   ostr << "OPT: shiftReal " << (opt.shiftReal ? "yes" : "no") << ", sigmaReal " << opt.sigmaReal;
   ostr << ", shiftImag " << (opt.shiftImag ? "yes" : "no") << ", sigmaImag " << opt.sigmaImag;
   ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol << ", maxIt " << opt.maxIt;
