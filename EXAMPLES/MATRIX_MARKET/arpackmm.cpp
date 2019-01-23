@@ -26,32 +26,68 @@
 
 using namespace std;
 
-typedef Eigen::SparseMatrix<        double>                     EigMatR;  // Real.
-typedef Eigen::Triplet     <        double>                     EigCooR;  // Real.
-typedef Eigen::SparseMatrix<complex<double>>                    EigMatC;  // Complex.
-typedef Eigen::Triplet     <complex<double>>                    EigCooC;  // Complex.
-typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecR;  // Real.
-typedef Eigen::Map         <EigVecR>                            EigMpVR;  // Real.
-typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecC;  // Complex.
-typedef Eigen::Map         <EigVecC>                            EigMpVC;  // Complex.
-typedef Eigen::BiCGSTAB         <EigMatR>                       EigBiCGR; // Real.
-typedef Eigen::ConjugateGradient<EigMatR>                       EigCGR;   // Real.
-typedef Eigen::SparseLU<EigMatR, Eigen::COLAMDOrdering<int>>    EigSLUR;  // Real.
-typedef Eigen::SparseQR<EigMatR, Eigen::COLAMDOrdering<int>>    EigSQRR;  // Real.
-typedef Eigen::BiCGSTAB         <EigMatC>                       EigBiCGC; // Complex.
-typedef Eigen::ConjugateGradient<EigMatC>                       EigCGC;   // Complex.
-typedef Eigen::SparseLU<EigMatC, Eigen::COLAMDOrdering<int>>    EigSLUC;  // Complex.
-typedef Eigen::SparseQR<EigMatC, Eigen::COLAMDOrdering<int>>    EigSQRC;  // Complex.
-typedef Eigen::IncompleteLUT<        double>                                  EigILUR;     // Real.
-typedef Eigen::IncompleteLUT<complex<double>>                                 EigILUC;     // Complex.
-typedef Eigen::BiCGSTAB         <EigMatR,                            EigILUR> EigBiCGILUR; // Real.
-typedef Eigen::ConjugateGradient<EigMatR, Eigen::Lower|Eigen::Upper, EigILUR> EigCGILUR;   // Real.
+typedef Eigen::SparseMatrix<         float>                     EigMatS; // Real.
+typedef Eigen::Triplet     <         float>                     EigCooS; // Real.
+typedef Eigen::Matrix      <         float,  Eigen::Dynamic, 1> EigVecS; // Real.
+typedef Eigen::SparseMatrix<        double>                     EigMatD; // Real.
+typedef Eigen::Triplet     <        double>                     EigCooD; // Real.
+typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecD; // Real.
+typedef Eigen::SparseMatrix<complex< float>>                    EigMatC; // Complex.
+typedef Eigen::Triplet     <complex< float>>                    EigCooC; // Complex.
+typedef Eigen::Matrix      <complex< float>, Eigen::Dynamic, 1> EigVecC; // Complex.
+typedef Eigen::SparseMatrix<complex<double>>                    EigMatZ; // Complex.
+typedef Eigen::Triplet     <complex<double>>                    EigCooZ; // Complex.
+typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecZ; // Complex.
+
+typedef Eigen::Map<EigVecS> EigMpVS; // Real.
+typedef Eigen::Map<EigVecD> EigMpVD; // Real.
+typedef Eigen::Map<EigVecC> EigMpVC; // Complex.
+typedef Eigen::Map<EigVecZ> EigMpVZ; // Complex.
+
+typedef Eigen::BiCGSTAB         <EigMatS> EigBiCGS; // Real.
+typedef Eigen::BiCGSTAB         <EigMatD> EigBiCGD; // Real.
+typedef Eigen::BiCGSTAB         <EigMatC> EigBiCGC; // Complex.
+typedef Eigen::BiCGSTAB         <EigMatZ> EigBiCGZ; // Complex.
+
+typedef Eigen::ConjugateGradient<EigMatS> EigCGS;   // Real.
+typedef Eigen::ConjugateGradient<EigMatD> EigCGD;   // Real.
+typedef Eigen::ConjugateGradient<EigMatC> EigCGC;   // Complex.
+typedef Eigen::ConjugateGradient<EigMatZ> EigCGZ;   // Complex.
+
+typedef Eigen::IncompleteLUT<         float>                                  EigILUS;     // Real.
+typedef Eigen::IncompleteLUT<        double>                                  EigILUD;     // Real.
+typedef Eigen::IncompleteLUT<complex< float>>                                 EigILUC;     // Complex.
+typedef Eigen::IncompleteLUT<complex<double>>                                 EigILUZ;     // Complex.
+
+typedef Eigen::BiCGSTAB         <EigMatS,                            EigILUS> EigBiCGILUS; // Real.
+typedef Eigen::BiCGSTAB         <EigMatD,                            EigILUD> EigBiCGILUD; // Real.
 typedef Eigen::BiCGSTAB         <EigMatC,                            EigILUC> EigBiCGILUC; // Complex.
+typedef Eigen::BiCGSTAB         <EigMatZ,                            EigILUZ> EigBiCGILUZ; // Complex.
+
+typedef Eigen::ConjugateGradient<EigMatS, Eigen::Lower|Eigen::Upper, EigILUS> EigCGILUS;   // Real.
+typedef Eigen::ConjugateGradient<EigMatD, Eigen::Lower|Eigen::Upper, EigILUD> EigCGILUD;   // Real.
 typedef Eigen::ConjugateGradient<EigMatC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
-typedef Eigen::SimplicialLLT<EigMatR,  Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTR;  // Real.
-typedef Eigen::SimplicialLLT<EigMatC,  Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTC;  // Complex.
-typedef Eigen::SimplicialLDLT<EigMatR, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTR; // Real.
+typedef Eigen::ConjugateGradient<EigMatZ, Eigen::Lower|Eigen::Upper, EigILUZ> EigCGILUZ;   // Complex.
+
+typedef Eigen::SimplicialLLT <EigMatS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTS;  // Real.
+typedef Eigen::SimplicialLLT <EigMatD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTD;  // Real.
+typedef Eigen::SimplicialLLT <EigMatC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTC;  // Complex.
+typedef Eigen::SimplicialLLT <EigMatZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTZ;  // Complex.
+
+typedef Eigen::SimplicialLDLT<EigMatS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTS; // Real.
+typedef Eigen::SimplicialLDLT<EigMatD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTD; // Real.
 typedef Eigen::SimplicialLDLT<EigMatC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTC; // Complex.
+typedef Eigen::SimplicialLDLT<EigMatZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTZ; // Complex.
+
+typedef Eigen::SparseLU<EigMatS, Eigen::COLAMDOrdering<int>> EigSLUS;  // Real.
+typedef Eigen::SparseLU<EigMatD, Eigen::COLAMDOrdering<int>> EigSLUD;  // Real.
+typedef Eigen::SparseLU<EigMatC, Eigen::COLAMDOrdering<int>> EigSLUC;  // Complex.
+typedef Eigen::SparseLU<EigMatZ, Eigen::COLAMDOrdering<int>> EigSLUZ;  // Complex.
+
+typedef Eigen::SparseQR<EigMatS, Eigen::COLAMDOrdering<int>> EigSQRS;  // Real.
+typedef Eigen::SparseQR<EigMatD, Eigen::COLAMDOrdering<int>> EigSQRD;  // Real.
+typedef Eigen::SparseQR<EigMatC, Eigen::COLAMDOrdering<int>> EigSQRC;  // Complex.
+typedef Eigen::SparseQR<EigMatZ, Eigen::COLAMDOrdering<int>> EigSQRZ;  // Complex.
 
 class options {
   public:
@@ -63,6 +99,7 @@ class options {
       stdPb = true; // Standard or generalized (= not standard).
       symPb = true;
       cpxPb = false;
+      simplePrec = false; // Double precision.
       mag = string("LM"); // Large magnitude.
       shiftReal = false; shiftImag = false;
       sigmaReal = 0.; sigmaImag = 0.; // Eigen value translation: look for lambda+sigma instead of lambda.
@@ -105,6 +142,7 @@ class options {
           symPb = false;
           cpxPb = true;
         }
+        if (clo == "--simplePrec") simplePrec = true;
         if (clo == "--mag") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           mag = argv[a]; // small mag (likely poor perf) <=> large mag + invert (likely good perf).
@@ -211,6 +249,8 @@ class options {
       cout << "                    default: symmetric problem (<=> use ds[ae]upd)" << endl;
       cout << "  --cpxPb:          complex (non symmetric) problem (<=> use zn[ae]upd)." << endl;
       cout << "                    default: false (<=> use d*[ae]upd)" << endl;
+      cout << "  --simplePrec:     use simple precision (less accurate, but, half memory footprint)." << endl;
+      cout << "                    default: false (<=> use double precision: use [dz]*upd)" << endl;
       cout << "  --mag M:          set magnitude of eigen values to look for (LM, SM, LR, SR, LI, SI)." << endl;
       cout << "                    default: large magnitude (LM)" << endl;
       cout << "  --shiftReal S:    real shift where sigma = S (look for lambda+S instead of lambda)." << endl;
@@ -234,7 +274,7 @@ class options {
       cout << "                      Schur vectors q_1, q_2, ..., q_j span an invariant subspace of A." << endl;
       cout << "                      the Schur vectors and eigenvectors of A are the same if A is a normal matrix." << endl;
       cout << "                    default: compute Ritz vectors (approximations of eigen vectors)" << endl;
-      cout << "  --slv S:          solver (BiCG, CG, LU)" << endl;
+      cout << "  --slv S:          solver (needed if arpack mode > 1)." << endl;
       cout << "                      BiCG:     iterative method, any matrices" << endl;
       cout << "                      CG:       iterative method, sym matrices only" << endl;
       cout << "                      LU#P:     direct method, any matrices (pivoting needed)" << endl;
@@ -281,6 +321,7 @@ class options {
     bool stdPb; // Standard or generalized (= not standard).
     bool symPb;
     bool cpxPb;
+    bool simplePrec;
     string mag; // Magnitude <=> "which" arpack parameter.
     bool shiftReal, shiftImag;
     double sigmaReal, sigmaImag; // Eigen value translation: look for lambda+sigma instead of lambda.
@@ -314,7 +355,11 @@ ostream & operator<< (ostream & ostr, options const & opt) {
   return ostr;
 }
 
+void makeZero(         float  & zero) {zero = 0.f;}
+
 void makeZero(        double  & zero) {zero = 0.;}
+
+void makeZero(complex< float> & zero) {zero = complex<double>(0.f, 0.f);}
 
 void makeZero(complex<double> & zero) {zero = complex<double>(0., 0.);}
 
@@ -389,10 +434,23 @@ int readMatrixMarket(string const & fileName, EM & M, int const & verbose, strin
 class arpackEV { // Arpack eigen values / vectors.
   public:
     vector<complex<double>> val; // Eigen values.
-    vector<EigVecC> vec; // Eigen vectors.
+    vector<EigVecZ> vec; // Eigen vectors.
     int nbIt;
     double rciTime;
 };
+
+void arpackAUPD(options const & opt,
+                a_int * ido, char const * bMat, a_int nbDim, char const * which, float * resid, float * v,
+                a_int ldv, a_int * iparam, a_int * ipntr, float * workd, float * workl, a_int lworkl, float * & rwork,
+                a_int * info) {
+  assert(rwork == NULL);
+  if (opt.symPb) {
+    ssaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+  }
+  else {
+    snaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, info);
+  }
+}
 
 void arpackAUPD(options const & opt,
                 a_int * ido, char const * bMat, a_int nbDim, char const * which, double * resid, double * v,
@@ -408,6 +466,16 @@ void arpackAUPD(options const & opt,
 }
 
 void arpackAUPD(options const & opt,
+                a_int * ido, char const * bMat, a_int nbDim, char const * which, complex<float> * resid, complex<float> * v,
+                a_int ldv, a_int * iparam, a_int * ipntr, complex<float> * workd, complex<float> * workl, a_int lworkl, float * & rwork,
+                a_int * info) {
+  if (!rwork) rwork = new float[opt.nbCV];
+  cnaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, reinterpret_cast<_Complex float*>(resid), opt.nbCV,
+           reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr, reinterpret_cast<_Complex float*>(workd),
+           reinterpret_cast<_Complex float*>(workl), lworkl, rwork, info);
+}
+
+void arpackAUPD(options const & opt,
                 a_int * ido, char const * bMat, a_int nbDim, char const * which, complex<double> * resid, complex<double> * v,
                 a_int ldv, a_int * iparam, a_int * ipntr, complex<double> * workd, complex<double> * workl, a_int lworkl, double * & rwork,
                 a_int * info) {
@@ -415,6 +483,102 @@ void arpackAUPD(options const & opt,
   znaupd_c(ido, bMat, nbDim, which, opt.nbEV, opt.tol, reinterpret_cast<_Complex double*>(resid), opt.nbCV,
            reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr, reinterpret_cast<_Complex double*>(workd),
            reinterpret_cast<_Complex double*>(workl), lworkl, rwork, info);
+}
+
+template<typename RC, typename EV, typename EMV>
+void arpackSpectrum(RC * d, RC * z, a_int nbDim, a_int * iparam, options const & opt, arpackEV & out) {
+  // Arpack compute the whole spectrum.
+
+  a_int nbConv = iparam[4];
+  out.val.reserve(nbConv);
+  for (a_int i = 0; d && i < nbConv; i++) {
+    complex<double> lambda(d[i]);
+    out.val.push_back(lambda);
+    if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+
+  out.vec.reserve(nbConv);
+  for (a_int i = 0; z && i < nbConv; i++) {
+    EV V = EMV(z + i*nbDim, nbDim);
+    out.vec.push_back(V.template cast<complex<double>>());
+    if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+}
+
+template<typename RC, typename EV, typename EMV>
+void arpackHalfSpectrum(RC * dr, RC * di, RC * z, a_int nbDim, a_int * iparam, options const & opt, arpackEV & out) {
+  // Arpack compute only half of the spectrum.
+
+  a_int nbConv = iparam[4];
+  out.val.reserve(nbConv);
+  for (a_int i = 0; dr && di && i <= nbConv/2; i++) { // Scan first half of the spectrum.
+    // Get first half of the spectrum.
+
+    complex<double> lambda(dr[i], di[i]);
+    out.val.push_back(lambda);
+    if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+
+    // Deduce second half of the spectrum.
+
+    out.val.push_back(complex<double>(lambda.real(), -1.*lambda.imag()));
+    if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+
+  out.vec.reserve(nbConv);
+  for (a_int i = 0; z && i <= nbConv/2; i++) { // Scan half spectrum.
+    // Get first half of the spectrum.
+
+    EV Vr = EMV(z + (2*i+0)*nbDim, nbDim); // Real part.
+    EV Vi = EMV(z + (2*i+1)*nbDim, nbDim); // Imaginary part.
+    complex<double> imag(0., 1.);
+    EigVecZ V = Vr.template cast<complex<double>>() + imag * Vi.template cast<complex<double>>();
+    out.vec.push_back(V);
+    if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+
+    // Deduce second half of the spectrum.
+
+    V = Vr.template cast<complex<double>>() - imag * Vi.template cast<complex<double>>();
+    out.vec.push_back(V);
+    if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
+  }
+}
+
+int arpackEUPD(options const & opt, arpackEV & out,
+               bool rvec, char const * howmny, a_int const * select, float * z,
+               a_int ldz, char const * bMat, a_int nbDim, char const * which, float * resid, float * v,
+               a_int ldv, a_int * iparam, a_int * ipntr, float * workd, float * workl, a_int lworkl, float * rwork,
+               a_int & info) {
+  assert(rwork == NULL);
+  if (opt.symPb) {
+    float * d = new float[opt.nbEV]; for (a_int k = 0; k < opt.nbEV; k++) d[k] = 0.;
+
+    sseupd_c(rvec, howmny, select, d, z, ldz, opt.sigmaReal,
+             bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
+    if (info == -14) cerr << "Error: dseupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
+    if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dseupd - KO with info " << info << endl; return 1;}
+
+    arpackSpectrum<float, EigVecS, EigMpVS>(d, z, nbDim, iparam, opt, out);
+
+    if (d) {delete [] d; d = NULL;}
+  }
+  else {
+    float * dr = new float[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) dr[k] = 0.;
+    float * di = new float[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) di[k] = 0.;
+    float * workev = new float[3*opt.nbCV];
+
+    sneupd_c(rvec, howmny, select, dr, di, z, ldz, opt.sigmaReal, opt.sigmaImag, workev,
+             bMat, nbDim, which, opt.nbEV, opt.tol, resid, opt.nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
+    if (info == -14) cerr << "Error: dneupd - KO: [dz]naupd did not find any eigenvalues to sufficient accuracy" << endl;
+    if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dneupd - KO with info " << info << endl; return 1;}
+
+    arpackHalfSpectrum<float, EigVecS, EigMpVS>(dr, di, z, nbDim, iparam, opt, out);
+
+    if (workev) {delete [] workev; workev = NULL;}
+    if (dr)     {delete [] dr;     dr     = NULL;}
+    if (di)     {delete [] di;     di     = NULL;}
+  }
+
+  return 0;
 }
 
 int arpackEUPD(options const & opt, arpackEV & out,
@@ -431,22 +595,7 @@ int arpackEUPD(options const & opt, arpackEV & out,
     if (info == -14) cerr << "Error: dseupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
     if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dseupd - KO with info " << info << endl; return 1;}
 
-    // Arpack compute the whole spectrum.
-
-    a_int nbConv = iparam[4];
-    out.val.reserve(nbConv);
-    for (a_int i = 0; d && i < nbConv; i++) {
-      complex<double> lambda(d[i], 0.);
-      out.val.push_back(lambda);
-      if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-    }
-
-    out.vec.reserve(nbConv);
-    for (a_int i = 0; z && i < nbConv; i++) {
-      EigVecR V = EigMpVR(z + i*nbDim, nbDim);
-      out.vec.push_back(V.cast<complex<double>>());
-      if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-    }
+    arpackSpectrum<double, EigVecD, EigMpVD>(d, z, nbDim, iparam, opt, out);
 
     if (d) {delete [] d; d = NULL;}
   }
@@ -460,45 +609,37 @@ int arpackEUPD(options const & opt, arpackEV & out,
     if (info == -14) cerr << "Error: dneupd - KO: [dz]naupd did not find any eigenvalues to sufficient accuracy" << endl;
     if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dneupd - KO with info " << info << endl; return 1;}
 
-    // Arpack compute only half of the spectrum.
-
-    a_int nbConv = iparam[4];
-    out.val.reserve(nbConv);
-    for (a_int i = 0; dr && di && i <= nbConv/2; i++) { // Scan first half of the spectrum.
-      // Get first half of the spectrum.
-
-      complex<double> lambda(dr[i], di[i]);
-      out.val.push_back(lambda);
-      if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-
-      // Deduce second half of the spectrum.
-
-      out.val.push_back(complex<double>(lambda.real(), -1.*lambda.imag()));
-      if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-    }
-
-    out.vec.reserve(nbConv);
-    for (a_int i = 0; z && i <= nbConv/2; i++) { // Scan half spectrum.
-      // Get first half of the spectrum.
-
-      EigVecR Vr = EigMpVR(z + (2*i+0)*nbDim, nbDim); // Real part.
-      EigVecR Vi = EigMpVR(z + (2*i+1)*nbDim, nbDim); // Imaginary part.
-      complex<double> imag(0., 1.);
-      EigVecC V = Vr.cast<complex<double>>() + imag * Vi.cast<complex<double>>();
-      out.vec.push_back(V);
-      if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-
-      // Deduce second half of the spectrum.
-
-      V = Vr.cast<complex<double>>() - imag * Vi.cast<complex<double>>();
-      out.vec.push_back(V);
-      if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-    }
+    arpackHalfSpectrum<double, EigVecD, EigMpVD>(dr, di, z, nbDim, iparam, opt, out);
 
     if (workev) {delete [] workev; workev = NULL;}
     if (dr)     {delete [] dr;     dr     = NULL;}
     if (di)     {delete [] di;     di     = NULL;}
   }
+
+  return 0;
+}
+
+int arpackEUPD(options const & opt, arpackEV & out,
+               bool rvec, char const * howmny, a_int const * select, complex<float> * z,
+               a_int ldz, char const * bMat, a_int nbDim, char const * which, complex<float> * resid, complex<float> * v,
+               a_int ldv, a_int * iparam, a_int * ipntr, complex<float> * workd, complex<float> * workl, a_int lworkl, float * rwork,
+               a_int & info) {
+  complex<float> * d = new complex<float>[opt.nbEV+1]; for (a_int k = 0; k < opt.nbEV+1; k++) d[k] = complex<float>(0., 0.);
+  complex<float> * workev = new complex<float>[2*opt.nbCV];
+
+  complex<float> sigma = complex<float>((float) opt.sigmaReal, (float) opt.sigmaImag);
+  cneupd_c(rvec, howmny, select, reinterpret_cast<_Complex float*>(d), reinterpret_cast<_Complex float*>(z), ldz,
+           reinterpret_cast<_Complex float &>(sigma), reinterpret_cast<_Complex float*>(workev),
+           bMat, nbDim, which, opt.nbEV, opt.tol, reinterpret_cast<_Complex float*>(resid), opt.nbCV,
+           reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
+           reinterpret_cast<_Complex float*>(workd), reinterpret_cast<_Complex float*>(workl), lworkl, rwork, &info);
+  if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
+  if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
+
+  arpackSpectrum<complex<float>, EigVecC, EigMpVC>(d, z, nbDim, iparam, opt, out);
+
+  if (workev) {delete [] workev; workev = NULL;}
+  if (d)      {delete [] d;           d = NULL;}
 
   return 0;
 }
@@ -520,22 +661,7 @@ int arpackEUPD(options const & opt, arpackEV & out,
   if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
   if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
 
-  // Arpack compute the whole spectrum.
-
-  a_int nbConv = iparam[4];
-  out.val.reserve(nbConv);
-  for (a_int i = 0; d && i < nbConv; i++) {
-    complex<double> lambda = d[i];
-    out.val.push_back(lambda);
-    if (out.val.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-  }
-
-  out.vec.reserve(nbConv);
-  for (a_int i = 0; z && i < nbConv; i++) {
-    EigVecC V = EigMpVC(z + i*nbDim, nbDim);
-    out.vec.push_back(V);
-    if (out.vec.size() == (size_t) opt.nbEV) break; // If more converged than requested, likely not accurate (check KO).
-  }
+  arpackSpectrum<complex<double>, EigVecZ, EigMpVZ>(d, z, nbDim, iparam, opt, out);
 
   if (workev) {delete [] workev; workev = NULL;}
   if (d)      {delete [] d;           d = NULL;}
@@ -544,7 +670,39 @@ int arpackEUPD(options const & opt, arpackEV & out,
 }
 
 template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigMatR const & A, EigMatR const & B, SLV & solver) {
+                                      EigMatS const & A, EigMatS const & B, SLV & solver) {
+  int rc = 1;
+
+  if (mode == 1) {
+    rc = 0;
+  }
+  else if (mode == 2 || mode == 3) {
+    if (mode == 2) { // Regular mode.
+      solver.compute(B);
+    }
+    else { // Shift invert mode.
+      if (!opt.shiftImag) { // Real shift only.
+        float sigma = opt.sigmaReal;
+        auto S = A - sigma * B;
+        solver.compute(S);
+      }
+      else { // Complex (real/imaginary) shift.
+        complex<float> sigma((float) opt.sigmaReal, (float) opt.sigmaImag);
+        auto S = A.cast<complex<float>>() - sigma * B.cast<complex<float>>();
+        solver.compute(S.real()); // Real part of shifted matrix.
+      }
+    }
+
+    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
+    rc = 0;
+  }
+  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
+
+  return rc;
+}
+
+template<typename SLV> int arpackMode(options const & opt, int const mode,
+                                      EigMatD const & A, EigMatD const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
@@ -587,6 +745,31 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
       solver.compute(B);
     }
     else { // Shift invert mode.
+      complex<float> sigma((float) opt.sigmaReal, (float) opt.sigmaImag);
+      auto S = A - sigma * B;
+      solver.compute(S);
+    }
+
+    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
+    rc = 0;
+  }
+  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
+
+  return rc;
+}
+
+template<typename SLV> int arpackMode(options const & opt, int const mode,
+                                      EigMatZ const & A, EigMatZ const & B, SLV & solver) {
+  int rc = 1;
+
+  if (mode == 1) {
+    rc = 0;
+  }
+  else if (mode == 2 || mode == 3) {
+    if (mode == 2) { // Regular mode.
+      solver.compute(B);
+    }
+    else { // Shift invert mode.
       complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
       auto S = A - sigma * B;
       solver.compute(S);
@@ -600,7 +783,9 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
   return rc;
 }
 
-template<typename RC, typename EM, typename EV, typename SLV>
+template<typename RC, typename RW,
+         typename EM, typename EV,
+         typename SLV>
 int arpackSolve(options const & opt, int const & mode,
                 EM const & A, EM const & B, SLV & solver, arpackEV & out) {
   // Arpack set up.
@@ -662,7 +847,7 @@ int arpackSolve(options const & opt, int const & mode,
 
   // Arpack solve.
 
-  double * rwork = NULL;
+  RW * rwork = NULL;
   do {
     // Call arpack.
 
@@ -782,7 +967,7 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
   }
 
   for (size_t i = 0; i < out.vec.size(); i++) {
-    EigVecC V = out.vec[i];
+    EigVecZ V = out.vec[i];
     complex<double> lambda = out.val[i];
     if (opt.verbose >= 1) {
       cout << endl;
@@ -795,10 +980,10 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
     }
 
     if (opt.check) {
-      EigVecC left = A.template cast<complex<double>>() * V;
-      EigVecC right = opt.stdPb ? V : B.template cast<complex<double>>() * V;
+      EigVecZ left = A.template cast<complex<double>>() * V;
+      EigVecZ right = opt.stdPb ? V : B.template cast<complex<double>>() * V;
       right *= lambda;
-      EigVecC diff = left - right;
+      EigVecZ diff = left - right;
       if (diff.norm() > sqrt(opt.tol)) {
         cerr << endl << "Error: bad vector " << setw(3) << i << " (norm " << V.norm() << "):" << endl;
         cerr << endl << V << endl;
@@ -822,11 +1007,17 @@ int checkArpackEigVec(options const & opt, EM const & A, EM const & B, arpackEV 
   return 0;
 }
 
+void makeSigma(options const & opt,          float  & sigma) {sigma = (float) opt.sigmaReal;}
+
 void makeSigma(options const & opt,         double  & sigma) {sigma = opt.sigmaReal;}
+
+void makeSigma(options const & opt, complex< float> & sigma) {sigma = complex< float>((float) opt.sigmaReal, (float) opt.sigmaImag);}
 
 void makeSigma(options const & opt, complex<double> & sigma) {sigma = complex<double>(opt.sigmaReal, opt.sigmaImag);}
 
-template<typename RC, typename EM, typename EV, typename SLV>
+template<typename RC, typename RW,
+         typename EM, typename EV,
+         typename SLV>
 int arpackSolve(options const & opt, EM & A, EM const & B,
                 SLV & solver, arpackEV & out) {
   // If needed, transform the initial problem into a new one that arpack can handle.
@@ -861,7 +1052,7 @@ int arpackSolve(options const & opt, EM & A, EM const & B,
     cout << ", backTransform " << (backTransform ? "yes" : "no") << endl;
   }
 
-  int rc = arpackSolve<RC, EM, EV, SLV>(opt, mode, A, B, solver, out);
+  int rc = arpackSolve<RC, RW, EM, EV, SLV>(opt, mode, A, B, solver, out);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   if (opt.verbose >= 1) {
@@ -885,7 +1076,9 @@ int arpackSolve(options const & opt, EM & A, EM const & B,
   return checkArpackEigVec<EM>(opt, A, B, out);
 }
 
-template<typename RC, typename EM, typename EC, typename EV, typename SLV>
+template<typename RC, typename RW,
+         typename EM, typename EC, typename EV,
+         typename SLV>
 int arpackSolve(options & opt, SLV & solver) {
   // Read A.
 
@@ -914,7 +1107,7 @@ int arpackSolve(options & opt, SLV & solver) {
   arpackEV out;
   out.rciTime = 0.;
   auto start = chrono::high_resolution_clock::now();
-  rc = arpackSolve<RC, EM, EV, SLV>(opt, A, B, solver, out);
+  rc = arpackSolve<RC, RW, EM, EV, SLV>(opt, A, B, solver, out);
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
   auto stop = chrono::high_resolution_clock::now();
   double fullTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
@@ -925,7 +1118,8 @@ int arpackSolve(options & opt, SLV & solver) {
   return 0;
 }
 
-template<typename RC, typename EM, typename EC, typename EV,
+template<typename RC, typename RW,
+         typename EM, typename EC, typename EV,
          typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU,
          typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
 int arpackSolve(options & opt) {
@@ -948,12 +1142,12 @@ int arpackSolve(options & opt) {
     if (slv == "LU") {
       SLVSLU solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, EM, EC, EV, SLVSLU>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLU>(opt, solver);
     }
     else if (slv == "QR") {
       SLVSQR solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, EM, EC, EV, SLVSQR>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSQR>(opt, solver);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
@@ -974,12 +1168,12 @@ int arpackSolve(options & opt) {
     if (slv == "LLT") {
       SLVSLLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, EM, EC, EV, SLVSLLT>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLLT>(opt, solver);
     }
     else if (slv == "LDLT") {
       SLVSLDLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, EM, EC, EV, SLVSLDLT>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLDLT>(opt, solver);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
@@ -1012,7 +1206,7 @@ int arpackSolve(options & opt) {
         SLVBCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, EM, EC, EV, SLVBCG>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCG>(opt, solver);
       }
       else if (slvItrPC == "ILU") {
         SLVBCGILU solver;
@@ -1020,7 +1214,7 @@ int arpackSolve(options & opt) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, EM, EC, EV, SLVBCGILU>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCGILU>(opt, solver);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
@@ -1029,7 +1223,7 @@ int arpackSolve(options & opt) {
         SLVCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, EM, EC, EV, SLVCG>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCG>(opt, solver);
       }
       else if (slvItrPC == "ILU") {
         SLVCGILU solver;
@@ -1037,7 +1231,7 @@ int arpackSolve(options & opt) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, EM, EC, EV, SLVCGILU>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCGILU>(opt, solver);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
@@ -1057,12 +1251,26 @@ int main(int argc, char ** argv) {
   if (rc != 0) {cerr << "Error: read cmd line KO" << endl; return rc;}
   cout << opt; // Print options.
 
-  if (opt.cpxPb) rc = arpackSolve<complex<double>, EigMatC, EigCooC, EigMpVC,
-                                  EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC,
-                                  EigSLUC, EigSQRC, EigSLLTC, EigSLDLTC>(opt);
-  else           rc = arpackSolve<        double , EigMatR, EigCooR, EigMpVR,
-                                  EigBiCGR, EigBiCGILUR, EigCGR, EigCGILUR,
-                                  EigSLUR, EigSQRR, EigSLLTR, EigSLDLTR>(opt);
+  if (!opt.simplePrec) {
+    if (opt.cpxPb) rc = arpackSolve<complex<double>, double,
+                                    EigMatZ, EigCooZ, EigMpVZ,
+                                    EigBiCGZ, EigBiCGILUZ, EigCGZ, EigCGILUZ,
+                                    EigSLUZ, EigSQRZ, EigSLLTZ, EigSLDLTZ>(opt);
+    else           rc = arpackSolve<        double , double,
+                                    EigMatD, EigCooD, EigMpVD,
+                                    EigBiCGD, EigBiCGILUD, EigCGD, EigCGILUD,
+                                    EigSLUD, EigSQRD, EigSLLTD, EigSLDLTD>(opt);
+  }
+  else {
+    if (opt.cpxPb) rc = arpackSolve<complex<float>, float,
+                                    EigMatC, EigCooC, EigMpVC,
+                                    EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC,
+                                    EigSLUC, EigSQRC, EigSLLTC, EigSLDLTC>(opt);
+    else           rc = arpackSolve<        float , float,
+                                    EigMatS, EigCooS, EigMpVS,
+                                    EigBiCGS, EigBiCGILUS, EigCGS, EigCGILUS,
+                                    EigSLUS, EigSQRS, EigSLLTS, EigSLDLTS>(opt);
+  }
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;

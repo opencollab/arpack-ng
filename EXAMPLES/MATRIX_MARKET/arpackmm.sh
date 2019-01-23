@@ -35,38 +35,41 @@ do
             do
               for rs in "" "--schur"
               do
-                export extraGenPb=""
-                if [[ "$genPb" == *genPb* ]]; then
-                  export extraGenPb="$shiftOpt" # Force shift if genPb.
-                fi
-
-                if [[ "$slv" == *CG* ]]; then
-                  if [[ "$eigPb" == *nonSymPb* ]]; then
-                    continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                for ds in "" "--simplePrec"
+                do
+                  export extraGenPb=""
+                  if [[ "$genPb" == *genPb* ]]; then
+                    export extraGenPb="$shiftOpt" # Force shift if genPb.
                   fi
-                fi
 
-                if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
-                  if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
-                    continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
+                  if [[ "$slv" == *CG* ]]; then
+                    if [[ "$eigPb" == *nonSymPb* ]]; then
+                      continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                    fi
                   fi
-                fi
 
-                # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-                export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $extraGenPb $rs --nbCV 6 --verbose 3"
-                echo "$CMD"
-                eval "$CMD"
-                echo ""
-                echo "========================================================================================"
-                echo ""
+                  if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
+                    if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
+                      continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
+                    fi
+                  fi
 
-                # Run arpackmm: re-run with restart.
-                export CMD="$CMD --restart"
-                echo "$CMD"
-                eval "$CMD"
-                echo ""
-                echo "========================================================================================"
-                echo ""
+                  # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
+                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3"
+                  echo "$CMD"
+                  eval "$CMD"
+                  echo ""
+                  echo "========================================================================================"
+                  echo ""
+
+                  # Run arpackmm: re-run with restart.
+                  export CMD="$CMD --restart"
+                  echo "$CMD"
+                  eval "$CMD"
+                  echo ""
+                  echo "========================================================================================"
+                  echo ""
+                done
               done
             done
           done
