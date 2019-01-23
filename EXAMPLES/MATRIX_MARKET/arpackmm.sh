@@ -1,5 +1,12 @@
 #!/bin/bash -eu
 
+export CMD="./arpackmm --help" # For coverage
+echo "$CMD"
+eval "$CMD"
+echo ""
+echo "========================================================================================"
+echo ""
+
 for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx --B Bz.mtx"
 do
   for genPb in "" "--genPb"

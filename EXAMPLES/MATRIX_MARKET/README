@@ -9,8 +9,21 @@ be slow (arpack is good at finding large eigen values only).
 To compute small eigen values, it may be a better choice
 to look for large eigen values with invert or shift+invert.
 
-If solve breaks down, you may increase --nbCV, try --restart,
-play with --shiftReal/Imag and/or --invert.
+How to use this utility ?
+Start simple, then, increase complexity if/when needed:
+- defaults to: standard real symmetric eigen problem to be
+  solved accurately (double precision).
+- list all possible options with --help.
+- add --verbose or --debug to get more informations.
+- if solve breaks down, you may:
+  - play with --nbCV (increase workspace size).
+  - play with --shiftReal/Imag and/or --invert.
+  - if arpack mode > 1, change solver with --slv.
+  - if arpack mode > 1, change solver parameters with --slv
+    (typically: pivoting threshold, solver tolerance, ...).
+  - try --restart (restart from previous eigen basis
+    approximation computed by previous run).
+  - etc...
 
 To build this utility, you need:
 - to use a fortran compiler which supports iso_c_binding.
