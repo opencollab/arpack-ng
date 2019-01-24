@@ -2,7 +2,7 @@
 
 export CMD="./arpackmm --help" # For coverage
 echo "$CMD"
-eval "$CMD"
+eval "$CMD &> arpackmm.run.log"
 echo ""
 echo "========================================================================================"
 echo ""
@@ -64,7 +64,7 @@ do
                   # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
                   export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3"
                   echo "$CMD"
-                  eval "$CMD"
+                  eval "$CMD &> arpackmm.run.log"
                   echo ""
                   echo "========================================================================================"
                   echo ""
@@ -72,7 +72,7 @@ do
                   # Run arpackmm: re-run with restart.
                   export CMD="$CMD --restart"
                   echo "$CMD"
-                  eval "$CMD"
+                  eval "$CMD &> arpackmm.run.log"
                   echo ""
                   echo "========================================================================================"
                   echo ""
