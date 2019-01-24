@@ -26,16 +26,16 @@
 
 using namespace std;
 
-typedef Eigen::SparseMatrix<         float>                     EigMatS; // Real.
+typedef Eigen::SparseMatrix<         float>                     EigSMxS; // Real.
 typedef Eigen::Triplet     <         float>                     EigCooS; // Real.
 typedef Eigen::Matrix      <         float,  Eigen::Dynamic, 1> EigVecS; // Real.
-typedef Eigen::SparseMatrix<        double>                     EigMatD; // Real.
+typedef Eigen::SparseMatrix<        double>                     EigSMxD; // Real.
 typedef Eigen::Triplet     <        double>                     EigCooD; // Real.
 typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecD; // Real.
-typedef Eigen::SparseMatrix<complex< float>>                    EigMatC; // Complex.
+typedef Eigen::SparseMatrix<complex< float>>                    EigSMxC; // Complex.
 typedef Eigen::Triplet     <complex< float>>                    EigCooC; // Complex.
 typedef Eigen::Matrix      <complex< float>, Eigen::Dynamic, 1> EigVecC; // Complex.
-typedef Eigen::SparseMatrix<complex<double>>                    EigMatZ; // Complex.
+typedef Eigen::SparseMatrix<complex<double>>                    EigSMxZ; // Complex.
 typedef Eigen::Triplet     <complex<double>>                    EigCooZ; // Complex.
 typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecZ; // Complex.
 
@@ -44,50 +44,50 @@ typedef Eigen::Map<EigVecD> EigMpVD; // Real.
 typedef Eigen::Map<EigVecC> EigMpVC; // Complex.
 typedef Eigen::Map<EigVecZ> EigMpVZ; // Complex.
 
-typedef Eigen::BiCGSTAB         <EigMatS> EigBiCGS; // Real.
-typedef Eigen::BiCGSTAB         <EigMatD> EigBiCGD; // Real.
-typedef Eigen::BiCGSTAB         <EigMatC> EigBiCGC; // Complex.
-typedef Eigen::BiCGSTAB         <EigMatZ> EigBiCGZ; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxS> EigBiCGS; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxD> EigBiCGD; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxC> EigBiCGC; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxZ> EigBiCGZ; // Complex.
 
-typedef Eigen::ConjugateGradient<EigMatS> EigCGS;   // Real.
-typedef Eigen::ConjugateGradient<EigMatD> EigCGD;   // Real.
-typedef Eigen::ConjugateGradient<EigMatC> EigCGC;   // Complex.
-typedef Eigen::ConjugateGradient<EigMatZ> EigCGZ;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxS> EigCGS;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxD> EigCGD;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxC> EigCGC;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxZ> EigCGZ;   // Complex.
 
 typedef Eigen::IncompleteLUT<         float>                                  EigILUS;     // Real.
 typedef Eigen::IncompleteLUT<        double>                                  EigILUD;     // Real.
 typedef Eigen::IncompleteLUT<complex< float>>                                 EigILUC;     // Complex.
 typedef Eigen::IncompleteLUT<complex<double>>                                 EigILUZ;     // Complex.
 
-typedef Eigen::BiCGSTAB         <EigMatS,                            EigILUS> EigBiCGILUS; // Real.
-typedef Eigen::BiCGSTAB         <EigMatD,                            EigILUD> EigBiCGILUD; // Real.
-typedef Eigen::BiCGSTAB         <EigMatC,                            EigILUC> EigBiCGILUC; // Complex.
-typedef Eigen::BiCGSTAB         <EigMatZ,                            EigILUZ> EigBiCGILUZ; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxS,                            EigILUS> EigBiCGILUS; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxD,                            EigILUD> EigBiCGILUD; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxC,                            EigILUC> EigBiCGILUC; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxZ,                            EigILUZ> EigBiCGILUZ; // Complex.
 
-typedef Eigen::ConjugateGradient<EigMatS, Eigen::Lower|Eigen::Upper, EigILUS> EigCGILUS;   // Real.
-typedef Eigen::ConjugateGradient<EigMatD, Eigen::Lower|Eigen::Upper, EigILUD> EigCGILUD;   // Real.
-typedef Eigen::ConjugateGradient<EigMatC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
-typedef Eigen::ConjugateGradient<EigMatZ, Eigen::Lower|Eigen::Upper, EigILUZ> EigCGILUZ;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxS, Eigen::Lower|Eigen::Upper, EigILUS> EigCGILUS;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxD, Eigen::Lower|Eigen::Upper, EigILUD> EigCGILUD;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxZ, Eigen::Lower|Eigen::Upper, EigILUZ> EigCGILUZ;   // Complex.
 
-typedef Eigen::SimplicialLLT <EigMatS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTS;  // Real.
-typedef Eigen::SimplicialLLT <EigMatD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTD;  // Real.
-typedef Eigen::SimplicialLLT <EigMatC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTC;  // Complex.
-typedef Eigen::SimplicialLLT <EigMatZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTZ;  // Complex.
+typedef Eigen::SimplicialLLT <EigSMxS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTS;  // Real.
+typedef Eigen::SimplicialLLT <EigSMxD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTD;  // Real.
+typedef Eigen::SimplicialLLT <EigSMxC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTC;  // Complex.
+typedef Eigen::SimplicialLLT <EigSMxZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTZ;  // Complex.
 
-typedef Eigen::SimplicialLDLT<EigMatS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTS; // Real.
-typedef Eigen::SimplicialLDLT<EigMatD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTD; // Real.
-typedef Eigen::SimplicialLDLT<EigMatC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTC; // Complex.
-typedef Eigen::SimplicialLDLT<EigMatZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTZ; // Complex.
+typedef Eigen::SimplicialLDLT<EigSMxS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTS; // Real.
+typedef Eigen::SimplicialLDLT<EigSMxD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTD; // Real.
+typedef Eigen::SimplicialLDLT<EigSMxC, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTC; // Complex.
+typedef Eigen::SimplicialLDLT<EigSMxZ, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLDLTZ; // Complex.
 
-typedef Eigen::SparseLU<EigMatS, Eigen::COLAMDOrdering<int>> EigSLUS;  // Real.
-typedef Eigen::SparseLU<EigMatD, Eigen::COLAMDOrdering<int>> EigSLUD;  // Real.
-typedef Eigen::SparseLU<EigMatC, Eigen::COLAMDOrdering<int>> EigSLUC;  // Complex.
-typedef Eigen::SparseLU<EigMatZ, Eigen::COLAMDOrdering<int>> EigSLUZ;  // Complex.
+typedef Eigen::SparseLU<EigSMxS, Eigen::COLAMDOrdering<int>> EigSLUS;  // Real.
+typedef Eigen::SparseLU<EigSMxD, Eigen::COLAMDOrdering<int>> EigSLUD;  // Real.
+typedef Eigen::SparseLU<EigSMxC, Eigen::COLAMDOrdering<int>> EigSLUC;  // Complex.
+typedef Eigen::SparseLU<EigSMxZ, Eigen::COLAMDOrdering<int>> EigSLUZ;  // Complex.
 
-typedef Eigen::SparseQR<EigMatS, Eigen::COLAMDOrdering<int>> EigSQRS;  // Real.
-typedef Eigen::SparseQR<EigMatD, Eigen::COLAMDOrdering<int>> EigSQRD;  // Real.
-typedef Eigen::SparseQR<EigMatC, Eigen::COLAMDOrdering<int>> EigSQRC;  // Complex.
-typedef Eigen::SparseQR<EigMatZ, Eigen::COLAMDOrdering<int>> EigSQRZ;  // Complex.
+typedef Eigen::SparseQR<EigSMxS, Eigen::COLAMDOrdering<int>> EigSQRS;  // Real.
+typedef Eigen::SparseQR<EigSMxD, Eigen::COLAMDOrdering<int>> EigSQRD;  // Real.
+typedef Eigen::SparseQR<EigSMxC, Eigen::COLAMDOrdering<int>> EigSQRC;  // Complex.
+typedef Eigen::SparseQR<EigSMxZ, Eigen::COLAMDOrdering<int>> EigSQRZ;  // Complex.
 
 class options {
   public:
@@ -233,11 +233,13 @@ class options {
     };
 
     int usage(int rc = 1) {
-      cout << "Usage: running arpack to check for eigen values/vectors." << endl;
+      cout << "Usage: running arpack with matrix market files to check for eigen values/vectors." << endl;
       cout << endl;
       cout << "  --A F:            file name of matrix A such that A X = lambda X. (standard)" << endl;
+      cout << "                    the file F must be compliant with the matrix market format." << endl;
       cout << "                    default: A.mtx" << endl;
       cout << "  --B F:            file name of matrix B such that A X = lambda B X. (generalized)" << endl;
+      cout << "                    the file F must be compliant with the matrix market format." << endl;
       cout << "                    default: N.A. for standard problem, or, B.mtx for generalized problem" << endl;
       cout << "  --nbEV:           number of eigen values/vectors to compute." << endl;
       cout << "                    default: 1" << endl;
@@ -307,6 +309,7 @@ class options {
       cout << "  --debug D:        debug level (up to 3)." << endl;
       cout << "                    default: 0" << endl;
       cout << "  --restart:        restart from previous run (which had produced resid.out and v.out)." << endl;
+      cout << "                    restart from eigen basis approximation computed during a previous run." << endl;
       cout << "                    default: false" << endl;
       if (rc == 0) exit(0);
       return rc;
@@ -365,13 +368,14 @@ void makeZero(complex< float> & zero) {zero = complex<double>(0.f, 0.f);}
 void makeZero(complex<double> & zero) {zero = complex<double>(0., 0.);}
 
 template<typename RC, typename EM, typename EC>
-int readMatrixMarket(string const & fileName, EM & M, int const & verbose, string const & msg) {
+int readMatrixMarket(string const & fileName,
+                     a_uint & n, a_uint & m, vector<a_uint> & i, vector<a_uint> & j, vector<RC> & Mij) {
   ifstream inp(fileName);
   if (!inp) {cerr << "Error: can not open " << fileName << endl; return 1;}
 
-  a_uint l = 0, n = 0, m = 0, nnz = 0;
-  vector<a_uint> i, j;
-  vector<RC> Mij;
+  // Read matrix from file.
+
+  a_uint l = 0, nnz = 0;
   do {
     // Skip comments.
 
@@ -416,10 +420,24 @@ int readMatrixMarket(string const & fileName, EM & M, int const & verbose, strin
     for (size_t k = 0; k < nnz; k++) j[k] -= 1;
   }
 
+  return 0;
+}
+
+template<typename RC, typename EM, typename EC>
+int readMatrixMarketSpr(string const & fileName, EM & M, int const & verbose, string const & msg) {
+  // Read matrix from file.
+
+  a_uint n = 0, m = 0;
+  vector<a_uint> i, j;
+  vector<RC> Mij;
+  int rc = readMatrixMarket<RC, EM, EC>(fileName, n, m, i, j, Mij);
+  if (rc != 0) {cerr << "Error: read matrix market file KO" << endl; return rc;}
+
   // Create matrix from file.
 
   M = EM(n, m); // Set matrice dimensions.
   vector<EC> triplets;
+  a_uint nnz = Mij.size();
   triplets.reserve(nnz);
   for (size_t k = 0; k < nnz; k++) triplets.emplace_back(i[k], j[k], Mij[k]);
   M.setFromTriplets(triplets.begin(), triplets.end()); // Set all (i, j, Mij).
@@ -437,6 +455,7 @@ class arpackEV { // Arpack eigen values / vectors.
     vector<complex<double>> val; // Eigen values.
     vector<EigVecZ> vec; // Eigen vectors.
     int nbIt;
+    double imsTime; // Init mode solver.
     double rciTime;
 };
 
@@ -671,7 +690,7 @@ int arpackEUPD(options const & opt, arpackEV & out,
 }
 
 template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigMatS const & A, EigMatS const & B, SLV & solver) {
+                                      EigSMxS const & A, EigSMxS const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
@@ -703,7 +722,7 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
 }
 
 template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigMatD const & A, EigMatD const & B, SLV & solver) {
+                                      EigSMxD const & A, EigSMxD const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
@@ -735,7 +754,7 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
 }
 
 template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigMatC const & A, EigMatC const & B, SLV & solver) {
+                                      EigSMxC const & A, EigSMxC const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
@@ -760,7 +779,7 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
 }
 
 template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigMatZ const & A, EigMatZ const & B, SLV & solver) {
+                                      EigSMxZ const & A, EigSMxZ const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
@@ -784,6 +803,26 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
   return rc;
 }
 
+template<typename RC>
+void arpackRestart(options const & opt, string const & fileName,
+                   a_int const & nbDim, RC * rv, bool readNbCV) {
+  if (opt.restart) {
+    ifstream ifs(fileName.c_str());
+    if (ifs.is_open()) {
+      a_int nbCV = 1; if (readNbCV) {ifs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;}
+      for (a_int n = 0; rv && n < nbDim*nbCV; n++) ifs >> rv[n];
+      if (opt.verbose >= 1) {
+        cout << endl;
+        cout << fileName << ": restart OK" << endl;
+        if (opt.verbose >= 2) {
+          for (a_int n = 0; rv && n < nbDim; n++) cout << rv[n] << endl;
+        }
+        cout << endl;
+      }
+    }
+  }
+}
+
 template<typename RC, typename RW,
          typename EM, typename EV,
          typename SLV>
@@ -803,48 +842,30 @@ int arpackSolve(options const & opt, int const & mode,
   a_int nbDim = A.rows();
   RC zero; makeZero(zero);
   RC * resid = new RC[nbDim]; for (a_int n = 0; n < nbDim; n++) resid[n] = zero; // Avoid "bad" starting vector.
-  if (opt.restart) {
-    ifstream rfs("resid.out");
-    if (rfs.is_open()) {
-      for (a_int n = 0; n < nbDim; n++) rfs >> resid[n];
-      if (opt.verbose >= 2) {
-        cout << endl;
-        cout << "resid:" << endl;
-        for (a_int n = 0; n < nbDim; n++) cout << resid[n] << endl;
-        cout << endl;
-      }
-    }
-  }
+  arpackRestart<RC>(opt, "resid.out", nbDim, resid, false);
   a_int ldv = nbDim;
   RC * v = new RC[ldv*opt.nbCV]; for (a_int n = 0; n < ldv*opt.nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
-  if (opt.restart) {
-    ifstream vfs("v.out");
-    if (vfs.is_open()) {
-      a_int nbCV = 0; vfs >> nbCV; if (opt.nbCV < nbCV) nbCV = opt.nbCV;
-      for (a_int n = 0; n < ldv*nbCV; n++) vfs >> v[n];
-      if (opt.verbose >= 2) {
-        cout << endl;
-        cout << "v:" << endl;
-        for (a_int n = 0; n < ldv*nbCV; n++) cout << v[n] << endl;
-        cout << endl;
-      }
-    }
-  }
+  arpackRestart<RC>(opt, "v.out", ldv, v, true);
   a_int iparam[11];
   iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
   iparam[2] = opt.maxIt; // Maximum number of iterations.
   iparam[3] = 1; // Block size.
   iparam[4] = 0; // Number of ev found by arpack.
   iparam[6] = mode;
-  int rc = arpackMode<SLV>(opt, mode, A, B, solver);
-  if (rc != 0) {cerr << "Error: bad arpack mode" << endl; return rc;}
   a_int ipntr[14];
   RC * workd = new RC[3*nbDim];
   a_int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
-  lworkl++; // The documentation says "LWORKL must be at least ..."
   RC * workl = new RC[lworkl];
   a_int info = 0; // Use random initial residual vector.
   if (opt.restart) info = 1;
+
+  // Initialize solver.
+
+  auto start = chrono::high_resolution_clock::now();
+  int rc = arpackMode<SLV>(opt, mode, A, B, solver);
+  if (rc != 0) {cerr << "Error: bad arpack mode" << endl; return rc;}
+  auto stop = chrono::high_resolution_clock::now();
+  out.imsTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
 
   // Arpack solve.
 
@@ -860,7 +881,7 @@ int arpackSolve(options const & opt, int const & mode,
 
     // Reverse Communication Interface: perform actions according to arpack.
 
-    auto start = chrono::high_resolution_clock::now();
+    start = chrono::high_resolution_clock::now();
 
     a_int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
     a_int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
@@ -921,7 +942,7 @@ int arpackSolve(options const & opt, int const & mode,
     }
     else if (ido != 99) {cerr << "Error: unexpected ido " << ido << " - KO" << endl; return 1;}
 
-    auto stop = chrono::high_resolution_clock::now();
+    stop = chrono::high_resolution_clock::now();
     out.rciTime += chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
 
   } while (ido != 99);
@@ -1080,32 +1101,13 @@ int arpackSolve(options const & opt, EM & A, EM const & B,
 template<typename RC, typename RW,
          typename EM, typename EC, typename EV,
          typename SLV>
-int arpackSolve(options & opt, SLV & solver) {
-  // Read A.
-
-  EM A;
-  int rc = readMatrixMarket<RC, EM, EC>(opt.fileA, A, opt.verbose, "A:");
-  if (rc != 0) {cerr << "Error: read A KO" << endl; return rc;}
-
-  // Read B.
-
-  EM B;
-  if (!opt.stdPb) {
-    rc = readMatrixMarket<RC, EM, EC>(opt.fileB, B, opt.verbose, "B:");
-    if (rc != 0) {cerr << "Error: read B KO" << endl; return rc;}
-  }
-
-  // Check A-B compatibility.
-
-  if (!opt.stdPb) {
-    if (A.rows() != B.rows()) {cerr << "Error: A.rows() != B.rows()" << endl; return rc;}
-    if (A.cols() != B.cols()) {cerr << "Error: A.cols() != B.cols()" << endl; return rc;}
-  }
-  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); // Cut-off.
+int arpackSolve(options & opt, EM & A, EM const & B, SLV & solver) {
+  int rc = 0;
 
   // Arpack solve.
 
   arpackEV out;
+  out.imsTime = 0.;
   out.rciTime = 0.;
   auto start = chrono::high_resolution_clock::now();
   rc = arpackSolve<RC, RW, EM, EV, SLV>(opt, A, B, solver, out);
@@ -1114,17 +1116,17 @@ int arpackSolve(options & opt, SLV & solver) {
   double fullTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
   cout << endl;
   cout << "OUT: nb EV found " << out.val.size() << ", nb iterations " << out.nbIt << endl;
-  cout << "OUT: full time " << fullTime << " s, RCI time " << out.rciTime << " s" << endl;
+  cout << "OUT: init mode solver " << out.imsTime << " s, RCI time " << out.rciTime << " s" << endl;
+  cout << "OUT: full time " << fullTime << " s" << endl;
 
   return 0;
 }
 
 template<typename RC, typename RW,
          typename EM, typename EC, typename EV,
-         typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU,
          typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
-int arpackSolve(options & opt) {
-  // Solve with arpack.
+int arpackSolveSprDrt(options & opt, EM & A, EM const & B) {
+  // Solve with arpack using direct solvers.
 
   int rc = 0;
 
@@ -1143,12 +1145,12 @@ int arpackSolve(options & opt) {
     if (slv == "LU") {
       SLVSLU solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLU>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLU>(opt, A, B, solver);
     }
     else if (slv == "QR") {
       SLVSQR solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSQR>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSQR>(opt, A, B, solver);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
@@ -1169,16 +1171,31 @@ int arpackSolve(options & opt) {
     if (slv == "LLT") {
       SLVSLLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLLT>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLLT>(opt, A, B, solver);
     }
     else if (slv == "LDLT") {
       SLVSLDLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLDLT>(opt, solver);
+      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLDLT>(opt, A, B, solver);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
-  else { // Iterative solvers.
+  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+
+  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
+
+  return 0;
+}
+
+template<typename RC, typename RW,
+         typename EM, typename EC, typename EV,
+         typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU>
+int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
+  // Solve with arpack using iterative solvers.
+
+  int rc = 0;
+
+  if (opt.slv.find("BiCG") != string::npos || opt.slv.find("CG") != string::npos) {
     stringstream clo(opt.slvItrPC);
     string slvItrPC; getline(clo, slvItrPC, '#');
 
@@ -1207,7 +1224,7 @@ int arpackSolve(options & opt) {
         SLVBCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCG>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCG>(opt, A, B, solver);
       }
       else if (slvItrPC == "ILU") {
         SLVBCGILU solver;
@@ -1215,7 +1232,7 @@ int arpackSolve(options & opt) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCGILU>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCGILU>(opt, A, B, solver);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
@@ -1224,7 +1241,7 @@ int arpackSolve(options & opt) {
         SLVCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCG>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCG>(opt, A, B, solver);
       }
       else if (slvItrPC == "ILU") {
         SLVCGILU solver;
@@ -1232,11 +1249,66 @@ int arpackSolve(options & opt) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCGILU>(opt, solver);
+        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCGILU>(opt, A, B, solver);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
-    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+  }
+  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
+
+  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
+
+  return 0;
+}
+
+template<typename RC, typename RW,
+         typename EM, typename EC, typename EV,
+         typename SLVBCG, typename SLVBCGILU, typename SLVCG, typename SLVCGILU,
+         typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
+int arpackSolve(options & opt) {
+  int rc = 0;
+
+  // Read A.
+
+  EM A;
+  auto start = chrono::high_resolution_clock::now();
+  rc = readMatrixMarketSpr<RC, EM, EC>(opt.fileA, A, opt.verbose, "A:");
+  if (rc != 0) {cerr << "Error: read A KO" << endl; return rc;}
+  auto stop = chrono::high_resolution_clock::now();
+  double readATime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+  cout << endl;
+  cout << "INP: read A " << readATime << " s" << endl;
+
+  // Read B.
+
+  EM B;
+  if (!opt.stdPb) {
+    start = chrono::high_resolution_clock::now();
+    rc = readMatrixMarketSpr<RC, EM, EC>(opt.fileB, B, opt.verbose, "B:");
+    if (rc != 0) {cerr << "Error: read B KO" << endl; return rc;}
+    stop = chrono::high_resolution_clock::now();
+    double readBTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+    cout << "INP: read B " << readBTime << " s" << endl;
+  }
+
+  // Check A-B compatibility.
+
+  if (!opt.stdPb) {
+    if (A.rows() != B.rows()) {cerr << "Error: A.rows() != B.rows()" << endl; return rc;}
+    if (A.cols() != B.cols()) {cerr << "Error: A.cols() != B.cols()" << endl; return rc;}
+  }
+  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); // Cut-off.
+
+  // Solve with arpack.
+
+  if (opt.slv.find("LU")  != string::npos || opt.slv.find("QR")   != string::npos ||
+      opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos ) {
+    // Direct solvers.
+    rc = arpackSolveSprDrt<RC, RW, EM, EC, EV, SLVSLU, SLVSQR, SLVSLLT, SLVSLDLT>(opt, A, B);
+  }
+  else {
+    // Iterative solvers.
+    rc = arpackSolveSprItr<RC, RW, EM, EC, EV, SLVBCG, SLVBCGILU, SLVCG, SLVCGILU>(opt, A, B);
   }
 
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
@@ -1252,23 +1324,25 @@ int main(int argc, char ** argv) {
   if (rc != 0) {cerr << "Error: read cmd line KO" << endl; return rc;}
   cout << opt; // Print options.
 
+  // Solve with arpack.
+
   if (!opt.simplePrec) {
     if (opt.cpxPb) rc = arpackSolve<complex<double>, double,
-                                    EigMatZ, EigCooZ, EigMpVZ,
+                                    EigSMxZ, EigCooZ, EigMpVZ,
                                     EigBiCGZ, EigBiCGILUZ, EigCGZ, EigCGILUZ,
                                     EigSLUZ, EigSQRZ, EigSLLTZ, EigSLDLTZ>(opt);
     else           rc = arpackSolve<        double , double,
-                                    EigMatD, EigCooD, EigMpVD,
+                                    EigSMxD, EigCooD, EigMpVD,
                                     EigBiCGD, EigBiCGILUD, EigCGD, EigCGILUD,
                                     EigSLUD, EigSQRD, EigSLLTD, EigSLDLTD>(opt);
   }
   else {
     if (opt.cpxPb) rc = arpackSolve<complex<float>, float,
-                                    EigMatC, EigCooC, EigMpVC,
+                                    EigSMxC, EigCooC, EigMpVC,
                                     EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC,
                                     EigSLUC, EigSQRC, EigSLLTC, EigSLDLTC>(opt);
     else           rc = arpackSolve<        float , float,
-                                    EigMatS, EigCooS, EigMpVS,
+                                    EigSMxS, EigCooS, EigMpVS,
                                     EigBiCGS, EigBiCGILUS, EigCGS, EigCGILUS,
                                     EigSLUS, EigSQRS, EigSLLTS, EigSLDLTS>(opt);
   }
