@@ -62,7 +62,7 @@ do
                   fi
 
                   # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3"
+                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3 --debug 3"
                   echo "$CMD"
                   eval "$CMD &> arpackmm.run.log"
                   echo ""
