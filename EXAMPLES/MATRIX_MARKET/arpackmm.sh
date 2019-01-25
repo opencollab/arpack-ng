@@ -34,7 +34,7 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "           --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv   CG --slvItrTol 1.e-06 --slvItrMaxIt 100" \
+            for slv in "           --slvItrTol 1.e-07 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-07 --slvItrMaxIt 150" \
                        "           --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
                        "--slv   LU"                                      "--slv   QR#1.e-06"                               \
                        "--slv  LLT"                                      "--slv  LLT#0.#1."                                \
