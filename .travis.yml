@@ -127,7 +127,9 @@ jobs:
                    --disable-dependency-tracking                                                                     && \
        export VERBOSE=1                                                                                              && \
        make all                                                                                                      && \
-       make check"
+       make check                                                                                                    && \
+       find . -name   test-suite.log | xargs tail -n 300                                                             && \
+       find . -name arpackmm.run.log | xargs tail -n 300"
 
 after_failure:
 
