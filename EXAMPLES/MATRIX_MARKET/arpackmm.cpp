@@ -18,56 +18,67 @@
 #include <memory> // unique_ptr.
 #include "arpack.h"
 #include "debug_c.hpp"
+#include "stat_c.hpp"
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseLU>
 #include <Eigen/SparseQR>
+#include <Eigen/SparseCholesky>
+#include <Eigen/Dense>
+#include <Eigen/LU>
+#include <Eigen/QR>
+#include <Eigen/Cholesky>
 
 using namespace std;
 
-typedef Eigen::SparseMatrix<         float>                     EigSMxS; // Real.
-typedef Eigen::Triplet     <         float>                     EigCooS; // Real.
-typedef Eigen::Matrix      <         float,  Eigen::Dynamic, 1> EigVecS; // Real.
-typedef Eigen::SparseMatrix<        double>                     EigSMxD; // Real.
-typedef Eigen::Triplet     <        double>                     EigCooD; // Real.
-typedef Eigen::Matrix      <        double,  Eigen::Dynamic, 1> EigVecD; // Real.
-typedef Eigen::SparseMatrix<complex< float>>                    EigSMxC; // Complex.
-typedef Eigen::Triplet     <complex< float>>                    EigCooC; // Complex.
-typedef Eigen::Matrix      <complex< float>, Eigen::Dynamic, 1> EigVecC; // Complex.
-typedef Eigen::SparseMatrix<complex<double>>                    EigSMxZ; // Complex.
-typedef Eigen::Triplet     <complex<double>>                    EigCooZ; // Complex.
-typedef Eigen::Matrix      <complex<double>, Eigen::Dynamic, 1> EigVecZ; // Complex.
+// Vector related types.
+
+typedef Eigen::Matrix<         float,  Eigen::Dynamic, 1> EigVecS; // Real.
+typedef Eigen::Matrix<        double,  Eigen::Dynamic, 1> EigVecD; // Real.
+typedef Eigen::Matrix<complex< float>, Eigen::Dynamic, 1> EigVecC; // Complex.
+typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, 1> EigVecZ; // Complex.
 
 typedef Eigen::Map<EigVecS> EigMpVS; // Real.
 typedef Eigen::Map<EigVecD> EigMpVD; // Real.
 typedef Eigen::Map<EigVecC> EigMpVC; // Complex.
 typedef Eigen::Map<EigVecZ> EigMpVZ; // Complex.
 
-typedef Eigen::BiCGSTAB         <EigSMxS> EigBiCGS; // Real.
-typedef Eigen::BiCGSTAB         <EigSMxD> EigBiCGD; // Real.
-typedef Eigen::BiCGSTAB         <EigSMxC> EigBiCGC; // Complex.
-typedef Eigen::BiCGSTAB         <EigSMxZ> EigBiCGZ; // Complex.
+// Sparse matrix related types.
 
-typedef Eigen::ConjugateGradient<EigSMxS> EigCGS;   // Real.
-typedef Eigen::ConjugateGradient<EigSMxD> EigCGD;   // Real.
-typedef Eigen::ConjugateGradient<EigSMxC> EigCGC;   // Complex.
-typedef Eigen::ConjugateGradient<EigSMxZ> EigCGZ;   // Complex.
+typedef Eigen::SparseMatrix<         float>  EigSMxS; // Real.
+typedef Eigen::Triplet     <         float>  EigSMTS; // Real.
+typedef Eigen::SparseMatrix<        double>  EigSMxD; // Real.
+typedef Eigen::Triplet     <        double>  EigSMTD; // Real.
+typedef Eigen::SparseMatrix<complex< float>> EigSMxC; // Complex.
+typedef Eigen::Triplet     <complex< float>> EigSMTC; // Complex.
+typedef Eigen::SparseMatrix<complex<double>> EigSMxZ; // Complex.
+typedef Eigen::Triplet     <complex<double>> EigSMTZ; // Complex.
+
+typedef Eigen::BiCGSTAB         <EigSMxS> EigSBiCGS; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxD> EigSBiCGD; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxC> EigSBiCGC; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxZ> EigSBiCGZ; // Complex.
+
+typedef Eigen::ConjugateGradient<EigSMxS> EigSCGS;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxD> EigSCGD;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxC> EigSCGC;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxZ> EigSCGZ;   // Complex.
 
 typedef Eigen::IncompleteLUT<         float>                                  EigILUS;     // Real.
 typedef Eigen::IncompleteLUT<        double>                                  EigILUD;     // Real.
 typedef Eigen::IncompleteLUT<complex< float>>                                 EigILUC;     // Complex.
 typedef Eigen::IncompleteLUT<complex<double>>                                 EigILUZ;     // Complex.
 
-typedef Eigen::BiCGSTAB         <EigSMxS,                            EigILUS> EigBiCGILUS; // Real.
-typedef Eigen::BiCGSTAB         <EigSMxD,                            EigILUD> EigBiCGILUD; // Real.
-typedef Eigen::BiCGSTAB         <EigSMxC,                            EigILUC> EigBiCGILUC; // Complex.
-typedef Eigen::BiCGSTAB         <EigSMxZ,                            EigILUZ> EigBiCGILUZ; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxS,                            EigILUS> EigSBiCGILUS; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxD,                            EigILUD> EigSBiCGILUD; // Real.
+typedef Eigen::BiCGSTAB         <EigSMxC,                            EigILUC> EigSBiCGILUC; // Complex.
+typedef Eigen::BiCGSTAB         <EigSMxZ,                            EigILUZ> EigSBiCGILUZ; // Complex.
 
-typedef Eigen::ConjugateGradient<EigSMxS, Eigen::Lower|Eigen::Upper, EigILUS> EigCGILUS;   // Real.
-typedef Eigen::ConjugateGradient<EigSMxD, Eigen::Lower|Eigen::Upper, EigILUD> EigCGILUD;   // Real.
-typedef Eigen::ConjugateGradient<EigSMxC, Eigen::Lower|Eigen::Upper, EigILUC> EigCGILUC;   // Complex.
-typedef Eigen::ConjugateGradient<EigSMxZ, Eigen::Lower|Eigen::Upper, EigILUZ> EigCGILUZ;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxS, Eigen::Lower|Eigen::Upper, EigILUS> EigSCGILUS;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxD, Eigen::Lower|Eigen::Upper, EigILUD> EigSCGILUD;   // Real.
+typedef Eigen::ConjugateGradient<EigSMxC, Eigen::Lower|Eigen::Upper, EigILUC> EigSCGILUC;   // Complex.
+typedef Eigen::ConjugateGradient<EigSMxZ, Eigen::Lower|Eigen::Upper, EigILUZ> EigSCGILUZ;   // Complex.
 
 typedef Eigen::SimplicialLLT <EigSMxS, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTS;  // Real.
 typedef Eigen::SimplicialLLT <EigSMxD, Eigen::Lower, Eigen::COLAMDOrdering<int>> EigSLLTD;  // Real.
@@ -89,11 +100,52 @@ typedef Eigen::SparseQR<EigSMxD, Eigen::COLAMDOrdering<int>> EigSQRD;  // Real.
 typedef Eigen::SparseQR<EigSMxC, Eigen::COLAMDOrdering<int>> EigSQRC;  // Complex.
 typedef Eigen::SparseQR<EigSMxZ, Eigen::COLAMDOrdering<int>> EigSQRZ;  // Complex.
 
+// Dense matrix related types.
+
+typedef Eigen::Matrix<         float,  Eigen::Dynamic, Eigen::Dynamic> EigDMxS; // Real.
+typedef Eigen::Matrix<        double,  Eigen::Dynamic, Eigen::Dynamic> EigDMxD; // Real.
+typedef Eigen::Matrix<complex< float>, Eigen::Dynamic, Eigen::Dynamic> EigDMxC; // Complex.
+typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, Eigen::Dynamic> EigDMxZ; // Complex.
+
+typedef Eigen::LLT<EigDMxS> EigDLLTS; // Real.
+typedef Eigen::LLT<EigDMxD> EigDLLTD; // Real.
+typedef Eigen::LLT<EigDMxC> EigDLLTC; // Complex.
+typedef Eigen::LLT<EigDMxZ> EigDLLTZ; // Complex.
+
+typedef Eigen::LDLT<EigDMxS> EigDLDLTS; // Real.
+typedef Eigen::LDLT<EigDMxD> EigDLDLTD; // Real.
+typedef Eigen::LDLT<EigDMxC> EigDLDLTC; // Complex.
+typedef Eigen::LDLT<EigDMxZ> EigDLDLTZ; // Complex.
+
+typedef Eigen::FullPivLU<EigDMxS> EigDFLUS; // Real.
+typedef Eigen::FullPivLU<EigDMxD> EigDFLUD; // Real.
+typedef Eigen::FullPivLU<EigDMxC> EigDFLUC; // Complex.
+typedef Eigen::FullPivLU<EigDMxZ> EigDFLUZ; // Complex.
+
+typedef Eigen::FullPivHouseholderQR<EigDMxS> EigDFQRS; // Real.
+typedef Eigen::FullPivHouseholderQR<EigDMxD> EigDFQRD; // Real.
+typedef Eigen::FullPivHouseholderQR<EigDMxC> EigDFQRC; // Complex.
+typedef Eigen::FullPivHouseholderQR<EigDMxZ> EigDFQRZ; // Complex.
+
+typedef Eigen::PartialPivLU<EigDMxS> EigDPLUS; // Real.
+typedef Eigen::PartialPivLU<EigDMxD> EigDPLUD; // Real.
+typedef Eigen::PartialPivLU<EigDMxC> EigDPLUC; // Complex.
+typedef Eigen::PartialPivLU<EigDMxZ> EigDPLUZ; // Complex.
+
+typedef Eigen::HouseholderQR<EigDMxS> EigDPQRS; // Real.
+typedef Eigen::HouseholderQR<EigDMxD> EigDPQRD; // Real.
+typedef Eigen::HouseholderQR<EigDMxC> EigDPQRC; // Complex.
+typedef Eigen::HouseholderQR<EigDMxZ> EigDPQRZ; // Complex.
+
+// Class, functions, program.
+
 class options {
   public:
     options() {
       fileA = "A.mtx";
       fileB = "N.A."; // Not available.
+      dense = false;
+      denseRR = true;
       nbEV = 1;
       nbCV = 2*nbEV + 1;
       stdPb = true; // Standard or generalized (= not standard).
@@ -126,6 +178,13 @@ class options {
         if (clo == "--A") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
           fileA = argv[a];
+        }
+        if (clo == "--dense") {
+          dense = true;
+          a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
+          string rr(argv[a]);
+          if (rr != "true" && rr != "false") {cerr << "Error: bad " << clo << " - bad argument" << endl; return usage();}
+          denseRR = (rr == "true") ? true : false;
         }
         if (clo == "--nbEV") {
           a++; if (a >= argc) {cerr << "Error: bad " << clo << " - need argument" << endl; return usage();}
@@ -241,6 +300,14 @@ class options {
       cout << "  --B F:            file name of matrix B such that A X = lambda B X. (generalized)" << endl;
       cout << "                    the file F must be compliant with the matrix market format." << endl;
       cout << "                    default: N.A. for standard problem, or, B.mtx for generalized problem" << endl;
+      cout << "  --dense RR:       consider A and B as dense matrices." << endl;
+      cout << "                    if RR = true,  use more-stable-but-slow versions of LU / QR (rank revealing)." << endl;
+      cout << "                    if RR = false, use less-stable-but-fast versions of LU / QR (depends on condition number)." << endl;
+      cout << "                    Notes:" << endl;
+      cout << "                      - only direct solvers are available when using dense matrices." << endl;
+      cout << "                      - RR does not impact the use of LLT and LDLT." << endl;
+      cout << "                      - thresholds only make sense for rank-revealing decompositions." << endl;
+      cout << "                    default: consider A and B as sparse matrices" << endl;
       cout << "  --nbEV:           number of eigen values/vectors to compute." << endl;
       cout << "                    default: 1" << endl;
       cout << "  --nbCV:           number of columns of the matrix V." << endl;
@@ -280,15 +347,15 @@ class options {
       cout << "                      BiCG:     iterative method, any matrices" << endl;
       cout << "                      CG:       iterative method, sym matrices only" << endl;
       cout << "                      LU#P:     direct method, any matrices (pivoting needed)" << endl;
-      cout << "                        P:        pivoting threshold" << endl;
+      cout << "                        P:        pivoting threshold (not used if not RR)" << endl;
       cout << "                      QR#P:     direct method, any matrices (pivoting needed)" << endl;
-      cout << "                        P:        pivoting threshold" << endl;
+      cout << "                        P:        pivoting threshold (not used if not RR)" << endl;
       cout << "                      LLT#O#S:  direct method, SPD matrices only (pivoting not needed)" << endl;
-      cout << "                        O:        shift offset" << endl;
-      cout << "                        S:        shift scale" << endl;
-      cout << "                      LDLT#O#S: direct method, SPD matrices only (pivoting not needed)" << endl;
-      cout << "                        O:        shift offset" << endl;
-      cout << "                        S:        shift scale" << endl;
+      cout << "                        O:        shift offset (not used if --dense)" << endl;
+      cout << "                        S:        shift scale (not used if --dense)" << endl;
+      cout << "                      LDLT#O#S: direct method, symmetric positive semi-definite matrices only (pivoting not needed)" << endl;
+      cout << "                        O:        shift offset (not used if --dense)" << endl;
+      cout << "                        S:        shift scale (not used if --dense)" << endl;
       cout << "                    default: BiCG" << endl;
       cout << "  --slvItrTol T:    solver tolerance T (for iterative solvers)." << endl;
       cout << "                    default: eigen default value" << endl;
@@ -308,7 +375,7 @@ class options {
       cout << "                    default: 0" << endl;
       cout << "  --debug D:        debug level (up to 3)." << endl;
       cout << "                    default: 0" << endl;
-      cout << "  --restart:        restart from previous run (which had produced resid.out and v.out)." << endl;
+      cout << "  --restart:        restart from previous run (which had produced arpackmm.*.out)." << endl;
       cout << "                    restart from eigen basis approximation computed during a previous run." << endl;
       cout << "                    default: false" << endl;
       if (rc == 0) exit(0);
@@ -319,6 +386,8 @@ class options {
 
     string fileA;
     string fileB;
+    bool dense;
+    bool denseRR;
     a_int nbEV;
     a_int nbCV;
     bool stdPb; // Standard or generalized (= not standard).
@@ -344,6 +413,9 @@ class options {
 
 ostream & operator<< (ostream & ostr, options const & opt) {
   ostr << "OPT: A " << opt.fileA << ", B " << opt.fileB;
+  if      (opt.dense &&  opt.denseRR) ostr << ", dense yes (RR true)";
+  else if (opt.dense && !opt.denseRR) ostr << ", dense yes (RR false)";
+  else                                ostr << ", dense no";
   ostr << ", nbEV " << opt.nbEV << ", nbCV " << opt.nbCV << ", stdPb " << (opt.stdPb ? "yes" : "no");
   ostr << ", symPb " << (opt.symPb ? "yes" : "no") <<  ", cpxPb " << (opt.cpxPb ? "yes" : "no");
   ostr <<  ", simplePrec " << (opt.simplePrec ? "yes" : "no") << ", mag " << opt.mag << endl;
@@ -367,7 +439,7 @@ void makeZero(complex< float> & zero) {zero = complex<double>(0.f, 0.f);}
 
 void makeZero(complex<double> & zero) {zero = complex<double>(0., 0.);}
 
-template<typename RC, typename EM, typename EC>
+template<typename RC>
 int readMatrixMarket(string const & fileName,
                      a_uint & n, a_uint & m, vector<a_uint> & i, vector<a_uint> & j, vector<RC> & Mij) {
   ifstream inp(fileName);
@@ -423,20 +495,21 @@ int readMatrixMarket(string const & fileName,
   return 0;
 }
 
-template<typename RC, typename EM, typename EC>
-int readMatrixMarketSpr(string const & fileName, EM & M, int const & verbose, string const & msg) {
+template<typename RC, typename ET>
+int createMatrix(string const & fileName, Eigen::SparseMatrix<RC> & M,
+                 int const & verbose, string const & msg) {
   // Read matrix from file.
 
   a_uint n = 0, m = 0;
   vector<a_uint> i, j;
   vector<RC> Mij;
-  int rc = readMatrixMarket<RC, EM, EC>(fileName, n, m, i, j, Mij);
+  int rc = readMatrixMarket<RC>(fileName, n, m, i, j, Mij);
   if (rc != 0) {cerr << "Error: read matrix market file KO" << endl; return rc;}
 
   // Create matrix from file.
 
-  M = EM(n, m); // Set matrice dimensions.
-  vector<EC> triplets;
+  M = Eigen::SparseMatrix<RC>(n, m); // Set matrice dimensions.
+  vector<ET> triplets;
   a_uint nnz = Mij.size();
   triplets.reserve(nnz);
   for (size_t k = 0; k < nnz; k++) triplets.emplace_back(i[k], j[k], Mij[k]);
@@ -450,10 +523,38 @@ int readMatrixMarketSpr(string const & fileName, EM & M, int const & verbose, st
   return 0;
 }
 
+template<typename RC, typename ET>
+int createMatrix(string const & fileName, Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> & M,
+                 int const & verbose, string const & msg) {
+  // Read matrix from file.
+
+  a_uint n = 0, m = 0;
+  vector<a_uint> i, j;
+  vector<RC> Mij;
+  int rc = readMatrixMarket<RC>(fileName, n, m, i, j, Mij);
+  if (rc != 0) {cerr << "Error: read matrix market file KO" << endl; return rc;}
+
+  // Create matrix from file.
+
+  M = Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic>(n, m); // Set matrice dimensions.
+  M.setZero(n, m); // Avoid spurious/random values which may break solves (LU, QR, ...).
+  a_uint nnz = Mij.size();
+  for (size_t k = 0; k < nnz; k++) M(i[k], j[k]) = Mij[k];
+
+  if (verbose == 3) {
+    cout << endl << msg << endl;
+    cout << endl << M << endl;
+  }
+
+  return 0;
+}
+
 class arpackEV { // Arpack eigen values / vectors.
   public:
+    arpackEV() {mode = 1; nbIt = 0; imsTime = 0.; rciTime = 0.;};
     vector<complex<double>> val; // Eigen values.
     vector<EigVecZ> vec; // Eigen vectors.
+    int mode;
     int nbIt;
     double imsTime; // Init mode solver.
     double rciTime;
@@ -689,88 +790,24 @@ int arpackEUPD(options const & opt, arpackEV & out,
   return 0;
 }
 
-template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigSMxS const & A, EigSMxS const & B, SLV & solver) {
+template<typename SLV, typename RC, typename FD, typename EM>
+int arpackMode(options const & opt, int const mode,
+               EM const & A, EM const & B, SLV & solver) {
   int rc = 1;
 
   if (mode == 1) {
     rc = 0;
   }
   else if (mode == 2 || mode == 3) {
-    if (mode == 2) { // Regular mode.
+    if (mode == 2) { // Invert mode.
       solver.compute(B);
     }
     else { // Shift invert mode.
-      if (!opt.shiftImag) { // Real shift only.
-        float sigma = opt.sigmaReal;
-        auto S = A - sigma * B;
-        solver.compute(S);
-      }
-      else { // Complex (real/imaginary) shift.
-        complex<float> sigma((float) opt.sigmaReal, (float) opt.sigmaImag);
-        auto S = A.cast<complex<float>>() - sigma * B.cast<complex<float>>();
-        solver.compute(S.real()); // Real part of shifted matrix.
-      }
-    }
-
-    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
-    rc = 0;
-  }
-  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
-
-  return rc;
-}
-
-template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigSMxD const & A, EigSMxD const & B, SLV & solver) {
-  int rc = 1;
-
-  if (mode == 1) {
-    rc = 0;
-  }
-  else if (mode == 2 || mode == 3) {
-    if (mode == 2) { // Regular mode.
-      solver.compute(B);
-    }
-    else { // Shift invert mode.
-      if (!opt.shiftImag) { // Real shift only.
-        double sigma = opt.sigmaReal;
-        auto S = A - sigma * B;
-        solver.compute(S);
-      }
-      else { // Complex (real/imaginary) shift.
-        complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
-        auto S = A.cast<complex<double>>() - sigma * B.cast<complex<double>>();
-        solver.compute(S.real()); // Real part of shifted matrix.
-      }
-    }
-
-    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
-    rc = 0;
-  }
-  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
-
-  return rc;
-}
-
-template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigSMxC const & A, EigSMxC const & B, SLV & solver) {
-  int rc = 1;
-
-  if (mode == 1) {
-    rc = 0;
-  }
-  else if (mode == 2 || mode == 3) {
-    if (mode == 2) { // Regular mode.
-      solver.compute(B);
-    }
-    else { // Shift invert mode.
-      complex<float> sigma((float) opt.sigmaReal, (float) opt.sigmaImag);
-      auto S = A - sigma * B;
+      RC sigma; makeSigma(opt, sigma);
+      auto S = A - sigma*B;
       solver.compute(S);
     }
 
-    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
     rc = 0;
   }
   else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
@@ -778,29 +815,20 @@ template<typename SLV> int arpackMode(options const & opt, int const mode,
   return rc;
 }
 
-template<typename SLV> int arpackMode(options const & opt, int const mode,
-                                      EigSMxZ const & A, EigSMxZ const & B, SLV & solver) {
-  int rc = 1;
+template<typename SLV, typename RC, typename FD>
+int arpackMode(options const & opt, int const mode,
+               Eigen::SparseMatrix<RC> const & A,
+               Eigen::SparseMatrix<RC> const & B,
+               SLV & solver) {
+  return arpackMode<SLV, RC, FD, Eigen::SparseMatrix<RC>>(opt, mode, A, B, solver);
+}
 
-  if (mode == 1) {
-    rc = 0;
-  }
-  else if (mode == 2 || mode == 3) {
-    if (mode == 2) { // Regular mode.
-      solver.compute(B);
-    }
-    else { // Shift invert mode.
-      complex<double> sigma(opt.sigmaReal, opt.sigmaImag);
-      auto S = A - sigma * B;
-      solver.compute(S);
-    }
-
-    if (solver.info() != Eigen::Success) {cerr << "Error: decomposition KO - check A and/or B are invertible" << endl; return 1;}
-    rc = 0;
-  }
-  else {cerr << "Error: arpack mode must be 1, 2 or 3 - KO" << endl; rc = 1;}
-
-  return rc;
+template<typename SLV, typename RC, typename FD>
+int arpackMode(options const & opt, int const mode,
+               Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> const & A,
+               Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> & B,
+               SLV & solver) {
+  return arpackMode<SLV, RC, FD, Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic>>(opt, mode, A, B, solver);
 }
 
 template<typename RC>
@@ -823,14 +851,14 @@ void arpackRestart(options const & opt, string const & fileName,
   }
 }
 
-template<typename RC, typename RW,
+template<typename RC, typename FD,
          typename EM, typename EV,
          typename SLV>
-int arpackSolve(options const & opt, int const & mode,
+int arpackSolve(options const & opt,
                 EM const & A, EM const & B, SLV & solver, arpackEV & out) {
   // Arpack set up.
 
-  // Note: all in/out parameters (all but work*) passed to d[sn][ae]upd are set to 0. before use.
+  // Note: some in/out parameters passed to d[sn][ae]upd are set to 0. before use.
   // d[sn][ae]upd uses dgetv0 to generate a random starting vector (when info is initialized to 0).
   // dgetv0 rely on resid/v: resid/v should be initialized to 0.0 to avoid "bad" starting random vectors.
 
@@ -838,22 +866,22 @@ int arpackSolve(options const & opt, int const & mode,
   a_int ido = 0; // First call to arpack.
   char const * iMat = "I";
   char const * gMat = "G";
-  char const * bMat = (mode == 1) ? iMat : gMat;
+  char const * bMat = (out.mode == 1) ? iMat : gMat;
   a_int nbDim = A.rows();
   RC zero; makeZero(zero);
   RC * resid = new RC[nbDim]; for (a_int n = 0; n < nbDim; n++) resid[n] = zero; // Avoid "bad" starting vector.
-  arpackRestart<RC>(opt, "resid.out", nbDim, resid, false);
+  arpackRestart<RC>(opt, "arpackmm.resid.out", nbDim, resid, false);
   a_int ldv = nbDim;
   RC * v = new RC[ldv*opt.nbCV]; for (a_int n = 0; n < ldv*opt.nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
-  arpackRestart<RC>(opt, "v.out", ldv, v, true);
+  arpackRestart<RC>(opt, "arpackmm.v.out", ldv, v, true);
   a_int iparam[11];
   iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
   iparam[2] = opt.maxIt; // Maximum number of iterations.
   iparam[3] = 1; // Block size.
   iparam[4] = 0; // Number of ev found by arpack.
-  iparam[6] = mode;
+  iparam[6] = out.mode;
   a_int ipntr[14];
-  RC * workd = new RC[3*nbDim];
+  RC * workd = new RC[3*nbDim]; for (a_int n = 0; n < 3*nbDim; n++) workd[n] = zero; // Avoid "bad" X/Y vector.
   a_int lworkl = opt.symPb ? opt.nbCV*opt.nbCV + 8*opt.nbCV : 3*opt.nbCV*opt.nbCV + 6*opt.nbCV;
   RC * workl = new RC[lworkl];
   a_int info = 0; // Use random initial residual vector.
@@ -862,14 +890,14 @@ int arpackSolve(options const & opt, int const & mode,
   // Initialize solver.
 
   auto start = chrono::high_resolution_clock::now();
-  int rc = arpackMode<SLV>(opt, mode, A, B, solver);
+  int rc = arpackMode<SLV, RC, FD>(opt, out.mode, A, B, solver);
   if (rc != 0) {cerr << "Error: bad arpack mode" << endl; return rc;}
   auto stop = chrono::high_resolution_clock::now();
   out.imsTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
 
   // Arpack solve.
 
-  RW * rwork = NULL;
+  FD * rwork = NULL;
   do {
     // Call arpack.
 
@@ -897,18 +925,10 @@ int arpackSolve(options const & opt, int const & mode,
         Y = A * X;
         auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
         Y = solver.solve(YY); // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {
-          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
-          return 1;
-        }
       }
       else if (iparam[6] == 3) {
         auto Z = B * X;      // Z = B * X.
         Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {
-          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
-          return 1;
-        }
       }
     }
     else if (ido == 1) {
@@ -920,19 +940,11 @@ int arpackSolve(options const & opt, int const & mode,
         if (opt.symPb) X = Y; // Remark 5 in dsaupd documentation.
         auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
         Y = solver.solve(YY); // Y = B^-1 * A * X.
-        if(solver.info() != Eigen::Success) {
-          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
-          return 1;
-        }
       }
       else if (iparam[6] == 3) {
         a_int zIdx = ipntr[2] - 1; // 0-based (Fortran is 1-based).
         EV Z(workd + zIdx, nbDim); // Arpack provides Z.
         Y = solver.solve(Z);       // Y = (A - sigma * B)^-1 * B * X.
-        if(solver.info() != Eigen::Success) {
-          cerr << "Error: solve KO - play with solver parameters (tol, max it, ...), or, change --slv" << endl;
-          return 1;
-        }
       }
     }
     else if (ido == 2) {
@@ -961,8 +973,8 @@ int arpackSolve(options const & opt, int const & mode,
   rc = arpackEUPD(opt, out, rvec, howmny, select, z, ldz, bMat, nbDim, which, resid, v, ldv, iparam, ipntr, workd, workl, lworkl, rwork, info);
   if (rc != 0) {cerr << "Error: bad arpack eupd" << endl; return rc;}
 
-  ofstream rfs("resid.out"); for (a_int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
-  ofstream vfs("v.out"); vfs << opt.nbCV << endl; for (a_int n = 0; n < ldv*opt.nbCV; n++) vfs << v[n] << endl;
+  ofstream rfs("arpackmm.resid.out"); for (a_int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
+  ofstream vfs("arpackmm.v.out"); vfs << opt.nbCV << endl; for (a_int n = 0; n < ldv*opt.nbCV; n++) vfs << v[n] << endl;
 
   // Clean.
 
@@ -1037,96 +1049,14 @@ void makeSigma(options const & opt, complex< float> & sigma) {sigma = complex< f
 
 void makeSigma(options const & opt, complex<double> & sigma) {sigma = complex<double>(opt.sigmaReal, opt.sigmaImag);}
 
-template<typename RC, typename RW,
+template<typename RC, typename FD,
          typename EM, typename EV,
-         typename SLV>
-int arpackSolve(options const & opt, EM & A, EM const & B,
-                SLV & solver, arpackEV & out) {
-  // If needed, transform the initial problem into a new one that arpack can handle.
-
-  auto eps = numeric_limits<double>::epsilon();
-  bool shiftReal = (opt.shiftReal && fabs(opt.sigmaReal) > eps) ? true : false;
-  bool shiftImag = (opt.shiftImag && fabs(opt.sigmaImag) > eps) ? true : false;
-
-  bool backTransform = false;
-  int mode = 0;
-  if (opt.stdPb) {
-    mode = 1;
-    if (shiftReal && !shiftImag) {
-      EM I(A.rows(), A.cols());
-      I.setIdentity();
-      RC sigma; makeSigma(opt, sigma);
-      A -= sigma*I;
-      backTransform = true;
-    }
-  }
-  else {
-    mode = 2;
-    if (shiftReal || shiftImag) mode = 3;
-  }
-
-  // Solve the problem.
-
-  if (opt.verbose >= 1) {
-    cout << endl;
-    cout << "ARP: mode " << mode;
-    cout << ", nbDim " << A.rows();
-    cout << ", backTransform " << (backTransform ? "yes" : "no") << endl;
-  }
-
-  int rc = arpackSolve<RC, RW, EM, EV, SLV>(opt, mode, A, B, solver, out);
-  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
-
-  if (opt.verbose >= 1) {
-    cout << endl;
-    cout << "ARP: nbEV found " << out.val.size();
-    cout << ", nbIt " << out.nbIt << endl;
-  }
-
-  // If needed, transform back the arpack problem into the initial problem.
-
-  if (backTransform) {
-    for (size_t i = 0; i < out.val.size(); i++) out.val[i] += opt.sigmaReal;
-    EM I(A.rows(), A.cols());
-    I.setIdentity();
-    RC sigma; makeSigma(opt, sigma);
-    A += sigma*I; // For later checks.
-  }
-
-  // Check.
-
-  return checkArpackEigVec<EM>(opt, A, B, out);
-}
-
-template<typename RC, typename RW,
-         typename EM, typename EC, typename EV,
-         typename SLV>
-int arpackSolve(options & opt, EM & A, EM const & B, SLV & solver) {
-  int rc = 0;
-
-  // Arpack solve.
-
-  arpackEV out;
-  out.imsTime = 0.;
-  out.rciTime = 0.;
-  auto start = chrono::high_resolution_clock::now();
-  rc = arpackSolve<RC, RW, EM, EV, SLV>(opt, A, B, solver, out);
-  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
-  auto stop = chrono::high_resolution_clock::now();
-  double fullTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
-  cout << endl;
-  cout << "OUT: nb EV found " << out.val.size() << ", nb iterations " << out.nbIt << endl;
-  cout << "OUT: init mode solver " << out.imsTime << " s, RCI time " << out.rciTime << " s" << endl;
-  cout << "OUT: full time " << fullTime << " s" << endl;
-
-  return 0;
-}
-
-template<typename RC, typename RW,
-         typename EM, typename EC, typename EV,
          typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
-int arpackSolveSprDrt(options & opt, EM & A, EM const & B) {
-  // Solve with arpack using direct solvers.
+int arpackSolveDrt(options & opt,
+                   Eigen::SparseMatrix<RC> & A,
+                   Eigen::SparseMatrix<RC> & B,
+                   arpackEV & out) {
+  // Solve with arpack using sparse matrices and direct solvers.
 
   int rc = 0;
 
@@ -1145,12 +1075,12 @@ int arpackSolveSprDrt(options & opt, EM & A, EM const & B) {
     if (slv == "LU") {
       SLVSLU solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLU>(opt, A, B, solver);
+      rc = arpackSolve<RC, FD, EM, EV, SLVSLU>(opt, A, B, solver, out);
     }
     else if (slv == "QR") {
       SLVSQR solver;
       if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSQR>(opt, A, B, solver);
+      rc = arpackSolve<RC, FD, EM, EV, SLVSQR>(opt, A, B, solver, out);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
@@ -1171,12 +1101,12 @@ int arpackSolveSprDrt(options & opt, EM & A, EM const & B) {
     if (slv == "LLT") {
       SLVSLLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLLT>(opt, A, B, solver);
+      rc = arpackSolve<RC, FD, EM, EV, SLVSLLT >(opt, A, B, solver, out);
     }
     else if (slv == "LDLT") {
       SLVSLDLT solver;
       if (slvOffset && slvScale) solver.setShift(*slvOffset, *slvScale);
-      rc = arpackSolve<RC, RW, EM, EC, EV, SLVSLDLT>(opt, A, B, solver);
+      rc = arpackSolve<RC, FD, EM, EV, SLVSLDLT>(opt, A, B, solver, out);
     }
     else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
@@ -1187,11 +1117,14 @@ int arpackSolveSprDrt(options & opt, EM & A, EM const & B) {
   return 0;
 }
 
-template<typename RC, typename RW,
-         typename EM, typename EC, typename EV,
-         typename SLVBCG, typename SLVBCGILU, typename SLVCG,  typename SLVCGILU>
-int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
-  // Solve with arpack using iterative solvers.
+template<typename RC, typename FD,
+         typename EM, typename EV,
+         typename SLVBCG, typename SLVBCGILU, typename SLVCG, typename SLVCGILU>
+int arpackSolveItr(options & opt,
+                   Eigen::SparseMatrix<RC> & A,
+                   Eigen::SparseMatrix<RC> & B,
+                   arpackEV & out) {
+  // Solve with arpack using sparse matrices and iterative solvers.
 
   int rc = 0;
 
@@ -1224,7 +1157,7 @@ int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
         SLVBCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCG>(opt, A, B, solver);
+        rc = arpackSolve<RC, FD, EM, EV, SLVBCG   >(opt, A, B, solver, out);
       }
       else if (slvItrPC == "ILU") {
         SLVBCGILU solver;
@@ -1232,7 +1165,7 @@ int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVBCGILU>(opt, A, B, solver);
+        rc = arpackSolve<RC, FD, EM, EV, SLVBCGILU>(opt, A, B, solver, out);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
@@ -1241,7 +1174,7 @@ int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
         SLVCG solver;
         if (opt.slvItrTol)   solver.setTolerance(*opt.slvItrTol);
         if (opt.slvItrMaxIt) solver.setMaxIterations(*opt.slvItrMaxIt);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCG>(opt, A, B, solver);
+        rc = arpackSolve<RC, FD, EM, EV, SLVCG   >(opt, A, B, solver, out);
       }
       else if (slvItrPC == "ILU") {
         SLVCGILU solver;
@@ -1249,7 +1182,7 @@ int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
         if (opt.slvItrMaxIt)     solver.setMaxIterations(*opt.slvItrMaxIt);
         if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
         if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
-        rc = arpackSolve<RC, RW, EM, EC, EV, SLVCGILU>(opt, A, B, solver);
+        rc = arpackSolve<RC, FD, EM, EV, SLVCGILU>(opt, A, B, solver, out);
       }
       else {cerr << "Error: unknown preconditioner - KO" << endl; return 1;}
     }
@@ -1261,59 +1194,165 @@ int arpackSolveSprItr(options & opt, EM & A, EM const & B) {
   return 0;
 }
 
-template<typename RC, typename RW,
-         typename EM, typename EC, typename EV,
-         typename SLVBCG, typename SLVBCGILU, typename SLVCG, typename SLVCGILU,
-         typename SLVSLU, typename SLVSQR, typename SLVSLLT, typename SLVSLDLT>
-int arpackSolve(options & opt) {
+template<typename RC, typename SLV>
+void arpackSolveDrtSetThreshold(SLV & solver, unique_ptr<double> const & slvDrtPvtThd) {
+  solver.setThreshold(Eigen::Default);
+  if (slvDrtPvtThd) solver.setThreshold(*slvDrtPvtThd);
+}
+
+template<typename RC, typename SLV>
+void arpackSolveDrtSetThreshold(Eigen::PartialPivLU<Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic>> & solver,
+                                unique_ptr<double> const & slvDrtPvtThd) {
+  // Thresholds only make sense for rank-revealing decompositions.
+}
+
+template<typename RC, typename SLV>
+void arpackSolveDrtSetThreshold(Eigen::HouseholderQR<Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic>> & solver,
+                                unique_ptr<double> const & slvDrtPvtThd) {
+  // Thresholds only make sense for rank-revealing decompositions.
+}
+
+template<typename RC, typename FD,
+         typename EM, typename EV,
+         typename SLVDLU, typename SLVDQR, typename SLVDLLT, typename SLVDLDLT>
+int arpackSolveDrt(options & opt,
+                   Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> & A,
+                   Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> & B,
+                   arpackEV & out) {
+  // Solve with arpack using dense matrices and direct solvers.
+
   int rc = 0;
 
-  // Read A.
+  if (opt.slv.find("LU") != string::npos || opt.slv.find("QR") != string::npos) {
+    stringstream clo(opt.slv);
+    string slv; getline(clo, slv, '#');
 
-  EM A;
-  auto start = chrono::high_resolution_clock::now();
-  rc = readMatrixMarketSpr<RC, EM, EC>(opt.fileA, A, opt.verbose, "A:");
-  if (rc != 0) {cerr << "Error: read A KO" << endl; return rc;}
-  auto stop = chrono::high_resolution_clock::now();
-  double readATime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
-  cout << endl;
-  cout << "INP: read A " << readATime << " s" << endl;
+    unique_ptr<double> slvDrtPvtThd = nullptr;
+    string pivot; getline(clo, pivot);
+    double pivotThd = 0.; stringstream pt(pivot); pt >> pivotThd;
+    if (pt) { // Valid value read.
+      slvDrtPvtThd = unique_ptr<double>(new double);
+      if (slvDrtPvtThd) *slvDrtPvtThd = pivotThd;
+    }
 
-  // Read B.
-
-  EM B;
-  if (!opt.stdPb) {
-    start = chrono::high_resolution_clock::now();
-    rc = readMatrixMarketSpr<RC, EM, EC>(opt.fileB, B, opt.verbose, "B:");
-    if (rc != 0) {cerr << "Error: read B KO" << endl; return rc;}
-    stop = chrono::high_resolution_clock::now();
-    double readBTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
-    cout << "INP: read B " << readBTime << " s" << endl;
+    a_int n = (out.mode == 1) ? 2 /*solver not used: reduce memory footprint*/ : A.rows();
+    Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> S(n, n); S.setIdentity();
+    if (slv == "LU") {
+      SLVDLU solver(S);
+      arpackSolveDrtSetThreshold<RC, SLVDLU>(solver, slvDrtPvtThd);
+      rc = arpackSolve<RC, FD, EM, EV, SLVDLU>(opt, A, B, solver, out);
+    }
+    else if (slv == "QR") {
+      SLVDQR solver(S);
+      arpackSolveDrtSetThreshold<RC, SLVDQR>(solver, slvDrtPvtThd);
+      rc = arpackSolve<RC, FD, EM, EV, SLVDQR>(opt, A, B, solver, out);
+    }
+    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
+  else if (opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos) {
+    stringstream clo(opt.slv);
+    string slv; getline(clo, slv, '#');
 
-  // Check A-B compatibility.
-
-  if (!opt.stdPb) {
-    if (A.rows() != B.rows()) {cerr << "Error: A.rows() != B.rows()" << endl; return rc;}
-    if (A.cols() != B.cols()) {cerr << "Error: A.cols() != B.cols()" << endl; return rc;}
+    a_int n = (out.mode == 1) ? 2 /*solver not used: reduce memory footprint*/ : A.rows();
+    Eigen::Matrix<RC, Eigen::Dynamic, Eigen::Dynamic> S(n, n); S.setIdentity();
+    if (slv == "LLT") {
+      SLVDLLT solver(S);
+      rc = arpackSolve<RC, FD, EM, EV, SLVDLLT >(opt, A, B, solver, out);
+    }
+    else if (slv == "LDLT") {
+      SLVDLDLT solver(S);
+      rc = arpackSolve<RC, FD, EM, EV, SLVDLDLT>(opt, A, B, solver, out);
+    }
+    else {cerr << "Error: unknown solver - KO" << endl; return 1;}
   }
-  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); // Cut-off.
-
-  // Solve with arpack.
-
-  if (opt.slv.find("LU")  != string::npos || opt.slv.find("QR")   != string::npos ||
-      opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos ) {
-    // Direct solvers.
-    rc = arpackSolveSprDrt<RC, RW, EM, EC, EV, SLVSLU, SLVSQR, SLVSLLT, SLVSLDLT>(opt, A, B);
-  }
-  else {
-    // Iterative solvers.
-    rc = arpackSolveSprItr<RC, RW, EM, EC, EV, SLVBCG, SLVBCGILU, SLVCG, SLVCGILU>(opt, A, B);
-  }
+  else {cerr << "Error: unknown solver - KO" << endl; return 1;}
 
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
 
   return 0;
+}
+
+template<typename RC, typename FD,
+         typename EM, typename ET, typename EV,
+         typename SLV1, typename SLV2, typename SLV3, typename SLV4>
+int arpackSolve(options & opt, arpackEV & out,
+                int (*pf) (options &, EM & A, EM & B, arpackEV &) /* Pointer on (instance of) templated function */) {
+  int rc = 0;
+
+  // Read A and B matrices.
+
+  EM A;
+  auto start = chrono::high_resolution_clock::now();
+  rc = createMatrix<RC, ET>(opt.fileA, A, opt.verbose, "A:");
+  if (rc != 0) {cerr << "Error: read A KO" << endl; return rc;}
+  auto stop = chrono::high_resolution_clock::now();
+  double readATime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+  cout << endl;
+  cout << "INP: create A " << readATime << " s" << endl;
+
+  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); /* Cut-off */
+
+  EM B;
+  if (!opt.stdPb) {
+    start = chrono::high_resolution_clock::now();
+    rc = createMatrix<RC, ET>(opt.fileB, B, opt.verbose, "B:");
+    if (rc != 0) {cerr << "Error: read B KO" << endl; return rc;}
+    stop = chrono::high_resolution_clock::now();
+    double readBTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+    cout << endl;
+    cout << "INP: create B " << readBTime << " s" << endl;
+
+    if (A.rows() != B.rows()) {cerr << "Error: A.rows() != B.rows()" << endl; return rc;}
+    if (A.cols() != B.cols()) {cerr << "Error: A.cols() != B.cols()" << endl; return rc;}
+  }
+
+  // If needed, transform the initial problem into a new one that arpack can handle.
+
+  auto eps = numeric_limits<double>::epsilon();
+  bool shiftReal = (opt.shiftReal && fabs(opt.sigmaReal) > eps) ? true : false;
+  bool shiftImag = (opt.shiftImag && fabs(opt.sigmaImag) > eps) ? true : false;
+  bool backTransform = false;
+  int mode = 0;
+  if (opt.stdPb) {
+    mode = 1;
+    if (shiftReal && !shiftImag) {
+      EM I(A.rows(), A.cols());
+      I.setIdentity();
+      RC sigma; makeSigma(opt, sigma);
+      A -= sigma*I;
+      backTransform = true;
+    }
+  }
+  else {
+    mode = 2;
+    if (shiftReal || shiftImag) mode = 3;
+  }
+  out.mode = mode;
+  if (opt.verbose >= 1) {
+    cout << endl;
+    cout << "ARP: mode " << mode;
+    cout << ", backTransform " << (backTransform ? "yes" : "no") << endl;
+  }
+
+  // Solve with arpack.
+  // Note: when initializing Eigen solvers, API differ depending on solvers.
+
+  rc = pf ? pf(opt, A, B, out) : 1; // Use function pointer to point at correct solver initialization.
+  if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
+
+  // If needed, transform back the arpack problem into the initial problem.
+
+  if (backTransform) {
+    EM I(A.rows(), A.cols());
+    I.setIdentity();
+    RC sigma; makeSigma(opt, sigma);
+    A += sigma*I;
+    for (size_t i = 0; i < out.val.size(); i++) out.val[i] += sigma;
+  }
+
+  // Check.
+
+  return checkArpackEigVec<EM>(opt, A, B, out);
 }
 
 int main(int argc, char ** argv) {
@@ -1326,27 +1365,147 @@ int main(int argc, char ** argv) {
 
   // Solve with arpack.
 
-  if (!opt.simplePrec) {
-    if (opt.cpxPb) rc = arpackSolve<complex<double>, double,
-                                    EigSMxZ, EigCooZ, EigMpVZ,
-                                    EigBiCGZ, EigBiCGILUZ, EigCGZ, EigCGILUZ,
-                                    EigSLUZ, EigSQRZ, EigSLLTZ, EigSLDLTZ>(opt);
-    else           rc = arpackSolve<        double , double,
-                                    EigSMxD, EigCooD, EigMpVD,
-                                    EigBiCGD, EigBiCGILUD, EigCGD, EigCGILUD,
-                                    EigSLUD, EigSQRD, EigSLLTD, EigSLDLTD>(opt);
+  sstats_c(); // Reset timers.
+  sstatn_c(); // Reset timers.
+  cstatn_c(); // Reset timers.
+
+  bool itrSlv = true; // Use iterative solvers.
+  if (opt.slv.find("LU")  != string::npos || opt.slv.find("QR")   != string::npos ||
+      opt.slv.find("LLT") != string::npos || opt.slv.find("LDLT") != string::npos ) itrSlv = false;
+
+  arpackEV out;
+  auto start = chrono::high_resolution_clock::now();
+
+  if (opt.dense) {
+    if (itrSlv) {
+      cerr << "Error: dense matrices does not support iterative solvers" << endl;
+      return 1;
+    }
+
+    if (opt.simplePrec) {
+      if (opt.cpxPb) {
+        int (*pf) (options &, EigDMxC &, EigDMxC &, arpackEV &);
+        if (opt.denseRR) {
+          pf = arpackSolveDrt<complex< float>,  float, EigDMxC,          EigMpVC, EigDFLUC, EigDFQRC, EigDLLTC, EigDLDLTC>;
+          rc = arpackSolve   <complex< float>,  float, EigDMxC, EigSMTC, EigMpVC, EigDFLUC, EigDFQRC, EigDLLTC, EigDLDLTC>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<complex< float>,  float, EigDMxC,          EigMpVC, EigDPLUC, EigDPQRC, EigDLLTC, EigDLDLTC>;
+          rc = arpackSolve   <complex< float>,  float, EigDMxC, EigSMTC, EigMpVC, EigDPLUC, EigDPQRC, EigDLLTC, EigDLDLTC>(opt, out, pf);
+        }
+      }
+      else {
+        int (*pf) (options &, EigDMxS &, EigDMxS &, arpackEV &);
+        if (opt.denseRR) {
+          pf = arpackSolveDrt<         float ,  float, EigDMxS,          EigMpVS, EigDFLUS, EigDFQRS, EigDLLTS, EigDLDLTS>;
+          rc = arpackSolve   <         float ,  float, EigDMxS, EigSMTS, EigMpVS, EigDFLUS, EigDFQRS, EigDLLTS, EigDLDLTS>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<         float ,  float, EigDMxS,          EigMpVS, EigDPLUS, EigDPQRS, EigDLLTS, EigDLDLTS>;
+          rc = arpackSolve   <         float ,  float, EigDMxS, EigSMTS, EigMpVS, EigDPLUS, EigDPQRS, EigDLLTS, EigDLDLTS>(opt, out, pf);
+        }
+      }
+    }
+    else {
+      if (opt.cpxPb) {
+        int (*pf) (options &, EigDMxZ &, EigDMxZ &, arpackEV &);
+        if (opt.denseRR) {
+          pf = arpackSolveDrt<complex<double>, double, EigDMxZ,          EigMpVZ, EigDFLUZ, EigDFQRZ, EigDLLTZ, EigDLDLTZ>;
+          rc = arpackSolve   <complex<double>, double, EigDMxZ, EigSMTZ, EigMpVZ, EigDFLUZ, EigDFQRZ, EigDLLTZ, EigDLDLTZ>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<complex<double>, double, EigDMxZ,          EigMpVZ, EigDPLUZ, EigDPQRZ, EigDLLTZ, EigDLDLTZ>;
+          rc = arpackSolve   <complex<double>, double, EigDMxZ, EigSMTZ, EigMpVZ, EigDPLUZ, EigDPQRZ, EigDLLTZ, EigDLDLTZ>(opt, out, pf);
+        }
+      }
+      else {
+        int (*pf) (options &, EigDMxD &, EigDMxD &, arpackEV &);
+        if (opt.denseRR) {
+          pf = arpackSolveDrt<        double , double, EigDMxD,          EigMpVD, EigDFLUD, EigDFQRD, EigDLLTD, EigDLDLTD>;
+          rc = arpackSolve   <        double , double, EigDMxD, EigSMTD, EigMpVD, EigDFLUD, EigDFQRD, EigDLLTD, EigDLDLTD>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<        double , double, EigDMxD,          EigMpVD, EigDPLUD, EigDPQRD, EigDLLTD, EigDLDLTD>;
+          rc = arpackSolve   <        double , double, EigDMxD, EigSMTD, EigMpVD, EigDPLUD, EigDPQRD, EigDLLTD, EigDLDLTD>(opt, out, pf);
+        }
+      }
+    }
   }
   else {
-    if (opt.cpxPb) rc = arpackSolve<complex<float>, float,
-                                    EigSMxC, EigCooC, EigMpVC,
-                                    EigBiCGC, EigBiCGILUC, EigCGC, EigCGILUC,
-                                    EigSLUC, EigSQRC, EigSLLTC, EigSLDLTC>(opt);
-    else           rc = arpackSolve<        float , float,
-                                    EigSMxS, EigCooS, EigMpVS,
-                                    EigBiCGS, EigBiCGILUS, EigCGS, EigCGILUS,
-                                    EigSLUS, EigSQRS, EigSLLTS, EigSLDLTS>(opt);
+    if (opt.simplePrec) {
+      if (opt.cpxPb) {
+        int (*pf) (options &, EigSMxC &, EigSMxC &, arpackEV &);
+        if (itrSlv) {
+          pf = arpackSolveItr<complex< float>,  float, EigSMxC,          EigMpVC, EigSBiCGC, EigSBiCGILUC, EigSCGC,  EigSCGILUC>;
+          rc = arpackSolve   <complex< float>,  float, EigSMxC, EigSMTC, EigMpVC, EigSBiCGC, EigSBiCGILUC, EigSCGC,  EigSCGILUC>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<complex< float>,  float, EigSMxC,          EigMpVC, EigSLUC,   EigSQRC,      EigSLLTC, EigSLDLTC >;
+          rc = arpackSolve   <complex< float>,  float, EigSMxC, EigSMTC, EigMpVC, EigSLUC,   EigSQRC,      EigSLLTC, EigSLDLTC >(opt, out, pf);
+        }
+      }
+      else {
+        int (*pf) (options &, EigSMxS &, EigSMxS &, arpackEV &);
+        if (itrSlv) {
+          pf = arpackSolveItr<         float ,  float, EigSMxS,          EigMpVS, EigSBiCGS, EigSBiCGILUS, EigSCGS,  EigSCGILUS>;
+          rc = arpackSolve   <         float ,  float, EigSMxS, EigSMTS, EigMpVS, EigSBiCGS, EigSBiCGILUS, EigSCGS,  EigSCGILUS>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<         float ,  float, EigSMxS,          EigMpVS, EigSLUS,   EigSQRS,      EigSLLTS, EigSLDLTS >;
+          rc = arpackSolve   <         float ,  float, EigSMxS, EigSMTS, EigMpVS, EigSLUS,   EigSQRS,      EigSLLTS, EigSLDLTS >(opt, out, pf);
+        }
+      }
+    }
+    else {
+      if (opt.cpxPb) {
+        int (*pf) (options &, EigSMxZ &, EigSMxZ &, arpackEV &);
+        if (itrSlv) {
+          pf = arpackSolveItr<complex<double>, double, EigSMxZ,          EigMpVZ, EigSBiCGZ, EigSBiCGILUZ, EigSCGZ,  EigSCGILUZ>;
+          rc = arpackSolve   <complex<double>, double, EigSMxZ, EigSMTZ, EigMpVZ, EigSBiCGZ, EigSBiCGILUZ, EigSCGZ,  EigSCGILUZ>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<complex<double>, double, EigSMxZ,          EigMpVZ, EigSLUZ,   EigSQRZ,      EigSLLTZ, EigSLDLTZ >;
+          rc = arpackSolve   <complex<double>, double, EigSMxZ, EigSMTZ, EigMpVZ, EigSLUZ,   EigSQRZ,      EigSLLTZ, EigSLDLTZ >(opt, out, pf);
+        }
+      }
+      else {
+        int (*pf) (options &, EigSMxD &, EigSMxD &, arpackEV &);
+        if (itrSlv) {
+          pf = arpackSolveItr<        double , double, EigSMxD,          EigMpVD, EigSBiCGD, EigSBiCGILUD, EigSCGD,  EigSCGILUD>;
+          rc = arpackSolve   <        double , double, EigSMxD, EigSMTD, EigMpVD, EigSBiCGD, EigSBiCGILUD, EigSCGD,  EigSCGILUD>(opt, out, pf);
+        }
+        else {
+          pf = arpackSolveDrt<        double , double, EigSMxD,          EigMpVD, EigSLUD,   EigSQRD,      EigSLLTD, EigSLDLTD >;
+          rc = arpackSolve   <        double , double, EigSMxD, EigSMTD, EigMpVD, EigSLUD,   EigSQRD,      EigSLLTD, EigSLDLTD >(opt, out, pf);
+        }
+      }
+    }
   }
   if (rc != 0) {cerr << "Error: arpack solve KO" << endl; return rc;}
+
+  auto stop = chrono::high_resolution_clock::now();
+  double fullTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
+  cout << endl;
+  cout << "OUT: mode " << out.mode << ", nb EV found " << out.val.size() << ", nb iterations " << out.nbIt << endl;
+  cout << "OUT: init mode solver " << out.imsTime << " s, RCI time " << out.rciTime << " s" << endl;
+  cout << "OUT: full time " << fullTime << " s" << endl;
+
+  a_int nopx = 0, nbx = 0, nrorth = 0, nitref = 0, nrstrt = 0;
+  float tsaupd = 0., tsaup2 = 0., tsaitr = 0., tseigt = 0., tsgets = 0., tsapps = 0., tsconv = 0.;
+  float tnaupd = 0., tnaup2 = 0., tnaitr = 0., tneigt = 0., tngets = 0., tnapps = 0., tnconv = 0.;
+  float tcaupd = 0., tcaup2 = 0., tcaitr = 0., tceigt = 0., tcgets = 0., tcapps = 0., tcconv = 0.;
+  float tmvopx = 0., tmvbx = 0., tgetv0 = 0., titref = 0., trvec = 0.;
+  stat_c(nopx, nbx, nrorth, nitref, nrstrt, tsaupd, tsaup2,
+         tsaitr, tseigt, tsgets, tsapps, tsconv, tnaupd, tnaup2,
+         tnaitr, tneigt, tngets, tnapps, tnconv, tcaupd, tcaup2,
+         tcaitr, tceigt, tcgets, tcapps, tcconv, tmvopx, tmvbx,
+         tgetv0, titref, trvec);
+  cout << endl;
+  cout << "STAT: total number of user OP*x operation                         " << nopx   << endl;
+  cout << "STAT: total number of user  B*x operation                         " << nbx    << endl;
+  cout << "STAT: total number of reorthogonalization steps taken             " << nrorth << endl;
+  cout << "STAT: total number of it. refinement steps in reorthogonalization " << nitref << endl;
+  cout << "STAT: total number of restart steps                               " << nrstrt << endl;
 
   return 0;
 }

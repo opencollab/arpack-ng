@@ -34,48 +34,57 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "           --slvItrTol 1.e-07 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-07 --slvItrMaxIt 150" \
-                       "           --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
+            for slv in "--slv BiCG --slvItrTol 1.e-07 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-07 --slvItrMaxIt 150" \
+                       "--slv BiCG --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
                        "--slv   LU"                                      "--slv   QR#1.e-06"                               \
                        "--slv  LLT"                                      "--slv  LLT#0.#1."                                \
                        "--slv LDLT"                                      "--slv LDLT#0.#1."
             do
               for rs in "" "--schur"
               do
-                for ds in "" "--simplePrec"
+                for dsPrec in "" "--simplePrec"
                 do
-                  export extraGenPb=""
-                  if [[ "$genPb" == *genPb* ]]; then
-                    export extraGenPb="$shiftOpt" # Force shift if genPb.
-                  fi
-
-                  if [[ "$slv" == *CG* ]]; then
-                    if [[ "$eigPb" == *nonSymPb* ]]; then
-                      continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                  for dsMat in "" "--dense false" "--dense true"
+                  do
+                    export extraGenPb=""
+                    if [[ "$genPb" == *genPb* ]]; then
+                      export extraGenPb="$shiftOpt" # Force shift if genPb.
                     fi
-                  fi
 
-                  if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
-                    if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
-                      continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
+                    if [[ "$slv" == *CG* ]]; then
+                      if [[ "$eigPb" == *nonSymPb* ]]; then
+                        continue # Skip CG that could fail (CG is meant to deal with sym matrices).
+                      fi
                     fi
-                  fi
 
-                  # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3 --debug 3"
-                  echo "$CMD"
-                  eval "$CMD &> arpackmm.run.log"
-                  echo ""
-                  echo "========================================================================================"
-                  echo ""
+                    if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
+                      if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
+                        continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
+                      fi
+                    fi
 
-                  # Run arpackmm: re-run with restart.
-                  export CMD="$CMD --restart"
-                  echo "$CMD"
-                  eval "$CMD &> arpackmm.run.log"
-                  echo ""
-                  echo "========================================================================================"
-                  echo ""
+                    if [[ "$dsMat" == *dense* ]]; then
+                      if [[ "$slv" == *CG* ]]; then
+                        continue # Iterative solvers are not allowed when using dense matrices.
+                      fi
+                    fi
+
+                    # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
+                    export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $dsPrec $dsMat $extraGenPb --nbCV 6 --verbose 3 --debug 3"
+                    echo "$CMD"
+                    eval "$CMD &> arpackmm.run.log"
+                    echo ""
+                    echo "========================================================================================"
+                    echo ""
+
+                    # Run arpackmm: re-run with restart.
+                    export CMD="$CMD --restart"
+                    echo "$CMD"
+                    eval "$CMD &> arpackmm.run.log"
+                    echo ""
+                    echo "========================================================================================"
+                    echo ""
+                  done
                 done
               done
             done

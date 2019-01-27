@@ -3,7 +3,7 @@
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
  * arpackmm: add --slv LLT LDLT (for SPD matrices).
  * arpackmm: add --simplePrec option (to enable use of s*upd).
-
+ * arpackmm: add --dense option.
 
 arpack-ng - 3.7.0
 
