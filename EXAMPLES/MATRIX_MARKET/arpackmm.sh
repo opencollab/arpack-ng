@@ -2,7 +2,7 @@
 
 export CMD="./arpackmm --help" # For coverage
 echo "$CMD"
-eval "$CMD"
+eval "$CMD &> arpackmm.run.log"
 echo ""
 echo "========================================================================================"
 echo ""
@@ -34,7 +34,7 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "           --slvItrTol 1.e-06 --slvItrMaxIt 100" "--slv   CG --slvItrTol 1.e-06 --slvItrMaxIt 100" \
+            for slv in "           --slvItrTol 1.e-07 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-07 --slvItrMaxIt 150" \
                        "           --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
                        "--slv   LU"                                      "--slv   QR#1.e-06"                               \
                        "--slv  LLT"                                      "--slv  LLT#0.#1."                                \
@@ -62,9 +62,9 @@ do
                   fi
 
                   # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3"
+                  export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $ds $extraGenPb --nbCV 6 --verbose 3 --debug 3"
                   echo "$CMD"
-                  eval "$CMD"
+                  eval "$CMD &> arpackmm.run.log"
                   echo ""
                   echo "========================================================================================"
                   echo ""
@@ -72,7 +72,7 @@ do
                   # Run arpackmm: re-run with restart.
                   export CMD="$CMD --restart"
                   echo "$CMD"
-                  eval "$CMD"
+                  eval "$CMD &> arpackmm.run.log"
                   echo ""
                   echo "========================================================================================"
                   echo ""

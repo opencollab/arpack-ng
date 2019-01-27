@@ -25,6 +25,10 @@ Start simple, then, increase complexity if/when needed:
     approximation computed by previous run).
   - etc...
 
+Note: using openblas/mkl/atlas instead of netlib blas/lapack
+may impact results. In some cases, it may also fail checks.
+Use --noCheck to skip checks.
+
 To build this utility, you need:
 - to use a fortran compiler which supports iso_c_binding.
 - to have installed eigen3 (to deal with the RCI).
