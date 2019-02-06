@@ -182,7 +182,7 @@ int main() {
   real_symmetric_runner<float>();
   real_symmetric_runner<double>();
 
-  int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
+  a_int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
   float tsaupd_c, tsaup2_c, tsaitr_c, tseigt_c, tsgets_c, tsapps_c, tsconv_c;
   float tnaupd_c, tnaup2_c, tnaitr_c, tneigt_c, tngets_c, tnapps_c, tnconv_c;
   float tcaupd_c, tcaup2_c, tcaitr_c, tceigt_c, tcgets_c, tcapps_c, tcconv_c;

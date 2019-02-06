@@ -18,6 +18,9 @@ Important Features:
 * arpackmm: utility to test arpack with matrix market files.
   Note: to run this utility, you need the eigen library (to handle RCI).
 * ILP64 support:
+  * reminder: you can NOT mix ILP64 with LP64. If you compile arpack-ng with ILP64
+    (resp. LP64) support, you MUST insure your BLAS/LAPACK is compliant with ILP64
+    (resp. LP64).
   * users: set INTERFACE64 at configure time.
   * developers:
     * all files which needs ILP64 support must include "arpackdef.h".
