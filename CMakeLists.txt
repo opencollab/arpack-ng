@@ -638,12 +638,33 @@ option(COVERALLS "Generate coveralls data" OFF)
 
 
 if (COVERALLS)
-    set(COVERAGE_SRCS awesome.c code.c files.c)
+    set(arpack_TST_SRC
+        ${arpack_SOURCE_DIR}/TESTS/bug_1323.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_142.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_142_gen.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_58_double.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_79_double_complex.f
+        ${arpack_SOURCE_DIR}/TESTS/dnsimp.f
+        ${arpack_SOURCE_DIR}/TESTS/mmio.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_1315_single.c
+        ${arpack_SOURCE_DIR}/TESTS/bug_1315_double.c
+        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_c.c
+        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp
+       )
+    file(GLOB_RECURSE arpack_EX_F_SRC "${arpack_SOURCE_DIR}/EXAMPLES/*/*.f")
+    set(arpack_EX_CPP_SRC ${arpack_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
+
+    set(parpack_TST_SRC
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/issue46.f
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp
+       )
+    file(GLOB_RECURSE parpack_EX_F_SRC "${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/*.f")
 
     # Create the coveralls target.
     # Also lists the c/cpp files for test purposes
     coveralls_setup(
-        "${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${parpacksrc_DIR} ${parpackutil_DIR} ${PROJECT_SOURCE_DIR}/ICB ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB} ${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c ${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" # The source files.
+        "${arpacksrc_STAT_SRCS} ${arpackutil_STAT_SRCS} ${arpacksrc_ICB} ${arpack_TST_SRC} ${arpack_EX_F_SRC} ${arpack_EX_CPP_SRC} ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB} ${parpack_TST_SRC} ${parpack_EX_F_SRC}" # The source files.
         ON                 # If we should upload.
         "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
 endif()
