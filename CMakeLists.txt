@@ -207,13 +207,13 @@ endif()
 #    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
 #endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
-file(GLOB arpacksrc_STAT_SRCS dbgini.f staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
+file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
 
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB SRC/icba*.F90 ICB/debug_icb.F90 ICB/stat_icb.F90)
-  file(GLOB parpacksrc_ICB PARPACK/SRC/MPI/icbp*.F90 ICB/debug_icb.F90 ICB/stat_icb.F90)
+  file(GLOB arpacksrc_ICB ${arpack_SOURCE_DIR}/SRC/icba*.F90 ${arpack_SOURCE_DIR}/ICB/debug_icb.F90 ${arpack_SOURCE_DIR}/ICB/stat_icb.F90)
+  file(GLOB parpacksrc_ICB ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/icbp*.F90 ${arpack_SOURCE_DIR}/ICB/debug_icb.F90 ${arpack_SOURCE_DIR}/ICB/stat_icb.F90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -234,8 +234,8 @@ set(arpackutil_STAT_SRCS
 
 
 if (MPI)
-    file(GLOB parpackutil_STAT_SRCS PARPACK/UTIL/MPI/*.f)
-    file(GLOB parpacksrc_STAT_SRCS dbgini.f staini.f PARPACK/SRC/MPI/*.f)
+    file(GLOB parpackutil_STAT_SRCS ${arpack_SOURCE_DIR}/PARPACK/UTIL/MPI/*.f)
+    file(GLOB parpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/*.f)
 endif()
 
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
@@ -314,7 +314,7 @@ if (EXAMPLES)
     # EXAMPLES/BAND
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/BAND/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/band/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/BAND/)
 
     set(examples_EXTRA_SRCS ${arpackexample_DIR}/cnband.f)
     set(examples_STAT_SRCS
@@ -377,7 +377,7 @@ if (EXAMPLES)
     # EXAMPLES/COMPLEX
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/COMPLEX/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/complex/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/COMPLEX/)
 
     set(examples_STAT_SRCS
         cndrv1.f
@@ -394,7 +394,7 @@ if (EXAMPLES)
     # examples/nonsym
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/NONSYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/nonsym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/NONSYM/)
 
     set(examples_STAT_SRCS
         dndrv1.f
@@ -415,7 +415,7 @@ if (EXAMPLES)
     # examples/SIMPLE
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SIMPLE/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/simple/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/SIMPLE/)
 
     set(examples_STAT_SRCS
         cnsimp.f
@@ -431,7 +431,7 @@ if (EXAMPLES)
     # examples/svd
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SVD/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/svd/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/SVD/)
 
     set(examples_STAT_SRCS
         ssvd.f)
@@ -442,7 +442,7 @@ if (EXAMPLES)
     # examples/sym
     ############################
     set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/sym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/SYM/)
 
     set(examples_STAT_SRCS
         dsdrv1.f
@@ -465,7 +465,7 @@ if (EXAMPLES)
     ############################
     if (MPI)
         set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples/parpack)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/EXAMPLES/MPI/)
 
         set(pexamples_STAT_SRCS
             pcndrv1.f
@@ -490,7 +490,7 @@ enable_testing()
 
 set(CMAKE_CTEST_COMMAND ctest -V)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Tests)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
 add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
 set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
@@ -498,78 +498,86 @@ target_link_libraries(dnsimp_test arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} $
 add_custom_command(TARGET dnsimp_test POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
 )
-add_test(dnsimp_tst Tests/dnsimp)
+add_test(dnsimp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dnsimp)
 
 if (NOT ICB)
     add_executable(bug_1315_single TESTS/bug_1315_single.c)
     target_link_libraries(bug_1315_single arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-    add_test(bug_1315_single_tst Tests/bug_1315_single)
+    add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
 
     add_executable(bug_1315_double TESTS/bug_1315_double.c)
     target_link_libraries(bug_1315_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-    add_test(bug_1315_double_tst Tests/bug_1315_double)
+    add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
 endif()
 
 add_executable(bug_1323 TESTS/bug_1323.f)
 target_link_libraries(bug_1323 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_1323_tst Tests/bug_1323)
+add_test(bug_1323_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1323)
 
 add_executable(bug_58_double TESTS/bug_58_double.f)
 target_link_libraries(bug_58_double arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_58_double_tst Tests/bug_58_double)
+add_test(bug_58_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_58_double)
 
 add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
 target_link_libraries(bug_79_double_complex arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_79_double_complex_tst Tests/bug_79_double_complex)
+add_test(bug_79_double_complex_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_79_double_complex)
 
 add_executable(bug_142 TESTS/bug_142.f)
 target_link_libraries(bug_142 arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_142_tst Tests/bug_142)
+add_test(bug_142_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142)
 
 add_executable(bug_142_gen TESTS/bug_142_gen.f)
 target_link_libraries(bug_142_gen arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-add_test(bug_142_gen_tst Tests/bug_142_gen)
+add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 
 if(MPI)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
+
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
   target_link_libraries(issue46 parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-  add_test(issue46_tst Tests/issue46)
+  add_test(issue46_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
 endif()
 
 if(ICB)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
+
   add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
   target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
   target_link_libraries(icb_arpack_c arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-  add_test(icb_arpack_c_tst Tests/icb_arpack_c)
+  add_test(icb_arpack_c_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_c)
 
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
   target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
   target_link_libraries(icb_arpack_cpp arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-  add_test(icb_arpack_cpp_tst Tests/icb_arpack_cpp)
+  add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
   if (ICBEXMM)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
+
     add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
     target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIRS}) # Get arpack.h + eigen
     target_link_libraries(arpackmm arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
-    configure_file(EXAMPLES/MATRIX_MARKET/As.mtx Tests/As.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/An.mtx Tests/An.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx Tests/Az.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  Tests/B.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx Tests/Bz.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh Tests/arpackmm.sh)
-    add_test(NAME arpackmm_tst WORKING_DIRECTORY ${arpack_BINARY_DIR}/Tests COMMAND arpackmm.sh)
+    configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
+    configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
+    configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
+    configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
+    configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
+    configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
+    add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND arpackmm.sh)
   endif()
 
   if (MPI)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
+
     add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
     target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${MPI_C_INCLUDE_DIRS}) # Get parpack.h mpi.h
     target_link_libraries(icb_parpack_c parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_C_LIBRARIES})
-    add_test(icb_parpack_c_tst mpirun -n 2 Tests/icb_parpack_c)
+    add_test(icb_parpack_c_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
 
     add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
     target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${MPI_CXX_INCLUDE_DIRS}) # Get parpack.hpp mpi.h
     target_link_libraries(icb_parpack_cpp parpack arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS} ${MPI_CXX_LIBRARIES})
-    add_test(icb_parpack_cpp_tst mpirun -n 2 Tests/icb_parpack_cpp)
+    add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
   endif()
 endif()
 
@@ -630,12 +638,33 @@ option(COVERALLS "Generate coveralls data" OFF)
 
 
 if (COVERALLS)
-    set(COVERAGE_SRCS awesome.c code.c files.c)
+    set(arpack_TST_SRC
+        ${arpack_SOURCE_DIR}/TESTS/bug_1323.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_142.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_142_gen.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_58_double.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_79_double_complex.f
+        ${arpack_SOURCE_DIR}/TESTS/dnsimp.f
+        ${arpack_SOURCE_DIR}/TESTS/mmio.f
+        ${arpack_SOURCE_DIR}/TESTS/bug_1315_single.c
+        ${arpack_SOURCE_DIR}/TESTS/bug_1315_double.c
+        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_c.c
+        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp
+       )
+    file(GLOB_RECURSE arpack_EX_F_SRC "${arpack_SOURCE_DIR}/EXAMPLES/*/*.f")
+    set(arpack_EX_CPP_SRC ${arpack_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
+
+    set(parpack_TST_SRC
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/issue46.f
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c
+        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp
+       )
+    file(GLOB_RECURSE parpack_EX_F_SRC "${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/*.f")
 
     # Create the coveralls target.
     # Also lists the c/cpp files for test purposes
     coveralls_setup(
-        "${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${parpacksrc_DIR} ${parpackutil_DIR} ${PROJECT_SOURCE_DIR}/ICB ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c ${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB} ${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c ${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" # The source files.
+        "${arpacksrc_STAT_SRCS} ${arpackutil_STAT_SRCS} ${arpacksrc_ICB} ${arpack_TST_SRC} ${arpack_EX_F_SRC} ${arpack_EX_CPP_SRC} ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB} ${parpack_TST_SRC} ${parpack_EX_F_SRC}" # The source files.
         ON                 # If we should upload.
         "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
 endif()

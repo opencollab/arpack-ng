@@ -89,7 +89,27 @@ jobs:
   # xenial <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: xenial
-    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. && make && make test coveralls > /dev/null;
+    script: |
+      mkdir -p build && cd build                                                   \
+      &&                                                                           \
+      cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. &> cmake.log     \
+      &&                                                                           \
+      tail -n 50 cmake.log                                                         \
+      &&                                                                           \
+      make all                                                    &> compil.log    \
+      &&                                                                           \
+      tail -n 50 compil.log                                                        \
+      &&                                                                           \
+      make test                                                   &> test.log      \
+      &&                                                                           \
+      tail -n 50 test.log                                                          \
+      &&                                                                           \
+      make coveralls                                              &> coveralls.log \
+      &&                                                                           \
+      head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
+      &&                                                                           \
+      head -n 50 coveralls.json && tail -n 50 coveralls.json
+
   # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
   - stage: interface64
     allow_failure:
