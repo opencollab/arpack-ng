@@ -75,7 +75,8 @@ void real_symmetric_runner() {
                                    &(workd[ipntr[1] - 1]));
   }
   // check number of ev found by arpack.
-  if (iparam[4] != nev || info != 0) {
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
@@ -153,7 +154,8 @@ void complex_symmetric_runner() {
   }
 
   // check number of ev found by arpack
-  if (iparam[4] != nev || info != 0) {
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
