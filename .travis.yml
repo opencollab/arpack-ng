@@ -111,18 +111,23 @@ jobs:
       head -n 50 coveralls.json && tail -n 50 coveralls.json
 
   # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
+  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
+  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
+  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #                                                               note: docker-cp works only if copy from/to containers (not images)
+  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
   - stage: interface64
     allow_failure:
     dist: xenial
     script: |
       sudo docker pull debian                                                                                           \
       &&                                                                                                                \
-      sudo docker run debian /bin/bash -c                                                                               \
+      sudo docker create --name mobydick debian /bin/bash -c                                                            \
       "cat /etc/os-release                                                                                           && \
-       more /etc/apt/sources.list                                                                                    && \
+       cat /etc/apt/sources.list                                                                                     && \
        sed -e 's/stretch/testing/'            -i /etc/apt/sources.list                                               && \
        sed -e 's/main/main non-free contrib/' -i /etc/apt/sources.list                                               && \
-       more /etc/apt/sources.list                                                                                    && \
+       cat /etc/apt/sources.list                                                                                     && \
        export DEBIAN_FRONTEND=noninteractive                                                                         && \
        apt-get -y                                                                 update                             && \
        apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
@@ -131,11 +136,11 @@ jobs:
        apt-get -y install dialog apt-utils                                                                           && \
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libeigen3-dev            && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf                          && \
        cd /tmp                                                                                                       && \
-       git clone https://github.com/opencollab/arpack-ng                                                             && \
        cd arpack-ng                                                                                                  && \
-       git checkout master                                                                                           && \
+       git status                                                                                                    && \
+       git log -2                                                                                                    && \
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
        ./bootstrap                                                                                                   && \
@@ -143,13 +148,16 @@ jobs:
        export FCFLAGS='-I/usr/include/mkl'                                                                           && \
        export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                               && \
        export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 -enable-icb-exmm --enable-mpi                    \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-icb --enable-mpi                        \
                    --disable-dependency-tracking                                                                     && \
        export VERBOSE=1                                                                                              && \
        make all                                                                                                      && \
        make check                                                                                                    && \
-       find . -name   test-suite.log | xargs tail -n 300                                                             && \
-       find . -name arpackmm.run.log | xargs tail -n 300"
+       find . -name   test-suite.log | xargs tail -n 300"                                                               \
+      &&                                                                                                                \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
+      &&                                                                                                                \
+      sudo docker start -a mobydick
 
 after_failure:
 
