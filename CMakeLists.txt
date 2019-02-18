@@ -648,13 +648,11 @@ set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
-# TODO: Fill these in with something appropriate.
-#set(LAPACK_LIBS)
-#set(BLAS_LIBS)
+set(LAPACK_LIBS ${LAPACK_LIBRARIES})
+set(BLAS_LIBS ${BLAS_LIBRARIES})
 configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # We don't want this to run on every build.
 option(COVERALLS "Generate coveralls data" OFF)
