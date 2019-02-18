@@ -67,7 +67,7 @@ if (ICBEXMM)
     find_package(Eigen3)
     if (NOT Eigen3_FOUND) # If not found, piggy-back pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
-        find_package(PkgConfig 3.2 REQUIRED)
+        find_package(PkgConfig REQUIRED)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.2)
     endif ()
 
