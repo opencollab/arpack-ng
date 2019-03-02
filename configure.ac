@@ -238,6 +238,13 @@ AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
+
+AC_SUBST([CMAKE_INSTALL_PREFIX], ["$prefix"])
+AC_CONFIG_FILES([arpack-ng-config.cmake:arpack-ng-config.cmake.in], [], [])
+
+AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
+AC_CONFIG_FILES([arpack-ng-config-version.cmake:arpack-ng-config-version.cmake.in], [], [])
+
 AC_CONFIG_FILES([
 	arpackdef.h
 	Makefile
