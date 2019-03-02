@@ -70,6 +70,7 @@ if (ICBEXMM)
         find_package(PkgConfig 3.2 REQUIRED)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.2)
     endif ()
+    find_program (BASH_PROGRAM bash)
 
     # Look for headers.
     find_path(EIGEN3_SPARSE_DIR NAMES Sparse PATHS ${EIGEN3_INCLUDE_DIRS} PATH_SUFFIXES Eigen)
@@ -563,7 +564,7 @@ if(ICB)
     configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
     configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
     configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
-    add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND arpackmm.sh)
+    add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
   endif()
 
   if (MPI)
