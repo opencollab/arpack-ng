@@ -4,6 +4,7 @@
  * arpackmm: add --slv LLT LDLT (for SPD matrices).
  * arpackmm: add --simplePrec option (to enable use of s*upd).
  * arpackmm: add --dense option.
+ * autotools: provide *.cmake files (in addition to *.pc file).
 
 arpack-ng - 3.7.0
 
