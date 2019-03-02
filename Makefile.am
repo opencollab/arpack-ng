@@ -25,4 +25,7 @@ detect_arpack_bug.m4 CMakeLists.txt arpack-ng-config.cmake.in arpack-ng-config-v
 
 pkgconfig_DATA = arpack@LIBSUFFIX@.pc
 
-DISTCLEANFILES = $(pkgconfig_DATA) arpackdef.h
+cmkdir = $(prefix)/lib/cmake
+cmk_DATA = arpack-ng-config.cmake arpack-ng-config-version.cmake
+
+DISTCLEANFILES = $(pkgconfig_DATA) arpackdef.h arpack-ng-config.cmake arpack-ng-config-version.cmake
