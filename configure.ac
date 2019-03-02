@@ -93,6 +93,21 @@ if test x"$enable_icb_exmm" != x"no"; then
 	AC_CHECK_HEADER([Eigen/SparseQR],
 		[],
 		[AC_MSG_ERROR([Eigen/SparseQR not found])])
+	AC_CHECK_HEADER([Eigen/SparseCholesky],
+		[],
+		[AC_MSG_ERROR([Eigen/SparseCholesky not found])])
+	AC_CHECK_HEADER([Eigen/Dense],
+		[],
+		[AC_MSG_ERROR([Eigen/Dense not found])])
+	AC_CHECK_HEADER([Eigen/LU],
+		[],
+		[AC_MSG_ERROR([Eigen/LU not found])])
+	AC_CHECK_HEADER([Eigen/QR],
+		[],
+		[AC_MSG_ERROR([Eigen/QR not found])])
+	AC_CHECK_HEADER([Eigen/Cholesky],
+		[],
+		[AC_MSG_ERROR([Eigen/Cholesky not found])])
 	CPPFLAGS=$CPPFLAGS_SAVE
 	AC_LANG_POP([C++])
 fi

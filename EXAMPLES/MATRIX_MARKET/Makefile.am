@@ -11,4 +11,4 @@ TESTS = arpackmm.sh
 
 arpackmm_SOURCES = arpackmm.cpp
 
-CLEANFILES = resid.out v.out
+CLEANFILES = arpackmm.resid.out arpackmm.v.out
