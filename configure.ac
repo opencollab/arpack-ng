@@ -296,6 +296,9 @@ CFLAGS              : $CFLAGS
 CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
 CPPFLAGS            : $CPPFLAGS
+MPI_Fortran_LIBS    : $MPI_Fortran_LIBS
+MPI_C_LIBS          : $MPI_C_LIBS
+MPI_CXX_LIBS        : $MPI_CXX_LIBS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
