@@ -6,6 +6,9 @@
  * arpackmm: add --dense option.
  * autotools: provide *.cmake files (in addition to *.pc file).
 
+[ Kyle Guinn ]
+ * [BUG FIX]: fix 'eval: Syntax error: "(" unexpected' error at build time.
+
 arpack-ng - 3.7.0
 
 [ Franck Houssen ]
