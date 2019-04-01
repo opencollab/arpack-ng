@@ -407,7 +407,7 @@ class options {
     string slvItrPC;
     bool check;
     int verbose;
-    int debug;
+    a_int debug;
     bool restart;
 };
 
