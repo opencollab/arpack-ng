@@ -1,3 +1,4 @@
+arpack-ng - 3.8.0
 
 [ Franck Houssen ]
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
@@ -6,6 +7,12 @@
  * arpackmm: add --dense option.
  * autotools: provide *.cmake files (in addition to *.pc file).
  * [BUG FIX] ILP64 support: using debug_c and stat_c.
+ * [BUG FIX] fix check precision which may fail with some ATLAS versions.
+
+[ Kyle Guinn ]
+ * [BUG FIX]: fix 'eval: Syntax error: "(" unexpected' error at build time.
+
+ -- Sylvestre Ledru <sylvestre@debian.org> Mon, 1 April 2019 16:24:00 +0100
 
 arpack-ng - 3.7.0
 

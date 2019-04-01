@@ -16,6 +16,8 @@ addons:
       - cmake
       - automake
       - autoconf
+      - pkg-config
+      - libtool
       - libblas-dev
       - liblapack-dev
       - diffutils
@@ -30,8 +32,10 @@ stages:
   - name: precise
   - name: trusty
   - name: xenial
+  - name: bionic
   - name: coverage
   - name: interface64
+  - name: fedora
 
 jobs:
   include:
@@ -86,6 +90,69 @@ jobs:
   - stage: xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
+  # bionic <=> test ubuntu:bionic with autotools/cmake
+  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
+  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
+  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #                                                               note: docker-cp works only if copy from/to containers (not images)
+  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  - stage: bionic
+    dist: xenial
+    script: |
+      sudo docker pull ubuntu:bionic                                                                                    \
+      &&                                                                                                                \
+      sudo docker create --name mobydick ubuntu:bionic /bin/bash -c                                                     \
+      "cat /etc/os-release                                                                                           && \
+       apt-get -y                                                                 update                             && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
+       apt-get -y install build-essential                                                                            && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
+       apt-get -y install libblas-dev liblapack-dev                                                                  && \
+       cd /tmp                                                                                                       && \
+       cd arpack-ng                                                                                                  && \
+       git status                                                                                                    && \
+       git log -2                                                                                                    && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
+       ./bootstrap                                                                                                   && \
+       ./configure --enable-icb --enable-mpi --disable-dependency-tracking                                           && \
+       export VERBOSE=1                                                                                              && \
+       make all                                                                                                      && \
+       make check                                                                                                    && \
+       find . -name test-suite.log | xargs tail -n 300"                                                                 \
+      &&                                                                                                                \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
+      &&                                                                                                                \
+      sudo docker start -a mobydick
+  - stage: bionic
+    dist: xenial
+    script: |
+      sudo docker pull ubuntu:bionic                                                         \
+      &&                                                                                     \
+      sudo docker create --name mobydick ubuntu:bionic /bin/bash -c                          \
+      "cat /etc/os-release                                                                && \
+       apt-get -y                                                                 update  && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade && \
+       apt-get -y install build-essential                                                 && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake           && \
+       apt-get -y install libblas-dev liblapack-dev                                       && \
+       cd /tmp                                                                            && \
+       cd arpack-ng                                                                       && \
+       git status                                                                         && \
+       git log -2                                                                         && \
+       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
+       mkdir -p build && cd build                                                         && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                           && \
+       export VERBOSE=1                                                                   && \
+       make all                                                                           && \
+       make test                                                                          && \
+       tail -n 300 ./Testing/Temporary/LastTest.log"                                         \
+      &&                                                                                     \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
+      &&                                                                                     \
+      sudo docker start -a mobydick
   # xenial <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: xenial
@@ -109,7 +176,6 @@ jobs:
       head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
       &&                                                                           \
       head -n 50 coveralls.json && tail -n 50 coveralls.json
-
   # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
@@ -136,7 +202,7 @@ jobs:
        apt-get -y install dialog apt-utils                                                                           && \
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf                          && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
        cd /tmp                                                                                                       && \
        cd arpack-ng                                                                                                  && \
        git status                                                                                                    && \
@@ -157,6 +223,42 @@ jobs:
       &&                                                                                                                \
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
       &&                                                                                                                \
+      sudo docker start -a mobydick
+  # fedora
+  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
+  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
+  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #                                                               note: docker-cp works only if copy from/to containers (not images)
+  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  - stage: fedora
+    dist: xenial
+    script: |
+      sudo docker pull fedora                                                               \
+      &&                                                                                    \
+      sudo docker create --name mobydick fedora /bin/bash -c                                \
+      "yum -y update                                                                     && \
+       yum -y upgrade                                                                    && \
+       yum -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
+       yum -y install environment-modules                                                && \
+       yum -y install gcc gcc-c++ gcc-gfortran git cmake make                            && \
+       yum -y install openmpi openmpi-devel openblas openblas-devel                      && \
+       . /etc/profile.d/modules.sh                                                       && \
+       module avail                                                                      && \
+       module load mpi/openmpi-x86_64                                                    && \
+       cd /tmp                                                                           && \
+       cd arpack-ng                                                                      && \
+       git status                                                                        && \
+       git log -2                                                                        && \
+       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt && \
+       mkdir -p build && cd build                                                        && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                          && \
+       export VERBOSE=1                                                                  && \
+       make all                                                                          && \
+       make test                                                                         && \
+       tail -n 300 ./Testing/Temporary/LastTest.log"                                        \
+      &&                                                                                    \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                   \
+      &&                                                                                    \
       sudo docker start -a mobydick
 
 after_failure:

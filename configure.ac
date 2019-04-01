@@ -139,7 +139,7 @@ if test x"$enable_icb" != x"no"; then
     AC_LANG_PUSH([Fortran])
     AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
     FC=$MPIFC
-    AC_FC_WRAPPERS dnl set FCLIBS
+    AC_FC_LIBRARY_LDFLAGS dnl set FCLIBS
     AC_LANG_POP([Fortran])
 
     AC_LANG_PUSH([C])
@@ -296,6 +296,9 @@ CFLAGS              : $CFLAGS
 CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
 CPPFLAGS            : $CPPFLAGS
+MPI_Fortran_LIBS    : $MPI_Fortran_LIBS
+MPI_C_LIBS          : $MPI_C_LIBS
+MPI_CXX_LIBS        : $MPI_CXX_LIBS
 BLAS                : $BLAS_LIBS
 LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
