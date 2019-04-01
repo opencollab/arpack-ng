@@ -5,6 +5,7 @@
  * arpackmm: add --simplePrec option (to enable use of s*upd).
  * arpackmm: add --dense option.
  * autotools: provide *.cmake files (in addition to *.pc file).
+ * [BUG FIX] fix check precision which may fail with some ATLAS versions.
 
 [ Kyle Guinn ]
  * [BUG FIX]: fix 'eval: Syntax error: "(" unexpected' error at build time.
