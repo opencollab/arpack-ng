@@ -1,5 +1,8 @@
 arpack-ng - 3.8.0
 
+[ Izaak "Zaak" Beekman ]
+ * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
+
 [ Franck Houssen ]
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
  * arpackmm: add --slv LLT LDLT (for SPD matrices).
