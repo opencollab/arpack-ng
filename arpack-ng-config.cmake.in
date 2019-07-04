@@ -1,11 +1,11 @@
 # Config file for the arpack-ng package. It defines the following variables:
 # - arpack_ng_INCLUDE_DIRS - include directories
 # - arpack_ng_LIBRARIES    - libraries to link against
-set(arpack_ng_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include/arpack" CACHE PATH "arpack-ng: include directories" FORCE)
+set(arpack_ng_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include/arpack;@EIGEN3_INCLUDE_DIR@" CACHE PATH "arpack-ng: include directories" FORCE)
 if(EXISTS "@CMAKE_INSTALL_PREFIX@/lib/libarpack.a")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_PREFIX@/lib/libarpack.a" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_PREFIX@/lib/libarpack.a;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@" CACHE FILEPATH "arpack-ng: libraries" FORCE)
 elseif(EXISTS "@CMAKE_INSTALL_PREFIX@/lib/libarpack.so")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_PREFIX@/lib/libarpack.so" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_PREFIX@/lib/libarpack.so;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@" CACHE FILEPATH "arpack-ng: libraries" FORCE)
 endif()
 if(EXISTS "@CMAKE_INSTALL_PREFIX@/lib/libparpack.a")
   set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_PREFIX@/lib/libparpack.a;${arpack_ng_LIBRARIES}" CACHE FILEPATH "arpack-ng: libraries" FORCE)
