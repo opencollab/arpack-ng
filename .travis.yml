@@ -193,6 +193,7 @@ jobs:
        cat /etc/apt/sources.list                                                                                     && \
        sed -e 's/stretch/testing/'            -i /etc/apt/sources.list                                               && \
        sed -e 's/main/main non-free contrib/' -i /etc/apt/sources.list                                               && \
+       sed -e '/security.debian.org/d'        -i /etc/apt/sources.list                                               && \
        cat /etc/apt/sources.list                                                                                     && \
        export DEBIAN_FRONTEND=noninteractive                                                                         && \
        apt-get -y                                                                 update                             && \
