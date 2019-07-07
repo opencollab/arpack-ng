@@ -11,4 +11,8 @@ TESTS = arpackmm.sh
 
 arpackmm_SOURCES = arpackmm.cpp
 
+if ICBEXMM
+pkginclude_HEADERS = arpackSolver.hpp
+endif
+
 CLEANFILES = arpackmm.resid.out arpackmm.v.out
