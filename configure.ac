@@ -240,6 +240,9 @@ m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_SUBST([CMAKE_INSTALL_PREFIX], ["$prefix"])
+AC_SUBST([BLAS_LIBRARIES], ["$BLAS_LIBS"])
+AC_SUBST([LAPACK_LIBRARIES], ["$LAPACK_LIBS"])
+AC_SUBST([EIGEN3_INCLUDE_DIR], ["$EIGEN3_CFLAGS"])
 AC_CONFIG_FILES([arpack-ng-config.cmake:arpack-ng-config.cmake.in], [], [])
 
 AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
