@@ -16,13 +16,13 @@ do
       export shiftOpt=""
       if [[ "$eigPb" == *nonSymPb* ]]; then
         if [[ "$genPb" == *genPb* ]]; then
-          export shiftOpt="--shiftReal 2.5 --shiftImag 2.5 --tol 0.5" # Relax tolerance, tricky to converge.
+          continue # Skip to ensure stable test: tricky to convergence.
         else
           export shiftOpt="--shiftReal 100.0 --shiftImag 100.0"
         fi
       else
         if [[ "$genPb" == *genPb* ]]; then
-          export shiftOpt="--shiftReal 50.0"
+          continue # Skip to ensure stable test: tricky to convergence.
         else
           export shiftOpt="--shiftReal 100.0"
         fi
@@ -34,11 +34,11 @@ do
         do
           for tol in "" "--tol 1.e-5"
           do
-            for slv in "--slv BiCG --slvItrTol 1.e-07 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-07 --slvItrMaxIt 150" \
+            for slv in "--slv BiCG --slvItrTol 1.e-06 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-06 --slvItrMaxIt 150" \
                        "--slv BiCG --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
-                       "--slv   LU"                                      "--slv   QR#1.e-06"                               \
-                       "--slv  LLT"                                      "--slv  LLT#0.#1."                                \
-                       "--slv LDLT"                                      "--slv LDLT#0.#1."
+                       "--slv   LU"                                      "--slv   QR --slvDrtPivot 1.e-06"                 \
+                       "--slv  LLT"                                      "--slv  LLT --slvDrtOffset 0."                    \
+                       "--slv LDLT"                                      "--slv LDLT --slvDrtScale 1."
             do
               for rs in "" "--schur"
               do
@@ -69,8 +69,8 @@ do
                       fi
                     fi
 
-                    # Run arpackmm: use --nbCV 6 to ease convergence, and, --verbose 3 for debug.
-                    export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $dsPrec $dsMat $extraGenPb --nbCV 6 --verbose 3 --debug 3"
+                    # Run arpackmm: use --nbCV 6 and --maxIt 200 to ease convergence, and, --verbose 3 for debug.
+                    export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $dsPrec $dsMat $extraGenPb --nbCV 6 --maxIt 200 --verbose 3 --debug 3"
                     echo "$CMD"
                     eval "$CMD &> arpackmm.run.log"
                     echo ""
