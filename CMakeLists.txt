@@ -653,7 +653,7 @@ set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
 set(LAPACK_LIBS ${LAPACK_LIBRARIES})
 set(BLAS_LIBS ${BLAS_LIBRARIES})
-set(EIGEN3_CFLAGS ${EIGEN3_INCLUDE_DIR})
+set(EIGEN3_CFLAGS "-I${EIGEN3_INCLUDE_DIR}")
 configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
