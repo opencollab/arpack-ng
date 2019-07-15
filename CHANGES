@@ -4,6 +4,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
 [ Franck Houssen ]
+ * [CLEAN] arpackSolver API: more convenient, suppress template parameters when possible.
  * [BUG FIX] ICB using rvec/select: rvec/select turned to integer
    bool should be, but, is not always supported (depend on compiler, options).
  * extract arpackSolver.hpp from arpakmm.cpp.
