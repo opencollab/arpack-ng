@@ -14,6 +14,7 @@
 #include <complex.h> // creal, cimag.
 #include "debug_c.h" // debug arpack.
 #include "stat_c.h" // arpack statistics.
+#include "iseed_c.h" // arpack seeds.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -63,6 +64,9 @@ int ds() {
   iparam[6] = 1;
 
   while(ido != 99) {
+    /*set seeds*/
+    iseed_c(1, 3, 5, 7);
+
     /* call arpack like you would have, but, use dsaupd_c instead of dsaupd_ */
     dsaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, &info);

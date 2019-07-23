@@ -36,6 +36,7 @@ lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
 libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
 libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/staini.f
+libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/siseed.f
 libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
 libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
@@ -43,6 +44,6 @@ libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
 libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
 if ICB
-libparpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
+libparpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la $(top_builddir)/ICB/libisdicb.la
 libparpack@LIBSUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
 endif

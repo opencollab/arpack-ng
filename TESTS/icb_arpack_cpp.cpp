@@ -18,6 +18,7 @@
 
 #include "debug_c.hpp"  // debug arpack.
 #include "stat_c.hpp"   // arpack statistics.
+#include "iseed_c.hpp"  // arpack seeds.
 
 template<typename Real>
 void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
@@ -63,6 +64,9 @@ void real_symmetric_runner(double const & tol_check) {
   a_int info = 0, ido = 0;
 
   while (ido != 99) {
+    /*set seeds*/
+    iseed_c(1, 3, 5, 7);
+
     arpack::saupd(ido, arpack::bmat::identity, N,
                   arpack::which::largest_magnitude, nev, tol, resid.data(), ncv,
                   V.data(), ldv, iparam.data(), ipntr.data(), workd.data(),

@@ -16,6 +16,7 @@
 #include <complex.h> // creal, cimag.
 #include "debug_c.h" // debug parpack.
 #include "stat_c.h" // arpack statistics.
+#include "iseed_c.h" // arpack seeds.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -67,6 +68,9 @@ int ds() {
 
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
   while(ido != 99) {
+    /*set seeds*/
+    iseed_c(1, 3, 5, 7);
+
     /* call arpack like you would have, but, use dsaupd_c instead of dsaupd_ */
     pdsaupd_c(MCW, &ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
               workd, workl, lworkl, &info);

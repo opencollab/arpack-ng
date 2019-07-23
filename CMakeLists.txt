@@ -230,13 +230,19 @@ endif()
 #    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
 #endif()
 #file(GLOB arpackutil_STAT_SRCS util/*.f)
-file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/SRC/*.f)
+file(GLOB arpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/siseed.f ${arpack_SOURCE_DIR}/SRC/*.f)
 
 set(arpacksrc_ICB "")
 set(parpacksrc_ICB "")
 if(ICB)
-  file(GLOB arpacksrc_ICB ${arpack_SOURCE_DIR}/SRC/icba*.F90 ${arpack_SOURCE_DIR}/ICB/debug_icb.F90 ${arpack_SOURCE_DIR}/ICB/stat_icb.F90)
-  file(GLOB parpacksrc_ICB ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/icbp*.F90 ${arpack_SOURCE_DIR}/ICB/debug_icb.F90 ${arpack_SOURCE_DIR}/ICB/stat_icb.F90)
+  file(GLOB arpacksrc_ICB ${arpack_SOURCE_DIR}/SRC/icba*.F90
+                          ${arpack_SOURCE_DIR}/ICB/debug_icb.F90
+                          ${arpack_SOURCE_DIR}/ICB/stat_icb.F90
+                          ${arpack_SOURCE_DIR}/ICB/iseed_icb.F90)
+  file(GLOB parpacksrc_ICB ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/icbp*.F90
+                           ${arpack_SOURCE_DIR}/ICB/debug_icb.F90
+                           ${arpack_SOURCE_DIR}/ICB/stat_icb.F90
+                           ${arpack_SOURCE_DIR}/ICB/iseed_icb.F90)
 endif()
 
 set(arpackutil_STAT_SRCS
@@ -258,7 +264,7 @@ set(arpackutil_STAT_SRCS
 
 if (MPI)
     file(GLOB parpackutil_STAT_SRCS ${arpack_SOURCE_DIR}/PARPACK/UTIL/MPI/*.f)
-    file(GLOB parpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/*.f)
+    file(GLOB parpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/siseed.f ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/*.f)
 endif()
 
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
@@ -286,6 +292,11 @@ install(FILES stat.h DESTINATION include/arpack)
 if(ICB)
   install(FILES ICB/stat_c.h DESTINATION include/arpack)
   install(FILES ICB/stat_c.hpp DESTINATION include/arpack)
+endif()
+
+if(ICB)
+  install(FILES ICB/iseed_c.h DESTINATION include/arpack)
+  install(FILES ICB/iseed_c.hpp DESTINATION include/arpack)
 endif()
 
 target_link_libraries(arpack ${BLAS_LIBRARIES})

@@ -4,6 +4,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
 [ Franck Houssen ]
+ * allow to customize arpack seeds.
  * extract arpackSolver.hpp from arpakmm.cpp.
  * [BUG FIX] fix cmake/pc files: enable linking from outside (add blas, lapack, eigen).
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).

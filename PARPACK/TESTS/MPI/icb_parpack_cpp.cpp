@@ -20,6 +20,7 @@
 
 #include "debug_c.hpp"  // debug parpack.
 #include "stat_c.hpp"   // arpack statistics.
+#include "iseed_c.hpp"  // arpack seeds.
 
 void diagonal_matrix_vector_product(float const* const x, float* const y) {
   for (int i = 0; i < 1000; ++i) {
@@ -66,6 +67,9 @@ void real_symmetric_runner() {
   a_int ido = 0;
 
   while (ido != 99) {
+    /*set seeds*/
+    iseed_c(1, 3, 5, 7);
+
     arpack::saupd(MCW, ido, arpack::bmat::identity, N,
                   arpack::which::largest_magnitude, nev, tol, resid.data(), ncv,
                   V.data(), ldv, iparam.data(), ipntr.data(), workd.data(),
