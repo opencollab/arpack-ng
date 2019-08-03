@@ -41,7 +41,7 @@ void real_symmetric_runner(double const & tol_check) {
   Real const tol = 0.0;
   Real const sigma = 0.0;
 
-  bool const rvec = true;
+  a_int const rvec = 1;
 
   std::vector<Real> resid(N);
   std::vector<Real> V(ncv * N);
@@ -79,6 +79,7 @@ void real_symmetric_runner(double const & tol_check) {
   }
 
   std::vector<a_int> select(ncv);
+  for (int i = 0; i < ncv; i++) select[i] = 1;
 
   arpack::seupd(rvec, arpack::howmny::ritz_vectors, select.data(), d.data(),
                 z.data(), ldz, sigma, arpack::bmat::identity, N,
@@ -89,6 +90,7 @@ void real_symmetric_runner(double const & tol_check) {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
+    /*eigen value order: smallest -> biggest*/
     if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
@@ -119,7 +121,7 @@ void complex_symmetric_runner(double const & tol_check) {
   Real const tol = 0.0;
   std::complex<Real> const sigma(0.0, 0.0);
 
-  bool const rvec = true;
+  a_int const rvec = 0;
 
   std::vector<std::complex<Real>> resid(N);
   std::vector<std::complex<Real>> V(ncv * N);
@@ -158,6 +160,7 @@ void complex_symmetric_runner(double const & tol_check) {
   }
 
   std::vector<a_int> select(ncv);
+  for (int i = 0; i < ncv; i++) select[i] = 1;
 
   arpack::neupd(rvec, arpack::howmny::ritz_vectors, select.data(), d.data(),
                 z.data(), ldz, sigma, workev.data(), arpack::bmat::identity, N,
@@ -168,8 +171,9 @@ void complex_symmetric_runner(double const & tol_check) {
   for (int i = 0; i < nev; ++i) {
     std::cout << d[i] << "\n";
 
-    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - i)) > tol_check ||
-        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - i)) > tol_check) {
+    /*eigen value order: smallest -> biggest*/
+    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check ||
+        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }

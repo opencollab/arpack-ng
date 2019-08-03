@@ -36,9 +36,9 @@ subroutine pcneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),          value,              intent(in)    :: comm
-  logical(kind=c_bool),         value,              intent(in)    :: rvec
+  integer(kind=c_int),          value,              intent(in)    :: rvec
   character(kind=c_char),       dimension(1),       intent(in)    :: howmny
-  logical(kind=c_bool),         dimension(ncv),     intent(in)    :: select
+  integer(kind=c_int),          dimension(ncv),     intent(in)    :: select
   complex(kind=c_float_complex),dimension(nev),     intent(out)   :: d
   complex(kind=c_float_complex),dimension(n, nev),  intent(out)   :: z
   integer(kind=c_int),          value,              intent(in)    :: ldz
@@ -60,7 +60,24 @@ subroutine pcneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   integer(kind=c_int),          value,              intent(in)    :: lworkl
   complex(kind=c_float_complex),dimension(ncv),     intent(out)   :: rwork
   integer(kind=c_int),                              intent(inout) :: info
-  call pcneupd(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
-               bmat, n, which, nev, tol, resid, ncv, v, ldv,        &
+
+  ! convert parameters if needed.
+
+  logical :: rv
+  logical, dimension(ncv) :: slt
+  integer :: idx
+
+  rv = .false.
+  if (rvec .ne. 0) rv = .true.
+
+  slt = .false.
+  do idx=1, ncv
+    if (select(idx) .ne. 0) slt(idx) = .true.
+  enddo
+
+  ! call arpack.
+
+  call pcneupd(comm, rv, howmny, slt, d, z, ldz, sigma, workev,&
+               bmat, n, which, nev, tol, resid, ncv, v, ldv,   &
                iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine pcneupd_c

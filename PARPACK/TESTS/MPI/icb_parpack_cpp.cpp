@@ -35,7 +35,7 @@ void real_symmetric_runner() {
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
   a_int ldv = N;
 
-  bool rvec = true;
+  a_int rvec = 1;
   float tol = 0.0f;
   float sigma = 0.0f;
 
@@ -48,6 +48,7 @@ void real_symmetric_runner() {
   std::vector<float> z((N + 1) * (nev + 1));
   std::vector<float> resid(N);
   std::vector<a_int> select(ncv);
+  for (int i = 0; i < ncv; i++) select[i] = 1;
 
   a_int info = 0;
 
@@ -88,6 +89,7 @@ void real_symmetric_runner() {
 
   for (int i = 0; i < nev; ++i) {
     std::cout << "rank " << rank << " - " << d[i] << std::endl;
+    /*eigen value order: smallest -> biggest*/
     if (std::abs(d[i] - static_cast<float>(1000 - (nev - 1) + i)) > 1.) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
@@ -109,7 +111,7 @@ void complex_symmetric_runner() {
   a_int ldz = N + 1;
 
   float tol = 0.0f;
-  bool rvec = true;
+  a_int rvec = 0;
   std::complex<float> sigma(0.0f, 0.0f);
 
   std::vector<std::complex<float>> resid(N);
@@ -118,6 +120,7 @@ void complex_symmetric_runner() {
   std::vector<std::complex<float>> d(nev + 1);
   std::vector<std::complex<float>> z((N + 1) * (nev + 1));
   std::vector<a_int> select(ncv);
+  for (int i = 0; i < ncv; i++) select[i] = 1;
 
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
   std::vector<std::complex<float>> workl(lworkl);
@@ -169,8 +172,9 @@ void complex_symmetric_runner() {
   for (int i = 0; i < nev; ++i) {
     std::cout << "rank " << rank << " - " << std::real(d[i]) << " "
               << std::imag(d[i]) << '\n';
-    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - i)) > 1. ||
-        std::abs(std::imag(d[i]) - static_cast<float>(1000 - i)) > 1.) {
+    /*eigen value order: smallest -> biggest*/
+    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) > 1. ||
+        std::abs(std::imag(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) > 1.) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }

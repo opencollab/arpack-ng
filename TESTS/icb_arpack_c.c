@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <stdbool.h> // bool.
 #include "arpack.h"
 #include <complex.h> // creal, cimag.
 #include "debug_c.h" // debug arpack.
@@ -40,10 +39,11 @@ int ds() {
   a_int iparam[11];
   a_int ipntr[14];
   double workd[3*N];
-  bool rvec = true;
+  a_int rvec = 1;
   char howmny[] = "A";
   double* d = (double*) malloc((nev+1)*sizeof(double));
   a_int select[ncv];
+  for (int i = 0; i < ncv; i++) select[i] = 1;
   double z[(N+1)*(nev+1)];
   a_int ldz = N+1;
   double sigma=0;
@@ -78,6 +78,7 @@ int ds() {
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f\n", d[i]);
+    /*eigen value order: smallest -> biggest*/
     if(fabs(d[i] - (double)(1000-(nev-1)+i))>1e-6){
       free(d);
       return 1;
@@ -107,10 +108,11 @@ int zn() {
   a_int iparam[11];
   a_int ipntr[14];
   double _Complex workd[3*N];
-  bool rvec = true;
+  a_int rvec = 0;
   char howmny[] = "A";
   double _Complex* d = (double _Complex*) malloc((nev+1)*sizeof(double _Complex));
   a_int select[ncv];
+  for (int i = 0; i < ncv; i++) select[i] = 1;
   double _Complex z[(N+1)*(nev+1)];
   a_int ldz = N+1;
   double _Complex sigma=0. + I*0.;
@@ -147,7 +149,8 @@ int zn() {
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f %f\n", creal(d[i]), cimag(d[i]));
-    if(fabs(creal(d[i]) - (double)(1000-i))>1e-6 || fabs(cimag(d[i]) - (double)(1000-i))>1e-6){
+    /*eigen value order: smallest -> biggest*/
+    if(fabs(creal(d[i]) - (double)(1000-(nev-1)+i))>1e-6 || fabs(cimag(d[i]) - (double)(1000-(nev-1)+i))>1e-6){
       free(d);
       return 1;
     }
