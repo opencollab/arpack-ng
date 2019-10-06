@@ -230,7 +230,7 @@ arpack-ng - 3.1.3
   * Replace arpack.pc with proper autotooled arpack.pc.in
   * Add debug.h to TESTS/Makefile.am sources
 
-  * "make dist" is functionnal
+  * "make dist" is functional
   * Also build the library "libparpacksrcblacs" (PARPACK/UTIL/BLACS/)
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Tue, 02 Apr 2013 10:53:08 +0200
@@ -243,7 +243,7 @@ arpack-ng - 3.1.2
    * Compile also PARPACK / MPI example (Closes: #783)
    * Configure detected built-in LAPACK and BLAS, but refused to use them
      (Closes: #784)
-   * Fixed division by zero in smlnum by usind p[d,s]lamch instead of the
+   * Fixed division by zero in smlnum by using p[d,s]lamch instead of the
      serial. Thanks to Umberto De Giovannini.
 
  -- Sylvestre Ledru <sylvestre.ledru@scilab-enterprises.com>  Fri, 22 Jun 2012 22:05:41 +0200
