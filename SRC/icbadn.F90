@@ -34,9 +34,9 @@ subroutine dneupd_c(rvec, howmny, select,                        &
   use :: iso_c_binding
   implicit none
 #include "arpackdef.h"
-  logical(kind=c_bool),   value,               intent(in)    :: rvec
+  integer(kind=c_int),    value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
-  logical(kind=c_bool),   dimension(ncv),      intent(in)    :: select
+  integer(kind=c_int),    dimension(ncv),      intent(in)    :: select
   real(kind=c_double),    dimension(nev+1),    intent(out)   :: dr
   real(kind=c_double),    dimension(nev+1),    intent(out)   :: di
   real(kind=c_double),    dimension(n, nev+1), intent(out)   :: z
@@ -59,7 +59,24 @@ subroutine dneupd_c(rvec, howmny, select,                        &
   real(kind=c_double),    dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call dneupd(rvec, howmny, select,                        &
+
+  ! convert parameters if needed.
+
+  logical :: rv
+  logical, dimension(ncv) :: slt
+  integer :: idx
+
+  rv = .false.
+  if (rvec .ne. 0) rv = .true.
+
+  slt = .false.
+  do idx=1, ncv
+    if (select(idx) .ne. 0) slt(idx) = .true.
+  enddo
+
+  ! call arpack.
+
+  call dneupd(rv, howmny, slt,                             &
               dr, di, z, ldz, sigmar, sigmai, workev,      &
               bmat, n, which, nev, tol, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)

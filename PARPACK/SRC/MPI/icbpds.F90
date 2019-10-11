@@ -35,9 +35,9 @@ subroutine pdseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
-  logical(kind=c_bool),   value,               intent(in)    :: rvec
+  integer(kind=c_int),    value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
-  logical(kind=c_bool),   dimension(ncv),      intent(in)    :: select
+  integer(kind=c_int),    dimension(ncv),      intent(in)    :: select
   real(kind=c_double),    dimension(nev),      intent(out)   :: d
   real(kind=c_double),    dimension(n, nev),   intent(out)   :: z
   integer(kind=c_int),    value,               intent(in)    :: ldz
@@ -57,7 +57,24 @@ subroutine pdseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
   real(kind=c_double),    dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call pdseupd(comm, rvec, howmny, select, d, z, ldz, sigma,&
+
+  ! convert parameters if needed.
+
+  logical :: rv
+  logical, dimension(ncv) :: slt
+  integer :: idx
+
+  rv = .false.
+  if (rvec .ne. 0) rv = .true.
+
+  slt = .false.
+  do idx=1, ncv
+    if (select(idx) .ne. 0) slt(idx) = .true.
+  enddo
+
+  ! call arpack.
+
+  call pdseupd(comm, rv, howmny, slt, d, z, ldz, sigma,     &
                bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
 end subroutine pdseupd_c

@@ -25,7 +25,7 @@ inline void saupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
-inline void seupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void seupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, float* d, float* z, a_int ldz, float sigma,
                   bmat const bmat_option, a_int n, which const which_option,
                   a_int nev, float tol, float* resid, a_int ncv, float* v, a_int ldv,
@@ -47,7 +47,7 @@ inline void saupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
-inline void seupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void seupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, double* d, double* z, a_int ldz, double sigma,
                   bmat const bmat_option, a_int n, which const which_option,
                   a_int nev, double tol, double* resid, a_int ncv, double* v,
@@ -69,7 +69,7 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
-inline void neupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, float* dr, float* di, float* z, a_int ldz,
                   float sigmar, float sigmai, float * workev,
                   bmat const bmat_option, a_int n,
@@ -92,7 +92,7 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
 }
 
-inline void neupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, double* dr, double* di, double* z, a_int ldz,
                   double sigmar, double sigmai, double * workev,
                   bmat const bmat_option, a_int n,
@@ -121,7 +121,7 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       reinterpret_cast<_Complex float*>(rwork), &info);
 }
 
-inline void neupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, std::complex<float>* d, std::complex<float>* z,
                   a_int ldz, std::complex<float> sigma,
                   std::complex<float>* workev, bmat const bmat_option, a_int n,
@@ -161,7 +161,7 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                       reinterpret_cast<_Complex double*>(rwork), &info);
 }
 
-inline void neupd(MPI_Fint comm, bool rvec, howmny const howmny_option,
+inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int* select, std::complex<double>* d, std::complex<double>* z,
                   a_int ldz, std::complex<double> sigma,
                   std::complex<double>* workev, bmat const bmat_option, a_int n,

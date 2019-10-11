@@ -34,9 +34,9 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   use :: iso_c_binding
   implicit none
 #include "arpackdef.h"
-  logical(kind=c_bool),             value,              intent(in)    :: rvec
+  integer(kind=c_int),              value,              intent(in)    :: rvec
   character(kind=c_char),           dimension(1),       intent(in)    :: howmny
-  logical(kind=c_bool),             dimension(ncv),     intent(in)    :: select
+  integer(kind=c_int),              dimension(ncv),     intent(in)    :: select
   complex(kind=c_double_complex),   dimension(nev),     intent(out)   :: d
   complex(kind=c_double_complex),   dimension(n, nev),  intent(out)   :: z
   integer(kind=c_int),              value,              intent(in)    :: ldz
@@ -58,7 +58,24 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   integer(kind=c_int),              value,              intent(in)    :: lworkl
   real(kind=c_double),              dimension(ncv),     intent(out)   :: rwork
   integer(kind=c_int),                               intent(inout) :: info
-  call zneupd(rvec, howmny, select, d, z, ldz, sigma, workev,&
+
+  ! convert parameters if needed.
+
+  logical :: rv
+  logical, dimension(ncv) :: slt
+  integer :: idx
+
+  rv = .false.
+  if (rvec .ne. 0) rv = .true.
+
+  slt = .false.
+  do idx=1, ncv
+    if (select(idx) .ne. 0) slt(idx) = .true.
+  enddo
+
+  ! call arpack.
+
+  call zneupd(rv, howmny, slt, d, z, ldz, sigma, workev,     &
               bmat, n, which, nev, tol, resid, ncv, v, ldv,  &
               iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine zneupd_c

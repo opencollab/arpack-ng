@@ -331,14 +331,12 @@ class output {
     double rciTime; // Reverse communication interface time.
 };
 
-template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
-         typename SLV>
+template<typename RC, typename FD, typename EM, typename SLV>
 int itrSolve(options & opt, output & out,
              double const & slvItrILUDropTol, double const & slvItrILUFillFactor) {
   // Init solver.
 
-  arpackItrSolver<RC, FD, EM, ET, EV, SLV> as;
+  arpackItrSolver<RC, FD, EM, SLV> as;
   as.stdPb = opt.stdPb;
   as.symPb = opt.symPb;
   as.nbEV = opt.nbEV;
@@ -386,10 +384,10 @@ int itrSolve(options & opt, output & out,
 
   // Solve.
 
-  rc = as.solve(A, B);
+  rc = as.solve(A, &B);
   if (rc != 0) {cerr << "Error: solve KO" << endl; return rc;}
   if (opt.check) {
-    rc = as.checkEigVec(A, B);
+    rc = as.checkEigVec(A, &B);
     if (rc != 0) {cerr << "Error: check KO" << endl; return rc;}
   }
 
@@ -404,13 +402,11 @@ int itrSolve(options & opt, output & out,
   return 0;
 }
 
-template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
-         typename SLV>
+template<typename RC, typename FD, typename EM, typename SLV>
 int drtSolve(options & opt, output & out) {
   // Init solver.
 
-  arpackDrtSolver<RC, FD, EM, ET, EV, SLV> as;
+  arpackDrtSolver<RC, FD, EM, SLV> as;
   as.stdPb = opt.stdPb;
   as.symPb = opt.symPb;
   as.nbEV = opt.nbEV;
@@ -457,10 +453,10 @@ int drtSolve(options & opt, output & out) {
 
   // Solve.
 
-  rc = as.solve(A, B);
+  rc = as.solve(A, &B);
   if (rc != 0) {cerr << "Error: solve KO" << endl; return rc;}
   if (opt.check) {
-    rc = as.checkEigVec(A, B);
+    rc = as.checkEigVec(A, &B);
     if (rc != 0) {cerr << "Error: check KO" << endl; return rc;}
   }
 
@@ -476,21 +472,21 @@ int drtSolve(options & opt, output & out) {
 }
 
 template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
+         typename EM,
          typename SLV1, typename SLV2, typename SLV3, typename SLV4>
 int drtSolve(options & opt, output & out) {
   int rc = 1;
 
-  if (opt.slv ==   "LU") rc = drtSolve<RC, FD, EM, ET, EV, SLV1>(opt, out);
-  if (opt.slv ==   "QR") rc = drtSolve<RC, FD, EM, ET, EV, SLV2>(opt, out);
-  if (opt.slv ==  "LLT") rc = drtSolve<RC, FD, EM, ET, EV, SLV3>(opt, out);
-  if (opt.slv == "LDLT") rc = drtSolve<RC, FD, EM, ET, EV, SLV4>(opt, out);
+  if (opt.slv ==   "LU") rc = drtSolve<RC, FD, EM, SLV1>(opt, out);
+  if (opt.slv ==   "QR") rc = drtSolve<RC, FD, EM, SLV2>(opt, out);
+  if (opt.slv ==  "LLT") rc = drtSolve<RC, FD, EM, SLV3>(opt, out);
+  if (opt.slv == "LDLT") rc = drtSolve<RC, FD, EM, SLV4>(opt, out);
 
   return rc;
 }
 
 template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
+         typename EM,
          typename SLV1, typename SLV2, typename SLV3, typename SLV4>
 int itrSolve(options & opt, output & out) {
   int rc = 1;
@@ -511,12 +507,12 @@ int itrSolve(options & opt, output & out) {
   }
 
   if (opt.slv == "BiCG") {
-    if (slvItrPC == "Diag") rc = itrSolve<RC, FD, EM, ET, EV, SLV1>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
-    if (slvItrPC == "ILU")  rc = itrSolve<RC, FD, EM, ET, EV, SLV2>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
+    if (slvItrPC == "Diag") rc = itrSolve<RC, FD, EM, SLV1>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
+    if (slvItrPC == "ILU")  rc = itrSolve<RC, FD, EM, SLV2>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
   }
   if (opt.slv ==   "CG") {
-    if (slvItrPC == "Diag") rc = itrSolve<RC, FD, EM, ET, EV, SLV3>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
-    if (slvItrPC == "ILU")  rc = itrSolve<RC, FD, EM, ET, EV, SLV4>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
+    if (slvItrPC == "Diag") rc = itrSolve<RC, FD, EM, SLV3>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
+    if (slvItrPC == "ILU")  rc = itrSolve<RC, FD, EM, SLV4>(opt, out, slvItrILUDropTol, slvItrILUFillFactor);
   }
 
   return rc;
@@ -551,36 +547,36 @@ int main(int argc, char ** argv) {
     if (opt.simplePrec) {
       if (opt.cpxPb) {
         if (opt.denseRR) {
-          rc = drtSolve<complex< float>,  float, EigDMxC, EigSMTC, EigMpVC, EigDFLUC, EigDFQRC, EigDLLTC, EigDLDLTC>(opt, out);
+          rc = drtSolve<complex< float>,  float, EigDMxC, EigDFLUC, EigDFQRC, EigDLLTC, EigDLDLTC>(opt, out);
         }
         else {
-          rc = drtSolve<complex< float>,  float, EigDMxC, EigSMTC, EigMpVC, EigDPLUC, EigDPQRC, EigDLLTC, EigDLDLTC>(opt, out);
+          rc = drtSolve<complex< float>,  float, EigDMxC, EigDPLUC, EigDPQRC, EigDLLTC, EigDLDLTC>(opt, out);
         }
       }
       else {
         if (opt.denseRR) {
-          rc = drtSolve<         float ,  float, EigDMxS, EigSMTS, EigMpVS, EigDFLUS, EigDFQRS, EigDLLTS, EigDLDLTS>(opt, out);
+          rc = drtSolve<         float ,  float, EigDMxS, EigDFLUS, EigDFQRS, EigDLLTS, EigDLDLTS>(opt, out);
         }
         else {
-          rc = drtSolve<         float ,  float, EigDMxS, EigSMTS, EigMpVS, EigDPLUS, EigDPQRS, EigDLLTS, EigDLDLTS>(opt, out);
+          rc = drtSolve<         float ,  float, EigDMxS, EigDPLUS, EigDPQRS, EigDLLTS, EigDLDLTS>(opt, out);
         }
       }
     }
     else {
       if (opt.cpxPb) {
         if (opt.denseRR) {
-          rc = drtSolve<complex<double>, double, EigDMxZ, EigSMTZ, EigMpVZ, EigDFLUZ, EigDFQRZ, EigDLLTZ, EigDLDLTZ>(opt, out);
+          rc = drtSolve<complex<double>, double, EigDMxZ, EigDFLUZ, EigDFQRZ, EigDLLTZ, EigDLDLTZ>(opt, out);
         }
         else {
-          rc = drtSolve<complex<double>, double, EigDMxZ, EigSMTZ, EigMpVZ, EigDPLUZ, EigDPQRZ, EigDLLTZ, EigDLDLTZ>(opt, out);
+          rc = drtSolve<complex<double>, double, EigDMxZ, EigDPLUZ, EigDPQRZ, EigDLLTZ, EigDLDLTZ>(opt, out);
         }
       }
       else {
         if (opt.denseRR) {
-          rc = drtSolve<        double , double, EigDMxD, EigSMTD, EigMpVD, EigDFLUD, EigDFQRD, EigDLLTD, EigDLDLTD>(opt, out);
+          rc = drtSolve<        double , double, EigDMxD, EigDFLUD, EigDFQRD, EigDLLTD, EigDLDLTD>(opt, out);
         }
         else {
-          rc = drtSolve<        double , double, EigDMxD, EigSMTD, EigMpVD, EigDPLUD, EigDPQRD, EigDLLTD, EigDLDLTD>(opt, out);
+          rc = drtSolve<        double , double, EigDMxD, EigDPLUD, EigDPQRD, EigDLLTD, EigDLDLTD>(opt, out);
         }
       }
     }
@@ -589,36 +585,36 @@ int main(int argc, char ** argv) {
     if (opt.simplePrec) {
       if (opt.cpxPb) {
         if (itrSlv) {
-          rc = itrSolve<complex< float>,  float, EigSMxC, EigSMTC, EigMpVC, EigSBiCGC, EigSBiCGILUC, EigSCGC,  EigSCGILUC>(opt, out);
+          rc = itrSolve<complex< float>,  float, EigSMxC, EigSBiCGC, EigSBiCGILUC, EigSCGC,  EigSCGILUC>(opt, out);
         }
         else {
-          rc = drtSolve<complex< float>,  float, EigSMxC, EigSMTC, EigMpVC, EigSLUC,   EigSQRC,      EigSLLTC, EigSLDLTC >(opt, out);
+          rc = drtSolve<complex< float>,  float, EigSMxC, EigSLUC,   EigSQRC,      EigSLLTC, EigSLDLTC >(opt, out);
         }
       }
       else {
         if (itrSlv) {
-          rc = itrSolve<         float ,  float, EigSMxS, EigSMTS, EigMpVS, EigSBiCGS, EigSBiCGILUS, EigSCGS,  EigSCGILUS>(opt, out);
+          rc = itrSolve<         float ,  float, EigSMxS, EigSBiCGS, EigSBiCGILUS, EigSCGS,  EigSCGILUS>(opt, out);
         }
         else {
-          rc = drtSolve<         float ,  float, EigSMxS, EigSMTS, EigMpVS, EigSLUS,   EigSQRS,      EigSLLTS, EigSLDLTS >(opt, out);
+          rc = drtSolve<         float ,  float, EigSMxS, EigSLUS,   EigSQRS,      EigSLLTS, EigSLDLTS >(opt, out);
         }
       }
     }
     else {
       if (opt.cpxPb) {
         if (itrSlv) {
-          rc = itrSolve<complex<double>, double, EigSMxZ, EigSMTZ, EigMpVZ, EigSBiCGZ, EigSBiCGILUZ, EigSCGZ,  EigSCGILUZ>(opt, out);
+          rc = itrSolve<complex<double>, double, EigSMxZ, EigSBiCGZ, EigSBiCGILUZ, EigSCGZ,  EigSCGILUZ>(opt, out);
         }
         else {
-          rc = drtSolve<complex<double>, double, EigSMxZ, EigSMTZ, EigMpVZ, EigSLUZ,   EigSQRZ,      EigSLLTZ, EigSLDLTZ >(opt, out);
+          rc = drtSolve<complex<double>, double, EigSMxZ, EigSLUZ,   EigSQRZ,      EigSLLTZ, EigSLDLTZ >(opt, out);
         }
       }
       else {
         if (itrSlv) {
-          rc = itrSolve<        double , double, EigSMxD, EigSMTD, EigMpVD, EigSBiCGD, EigSBiCGILUD, EigSCGD,  EigSCGILUD>(opt, out);
+          rc = itrSolve<        double , double, EigSMxD, EigSBiCGD, EigSBiCGILUD, EigSCGD,  EigSCGILUD>(opt, out);
         }
         else {
-          rc = drtSolve<        double , double, EigSMxD, EigSMTD, EigMpVD, EigSLUD,   EigSQRD,      EigSLLTD, EigSLDLTD >(opt, out);
+          rc = drtSolve<        double , double, EigSMxD, EigSLUD,   EigSQRD,      EigSLLTD, EigSLDLTD >(opt, out);
         }
       }
     }

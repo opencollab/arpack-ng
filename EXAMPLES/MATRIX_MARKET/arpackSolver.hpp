@@ -24,28 +24,12 @@
 
 using namespace std;
 
-// Vector related types.
-
-typedef Eigen::Matrix<         float,  Eigen::Dynamic, 1> EigVecS; // Real.
-typedef Eigen::Matrix<        double,  Eigen::Dynamic, 1> EigVecD; // Real.
-typedef Eigen::Matrix<complex< float>, Eigen::Dynamic, 1> EigVecC; // Complex.
-typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, 1> EigVecZ; // Complex.
-
-typedef Eigen::Map<EigVecS> EigMpVS; // Real.
-typedef Eigen::Map<EigVecD> EigMpVD; // Real.
-typedef Eigen::Map<EigVecC> EigMpVC; // Complex.
-typedef Eigen::Map<EigVecZ> EigMpVZ; // Complex.
-
 // Sparse matrix related types.
 
 typedef Eigen::SparseMatrix<         float>  EigSMxS; // Real.
-typedef Eigen::Triplet     <         float>  EigSMTS; // Real.
 typedef Eigen::SparseMatrix<        double>  EigSMxD; // Real.
-typedef Eigen::Triplet     <        double>  EigSMTD; // Real.
 typedef Eigen::SparseMatrix<complex< float>> EigSMxC; // Complex.
-typedef Eigen::Triplet     <complex< float>> EigSMTC; // Complex.
 typedef Eigen::SparseMatrix<complex<double>> EigSMxZ; // Complex.
-typedef Eigen::Triplet     <complex<double>> EigSMTZ; // Complex.
 
 // Iterative solvers for sparse matrices.
 
@@ -137,10 +121,17 @@ typedef Eigen::HouseholderQR<EigDMxZ> EigDPQRZ; // Complex.
 
 // Definition of arpackSolver class.
 
-template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
-         typename SLV>
+// RC: Real or Complex.
+// FD: Float or Double.
+// EM: Eigen Matrix (sparse or dense).
+// SLV: Solver.
+template<typename RC, typename FD, typename EM, typename SLV>
 class arpackSolver {
+  // Nested typedef.
+
+  typedef Eigen::Map<Eigen::Matrix<RC, Eigen::Dynamic, 1>> EV;
+  typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, 1> EigVecZ;
+
   // Public methods.
 
   public:
@@ -186,7 +177,7 @@ class arpackSolver {
       // Create matrix from file.
 
       M = Eigen::SparseMatrix<RC>(n, m); // Set matrice dimensions.
-      vector<ET> triplets;
+      vector<Eigen::Triplet<RC>> triplets;
       a_uint nnz = Mij.size();
       triplets.reserve(nnz);
       for (size_t k = 0; k < nnz; k++) triplets.emplace_back(i[k], j[k], Mij[k]);
@@ -214,13 +205,17 @@ class arpackSolver {
       return 0;
     };
 
-    int solve(EM & A, EM & B) {
+    int solve(EM & A, EM const * B = nullptr) {
+      if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+
       if (verbose == 3) {
         cout << endl << "arpackSolver:" << endl;
         cout << endl << "A:" << endl;
         cout << endl <<  A   << endl;
-        cout << endl << "B:" << endl;
-        cout << endl <<  B   << endl;
+        if (B) {
+          cout << endl << "B:" << endl;
+          cout << endl << *B   << endl;
+        }
       }
       nbDim = A.rows();
 
@@ -272,7 +267,10 @@ class arpackSolver {
       return 0;
     };
 
-    int checkEigVec(EM const & A, EM const & B) {
+    int checkEigVec(EM const & A, EM const * B = nullptr, double const * diffTol = nullptr) {
+      if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+      double dTol = !diffTol ? sqrt(tol) : *diffTol;
+
       // Check eigen vectors.
 
       string rs = schur ? "Schur" : "Ritz";
@@ -295,17 +293,17 @@ class arpackSolver {
         }
 
         EigVecZ left = A.template cast<complex<double>>() * V;
-        EigVecZ right = stdPb ? V : B.template cast<complex<double>>() * V;
+        EigVecZ right = stdPb ? V : B->template cast<complex<double>>() * V;
         right *= lambda;
         EigVecZ diff = left - right;
-        if (diff.norm() > sqrt(tol)) {
+        if (diff.norm() > dTol) {
           cerr << endl << "Error: bad vector " << setw(3) << i << " (norm " << V.norm() << "):" << endl;
           cerr << endl << V << endl;
           cerr << endl << "Error: left side (A*V - norm " << left.norm() << "):" << endl;
           cerr << endl << left << endl;
           cerr << endl << "Error: right side (lambda*" << (stdPb ? "" : "B*") << "V - norm " << right.norm() << "):" << endl;
           cerr << endl << right << endl;
-          cerr << endl << "Error: diff (norm " << diff.norm() << ", sqrt(tol) " << sqrt(tol) << "):" << endl;
+          cerr << endl << "Error: diff (norm " << diff.norm() << ", tol " << dTol << "):" << endl;
           cerr << endl << diff << endl;
           return 1;
         }
@@ -313,7 +311,7 @@ class arpackSolver {
           if (verbose >= 1) {
             cout << endl << "arpackSolver:" << endl;
             cout << endl << rs << " value/vector " << setw(3) << i << ": check OK";
-            cout << ", diff (norm " << diff.norm() << ", sqrt(tol) " << sqrt(tol) << ")" << endl;
+            cout << ", diff (norm " << diff.norm() << ", tol " << dTol << ")" << endl;
           }
         }
       }
@@ -486,7 +484,7 @@ class arpackSolver {
       }
     };
 
-    int eupd(bool rvec, char const * howmny, a_int const * select, float * z,
+    int eupd(a_int rvec, char const * howmny, a_int const * select, float * z,
              a_int ldz, char const * bMat, a_int nbDim, char const * which, float * resid, float * v,
              a_int ldv, a_int * iparam, a_int * ipntr, float * workd, float * workl, a_int lworkl, float * rwork,
              a_int & info) {
@@ -523,7 +521,7 @@ class arpackSolver {
       return 0;
     };
 
-    int eupd(bool rvec, char const * howmny, a_int const * select, double * z,
+    int eupd(a_int rvec, char const * howmny, a_int const * select, double * z,
              a_int ldz, char const * bMat, a_int nbDim, char const * which, double * resid, double * v,
              a_int ldv, a_int * iparam, a_int * ipntr, double * workd, double * workl, a_int lworkl, double * rwork,
              a_int & info) {
@@ -560,7 +558,7 @@ class arpackSolver {
       return 0;
     };
 
-    int eupd(bool rvec, char const * howmny, a_int const * select, complex<float> * z,
+    int eupd(a_int rvec, char const * howmny, a_int const * select, complex<float> * z,
              a_int ldz, char const * bMat, a_int nbDim, char const * which, complex<float> * resid, complex<float> * v,
              a_int ldv, a_int * iparam, a_int * ipntr, complex<float> * workd, complex<float> * workl, a_int lworkl, float * rwork,
              a_int & info) {
@@ -584,7 +582,7 @@ class arpackSolver {
       return 0;
     };
 
-    int eupd(bool rvec, char const * howmny, a_int const * select, complex<double> * z,
+    int eupd(a_int rvec, char const * howmny, a_int const * select, complex<double> * z,
              a_int ldz, char const * bMat, a_int nbDim, char const * which, complex<double> * resid, complex<double> * v,
              a_int ldv, a_int * iparam, a_int * ipntr, complex<double> * workd, complex<double> * workl, a_int lworkl, double * rwork,
              a_int & info) {
@@ -608,19 +606,21 @@ class arpackSolver {
       return 0;
     };
 
-    int setMode(int const mode, EM const & A, EM const & B, SLV & solver) {
+    int setMode(int const mode, EM const & A, EM const * B, SLV & solver) {
       int rc = 1;
 
       if (mode == 1) {
         rc = 0;
       }
       else if (mode == 2 || mode == 3) {
+        if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+
         if (mode == 2) { // Invert mode.
-          solver.compute(B);
+          solver.compute(*B);
         }
         else { // Shift invert mode.
           RC sigma; makeSigma(sigma);
-          auto S = A - sigma*B;
+          auto S = A - sigma*(*B);
           solver.compute(S);
         }
 
@@ -649,7 +649,9 @@ class arpackSolver {
       }
     };
 
-    int solve(EM const & A, EM const & B, SLV & solver) {
+    int solve(EM const & A, EM const * B, SLV & solver) {
+      if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+
       // Arpack set up.
 
       // Note: some in/out parameters passed to d[sn][ae]upd are set to 0. before use.
@@ -727,7 +729,7 @@ class arpackSolver {
             Y = solver.solve(YY); // Y = B^-1 * A * X.
           }
           else if (iparam[6] == 3) {
-            auto Z = B * X;      // Z = B * X.
+            auto Z = (*B) * X;   // Z = B * X.
             Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
           }
         }
@@ -748,9 +750,9 @@ class arpackSolver {
           }
         }
         else if (ido == 2) {
-          if      (iparam[6] == 1) Y =     X; // Y = I * X.
-          else if (iparam[6] == 2) Y = B * X; // Y = B * X.
-          else if (iparam[6] == 3) Y = B * X; // Y = B * X.
+          if      (iparam[6] == 1) Y =        X; // Y = I * X.
+          else if (iparam[6] == 2) Y = (*B) * X; // Y = B * X.
+          else if (iparam[6] == 3) Y = (*B) * X; // Y = B * X.
         }
         else if (ido != 99) {cerr << "Error: unexpected ido " << ido << " - KO" << endl; return 1;}
 
@@ -762,7 +764,7 @@ class arpackSolver {
       // Get arpack results (computed eigen values and vectors).
 
       nbIt = iparam[2]; // Actual number of iterations.
-      bool rvec = true;
+      a_int rvec = 1;
       char const * howmnyA = "A"; // Ritz vectors.
       char const * howmnyP = "P"; // Schur vectors.
       char const * howmny = schur ? howmnyP : howmnyA;
@@ -841,15 +843,20 @@ class arpackSolver {
     RC * v;     // Saved: enable restart from previous solve.
 };
 
-template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
-         typename SLV>
-class arpackItrSolver: public arpackSolver<RC, FD, EM, ET, EV, SLV> {
+// Definition of arpackItrSolver class: specialization of arpackSolver using iterative solvers.
+// Note: Eigen provides iterative solvers only for sparse matrices.
+
+// RC: Real or Complex.
+// FD: Float or Double.
+// EM: Eigen Matrix (sparse only, not dense).
+// SLV: Solver.
+template<typename RC, typename FD, typename EM, typename SLV>
+class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
   // Public methods.
 
   public:
 
-    arpackItrSolver(): arpackSolver<RC, FD, EM, ET, EV, SLV>() {
+    arpackItrSolver(): arpackSolver<RC, FD, EM, SLV>() {
       slvItrTol = unique_ptr<double>(new double); *slvItrTol = 1.e-6;
       slvItrMaxIt = unique_ptr<int>(new int); *slvItrMaxIt = 100;
       slvItrILUDropTol = unique_ptr<double>(new double); *slvItrILUDropTol = 1.;
@@ -908,15 +915,20 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, ET, EV, SLV> {
     unique_ptr<int>    slvItrILUFillFactor;
 };
 
-template<typename RC, typename FD,
-         typename EM, typename ET, typename EV,
-         typename SLV>
-class arpackDrtSolver: public arpackSolver<RC, FD, EM, ET, EV, SLV> {
+// Definition of arpackDrtSolver class: specialization of arpackSolver using direct solvers.
+// Note: Eigen provides direct solvers for both sparse and dense matrices.
+
+// RC: Real or Complex.
+// FD: Float or Double.
+// EM: Eigen Matrix (sparse or dense).
+// SLV: Solver.
+template<typename RC, typename FD, typename EM, typename SLV>
+class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
   // Public methods.
 
   public:
 
-    arpackDrtSolver(): arpackSolver<RC, FD, EM, ET, EV, SLV>() {
+    arpackDrtSolver(): arpackSolver<RC, FD, EM, SLV>() {
       slvDrtPvtThd = unique_ptr<double>(new double); *slvDrtPvtThd = 1.e-6;
       slvDrtOffset = unique_ptr<double>(new double); *slvDrtOffset = 0.;
       slvDrtScale = unique_ptr<double>(new double); *slvDrtScale = 1.;
