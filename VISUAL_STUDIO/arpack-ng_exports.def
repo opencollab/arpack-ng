@@ -5,7 +5,6 @@ EXPORTS
 	cmout_
 	cvout_
 	dgetv0_
-	dlaqrb_
 	dmout_
 	dnaitr_
 	dnapps_
