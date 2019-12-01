@@ -49,6 +49,8 @@ jobs:
           - mingw-w64
           - mingw-w64-tools
           - mingw-w64-x86-64-dev
+          - mingw-w64-x86-64-gcc
+          - mingw-w64-x86-64-gcc-fortran
     script: |
       pwd \
       && \
