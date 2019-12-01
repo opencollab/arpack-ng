@@ -50,6 +50,7 @@ jobs:
           - mingw-w64-tools
           - mingw-w64-x86-64-dev
           - mingw-w64-x86-64-gcc
+          - mingw-w64-x86-64-gcc-libgfortran
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
     script: |
