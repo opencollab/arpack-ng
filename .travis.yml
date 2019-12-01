@@ -63,6 +63,10 @@ jobs:
       cmake -G "Unix Makefiles" .. \
       && \
       make -j \
+      && \
+      make install \
+      && \
+      $env:Path += "C:\Program Files (x86)\LAPACK\lib" \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
