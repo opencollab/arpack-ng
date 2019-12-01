@@ -53,6 +53,8 @@ jobs:
       cmake --help \
       && \
       make --help \
+      && \
+      mkdir build && cd build \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
