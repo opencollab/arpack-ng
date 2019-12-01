@@ -23,7 +23,6 @@ addons:
       - diffutils
       - findutils
       - libeigen3-dev
-      - mingw-w64
 
 services:
   - docker
@@ -44,6 +43,10 @@ jobs:
   # windows
   - stage: windows
     dist: windows
+    addons:
+      apt:
+        packages:
+          - mingw-w64
     script: |
       pwd \
       &&
