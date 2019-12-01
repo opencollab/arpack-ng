@@ -54,9 +54,9 @@ jobs:
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
     env:
-      - FC="/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gfortran"
-      - CC="/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gcc"
-      - CXX="/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++"
+      - FC=x86_64-w64-mingw32-gfortran
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
     script: |
       pwd \
       && \
