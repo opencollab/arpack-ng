@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: windows
   - name: precise
   - name: trusty
   - name: xenial
@@ -39,6 +40,14 @@ stages:
 
 jobs:
   include:
+  # windows
+  - stage: windows
+    dist: windows
+    install: choco install mingw
+    script: |
+      pwd          \
+      &&
+      cmake --help \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
