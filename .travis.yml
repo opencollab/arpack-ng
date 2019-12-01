@@ -60,7 +60,7 @@ jobs:
       && \
       mkdir build && cd build \
       && \
-      cmake -G "Unix Makefiles" .. \
+      cmake -G "Unix Makefiles" $TRAVIS_BUILD_DIR \
       && \
       make -j \
       && \
