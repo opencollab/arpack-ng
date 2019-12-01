@@ -23,6 +23,7 @@ addons:
       - diffutils
       - findutils
       - libeigen3-dev
+      - mingw-w64
 
 services:
   - docker
@@ -48,9 +49,7 @@ jobs:
       &&
       cmake --help \
       &&
-      choco install mingw -y \
-      &&
-      mingw32-make.exe --help \
+      mingw64-make.exe --help \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
