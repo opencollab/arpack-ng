@@ -47,6 +47,8 @@ jobs:
       apt:
         packages:
           - mingw-w64
+          - mingw-w64-tools
+          - mingw-w64-x86-64-dev
     script: |
       pwd \
       && \
