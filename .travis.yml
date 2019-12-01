@@ -49,9 +49,9 @@ jobs:
           - mingw-w64
     script: |
       pwd \
-      &&
+      && \
       cmake --help \
-      &&
+      && \
       make --help \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
