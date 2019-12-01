@@ -43,7 +43,6 @@ jobs:
   # windows
   - stage: windows
     dist: windows
-    install: choco install mingw
     script: |
       pwd          \
       &&
