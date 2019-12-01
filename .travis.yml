@@ -57,6 +57,12 @@ jobs:
       mkdir build && cd build \
       && \
       git clone http://github.com/Reference-LAPACK/lapack-release \
+      && \
+      mkdir build && cd build \
+      && \
+      cmake -G "Unix Makefiles" .. \
+      && \
+      make -j \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
