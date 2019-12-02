@@ -54,9 +54,9 @@ jobs:
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
     env:
-      - FC=x86_64-w64-mingw32-gfortran
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
+      - FC=mingw-w64-gfortran
+      - CC=mingw-w64-gcc
+      - CXX=mingw-w64-g++
     script: |
       pwd \
       && \
