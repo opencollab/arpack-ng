@@ -58,9 +58,9 @@ jobs:
       - CC=gcc
       - CXX=g++
     script: |
-      pwd \
-      && \
       ls /c/msys64/usr/bin \
+      && \
+      pwd \
       && \
       cmake --help \
       && \
