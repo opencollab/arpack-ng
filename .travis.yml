@@ -60,6 +60,8 @@ jobs:
     script: |
       pwd \
       && \
+      ls /c/msys64/usr/bin \
+      && \
       cmake --help \
       && \
       make --help \
