@@ -64,6 +64,10 @@ jobs:
       && \
       make --help \
       && \
+      ls /c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/opt/bin \
+      && \
+      ls /c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/opt/lib \
+      && \
       mkdir build && cd build \
       && \
       git clone http://github.com/Reference-LAPACK/lapack-release \
