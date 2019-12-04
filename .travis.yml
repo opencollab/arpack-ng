@@ -53,10 +53,6 @@ jobs:
           - mingw-w64-x86-64-gcc-libgfortran
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
-    env:
-      - FC=gfortran
-      - CC=gcc
-      - CXX=g++
     script: |
       export PATH=/C/tools/msys64/mingw64/bin:$PATH \
       && \
