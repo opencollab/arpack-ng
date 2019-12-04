@@ -58,7 +58,7 @@ jobs:
       - CC=gcc
       - CXX=g++
     script: |
-      ls /c/msys64/usr/bin \
+      export PATH=/C/tools/msys64/mingw64/bin:$PATH \
       && \
       pwd \
       && \
