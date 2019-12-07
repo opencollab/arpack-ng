@@ -46,16 +46,16 @@ jobs:
     addons:
       apt:
         packages:
-          - mingw-w64
-          - mingw-w64-x86-64-tools
-          - mingw-w64-x86-64-dev
-          - mingw-w64-x86-64-gcc
-          - mingw-w64-x86-64-gcc-dev
-          - mingw-w64-x86-64-gcc-fortran
-          - mingw-w64-x86-64-gcc-fortran-dev
-          - mingw-w64-x86-64-gcc-libgfortran
-          - mingw-w64-x86-64-gcc-libgfortran-dev
-          - mingw-w64-x86-64-headers
+          - mingw-w32
+          - mingw-w32-tools
+          - mingw-w32-dev
+          - mingw-w32-gcc
+          - mingw-w32-gcc-dev
+          - mingw-w32-gcc-fortran
+          - mingw-w32-gcc-fortran-dev
+          - mingw-w32-gcc-libgfortran
+          - mingw-w32-gcc-libgfortran-dev
+          - mingw-w32-headers
     script: |
       pwd \
       && \
