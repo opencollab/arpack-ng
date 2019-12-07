@@ -53,9 +53,6 @@ jobs:
           - mingw-w64-x86-64-gcc-libgfortran
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
-    env:
-      PATH="C:\tools\msys64\mingw64\bin:$PATH"
-      PATH="C:\Program Files (x86)\LAPACK\lib:$PATH"
     script: |
       pwd \
       && \
