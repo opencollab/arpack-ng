@@ -53,9 +53,10 @@ jobs:
           - mingw-w64-x86-64-gcc-libgfortran
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
+    env:
+      PATH="C:\tools\msys64\mingw64\bin:$PATH"
+      PATH="C:\Program Files (x86)\LAPACK\lib:$PATH"
     script: |
-      $env:Path += "C:\tools\msys64\mingw64\bin" \
-      && \
       pwd \
       && \
       cmake --help \
@@ -73,8 +74,6 @@ jobs:
       make -j \
       && \
       make install \
-      && \
-      $env:Path += "C:\Program Files (x86)\LAPACK\lib" \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
