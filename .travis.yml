@@ -54,7 +54,7 @@ jobs:
           - mingw-w64-x86-64-gcc-fortran
           - mingw-w64-x86-64-headers
     script: |
-      $env:Path += "C:\tools\msys64\mingw64\bin" \
+      $env:Path += "C:\MinGW\bin" \
       && \
       pwd \
       && \
