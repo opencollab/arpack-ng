@@ -57,8 +57,6 @@ jobs:
           - mingw-w64-x86-64-gcc-libgfortran-dev
           - mingw-w64-x86-64-headers
     script: |
-      cmd.exe //C "RefreshEnv.cmd" \
-      && \
       pwd \
       && \
       cmake --help \
