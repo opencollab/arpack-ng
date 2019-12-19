@@ -42,7 +42,7 @@ jobs:
   include:
   # windows
   - stage: windows
-    dist: windows
+    os: windows
     addons:
       apt:
         packages:
