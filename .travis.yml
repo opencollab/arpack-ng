@@ -60,12 +60,6 @@ jobs:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
     script: |
-      pwd \
-      && \
-      cmake --help \
-      && \
-      make --help \
-      && \
       mkdir build && cd build \
       && \
       git clone http://github.com/Reference-LAPACK/lapack-release \
@@ -74,9 +68,9 @@ jobs:
       && \
       cmake -G "Unix Makefiles" $TRAVIS_BUILD_DIR \
       && \
-      make -j \
+      mingw32-make -j \
       && \
-      make install \
+      mingw32-make install \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
