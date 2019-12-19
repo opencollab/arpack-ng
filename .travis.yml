@@ -60,6 +60,8 @@ jobs:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
     script: |
+      cmake --help \
+      ; \
       mkdir build; cd build \
       ; \
       git clone http://github.com/Reference-LAPACK/lapack-release \
