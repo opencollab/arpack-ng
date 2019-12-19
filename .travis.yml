@@ -56,6 +56,9 @@ jobs:
           - mingw-w64-x86-64-gcc-libgfortran
           - mingw-w64-x86-64-gcc-libgfortran-dev
           - mingw-w64-x86-64-headers
+    before_install:
+      - choco install -y mingw
+      - choco upgrade --no-progress -y mingw
     script: |
       pwd \
       && \
