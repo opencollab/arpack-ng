@@ -43,22 +43,11 @@ jobs:
   # windows
   - stage: windows
     os: windows
-    addons:
-      apt:
-        packages:
-          - mingw-w64
-          - mingw-w64-x86-64-tools
-          - mingw-w64-x86-64-dev
-          - mingw-w64-x86-64-gcc
-          - mingw-w64-x86-64-gcc-dev
-          - mingw-w64-x86-64-gcc-fortran
-          - mingw-w64-x86-64-gcc-fortran-dev
-          - mingw-w64-x86-64-gcc-libgfortran
-          - mingw-w64-x86-64-gcc-libgfortran-dev
-          - mingw-w64-x86-64-headers
     before_install:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
+      - choco install -y mingw-gcc
+      - choco install -y mingw-gfortran
     script: |
       cmake --help \
       ; \
