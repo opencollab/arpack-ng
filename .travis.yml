@@ -46,8 +46,6 @@ jobs:
     before_install:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
-      - choco install -y mingw-gcc
-      - choco install -y mingw-gfortran
     script: |
       cmake --help \
       ; \
