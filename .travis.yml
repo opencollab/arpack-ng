@@ -44,12 +44,8 @@ jobs:
   - stage: windows
     os: windows
     before_install:
-      - choco install -y mingw
-      - choco upgrade --no-progress -y mingw
-    env:
-      - CMAKE_MAKE_PROGRAM=mingw32-make
-      - CMAKE_Fortran_COMPILER=mingw32-gfortan
-      - CMAKE_C_COMPILER=mingw32-gcc
+      - choco install -y msys2
+      - choco upgrade --no-progress -y msys2
     script: |
       cmake --help \
       ; \
@@ -61,9 +57,9 @@ jobs:
       ; \
       cmake -G "MinGW Makefiles" $TRAVIS_BUILD_DIR \
       ; \
-      mingw32-make -j \
+      make -j \
       ; \
-      mingw32-make install \
+      make install \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
