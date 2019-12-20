@@ -46,6 +46,9 @@ jobs:
     before_install:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
+    env:
+      - FC=mingw32-gfortan
+      - CC=mingw32-gcc
     script: |
       cmake --help \
       ; \
