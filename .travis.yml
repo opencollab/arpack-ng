@@ -47,6 +47,8 @@ jobs:
       - choco install -y mingw
       - choco upgrade --no-progress -y mingw
     script: |
+      get-childitem C:\ -name *gcc* -recurse \
+      ; \
       cmake --help \
       ; \
       mkdir build; cd build \
