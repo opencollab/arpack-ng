@@ -59,7 +59,7 @@ jobs:
       ; \
       git clone http://github.com/Reference-LAPACK/lapack-release \
       ; \
-      mkdir build; cd build \
+      cd lapack-release; mkdir build; cd build \
       ; \
       $shell cmake --help \
       ; \
