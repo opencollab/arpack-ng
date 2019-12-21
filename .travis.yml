@@ -63,7 +63,7 @@ jobs:
       ; \
       $shell cmake --help \
       ; \
-      $shell cmake .. \
+      $shell cmake -G "MinGW Makefiles" .. \
       ; \
       $shell make -j \
       ; \
