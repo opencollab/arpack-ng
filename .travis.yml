@@ -46,6 +46,7 @@ jobs:
     before_install:
       - choco install -y msys2
       - choco upgrade --no-progress -y msys2
+      - C:/tools/msys64/msys2_shell.cmd pacman -S --noconfirm mingw-w64-x86_64-toolchain
     script: |
       cmake --help \
       ; \
