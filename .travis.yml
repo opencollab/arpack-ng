@@ -55,15 +55,15 @@ jobs:
     env:
       - PATH=/C/tools/msys64/mingw64/bin:$PATH
     script: |
-      cmake --help \
-      ; \
       mkdir build; cd build \
       ; \
       git clone http://github.com/Reference-LAPACK/lapack-release \
       ; \
       mkdir build; cd build \
       ; \
-      $shell cmake -G "MSYS Makefiles" $TRAVIS_BUILD_DIR \
+      $shell cmake --help \
+      ; \
+      $shell cmake .. \
       ; \
       $shell make -j \
       ; \
