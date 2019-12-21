@@ -53,9 +53,6 @@ jobs:
       - $msys2 pacman --sync --noconfirm mingw-w64-x86_64-toolchain
     env:
       - PATH=/C/tools/msys64/mingw64/bin:$PATH
-      - CMAKE_MAKE_PROGRAM=mingw64-make
-      - CMAKE_Fortran_COMPILER=mingw64-gfortran
-      - CMAKE_C_COMPILER=mingw64-gcc
     script: |
       cmake --help \
       ; \
