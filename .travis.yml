@@ -62,11 +62,11 @@ jobs:
       ; \
       mkdir build; cd build \
       ; \
-      cmake -G "MSYS Makefiles" $TRAVIS_BUILD_DIR \
+      $msys2 cmake -G "MSYS Makefiles" $TRAVIS_BUILD_DIR \
       ; \
-      make -j \
+      $msys2 make -j \
       ; \
-      make install \
+      $msys2 make install \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
