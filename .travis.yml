@@ -46,7 +46,16 @@ jobs:
     before_install:
       - choco install -y msys2
       - choco upgrade --no-progress -y msys2
-      - C:/tools/msys64/msys2_shell.cmd pacman -S --noconfirm mingw-w64-x86_64-toolchain
+      - export msys2='cmd //C RefreshEnv.cmd '
+      - export msys2+='& set MSYS=winsymlinks:nativestrict '
+      - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start '
+      - export msys2+="-msys2 -c \$\* --"
+      - $msys2 pacman --sync --noconfirm mingw-w64-x86_64-toolchain
+    env:
+      - PATH=/C/tools/msys64/mingw64/bin:$PATH
+      - CMAKE_MAKE_PROGRAM=mingw64-make
+      - CMAKE_Fortran_COMPILER=mingw64-gfortran
+      - CMAKE_C_COMPILER=mingw64-gcc
     script: |
       cmake --help \
       ; \
