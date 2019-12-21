@@ -49,6 +49,7 @@ jobs:
       - export msys2='cmd //C RefreshEnv.cmd '
       - export msys2+='& set MSYS=winsymlinks:nativestrict '
       - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start '
+      - export shell="$msys2 -mingw64 -full-path -here -c \$\* --"
       - export msys2+="-msys2 -c \$\* --"
       - $msys2 pacman --sync --noconfirm mingw-w64-x86_64-toolchain
     env:
@@ -62,11 +63,11 @@ jobs:
       ; \
       mkdir build; cd build \
       ; \
-      $msys2 cmake -G "MSYS Makefiles" $TRAVIS_BUILD_DIR \
+      $shell cmake -G "MSYS Makefiles" $TRAVIS_BUILD_DIR \
       ; \
-      $msys2 make -j \
+      $shell make -j \
       ; \
-      $msys2 make install \
+      $shell make install \
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
