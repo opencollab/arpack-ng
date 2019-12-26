@@ -51,7 +51,7 @@ jobs:
       - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start '
       - export shell="$msys2 -mingw64 -full-path -here -c \$\* --"
       - export msys2+="-msys2 -c \$\* --"
-      - $msys2 pacman --sync --noconfirm mingw-w64-x86_64-toolchain
+      - $msys2 pacman --sync --noconfirm mingw-w64-x86_64-toolchain cmake
     env:
       - PATH=/C/tools/msys64/mingw64/bin:$PATH
     script: |
@@ -63,7 +63,7 @@ jobs:
       ; \
       $shell cmake --help \
       ; \
-      $shell "cmake -G \"MinGW Makefiles\" .." \
+      $shell cmake .. \
       ; \
       $shell make -j \
       ; \
