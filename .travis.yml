@@ -63,7 +63,7 @@ jobs:
       ; \
       $shell cmake --help \
       ; \
-      $shell cmake .. \
+      $shell CMAKE_MAKE_PROGRAM=mingw64-make FC=mingw64-gfortran CC=mingw64-gcc cmake .. \
       ; \
       $shell make -j \
       ; \
