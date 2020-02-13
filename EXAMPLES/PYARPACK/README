@@ -1,0 +1,59 @@
+pyarpack: python binding based on Boost.Python.Numpy used to expose arpack C++ API
+
+Installation:
+-------------
+
+Python2: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON2=ON                              ..
+         ~/arpack-ng/build> make all test
+Note: Boost must have been compiled for Python2.
+
+Python3: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX="3" ..
+         ~/arpack-ng/build> make all test
+Note: Boost must have been compiled for Python3.
+
+Usage:
+------
+
+>> export PYTHONPATH="/tmp/local/lib/pyarpack:${PYTHONPATH}"
+>> python
+>> import pyarpack
+>> help(pyarpack)
+
+You can use sparse or dense matrices, and, play with iterative or direct mode solvers (CG, LU, ...):
+
+1. choose arpack solver with a given mode solver
+   1.1. if you need to handle sparse matrices
+        >> from pyarpack import sparseBiCG as pyarpackSlv
+   1.2. if you need to handle dense matrices
+        >> from pyarpack import denseBiCG as pyarpackSlv
+2. choose arpack data type (float, double, ...)
+   >> arpackSlv = pyarpackSlv.double()
+3. solve the eigen problem
+   >> arpackSlv.solve(A, B)
+4. get eigen values and vectors
+   >> print(arpackSlv.vec)
+   >> print(arpackSlv.val)
+
+You can also:
+
+1. restart a solve from the workspace of a previous solve: check out pyarpackRestart.py.in.
+2. compute eigen and / or schur vectors.
+
+Note:
+
+1. arpack data type (float, double, ...) must be consistent with A/B numpy dtypes (float32, float64, ...).
+2. sparse matrices must be provided in coo format (n, i, j, Mij), that is, as a tuple where:
+   2.1. n is an integer.
+   2.2. i, j, Mij are 1 x nnz numpy arrays.
+3. dense  matrices must be provided in raw format (Mij, rowOrdered), that is, as a tuple where:
+   3.1. Mij is an n x n numpy array.
+   3.2. rowOrdered is a boolean (column ordered if False).
+4. arpack mode solver are provided by eigen:
+   4.1. when solver is iterative, A and B can be sparse only.
+   4.2. when solver is direct,    A and B can be sparse or dense.
+
+Examples:
+---------
+
+~/arpack-ng> find . -name *.py.in (template files from which python scripts will result)
+

@@ -178,13 +178,17 @@ jobs:
        apt-get -y install build-essential                                                 && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake           && \
        apt-get -y install libblas-dev liblapack-dev                                       && \
+       apt-get -y install python-minimal python-pip python-numpy                          && \
+       apt-get -y install libboost-python-dev libboost-numpy-dev                          && \
+       apt-get -y install libeigen3-dev                                                   && \
+       pip install numpy                                                                  && \
        cd /tmp                                                                            && \
        cd arpack-ng                                                                       && \
        git status                                                                         && \
        git log -2                                                                         && \
        sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
        mkdir -p build && cd build                                                         && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                           && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DPYTHON2=ON ..                              && \
        export VERBOSE=1                                                                   && \
        make all                                                                           && \
        make test                                                                          && \
