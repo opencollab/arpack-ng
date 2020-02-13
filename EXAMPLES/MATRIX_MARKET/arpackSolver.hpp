@@ -7,7 +7,6 @@
 #include <string>
 #include <sstream> // stringstream.
 #include <fstream> // [io]fstream.
-#include <memory> // unique_ptr.
 #include <chrono>
 #include <iomanip> // setw.
 #include <cassert>
@@ -121,6 +120,11 @@ typedef Eigen::HouseholderQR<EigDMxZ> EigDPQRZ; // Complex.
 
 // Definition of arpackSolver class.
 
+typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, 1> EigVecZ;
+
+typedef vector<complex<double>> StdVecZ;
+typedef vector<EigVecZ> StdVecEVZ;
+
 // RC: Real or Complex.
 // FD: Float or Double.
 // EM: Eigen Matrix (sparse or dense).
@@ -130,14 +134,12 @@ class arpackSolver {
   // Nested typedef.
 
   typedef Eigen::Map<Eigen::Matrix<RC, Eigen::Dynamic, 1>> EV;
-  typedef Eigen::Matrix<complex<double>, Eigen::Dynamic, 1> EigVecZ;
 
   // Public methods.
 
   public:
 
     arpackSolver() {
-      stdPb = true;
       symPb = true;
       nbEV = 1;
       nbCV = 2*nbEV+1;
@@ -150,6 +152,7 @@ class arpackSolver {
       schur = false;
       verbose = 0;
 
+      stdPb = true;
       mode = 1;
       nbIt = 0;
       imsTime = 0.;
@@ -205,9 +208,27 @@ class arpackSolver {
       return 0;
     };
 
-    int solve(EM & A, EM const * B = nullptr) {
-      if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+    void dumpParameters() {
+      if (verbose >= 1) {
+        cout << endl << "arpackSolver:" << endl;
+        cout << endl << "symPb: " << symPb << endl;
+        cout << endl << "nbEV: " << nbEV << endl;
+        cout << endl << "nbCV: " << nbCV << endl;
+        cout << endl << "tol: " << tol << endl;
+        cout << endl << "sigmaReal: " << sigmaReal << endl;
+        cout << endl << "sigmaImag: " << sigmaImag << endl;
+        cout << endl << "dumpToFile: " << dumpToFile << endl;
+        cout << endl << "restartFromFile: " << restartFromFile << endl;
+        cout << endl << "mag: " << mag << endl;
+        cout << endl << "maxIt: " << maxIt << endl;
+        cout << endl << "schur: " << schur << endl;
+      }
+    };
 
+    int solve(EM & A, EM const * B = nullptr) {
+      stdPb = !B ? true : false;
+
+      dumpParameters();
       if (verbose == 3) {
         cout << endl << "arpackSolver:" << endl;
         cout << endl << "A:" << endl;
@@ -222,8 +243,8 @@ class arpackSolver {
       // If needed, transform the initial problem into a new one that arpack can handle.
 
       auto eps = numeric_limits<double>::epsilon();
-      bool shiftReal = (shiftReal && fabs(sigmaReal) > eps) ? true : false;
-      bool shiftImag = (shiftImag && fabs(sigmaImag) > eps) ? true : false;
+      bool shiftReal = (fabs(sigmaReal) > eps) ? true : false;
+      bool shiftImag = (fabs(sigmaImag) > eps) ? true : false;
       bool backTransform = false;
       mode = 0;
       if (stdPb) {
@@ -268,7 +289,7 @@ class arpackSolver {
     };
 
     int checkEigVec(EM const & A, EM const * B = nullptr, double const * diffTol = nullptr) {
-      if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
+      stdPb = !B ? true : false;
       double dTol = !diffTol ? sqrt(tol) : *diffTol;
 
       // Check eigen vectors.
@@ -801,13 +822,14 @@ class arpackSolver {
 
     virtual int initSolver(SLV & solver) = 0;
 
+    virtual void dumpAllParameters() = 0;
+
   // Public members.
 
   public:
 
     // Arpack parameters.
 
-    bool stdPb; // Standard or generalized (= not standard).
     bool symPb; // Symmetric problem.
     a_int nbEV;
     a_int nbCV;
@@ -822,8 +844,9 @@ class arpackSolver {
 
     // Arpack outputs.
 
-    vector<complex<double>> val; // Eigen values.
-    vector<EigVecZ> vec; // Eigen vectors.
+    bool stdPb; // Standard or generalized (= not standard).
+    StdVecZ val; // Eigen values.
+    StdVecEVZ vec; // Eigen vectors.
     int mode;
     int nbIt;
     double imsTime; // Init mode solver time.
@@ -857,17 +880,28 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
   public:
 
     arpackItrSolver(): arpackSolver<RC, FD, EM, SLV>() {
-      slvItrTol = unique_ptr<double>(new double); *slvItrTol = 1.e-6;
-      slvItrMaxIt = unique_ptr<int>(new int); *slvItrMaxIt = 100;
-      slvItrILUDropTol = unique_ptr<double>(new double); *slvItrILUDropTol = 1.;
-      slvItrILUFillFactor = unique_ptr<int>(new int); *slvItrILUFillFactor = 2;
+      slvTol = 1.e-6;
+      slvMaxIt = 100;
+      slvILUDropTol = 1.;
+      slvILUFillFactor = 2;
+    };
+
+    void dumpAllParameters() {
+      this->dumpParameters();
+      if (this->verbose >= 1) {
+        cout << endl << "arpackItrSolver:" << endl;
+        cout << endl << "slvTol: " << slvTol << endl;
+        cout << endl << "slvMaxIt: " << slvMaxIt << endl;
+        cout << endl << "slvILUDropTol: " << slvILUDropTol << endl;
+        cout << endl << "slvILUFillFactor: " << slvILUFillFactor << endl;
+      }
     };
 
     virtual int initSolver(Eigen::BiCGSTAB<EM> & solver) {
       // Solve with arpack using sparse matrices and iterative solvers.
 
-      if (slvItrTol)   solver.setTolerance(*slvItrTol);
-      if (slvItrMaxIt) solver.setMaxIterations(*slvItrMaxIt);
+      solver.setTolerance(slvTol);
+      solver.setMaxIterations(slvMaxIt);
 
       return 0;
     };
@@ -875,8 +909,8 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::ConjugateGradient<EM> & solver) {
       // Solve with arpack using sparse matrices and iterative solvers.
 
-      if (slvItrTol)   solver.setTolerance(*slvItrTol);
-      if (slvItrMaxIt) solver.setMaxIterations(*slvItrMaxIt);
+      solver.setTolerance(slvTol);
+      solver.setMaxIterations(slvMaxIt);
 
       return 0;
     };
@@ -884,10 +918,10 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::BiCGSTAB<EM, Eigen::IncompleteLUT<RC>> & solver) {
       // Solve with arpack using sparse matrices and iterative solvers.
 
-      if (slvItrTol)           solver.setTolerance(*slvItrTol);
-      if (slvItrMaxIt)         solver.setMaxIterations(*slvItrMaxIt);
-      if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
-      if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
+      solver.setTolerance(slvTol);
+      solver.setMaxIterations(slvMaxIt);
+      solver.preconditioner().setDroptol(slvILUDropTol);
+      solver.preconditioner().setFillfactor(slvILUFillFactor);
 
       return 0;
     };
@@ -895,10 +929,10 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::ConjugateGradient<EM, Eigen::Lower|Eigen::Upper, Eigen::IncompleteLUT<RC>> & solver) {
       // Solve with arpack using sparse matrices and iterative solvers.
 
-      if (slvItrTol)           solver.setTolerance(*slvItrTol);
-      if (slvItrMaxIt)         solver.setMaxIterations(*slvItrMaxIt);
-      if (slvItrILUDropTol)    solver.preconditioner().setDroptol(*slvItrILUDropTol);
-      if (slvItrILUFillFactor) solver.preconditioner().setFillfactor(*slvItrILUFillFactor);
+      solver.setTolerance(slvTol);
+      solver.setMaxIterations(slvMaxIt);
+      solver.preconditioner().setDroptol(slvILUDropTol);
+      solver.preconditioner().setFillfactor(slvILUFillFactor);
 
       return 0;
     };
@@ -909,10 +943,10 @@ class arpackItrSolver: public arpackSolver<RC, FD, EM, SLV> {
 
     // Iterative solvers parameters.
 
-    unique_ptr<double> slvItrTol;
-    unique_ptr<int>    slvItrMaxIt;
-    unique_ptr<double> slvItrILUDropTol;
-    unique_ptr<int>    slvItrILUFillFactor;
+    double slvTol; // Tolerance of the iterative mode solver.
+    int    slvMaxIt; // Maximum number of iterations of the iterative mode solver.
+    double slvILUDropTol; // Drop tolerance of the ILU preconditioner (if any) of the iterative mode solver.
+    int    slvILUFillFactor; // Fill factor of the ILU preconditioner (if any) of the iterative mode solver.
 };
 
 // Definition of arpackDrtSolver class: specialization of arpackSolver using direct solvers.
@@ -929,15 +963,25 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
   public:
 
     arpackDrtSolver(): arpackSolver<RC, FD, EM, SLV>() {
-      slvDrtPvtThd = unique_ptr<double>(new double); *slvDrtPvtThd = 1.e-6;
-      slvDrtOffset = unique_ptr<double>(new double); *slvDrtOffset = 0.;
-      slvDrtScale = unique_ptr<double>(new double); *slvDrtScale = 1.;
+      slvPvtThd = 1.e-6;
+      slvOffset = 0.;
+      slvScale = 1.;
+    };
+
+    void dumpAllParameters() {
+      this->dumpParameters();
+      if (this->verbose >= 1) {
+        cout << endl << "arpackDrtSolver:" << endl;
+        cout << endl << "slvPvtThd: " << slvPvtThd << endl;
+        cout << endl << "slvOffset: " << slvOffset << endl;
+        cout << endl << "slvScale: " << slvScale << endl;
+      }
     };
 
     virtual int initSolver(Eigen::SparseLU<EM, Eigen::COLAMDOrdering<int>> & solver) {
       // Solve with arpack using sparse matrices and direct solvers.
 
-      if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
+      solver.setPivotThreshold(slvPvtThd);
 
       return 0;
     };
@@ -945,7 +989,7 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::SparseQR<EM, Eigen::COLAMDOrdering<int>> & solver) {
       // Solve with arpack using sparse matrices and direct solvers.
 
-      if (slvDrtPvtThd) solver.setPivotThreshold(*slvDrtPvtThd);
+      solver.setPivotThreshold(slvPvtThd);
 
       return 0;
     };
@@ -953,7 +997,7 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::SimplicialLLT<EM, Eigen::Lower, Eigen::COLAMDOrdering<int>> & solver) {
       // Solve with arpack using sparse matrices and direct solvers.
 
-      if (slvDrtOffset && slvDrtScale) solver.setShift(*slvDrtOffset, *slvDrtScale);
+      solver.setShift(slvOffset, slvScale);
 
       return 0;
     };
@@ -961,7 +1005,7 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
     virtual int initSolver(Eigen::SimplicialLDLT<EM, Eigen::Lower, Eigen::COLAMDOrdering<int>> & solver) {
       // Solve with arpack using sparse matrices and direct solvers.
 
-      if (slvDrtOffset && slvDrtScale) solver.setShift(*slvDrtOffset, *slvDrtScale);
+      solver.setShift(slvOffset, slvScale);
 
       return 0;
     };
@@ -992,8 +1036,7 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
       if (this->mode == 1) return 0;
 
       solver = Eigen::FullPivLU<EM>(this->nbDim, this->nbDim);
-      solver.setThreshold(Eigen::Default);
-      if (slvDrtPvtThd) solver.setThreshold(*slvDrtPvtThd);
+      solver.setThreshold(slvPvtThd);
 
       return 0;
     };
@@ -1004,8 +1047,7 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
       if (this->mode == 1) return 0;
 
       solver = Eigen::FullPivHouseholderQR<EM>(this->nbDim, this->nbDim);
-      solver.setThreshold(Eigen::Default);
-      if (slvDrtPvtThd) solver.setThreshold(*slvDrtPvtThd);
+      solver.setThreshold(slvPvtThd);
 
       return 0;
     };
@@ -1036,9 +1078,9 @@ class arpackDrtSolver: public arpackSolver<RC, FD, EM, SLV> {
 
     // Direct solvers parameters.
 
-    unique_ptr<double> slvDrtPvtThd;
-    unique_ptr<double> slvDrtOffset;
-    unique_ptr<double> slvDrtScale;
+    double slvPvtThd; // Pivoting tolerance of the direct mode solver.
+    double slvOffset; // Cholesky offset (LLT, LDLT) of the direct mode solver.
+    double slvScale; // Cholesky scale (LLT, LDLT) of the direct mode solver.
 };
 
 #endif
