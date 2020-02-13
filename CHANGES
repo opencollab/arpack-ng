@@ -4,6 +4,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
 [ Franck Houssen ]
+ * [BUG FIX] iparam/ipntr sizes may change depending on cases.
  * pyarpack: python binding based on Boost.Python.Numpy exposing C++ API.
  * [CLEAN] arpackSolver API: more convenient, suppress template parameters when possible.
  * [BUG FIX] ICB using rvec/select: rvec/select turned to integer

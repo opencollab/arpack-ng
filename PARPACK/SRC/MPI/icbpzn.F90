@@ -18,7 +18,7 @@ subroutine pznaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   complex(kind=c_double_complex),   dimension(ldv, ncv),intent(out)   :: v
   integer(kind=c_int),              value,              intent(in)    :: ldv
   integer(kind=c_int),              dimension(11),      intent(inout) :: iparam
-  integer(kind=c_int),              dimension(11),      intent(out)   :: ipntr
+  integer(kind=c_int),              dimension(14),      intent(out)   :: ipntr
   complex(kind=c_double_complex),   dimension(3*n),     intent(out)   :: workd
   complex(kind=c_double_complex),   dimension(lworkl),  intent(out)   :: workl
   integer(kind=c_int),              value,              intent(in)    :: lworkl
@@ -54,7 +54,7 @@ subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   complex(kind=c_double_complex),   dimension(ldv, ncv),intent(out)   :: v
   integer(kind=c_int),              value,              intent(in)    :: ldv
   integer(kind=c_int),              dimension(11),      intent(inout) :: iparam
-  integer(kind=c_int),              dimension(11),      intent(out)   :: ipntr
+  integer(kind=c_int),              dimension(14),      intent(out)   :: ipntr
   complex(kind=c_double_complex),   dimension(3*n),     intent(out)   :: workd
   complex(kind=c_double_complex),   dimension(lworkl),  intent(out)   :: workl
   integer(kind=c_int),              value,              intent(in)    :: lworkl

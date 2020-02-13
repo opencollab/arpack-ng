@@ -10,6 +10,8 @@
 #include <chrono>
 #include <iomanip> // setw.
 #include <cassert>
+#include <vector>
+#include <type_traits> // is_same.
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
@@ -670,6 +672,21 @@ class arpackSolver {
       }
     };
 
+    int initPointerSize(a_int & iparamSz, a_int & ipntrSz, string const & aeupd) {
+      iparamSz = 11; ipntrSz = 14;
+      if (aeupd == "aupd") {
+        if (is_same<RC, double>::value && symPb) ipntrSz = 11;
+        if (is_same<RC,  float>::value && symPb) ipntrSz = 11;
+        return 0;
+      }
+      else if (aeupd == "eupd") {
+        if (is_same<RC, double>::value && symPb) {iparamSz = 7; ipntrSz = 11;}
+        if (is_same<RC,  float>::value && symPb) {iparamSz = 7; ipntrSz = 11;}
+        return 0;
+      }
+      return 1;
+    };
+
     int solve(EM const & A, EM const * B, SLV & solver) {
       if (!stdPb && !B) {cerr << "Error: generalized problem without B" << endl; return 1;}
 
@@ -697,13 +714,16 @@ class arpackSolver {
         for (a_int n = 0; n < ldv*nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
       };
       restartSolve("arpackSolver.v.out", ldv, v, true);
-      a_int iparam[11];
-      iparam[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
-      iparam[2] = maxIt; // Maximum number of iterations.
-      iparam[3] = 1; // Block size.
-      iparam[4] = 0; // Number of ev found by arpack.
-      iparam[6] = mode;
-      a_int ipntr[14];
+      a_int iparamSz = 0, ipntrSz = 0;
+      int rc = initPointerSize(iparamSz, ipntrSz, "aupd");
+      if (rc != 0) {cerr << "Error: bad iparam/ipntr initialization for aupd" << endl; return rc;}
+      vector<a_int> iparamAupd(iparamSz, 0);
+      iparamAupd[0] = 1; // Use exact shifts (=> we'll never have ido == 3).
+      iparamAupd[2] = maxIt; // Maximum number of iterations.
+      iparamAupd[3] = 1; // Block size.
+      iparamAupd[4] = 0; // Number of ev found by arpack.
+      iparamAupd[6] = mode;
+      vector<a_int> ipntrAupd(ipntrSz, 0);
       RC * workd = new RC[3*nbDim]; for (a_int n = 0; n < 3*nbDim; n++) workd[n] = zero; // Avoid "bad" X/Y vector.
       a_int lworkl = symPb ? nbCV*nbCV + 8*nbCV : 3*nbCV*nbCV + 6*nbCV;
       RC * workl = new RC[lworkl];
@@ -713,7 +733,7 @@ class arpackSolver {
       // Initialize solver.
 
       auto start = chrono::high_resolution_clock::now();
-      int rc = setMode(mode, A, B, solver);
+      rc = setMode(mode, A, B, solver);
       if (rc != 0) {cerr << "Error: bad arpack mode" << endl; return rc;}
       auto stop = chrono::high_resolution_clock::now();
       imsTime = chrono::duration_cast<chrono::milliseconds>(stop - start).count()/1000.;
@@ -724,56 +744,56 @@ class arpackSolver {
       do {
         // Call arpack.
 
-        aupd(&ido, bMat, nbDim, which, resid, v, ldv, iparam, ipntr, workd, workl, lworkl, rwork, &info);
+        aupd(&ido, bMat, nbDim, which, resid, v, ldv, iparamAupd.data(), ipntrAupd.data(), workd, workl, lworkl, rwork, &info);
         if (info ==  1) cerr << "Error: [dz][sn]aupd - KO: maximum number of iterations taken. Increase --maxIt..." << endl;
         if (info ==  3) cerr << "Error: [dz][sn]aupd - KO: no shifts could be applied. Increase --nbCV..." << endl;
         if (info == -9) cerr << "Error: [dz][sn]aupd - KO: starting vector is zero. Retry: play with shift..." << endl;
-        if (info < 0) {cerr << "Error: [dz][sn]aupd - KO with info " << info << ", nbIt " << iparam[2] << endl; return 1;}
+        if (info < 0) {cerr << "Error: [dz][sn]aupd - KO with info " << info << ", nbIt " << iparamAupd[2] << endl; return 1;}
 
         // Reverse Communication Interface: perform actions according to arpack.
 
         start = chrono::high_resolution_clock::now();
 
-        a_int xIdx = ipntr[0] - 1; // 0-based (Fortran is 1-based).
-        a_int yIdx = ipntr[1] - 1; // 0-based (Fortran is 1-based).
+        a_int xIdx = ipntrAupd[0] - 1; // 0-based (Fortran is 1-based).
+        a_int yIdx = ipntrAupd[1] - 1; // 0-based (Fortran is 1-based).
 
         EV X(workd + xIdx, nbDim); // Arpack provides X.
         EV Y(workd + yIdx, nbDim); // Arpack provides Y.
 
         if (ido == -1) {
-          if (iparam[6] == 1) {
+          if (iparamAupd[6] == 1) {
             Y = A * X;
           }
-          else if (iparam[6] == 2) {
+          else if (iparamAupd[6] == 2) {
             Y = A * X;
             auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
             Y = solver.solve(YY); // Y = B^-1 * A * X.
           }
-          else if (iparam[6] == 3) {
+          else if (iparamAupd[6] == 3) {
             auto Z = (*B) * X;   // Z = B * X.
             Y = solver.solve(Z); // Y = (A - sigma * B)^-1 * B * X.
           }
         }
         else if (ido == 1) {
-          if (iparam[6] == 1) {
+          if (iparamAupd[6] == 1) {
             Y = A * X;
           }
-          else if (iparam[6] == 2) {
+          else if (iparamAupd[6] == 2) {
             Y = A * X;
             if (symPb) X = Y;     // Remark 5 in dsaupd documentation.
             auto YY = Y;          // Use copy of Y (not Y) for solve (avoid potential memory overwrite as Y is both in/out).
             Y = solver.solve(YY); // Y = B^-1 * A * X.
           }
-          else if (iparam[6] == 3) {
-            a_int zIdx = ipntr[2] - 1; // 0-based (Fortran is 1-based).
+          else if (iparamAupd[6] == 3) {
+            a_int zIdx = ipntrAupd[2] - 1; // 0-based (Fortran is 1-based).
             EV Z(workd + zIdx, nbDim); // Arpack provides Z.
             Y = solver.solve(Z);       // Y = (A - sigma * B)^-1 * B * X.
           }
         }
         else if (ido == 2) {
-          if      (iparam[6] == 1) Y =        X; // Y = I * X.
-          else if (iparam[6] == 2) Y = (*B) * X; // Y = B * X.
-          else if (iparam[6] == 3) Y = (*B) * X; // Y = B * X.
+          if      (iparamAupd[6] == 1) Y =        X; // Y = I * X.
+          else if (iparamAupd[6] == 2) Y = (*B) * X; // Y = B * X.
+          else if (iparamAupd[6] == 3) Y = (*B) * X; // Y = B * X.
         }
         else if (ido != 99) {cerr << "Error: unexpected ido " << ido << " - KO" << endl; return 1;}
 
@@ -784,7 +804,7 @@ class arpackSolver {
 
       // Get arpack results (computed eigen values and vectors).
 
-      nbIt = iparam[2]; // Actual number of iterations.
+      nbIt = iparamAupd[2]; // Actual number of iterations.
       a_int rvec = 1;
       char const * howmnyA = "A"; // Ritz vectors.
       char const * howmnyP = "P"; // Schur vectors.
@@ -793,7 +813,13 @@ class arpackSolver {
       a_int const nbZ = nbDim*(nbEV+1); // Caution: nbEV+1 for dneupd.
       RC * z = new RC[nbZ]; for (a_int n = 0; n < nbZ; n++) z[n] = zero;
       a_int ldz = nbDim;
-      rc = eupd(rvec, howmny, select, z, ldz, bMat, nbDim, which, resid, v, ldv, iparam, ipntr, workd, workl, lworkl, rwork, info);
+      rc = initPointerSize(iparamSz, ipntrSz, "eupd");
+      if (rc != 0) {cerr << "Error: bad iparam/ipntr initialization for eupd" << endl; return rc;}
+      vector<a_int> iparamEupd(iparamSz, 0);
+      for (a_int p = 0; p < iparamSz; p++) iparamEupd[p] = iparamAupd[p]; // Initialize eupd parameters with aupd ones.
+      vector<a_int> ipntrEupd(ipntrSz, 0);
+      for (a_int p = 0; p < ipntrSz; p++) ipntrEupd[p] = ipntrAupd[p]; // Initialize eupd parameters with aupd ones.
+      rc = eupd(rvec, howmny, select, z, ldz, bMat, nbDim, which, resid, v, ldv, iparamEupd.data(), ipntrEupd.data(), workd, workl, lworkl, rwork, info);
       if (rc != 0) {cerr << "Error: bad arpack eupd" << endl; return rc;}
 
       if (dumpToFile) {

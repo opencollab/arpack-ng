@@ -18,7 +18,7 @@ subroutine pdnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   real(kind=c_double),    dimension(ldv, ncv), intent(out)   :: v
   integer(kind=c_int),    value,               intent(in)    :: ldv
   integer(kind=c_int),    dimension(11),       intent(inout) :: iparam
-  integer(kind=c_int),    dimension(11),       intent(out)   :: ipntr
+  integer(kind=c_int),    dimension(14),       intent(out)   :: ipntr
   real(kind=c_double),    dimension(3*n),      intent(out)   :: workd
   real(kind=c_double),    dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
@@ -56,7 +56,7 @@ subroutine pdneupd_c(comm, rvec, howmny, select,                  &
   real(kind=c_double),    dimension(ldv, ncv), intent(out)   :: v
   integer(kind=c_int),    value,               intent(in)    :: ldv
   integer(kind=c_int),    dimension(11),       intent(inout) :: iparam
-  integer(kind=c_int),    dimension(11),       intent(out)   :: ipntr
+  integer(kind=c_int),    dimension(14),       intent(out)   :: ipntr
   real(kind=c_double),    dimension(3*n),      intent(out)   :: workd
   real(kind=c_double),    dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
