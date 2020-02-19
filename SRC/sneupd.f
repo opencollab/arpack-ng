@@ -601,9 +601,9 @@ c        | caused by incorrect passing of the dnaupd data.           |
 c        %-----------------------------------------------------------%
 c
          if (msglvl .gt. 2) then
-             call ivout(logfil, 1, numcnv, ndigit,
+             call ivout(logfil, 1, [numcnv], ndigit,
      &            '_neupd: Number of specified eigenvalues')
-             call ivout(logfil, 1, nconv, ndigit,
+             call ivout(logfil, 1, [nconv], ndigit,
      &            '_neupd: Number of "converged" eigenvalues')
          end if
 c
