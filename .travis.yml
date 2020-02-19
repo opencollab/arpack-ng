@@ -234,15 +234,14 @@ jobs:
   - stage: fedora
     dist: xenial
     script: |
-      sudo docker pull fedora                                                               \
+      sudo docker pull registry.fedoraproject.org/fedora || sudo docker pull fedora         \
       &&                                                                                    \
       sudo docker create --name mobydick fedora /bin/bash -c                                \
-      "yum -y update                                                                     && \
-       yum -y upgrade                                                                    && \
-       yum -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
-       yum -y install environment-modules                                                && \
-       yum -y install gcc gcc-c++ gcc-gfortran git cmake make                            && \
-       yum -y install openmpi openmpi-devel openblas openblas-devel                      && \
+      "dnf -y upgrade                                                                    && \
+       dnf -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
+       dnf -y install environment-modules                                                   \
+                      gcc gcc-c++ gcc-gfortran git cmake make                               \
+                      openmpi openmpi-devel openblas openblas-devel                      && \
        . /etc/profile.d/modules.sh                                                       && \
        module avail                                                                      && \
        module load mpi/openmpi-x86_64                                                    && \
