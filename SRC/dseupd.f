@@ -513,9 +513,9 @@ c        | caused by incorrect passing of the _saupd data.           |
 c        %-----------------------------------------------------------%
 c
          if (msglvl .gt. 2) then
-             call ivout(logfil, 1, numcnv, ndigit,
+             call ivout(logfil, 1, [numcnv], ndigit,
      &            '_seupd: Number of specified eigenvalues')
-             call ivout(logfil, 1, nconv, ndigit,
+             call ivout(logfil, 1, [nconv], ndigit,
      &            '_seupd: Number of "converged" eigenvalues')
          end if
 c
