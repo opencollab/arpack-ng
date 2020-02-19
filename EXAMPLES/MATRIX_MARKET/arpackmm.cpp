@@ -337,7 +337,6 @@ int itrSolve(options & opt, output & out,
   // Init solver.
 
   arpackItrSolver<RC, FD, EM, SLV> as;
-  as.stdPb = opt.stdPb;
   as.symPb = opt.symPb;
   as.nbEV = opt.nbEV;
   as.nbCV = opt.nbCV;
@@ -350,10 +349,10 @@ int itrSolve(options & opt, output & out,
   as.maxIt = opt.maxIt;
   as.schur = opt.schur;
   as.verbose = opt.verbose;
-  *as.slvItrTol = opt.slvItrTol;
-  *as.slvItrMaxIt = opt.slvItrMaxIt;
-  *as.slvItrILUDropTol = slvItrILUDropTol;
-  *as.slvItrILUFillFactor = slvItrILUFillFactor;
+  as.slvTol = opt.slvItrTol;
+  as.slvMaxIt = opt.slvItrMaxIt;
+  as.slvILUDropTol = slvItrILUDropTol;
+  as.slvILUFillFactor = slvItrILUFillFactor;
 
   // Read A and B matrices.
 
@@ -384,10 +383,10 @@ int itrSolve(options & opt, output & out,
 
   // Solve.
 
-  rc = as.solve(A, &B);
+  rc = as.solve(A, opt.stdPb ? nullptr : &B);
   if (rc != 0) {cerr << "Error: solve KO" << endl; return rc;}
   if (opt.check) {
-    rc = as.checkEigVec(A, &B);
+    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B);
     if (rc != 0) {cerr << "Error: check KO" << endl; return rc;}
   }
 
@@ -407,7 +406,6 @@ int drtSolve(options & opt, output & out) {
   // Init solver.
 
   arpackDrtSolver<RC, FD, EM, SLV> as;
-  as.stdPb = opt.stdPb;
   as.symPb = opt.symPb;
   as.nbEV = opt.nbEV;
   as.nbCV = opt.nbCV;
@@ -420,9 +418,9 @@ int drtSolve(options & opt, output & out) {
   as.maxIt = opt.maxIt;
   as.schur = opt.schur;
   as.verbose = opt.verbose;
-  *as.slvDrtPvtThd = opt.slvDrtPivot;
-  *as.slvDrtOffset = opt.slvDrtOffset;
-  *as.slvDrtScale = opt.slvDrtScale;
+  as.slvPvtThd = opt.slvDrtPivot;
+  as.slvOffset = opt.slvDrtOffset;
+  as.slvScale = opt.slvDrtScale;
 
   // Read A and B matrices.
 
@@ -453,10 +451,10 @@ int drtSolve(options & opt, output & out) {
 
   // Solve.
 
-  rc = as.solve(A, &B);
+  rc = as.solve(A, opt.stdPb ? nullptr : &B);
   if (rc != 0) {cerr << "Error: solve KO" << endl; return rc;}
   if (opt.check) {
-    rc = as.checkEigVec(A, &B);
+    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B);
     if (rc != 0) {cerr << "Error: check KO" << endl; return rc;}
   }
 
