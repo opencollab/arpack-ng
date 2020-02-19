@@ -7,5 +7,5 @@ Name: @PACKAGE_NAME@
 Description: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
 Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
-Libs: -L${libdir} -larpack@LIBSUFFIX@ @LAPACK_LIBS@ @BLAS_LIBS@
+Libs: -L${libdir} -L${libdir}64 -larpack@LIBSUFFIX@ @LAPACK_LIBS@ @BLAS_LIBS@
 Cflags: -I${includedir}/arpack @EIGEN3_CFLAGS@
