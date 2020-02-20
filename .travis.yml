@@ -292,7 +292,7 @@ jobs:
        git status                                                                                                             && \
        git log -2                                                                                                             && \
        mkdir build && cd build                                                                                                && \
-       BLA_STATIC=ON BLA_VENDOR='Intel10_64ilp' cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON ..                           && \
+       BLA_VENDOR='Intel10_64ilp' BLA_PREFER_PKGCONFIG=1 cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON ..                  && \
        export VERBOSE=1                                                                                                       && \
        make all                                                                                                               && \
        make test                                                                                                              && \
