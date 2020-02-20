@@ -296,7 +296,7 @@ jobs:
        FCFLAGS='-I/usr/include/mkl'                                                                                              \
        BLAS_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                        \
        LAPACK_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                      \
-       cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON ..                                                                    && \
+       cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON -D MPI=ON ..                                                          && \
        export VERBOSE=1                                                                                                       && \
        make all                                                                                                               && \
        make test                                                                                                              && \
