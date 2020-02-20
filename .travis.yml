@@ -292,7 +292,11 @@ jobs:
        git status                                                                                                             && \
        git log -2                                                                                                             && \
        mkdir build && cd build                                                                                                && \
-       BLA_VENDOR='Intel10_64ilp' BLA_PREFER_PKGCONFIG=1 cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON ..                  && \
+       FFLAGS='-I/usr/include/mkl'                                                                                               \
+       FCFLAGS='-I/usr/include/mkl'                                                                                              \
+       BLAS_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                        \
+       LAPACK_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                      \
+       cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON ..                                                                    && \
        export VERBOSE=1                                                                                                       && \
        make all                                                                                                               && \
        make test                                                                                                              && \
