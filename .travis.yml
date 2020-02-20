@@ -294,8 +294,8 @@ jobs:
        mkdir build && cd build                                                                                                && \
        FFLAGS='-I/usr/include/mkl'                                                                                               \
        FCFLAGS='-I/usr/include/mkl'                                                                                              \
-       BLAS_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                        \
-       LAPACK_LIBRARIES='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                                      \
+       BLAS_LIBRARIES='-lmkl_gf_ilp64 -Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                         \
+       LAPACK_LIBRARIES='-lmkl_gf_ilp64 -Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                       \
        cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON -D MPI=ON ..                                                          && \
        export VERBOSE=1                                                                                                       && \
        make all                                                                                                               && \
