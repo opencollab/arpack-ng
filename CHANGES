@@ -21,7 +21,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'eval: Syntax error: "(" unexpected' error at build time.
 
 [ David Schwörer ]
- * [BUG FIX] port to gcc 10
+ * Support of gfortran 10
 
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 1 April 2019 16:24:00 +0100
 

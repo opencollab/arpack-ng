@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: osx
   - name: precise
   - name: trusty
   - name: xenial
@@ -39,6 +40,45 @@ stages:
 
 jobs:
   include:
+  # osx <=> macOS 10.13 (high sierra)
+  - stage: osx
+    os: osx
+    osx_image: xcode10.1
+    before_install:
+    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list cmake    || brew install cmake
+    - brew list openblas || brew install openblas
+    - brew list lapack   || brew install lapack
+    - brew list openmpi  || brew install openmpi
+    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
+    script: |
+      mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON -D ICB=ON  .. && make VERBOSE=1 && \
+      make test ARGS="-R  snbdr2_ex" && \
+      make test ARGS="-R  dnbdr2_ex" && \
+      make test ARGS="-R  cnbdr2_ex" && \
+      make test ARGS="-R  znbdr2_ex" && \
+      make test ARGS="-R psndrv1_ex" && \
+      make test ARGS="-R pdndrv1_ex" && \
+      make test ARGS="-R pcndrv1_ex"
+  - stage: osx
+    os: osx
+    osx_image: xcode10.1
+    before_install:
+    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list autoconf || brew install autoconf
+    - brew list automake || brew install automake
+    - brew list openblas || brew install openblas
+    - brew list lapack   || brew install lapack
+    - brew list openmpi  || brew install openmpi
+    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
+    script: |
+      ./bootstrap && ./configure --enable-mpi --enable-icb && make VERBOSE=1 && \
+      cd $TRAVIS_BUILD_DIR/EXAMPLES/BAND        && make check TESTS="snbdr2 dnbdr2 cnbdr2 znbdr2" && \
+      cd $TRAVIS_BUILD_DIR/PARPACK/EXAMPLES/MPI && make check TESTS="psndrv1 pdndrv1 pcndrv1"
   # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: precise
     dist: precise
@@ -234,15 +274,14 @@ jobs:
   - stage: fedora
     dist: xenial
     script: |
-      sudo docker pull fedora                                                               \
+      sudo docker pull registry.fedoraproject.org/fedora || sudo docker pull fedora         \
       &&                                                                                    \
       sudo docker create --name mobydick fedora /bin/bash -c                                \
-      "yum -y update                                                                     && \
-       yum -y upgrade                                                                    && \
-       yum -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
-       yum -y install environment-modules                                                && \
-       yum -y install gcc gcc-c++ gcc-gfortran git cmake make                            && \
-       yum -y install openmpi openmpi-devel openblas openblas-devel                      && \
+      "dnf -y upgrade                                                                    && \
+       dnf -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
+       dnf -y install environment-modules                                                   \
+                      gcc gcc-c++ gcc-gfortran git cmake make                               \
+                      openmpi openmpi-devel openblas openblas-devel                      && \
        . /etc/profile.d/modules.sh                                                       && \
        module avail                                                                      && \
        module load mpi/openmpi-x86_64                                                    && \

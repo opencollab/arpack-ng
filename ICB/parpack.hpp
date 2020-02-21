@@ -132,10 +132,11 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   std::complex<float>* rwork, a_int& info)
 
 {
+  std::complex<float> sigma2 = sigma;
   internal::pcneupd_c(comm, rvec, internal::convert_to_char(howmny_option),
                       select, reinterpret_cast<_Complex float*>(d),
                       reinterpret_cast<_Complex float*>(z), ldz,
-                      std::real(sigma) + _Complex_I * std::imag(sigma),
+                      *reinterpret_cast<_Complex float*>(&sigma2),
                       reinterpret_cast<_Complex float*>(workev),
                       internal::convert_to_char(bmat_option), n,
                       internal::convert_to_char(which_option), nev, tol,
@@ -170,10 +171,11 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   a_int ldv, a_int* iparam, a_int* ipntr, std::complex<double>* workd,
                   std::complex<double>* workl, a_int lworkl,
                   std::complex<double>* rwork, a_int& info) {
+  std::complex<double> sigma2 = sigma;
   internal::pzneupd_c(comm, rvec, internal::convert_to_char(howmny_option),
                       select, reinterpret_cast<_Complex double*>(d),
                       reinterpret_cast<_Complex double*>(z), ldz,
-                      std::real(sigma) + _Complex_I * std::imag(sigma),
+                      *reinterpret_cast<_Complex double*>(&sigma2),
                       reinterpret_cast<_Complex double*>(workev),
                       internal::convert_to_char(bmat_option), n,
                       internal::convert_to_char(which_option), nev, tol,
