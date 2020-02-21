@@ -293,7 +293,7 @@ jobs:
        git log -2                                                                                                             && \
        mkdir build && cd build                                                                                                && \
        export PKG_CONFIG_PATH='/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH'                                          && \
-       BLA_VENDOR='Intel10_64ilp' BLA_PREFER_PKG=ON cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON -D MPI=ON ..             && \
+       BLA_VENDOR='Intel10_64ilp_seq' BLA_PREFER_PKG=ON cmake -D INTERFACE64=ON -D EXAMPLES=ON -D ICB=ON -D MPI=ON ..         && \
        export VERBOSE=1                                                                                                       && \
        make all                                                                                                               && \
        make test                                                                                                              && \
