@@ -286,7 +286,7 @@ jobs:
        apt-get -y install dialog apt-utils                                                                                    && \
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                                     && \
        apt-get -y install build-essential                                                                                     && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake                                               && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake cmake-data                                    && \
        cd /tmp                                                                                                                && \
        cd arpack-ng                                                                                                           && \
        git status                                                                                                             && \
