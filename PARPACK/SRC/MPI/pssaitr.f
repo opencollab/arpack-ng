@@ -264,7 +264,7 @@ c
       integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,
      &           jj
       Real
-     &           rnorm1, wnorm, safmin, temp1
+     &           rnorm1, wnorm(1), safmin, temp1, temp2(1)
       save       orth1, orth2, rstart, step3, step4,
      &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,
      &           rnorm1, safmin, wnorm
@@ -572,16 +572,16 @@ c           | is the inv(B)-norm of A*v_{j}.   |
 c           %----------------------------------%
 c
             rnorm_buf = sdot (n, resid, 1, workd(ivj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,
      &           MPI_REAL, MPI_SUM, comm, ierr )
-            wnorm = sqrt(abs(wnorm))
+            wnorm(1) = sqrt(abs(wnorm(1)))
          else if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,
      &           MPI_REAL, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(wnorm))
          else if (bmat .eq. 'I') then
-            wnorm = psnorm2( comm, n, resid, 1 )
+            wnorm(1) = psnorm2( comm, n, resid, 1 )
          end if
 c
 c        %-----------------------------------------%
@@ -669,9 +669,9 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,
      &           MPI_REAL, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(temp2(1)))
          else if (bmat .eq. 'I') then
             rnorm = psnorm2( comm, n, resid, 1 )
          end if
@@ -691,7 +691,7 @@ c        | Determine if we need to correct the residual. The goal is |
 c        | to enforce ||v(:,1:j)^T * r_{j}|| .le. eps * || r_{j} ||  |
 c        %-----------------------------------------------------------%
 c
-         if (rnorm .gt. 0.717*wnorm) go to 100
+         if (rnorm .gt. 0.717*wnorm(1)) go to 100
          nrorth = nrorth + 1
 c
 c        %---------------------------------------------------%
@@ -704,7 +704,7 @@ c
    80    continue
 c
          if (msglvl .gt. 2) then
-            xtemp(1) = wnorm
+            xtemp(1) = wnorm(1)
             xtemp(2) = rnorm
             call psvout (comm, logfil, 2, xtemp, ndigit,
      &           '_naitr: re-orthonalization ; wnorm and rnorm are')
@@ -769,9 +769,9 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
            rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( rnorm_buf, rnorm1, 1,
+           call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,
      &          MPI_REAL, MPI_SUM, comm, ierr )
-           rnorm1 = sqrt(abs(rnorm1))
+           rnorm1 = sqrt(abs(temp2(1)))
          else if (bmat .eq. 'I') then
            rnorm1 = psnorm2( comm, n, resid, 1 )
          end if

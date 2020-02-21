@@ -264,7 +264,7 @@ c
       integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,
      &           jj
       Double precision
-     &           rnorm1, wnorm, safmin, temp1
+     &           rnorm1, wnorm, safmin, temp1, buf2(1)
       save       orth1, orth2, rstart, step3, step4,
      &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,
      &           rnorm1, safmin, wnorm
@@ -572,14 +572,14 @@ c           | is the inv(B)-norm of A*v_{j}.   |
 c           %----------------------------------%
 c
             rnorm_buf = ddot (n, resid, 1, workd(ivj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-            wnorm = sqrt(abs(wnorm))
+            wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-            wnorm = sqrt(abs(wnorm))
+            wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             wnorm = pdnorm2( comm, n, resid, 1 )
          end if
@@ -669,9 +669,9 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = pdnorm2( comm, n, resid, 1 )
          end if
@@ -769,9 +769,9 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
            rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( rnorm_buf, rnorm1, 1,
+           call MPI_ALLREDUCE( [rnorm_buf], buf2(1), 1,
      &          MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-           rnorm1 = sqrt(abs(rnorm1))
+           rnorm1 = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
            rnorm1 = pdnorm2( comm, n, resid, 1 )
          end if

@@ -293,7 +293,7 @@ c
      &           betaj, rnorm1, smlnum, ulp, unfl, wnorm
 c
       Complex
-     &           cnorm_buf
+     &           cnorm_buf, buf2(1)
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -406,7 +406,7 @@ c
          if (msglvl .gt. 1) then
             call pivout (comm, logfil, 1, [j], ndigit,
      &                  '_naitr: generating Arnoldi vector number')
-            call pcvout (comm, logfil, 1, [rnorm], ndigit,
+            call pdvout (comm, logfil, 1, [rnorm], ndigit,
      &                  '_naitr: B-norm of the current residual is')
          end if
 c
@@ -577,8 +577,9 @@ c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+             cnorm = buf2(1)
              wnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              wnorm = pscnorm2(comm, n, resid, 1)
@@ -653,8 +654,9 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+            cnorm = buf2(1)
             rnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
             rnorm = pscnorm2(comm, n, resid, 1)
@@ -757,8 +759,9 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+             cnorm = buf2(1)
              rnorm1 = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              rnorm1 = pscnorm2(comm, n, resid, 1)

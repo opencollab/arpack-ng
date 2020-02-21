@@ -345,7 +345,7 @@ c
      &         tst1 = dlanhs( '1', kplusp-jj+1, h, ldh, workl )
             if( abs( h( i+1,i ) ).le.max( ulp*tst1, smlnum ) ) then
                if (msglvl .gt. 0) then
-                  call pivout (comm, logfil, 1, i, ndigit,
+                  call pivout (comm, logfil, 1, [i], ndigit,
      &                 '_napps: matrix splitting at row/column no.')
                   call pivout (comm, logfil, 1, [jj], ndigit,
      &                 '_napps: matrix splitting with shift number.')

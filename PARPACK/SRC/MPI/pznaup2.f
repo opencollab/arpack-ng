@@ -237,7 +237,7 @@ c
      &           nevbef, nev0 , np0,    eps23
 c
       Double precision
-     &           cmpnorm_buf
+     &           cmpnorm_buf, buf2(1)
 c
 c     %-----------------------%
 c     | Local array arguments |
@@ -771,8 +771,9 @@ c
 c
          if (bmat .eq. 'G') then
             cmpnorm_buf = zdotc (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( cmpnorm_buf, cmpnorm, 1,
+            call MPI_ALLREDUCE( [cmpnorm_buf], buf2, 1,
      &               MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
+            cmpnorm = buf2(1)
             rnorm = sqrt(dlapy2(dble(cmpnorm),dimag(cmpnorm)))
          else if (bmat .eq. 'I') then
             rnorm = pdznorm2(comm, n, resid, 1)

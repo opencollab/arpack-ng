@@ -241,7 +241,7 @@ c
 c
 
       Real
-     &           rnorm_buf
+     &           rnorm_buf, buf2(1)
 c
 c     %-----------------------%
 c     | Local array arguments |
@@ -810,9 +810,9 @@ c
 c
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &                MPI_REAL, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = psnorm2( comm, n, resid, 1 )
          end if

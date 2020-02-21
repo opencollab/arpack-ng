@@ -180,7 +180,7 @@ c
       logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj
       Double precision
-     &           rnorm0
+     &           rnorm0, buf2(1)
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 c
       Double precision
@@ -318,9 +318,9 @@ c
       first = .FALSE.
       if (bmat .eq. 'G') then
           rnorm_buf = ddot (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( rnorm_buf, rnorm0, 1,
+          call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &          MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-          rnorm0 = sqrt(abs(rnorm0))
+          rnorm0 = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
           rnorm0 = pdnorm2( comm, n, resid, 1 )
       end if
@@ -379,9 +379,9 @@ c
 c
       if (bmat .eq. 'G') then
          rnorm_buf = ddot (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+         call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &            MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-         rnorm = sqrt(abs(rnorm))
+         rnorm = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
          rnorm = pdnorm2( comm, n, resid, 1 )
       end if

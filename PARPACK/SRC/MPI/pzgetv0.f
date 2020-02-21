@@ -185,7 +185,7 @@ c
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 c
       Complex*16
-     &           cnorm_buf
+     &           cnorm_buf, buf2(1)
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -332,8 +332,9 @@ c
       first = .FALSE.
       if (bmat .eq. 'G') then
           cnorm_buf = zdotc  (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &          MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
+          cnorm = buf2(1)
           rnorm0 = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
       else if (bmat .eq. 'I') then
            rnorm0 = pdznorm2 ( comm, n, resid, 1)
@@ -393,8 +394,9 @@ c
 c
       if (bmat .eq. 'G') then
          cnorm_buf = zdotc  (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+         call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &            MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
+         cnorm = buf2(1)
          rnorm = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
       else if (bmat .eq. 'I') then
          rnorm = pdznorm2 (comm, n, resid, 1)

@@ -212,7 +212,7 @@ c
       integer    ido, info, ishift, iupd, ldh, ldq, ldv, mxiter,
      &           n, mode, nev, np
       Double precision
-     &           tol
+     &           tol, buf2(1)
 c
 c     %-----------------%
 c     | Array Arguments |
@@ -825,9 +825,9 @@ c
 c
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &                MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = pdnorm2( comm, n, resid, 1 )
          end if
