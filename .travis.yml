@@ -307,7 +307,7 @@ jobs:
     script: |
       sudo docker pull registry.fedoraproject.org/fedora:rawhide                         || \
       sudo docker pull fedora:rawhide                                                    && \
-      sudo docker create --name mobydick fedora /bin/bash -c                                \
+      sudo docker create --name mobydick fedora:rawhide /bin/bash -c                        \
       "dnf -y upgrade                                                                    && \
        dnf -y install environment-modules git                                               \
                       gfortran openblas-devel cmake mpich-devel make gcc-c++             && \
