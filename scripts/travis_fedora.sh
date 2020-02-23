@@ -32,7 +32,7 @@ then
         gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
     useradd test
     chown -R test /tmp
-    sudo test $0 $mpi
+    sudo -u test $0 $mpi
 ## If we are called as normal user, run test
 else
     . /etc/profile.d/modules.sh

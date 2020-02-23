@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: fedora
   - name: osx
   - name: precise
   - name: trusty
@@ -36,7 +37,6 @@ stages:
   - name: bionic
   - name: coverage
   - name: interface64
-  - name: fedora
 
 jobs:
   include:
