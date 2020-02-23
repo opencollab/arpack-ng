@@ -265,68 +265,15 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
       &&                                                                                                                \
       sudo docker start -a mobydick
-  # fedora
-  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
-  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
-  #                                                               note: docker-cp works only if copy from/to containers (not images)
-  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  # fedora (released fedora with openmpi)
   - stage: fedora
     dist: xenial
-    script: |
-      sudo docker pull registry.fedoraproject.org/fedora || sudo docker pull fedora         \
-      &&                                                                                    \
-      sudo docker create --name mobydick fedora /bin/bash -c                                \
-      "dnf -y upgrade                                                                    && \
-       dnf -y groupinstall \"Development Tools\" \"Development Libraries\"               && \
-       dnf -y install environment-modules                                                   \
-                      gcc gcc-c++ gcc-gfortran git cmake make                               \
-                      openmpi openmpi-devel openblas openblas-devel                      && \
-       . /etc/profile.d/modules.sh                                                       && \
-       module avail                                                                      && \
-       module load mpi/openmpi-x86_64                                                    && \
-       cd /tmp                                                                           && \
-       cd arpack-ng                                                                      && \
-       git status                                                                        && \
-       git log -2                                                                        && \
-       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt && \
-       mkdir -p build && cd build                                                        && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                          && \
-       export VERBOSE=1                                                                  && \
-       make all                                                                          && \
-       make test                                                                         && \
-       tail -n 300 ./Testing/Temporary/LastTest.log"                                        \
-      &&                                                                                    \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                   \
-      &&                                                                                    \
-      sudo docker start -a mobydick
+    script: scripts/travis_fedora.sh setup openmpi latest
 
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     dist: xenial
-    script: |
-      sudo docker pull registry.fedoraproject.org/fedora:rawhide                         || \
-      sudo docker pull fedora:rawhide                                                    && \
-      sudo docker create --name mobydick fedora:rawhide /bin/bash -c                        \
-      "dnf -y upgrade                                                                    && \
-       dnf -y install environment-modules git                                               \
-                      gfortran openblas-devel cmake mpich-devel make gcc-c++             && \
-       . /etc/profile.d/modules.sh                                                       && \
-       module load mpi                                                                   && \
-       cd /tmp                                                                           && \
-       cd arpack-ng                                                                      && \
-       git status                                                                        && \
-       git log -2                                                                        && \
-       mkdir -p build && cd build                                                        && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                          && \
-       export VERBOSE=1                                                                  && \
-       make all                                                                          && \
-       make test                                                                         && \
-       tail -n 300 ./Testing/Temporary/LastTest.log"                                        \
-      &&                                                                                    \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                   \
-      &&                                                                                    \
-      sudo docker start -a mobydick
+    script: scripts/travis_fedora.sh setup mpich rawhide
 
 after_failure:
 
