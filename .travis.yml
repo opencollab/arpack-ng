@@ -268,7 +268,7 @@ jobs:
   # fedora (released fedora with openmpi)
   - stage: fedora
     dist: xenial
-    script: scripts/travis_fedora.sh setup openmpi latest
+    script: bash -v scripts/travis_fedora.sh setup openmpi latest
 
   # fedora (with gcc 10 and mpich)
   - stage: fedora
