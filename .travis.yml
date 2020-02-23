@@ -273,7 +273,7 @@ jobs:
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     dist: xenial
-    script: scripts/travis_fedora.sh setup mpich rawhide
+    script: bash -v scripts/travis_fedora.sh setup mpich rawhide
 
 after_failure:
 
