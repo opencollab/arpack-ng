@@ -268,12 +268,12 @@ jobs:
   # fedora (released fedora with openmpi)
   - stage: fedora
     dist: xenial
-    script: bash -v scripts/travis_fedora.sh setup openmpi latest
+    script: ./scripts/travis_fedora.sh setup openmpi latest
 
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     dist: xenial
-    script: bash -v scripts/travis_fedora.sh setup mpich rawhide
+    script: ./scripts/travis_fedora.sh setup mpich rawhide
 
 after_failure:
 

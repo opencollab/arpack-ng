@@ -1,3 +1,4 @@
+#!/bin/sh
 ## -e : Make sure all errors cause the script to fail
 ## -x be verbose; write what we are doing, as we do it
 set -ex
