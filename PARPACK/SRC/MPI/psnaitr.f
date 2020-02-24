@@ -276,7 +276,7 @@ c
      &           betaj, rnorm1, smlnum, ulp, unfl, wnorm
 c
       Real
-     &           rnorm_buf
+     &           rnorm_buf, buf2(1)
 c
 c
 c     %-----------------------%
@@ -393,9 +393,9 @@ c     %--------------------------------------------------------------%
  1000 continue
 c
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, j, ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,
      &                  '_naitr: generating Arnoldi vector number')
-            call psvout (comm, logfil, 1, rnorm, ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,
      &                  '_naitr: B-norm of the current residual is')
          end if
 c
@@ -415,7 +415,7 @@ c           | basis and continue the iteration.                 |
 c           %---------------------------------------------------%
 c
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, j, ndigit,
+               call pivout (comm, logfil, 1, [j], ndigit,
      &                     '_naitr: ****** RESTART AT STEP ******')
             end if
 c
@@ -566,9 +566,9 @@ c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_REAL, MPI_SUM, comm, ierr )
-            wnorm = sqrt(abs(wnorm))
+            wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             wnorm = psnorm2( comm, n, resid, 1 )
          end if
@@ -642,9 +642,9 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_REAL, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = psnorm2( comm, n, resid, 1 )
          end if
@@ -745,15 +745,15 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
            rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( rnorm_buf, rnorm1, 1,
+           call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &          MPI_REAL, MPI_SUM, comm, ierr )
-           rnorm1 = sqrt(abs(rnorm1))
+           rnorm1 = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
            rnorm1 = psnorm2( comm, n, resid, 1 )
          end if
 c
          if (msglvl .gt. 0 .and. iter .gt. 0) then
-            call pivout (comm, logfil, 1, j, ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,
      &           '_naitr: Iterative refinement for Arnoldi residual')
             if (msglvl .gt. 2) then
                 xtemp(1) = rnorm

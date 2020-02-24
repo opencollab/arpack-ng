@@ -45,7 +45,7 @@ c     | Local Scalars |
 c     %---------------%
 c
       Double precision
-     &             max, buf, zero
+     &             max, buf, zero, buf2(1)
       parameter    ( zero = 0.0 )
 c
 c     %---------------------%
@@ -69,15 +69,16 @@ c
       pdnorm2 = dnrm2( n, x, inc)
 c
       buf = pdnorm2
-      call MPI_ALLREDUCE( buf, max, 1, MPI_DOUBLE_PRECISION,
+      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,
      &                    MPI_MAX, comm, ierr )
+      max = buf2(1)
       if ( max .eq. zero ) then
          pdnorm2 = zero
       else
          buf = (pdnorm2/max)**2.0
-         call MPI_ALLREDUCE( buf, pdnorm2, 1, MPI_DOUBLE_PRECISION,
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,
      &                       MPI_SUM, comm, ierr )
-         pdnorm2 = max * sqrt(abs(pdnorm2))
+         pdnorm2 = max * sqrt(abs(buf2(1)))
       endif
 c
 c     %----------------%

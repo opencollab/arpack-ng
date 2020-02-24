@@ -57,7 +57,7 @@
 *
 *     .. Local Scalars ..
       INTEGER            IDUMM
-      DOUBLE PRECISION   TEMP, TEMP1
+      DOUBLE PRECISION   TEMP, TEMP1, buf2(1)
 *     ..
 *     .. External Subroutines ..
 *      EXTERNAL           DGAMN2D, DGAMX2D
@@ -73,19 +73,20 @@
 *
       IF( LSAME( CMACH, 'E' ).OR.LSAME( CMACH, 'S' ).OR.
      $    LSAME( CMACH, 'M' ).OR.LSAME( CMACH, 'U' ) ) THEN
-          CALL MPI_ALLREDUCE( TEMP1, TEMP, 1, MPI_DOUBLE_PRECISION,
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,
      $                        MPI_MAX, ICTXT, IDUMM )
-*         CALL DGAMX2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,
+*         CALL DGAMX2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,
 *     $                 IDUMM, 1, -1, IDUMM )
       ELSE IF( LSAME( CMACH, 'L' ).OR.LSAME( CMACH, 'O' ) ) THEN
-          CALL MPI_ALLREDUCE( TEMP1, TEMP, 1, MPI_DOUBLE_PRECISION,
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,
      $                        MPI_MIN, ICTXT, IDUMM )
-*         CALL DGAMN2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,
+*         CALL DGAMN2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,
 *     $                 IDUMM, 1, -1, IDUMM )
       ELSE
-          TEMP = TEMP1
+          buf2(1) = TEMP1
       END IF
 *
+      TEMP = buf2(1)
       PDLAMCH10 = TEMP
 *
 *     End of PDLAMCH10

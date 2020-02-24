@@ -73,3 +73,7 @@ PARPACK/TESTS/MPI/issue46
 *.suo
 VISUAL_STUDIO/Release MKL/
 VISUAL_STUDIO/bin/
+
+# Temporary files
+*~
+\#*#

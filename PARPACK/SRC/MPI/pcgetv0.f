@@ -185,7 +185,7 @@ c
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 c
       Complex
-     &           cnorm_buf
+     &           cnorm_buf, buf2(1)
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -332,8 +332,9 @@ c
       first = .FALSE.
       if (bmat .eq. 'G') then
           cnorm_buf = cdotc (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &          MPI_COMPLEX, MPI_SUM, comm, ierr )
+          cnorm = buf2(1)
           rnorm0 = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
            rnorm0 = pscnorm2( comm, n, resid, 1)
@@ -393,8 +394,9 @@ c
 c
       if (bmat .eq. 'G') then
          cnorm_buf = cdotc (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+         call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &            MPI_COMPLEX, MPI_SUM, comm, ierr )
+         cnorm = buf2(1)
          rnorm = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
          rnorm = pscnorm2(comm, n, resid, 1)
@@ -405,9 +407,9 @@ c     | Check for further orthogonalization. |
 c     %--------------------------------------%
 c
       if (msglvl .gt. 2) then
-          call psvout (comm, logfil, 1, rnorm0, ndigit,
+          call psvout (comm, logfil, 1, [rnorm0], ndigit,
      &                '_getv0: re-orthonalization ; rnorm0 is')
-          call psvout (comm, logfil, 1, rnorm, ndigit,
+          call psvout (comm, logfil, 1, [rnorm], ndigit,
      &                '_getv0: re-orthonalization ; rnorm is')
       end if
 c
@@ -439,7 +441,7 @@ c
 c
       if (msglvl .gt. 0) then
          cnorm2 = cmplx(rnorm,rzero)
-         call pcvout (comm, logfil, 1, cnorm2, ndigit,
+         call pcvout (comm, logfil, 1, [cnorm2], ndigit,
      &        '_getv0: B-norm of initial / restarted starting vector')
       end if
       if (msglvl .gt. 2) then

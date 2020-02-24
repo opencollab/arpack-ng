@@ -293,7 +293,7 @@ c
      &           betaj, rnorm1, smlnum, ulp, unfl, wnorm
 c
       Complex
-     &           cnorm_buf
+     &           cnorm_buf, buf2(1)
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -404,9 +404,9 @@ c     %--------------------------------------------------------------%
  1000 continue
 c
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, j, ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,
      &                  '_naitr: generating Arnoldi vector number')
-            call pcvout (comm, logfil, 1, rnorm, ndigit,
+            call pdvout (comm, logfil, 1, [rnorm], ndigit,
      &                  '_naitr: B-norm of the current residual is')
          end if
 c
@@ -426,7 +426,7 @@ c           | basis and continue the iteration.                 |
 c           %---------------------------------------------------%
 c
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, j, ndigit,
+               call pivout (comm, logfil, 1, [j], ndigit,
      &                     '_naitr: ****** RESTART AT STEP ******')
             end if
 c
@@ -577,8 +577,9 @@ c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+             cnorm = buf2(1)
              wnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              wnorm = pscnorm2(comm, n, resid, 1)
@@ -653,8 +654,9 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+            cnorm = buf2(1)
             rnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
             rnorm = pscnorm2(comm, n, resid, 1)
@@ -757,15 +759,16 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( cnorm_buf, cnorm, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
+             cnorm = buf2(1)
              rnorm1 = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              rnorm1 = pscnorm2(comm, n, resid, 1)
          end if
 c
          if (msglvl .gt. 0 .and. iter .gt. 0 ) then
-            call pivout (comm, logfil, 1, j, ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,
      &           '_naitr: Iterative refinement for Arnoldi residual')
             if (msglvl .gt. 2) then
                 rtemp(1) = rnorm

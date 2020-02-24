@@ -45,7 +45,7 @@ c     | Local Scalars |
 c     %---------------%
 c
       Real
-     &             max, buf, zero
+     &             max(1), buf, zero
       parameter    ( zero = 0.0 )
 c
 c     %---------------------%
@@ -61,6 +61,7 @@ c
       Real
      &             scnrm2
       External     scnrm2
+      Real         buf2(1)
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -69,15 +70,15 @@ c
       pscnorm2 = scnrm2( n, x, inc)
 c
       buf = pscnorm2
-      call MPI_ALLREDUCE( buf, max, 1, MPI_REAL,
+      call MPI_ALLREDUCE( [buf], max, 1, MPI_REAL,
      &                    MPI_MAX, comm, ierr )
-      if ( max .eq. zero ) then
+      if ( max(1) .eq. zero ) then
          pscnorm2 = zero
       else
-         buf = (pscnorm2/max)**2.0
-         call MPI_ALLREDUCE( buf, pscnorm2, 1, MPI_REAL,
+         buf = (pscnorm2/max(1))**2.0
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,
      &                       MPI_SUM, comm, ierr )
-         pscnorm2 = max * sqrt(abs(pscnorm2))
+         pscnorm2 = max(1) * sqrt(abs(buf2(1)))
       endif
 c
 c     %-----------------%

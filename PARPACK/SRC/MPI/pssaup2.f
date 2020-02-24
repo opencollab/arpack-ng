@@ -241,7 +241,7 @@ c
       integer    ierr, iter, j, kplusp, msglvl, nconv, nevbef, nev0,
      &           np0, nptemp, nevd2, nevm2, kp(3)
       Real
-     &           rnorm, temp, eps23
+     &           rnorm, temp, eps23, buf2(1)
       save       cnorm, getv0, initv, update, ushift,
      &           iter, kplusp, msglvl, nconv, nev0, np0,
      &           rnorm, eps23
@@ -424,13 +424,13 @@ c
          iter = iter + 1
 c
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, iter, ndigit,
+            call pivout (comm, logfil, 1, [iter], ndigit,
      &           '_saup2: **** Start of major iteration number ****')
          end if
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, nev, ndigit,
+            call pivout (comm, logfil, 1, [nev], ndigit,
      &     '_saup2: The length of the current Lanczos factorization')
-            call pivout (comm, logfil, 1, np, ndigit,
+            call pivout (comm, logfil, 1, [np], ndigit,
      &           '_saup2: Extend the Lanczos factorization by')
          end if
 c
@@ -469,7 +469,7 @@ c
          update = .false.
 c
          if (msglvl .gt. 1) then
-            call psvout (comm, logfil, 1, rnorm, ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,
      &           '_saup2: Current B-norm of residual for factorization')
          end if
 c
@@ -719,7 +719,7 @@ c
          end if
 c
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, nconv, ndigit,
+            call pivout (comm, logfil, 1, [nconv], ndigit,
      &           '_saup2: no. of "converged" Ritz values at this iter.')
             if (msglvl .gt. 1) then
                kp(1) = nev
@@ -766,7 +766,7 @@ c
          if (ishift .eq. 0) call scopy (np, workl, 1, ritz, 1)
 c
          if (msglvl .gt. 2) then
-            call pivout (comm, logfil, 1, np, ndigit,
+            call pivout (comm, logfil, 1, [np], ndigit,
      &                  '_saup2: The number of shifts to apply ')
             call psvout (comm, logfil, np, workl, ndigit,
      &                  '_saup2: shifts selected')
@@ -825,9 +825,9 @@ c
 c
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &                MPI_REAL, MPI_SUM, comm, ierr )
-            rnorm = sqrt(abs(rnorm))
+            rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = psnorm2( comm, n, resid, 1 )
          end if
@@ -835,7 +835,7 @@ c
   130    continue
 c
          if (msglvl .gt. 2) then
-            call psvout (comm, logfil, 1, rnorm, ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,
      &      '_saup2: B-norm of residual for NEV factorization')
             call psvout (comm, logfil, nev, h(1,2), ndigit,
      &           '_saup2: main diagonal of compressed H matrix')

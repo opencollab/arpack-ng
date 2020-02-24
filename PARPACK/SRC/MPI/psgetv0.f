@@ -163,7 +163,7 @@ c     %-----------------%
 c
       integer    ipntr(3)
       Real
-     &           resid(n), v(ldv,j), workd(2*n), workl(2*j)
+     &           resid(n), v(ldv,j), workd(2*n), workl(2*j), buf2(1)
 c
 c     %------------%
 c     | Parameters |
@@ -318,9 +318,9 @@ c
       first = .FALSE.
       if (bmat .eq. 'G') then
           rnorm_buf = sdot (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( rnorm_buf, rnorm0, 1,
+          call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &          MPI_REAL, MPI_SUM, comm, ierr )
-          rnorm0 = sqrt(abs(rnorm0))
+          rnorm0 = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
           rnorm0 = psnorm2( comm, n, resid, 1 )
       end if
@@ -379,9 +379,9 @@ c
 c
       if (bmat .eq. 'G') then
          rnorm_buf = sdot (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( rnorm_buf, rnorm, 1,
+         call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &            MPI_REAL, MPI_SUM, comm, ierr )
-         rnorm = sqrt(abs(rnorm))
+         rnorm = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
          rnorm = psnorm2( comm, n, resid, 1 )
       end if
@@ -391,9 +391,9 @@ c     | Check for further orthogonalization. |
 c     %--------------------------------------%
 c
       if (msglvl .gt. 2) then
-          call psvout (comm, logfil, 1, rnorm0, ndigit,
+          call psvout (comm, logfil, 1, [rnorm0], ndigit,
      &                '_getv0: re-orthonalization ; rnorm0 is')
-          call psvout (comm, logfil, 1, rnorm, ndigit,
+          call psvout (comm, logfil, 1, [rnorm], ndigit,
      &                '_getv0: re-orthonalization ; rnorm is')
       end if
 c
@@ -424,7 +424,7 @@ c
    50 continue
 c
       if (msglvl .gt. 0) then
-         call psvout (comm, logfil, 1, rnorm, ndigit,
+         call psvout (comm, logfil, 1, [rnorm], ndigit,
      &        '_getv0: B-norm of initial / restarted starting vector')
       end if
       if (msglvl .gt. 2) then
