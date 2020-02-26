@@ -191,6 +191,7 @@ jobs:
        cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON ..                                       && \
        export VERBOSE=1                                                                   && \
        make all                                                                           && \
+       make test ARGS='-V -R pyarpackSparseBiCGDiag_tst'                                  && \
        make test                                                                          && \
        tail -n 300 ./Testing/Temporary/LastTest.log"                                         \
       &&                                                                                     \
