@@ -35,6 +35,7 @@ Important Features:
     $ export INTERFACE64=1
     $ ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
     $ make all check```
+* pyarpack: python support based on Boost.Python.Numpy exposing C++ API.
 
 This project started as a joint project between Debian, Octave and Scilab in order to
 provide a common and maintained version of arpack.
