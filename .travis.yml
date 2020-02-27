@@ -178,23 +178,17 @@ jobs:
        apt-get -y install build-essential                                                 && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake           && \
        apt-get -y install libblas-dev liblapack-dev                                       && \
+       apt-get -y install python-minimal python-pip python-numpy                          && \
+       apt-get -y install libboost-python-dev libboost-numpy-dev                          && \
        apt-get -y install libeigen3-dev                                                   && \
-       apt-get -y install python3-minimal python3-pip python3-numpy                       && \
-       pip3 install numpy                                                                 && \
-       apt-get -y install wget                                                            && \
-       wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && \
-       tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0                                     && \
-       ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3              && \
-       ./b2 install                                                                       && \
-       apt-get install locate                                                             && \
-       updatedb                                                                           && \
+       pip install numpy                                                                  && \
        cd /tmp                                                                            && \
        cd arpack-ng                                                                       && \
        git status                                                                         && \
        git log -2                                                                         && \
        sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
        mkdir -p build && cd build                                                         && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' ..         && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DPYTHON2=ON ..                              && \
        export VERBOSE=1                                                                   && \
        make all                                                                           && \
        make test                                                                          && \

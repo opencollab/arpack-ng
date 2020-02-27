@@ -3,6 +3,10 @@ pyarpack: python binding based on Boost.Python.Numpy used to expose arpack C++ A
 Installation:
 -------------
 
+Python2: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON2=ON                              ..
+         ~/arpack-ng/build> make all test
+Note: Boost must have been compiled for Python2.
+
 Python3: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX="3" ..
          ~/arpack-ng/build> make all test
 Note: Boost must have been compiled for Python3.
