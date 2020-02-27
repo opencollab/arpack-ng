@@ -265,7 +265,7 @@ jobs:
        export FCFLAGS='-I/usr/include/mkl'                                                                           && \
        export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                               && \
        export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-icb --enable-mpi                        \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi                                     \
                    --disable-dependency-tracking                                                                     && \
        export VERBOSE=1                                                                                              && \
        make all                                                                                                      && \
