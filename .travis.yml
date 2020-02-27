@@ -188,7 +188,7 @@ jobs:
        git log -2                                                                         && \
        sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
        mkdir -p build && cd build                                                         && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON ..                                       && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' ..         && \
        export VERBOSE=1                                                                   && \
        make all                                                                           && \
        make test                                                                          && \
