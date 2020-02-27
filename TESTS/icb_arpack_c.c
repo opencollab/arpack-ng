@@ -32,7 +32,7 @@ int ds() {
   a_int N = 1000;
   char which[] = "LM";
   a_int nev = 9;
-  double tol = 0;
+  double tol = 0.000001; // small tol => more stable checks after EV computation.
   double resid[N];
   a_int ncv = 2 * nev + 1;
   double V[ncv * N];
@@ -68,16 +68,20 @@ int ds() {
 
     dMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   }
-  if (iparam[4] != nev) return 1;  // check number of ev found by arpack.
+  if (iparam[4] != nev) {printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); return 1;} // check number of ev found by arpack.
 
   /* call arpack like you would have, but, use dseupd_c instead of dseupd_ */
   dseupd_c(rvec, howmny, select, d, z, ldz, sigma, bmat, N, which, nev, tol,
            resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, &info);
   int i;
   for (i = 0; i < nev; ++i) {
-    printf("%f\n", d[i]);
+    double val = d[i];
+    double ref = (N-(nev-1)+i);
+    double eps = fabs(val - ref);
+    printf("%f - %f - %f\n", val, ref, eps);
+
     /*eigen value order: smallest -> biggest*/
-    if (fabs(d[i] - (double)(1000 - (nev - 1) + i)) > 1e-6) {
+    if(eps>1.e-05){
       free(d);
       return 1;
     }
@@ -97,7 +101,7 @@ int zn() {
   a_int N = 1000;
   char which[] = "LM";
   a_int nev = 9;
-  double tol = 0;
+  double tol = 0.000001; // small tol => more stable checks after EV computation.
   double _Complex resid[N];
   a_int ncv = 2 * nev + 1;
   double _Complex V[ncv * N];
@@ -136,7 +140,7 @@ int zn() {
 
     zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   }
-  if (iparam[4] != nev) return 1;  // check number of ev found by arpack.
+  if (iparam[4] != nev) {printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); return 1;} // check number of ev found by arpack.
 
   /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
@@ -144,10 +148,16 @@ int zn() {
            &info);
   int i;
   for (i = 0; i < nev; ++i) {
-    printf("%f %f\n", creal(d[i]), cimag(d[i]));
+    double rval = creal(d[i]);
+    double rref = (N-(nev-1)+i);
+    double reps = fabs(rval - rref);
+    double ival = cimag(d[i]);
+    double iref = (N-(nev-1)+i);
+    double ieps = fabs(ival - iref);
+    printf("%f %f - %f %f - %f %f\n", rval, ival, rref, iref, reps, ieps);
+
     /*eigen value order: smallest -> biggest*/
-    if (fabs(creal(d[i]) - (double)(1000 - (nev - 1) + i)) > 1e-6 ||
-        fabs(cimag(d[i]) - (double)(1000 - (nev - 1) + i)) > 1e-6) {
+    if(reps>1.e-05 || ieps>1.e-05){
       free(d);
       return 1;
     }

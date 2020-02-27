@@ -254,6 +254,7 @@ jobs:
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
+       apt-get -y install libeigen3-dev                                                                              && \
        cd /tmp                                                                                                       && \
        cd arpack-ng                                                                                                  && \
        git status                                                                                                    && \
@@ -261,11 +262,11 @@ jobs:
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
        sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
        ./bootstrap                                                                                                   && \
-       export FFLAGS='-I/usr/include/mkl'                                                                            && \
-       export FCFLAGS='-I/usr/include/mkl'                                                                           && \
-       export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                               && \
+       export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                                && \
+       export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                               && \
+       export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl'   && \
        export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-icb --enable-mpi                        \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-icb-exmm                   \
                    --disable-dependency-tracking                                                                     && \
        export VERBOSE=1                                                                                              && \
        make all                                                                                                      && \
