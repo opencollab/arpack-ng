@@ -4,6 +4,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
 [ Franck Houssen ]
+ * [BUG FIX] fix arpackdef.h: must not be included by F77/F90.
  * pyarpack: python binding based on Boost.Python.Numpy exposing C++ API.
  * [CLEAN] arpackSolver API: more convenient, suppress template parameters when possible.
  * [BUG FIX] ICB using rvec/select: rvec/select turned to integer
@@ -34,12 +35,11 @@ arpack-ng - 3.7.0
  * arpackmm: utility to test arpack with matrix market files.
  * ICB: add ILP64 support.
     The idea is:
-    - cmake      generates arpackdef.h from arpackdef.cmake.h.in
-    - autoheader generates arpackdef.h from arpackdef.autotools.h[.in]
-    - arpack includes arpackdef.h when/where needed:
-      - #define provide c_int/a_int according to architecture.
-      - all f90 who need to include "arpackdef.h" must be moved to F90.
-        Note: by convention, F90 are preprocessed (f90 are not).
+    - cmake      generates arpackdef.h from arpackdef.h.in
+    - autoheader generates arpackdef.h from arpackdef.h.in
+    - using arpackdef.h:
+      - in C/C++ files: arpackdef.h defines c_int/a_int according to architecture.
+      - in f90/F90 files: arpackdef.h must NOT be included (as it may need C header).
     - MPI does not support ILP64: integer*4 must be imposed in all
       calls involving MPI (f90 example/test code).
     To enable ILP64 users to compile/link, arpackdef.h is added in

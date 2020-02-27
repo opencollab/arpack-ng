@@ -5,7 +5,6 @@ subroutine snaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                     bind(c, name="snaupd_c")
   use :: iso_c_binding
   implicit none
-#include "arpackdef.h"
   integer(kind=c_int),                         intent(inout) :: ido
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
@@ -33,7 +32,6 @@ subroutine sneupd_c(rvec, howmny, select,                        &
                     bind(c, name="sneupd_c")
   use :: iso_c_binding
   implicit none
-#include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
   integer(kind=c_int),    dimension(ncv),      intent(in)    :: select

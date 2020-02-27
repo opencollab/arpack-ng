@@ -5,7 +5,6 @@ subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      bind(c, name="pssaupd_c")
   use :: iso_c_binding
   implicit none
-#include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   integer(kind=c_int),                         intent(inout) :: ido
   character(kind=c_char), dimension(1),        intent(in)    :: bmat
@@ -33,7 +32,6 @@ subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
                      bind(c, name="psseupd_c")
   use :: iso_c_binding
   implicit none
-#include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   integer(kind=c_int),    value,               intent(in)    :: rvec
   character(kind=c_char), dimension(1),        intent(in)    :: howmny
