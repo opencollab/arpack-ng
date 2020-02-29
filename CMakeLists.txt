@@ -274,30 +274,6 @@ endif()
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
-if(ICB)
-  install(FILES ICB/arpack.h DESTINATION include/arpack)
-  install(FILES ICB/arpack.hpp DESTINATION include/arpack)
-  if (MPI)
-    install(FILES ICB/parpack.h DESTINATION include/arpack)
-    install(FILES ICB/parpack.hpp DESTINATION include/arpack)
-  endif()
-  if (ICBEXMM)
-    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION include/arpack)
-  endif()
-endif()
-
-install(FILES debug.h DESTINATION include/arpack)
-if(ICB)
-  install(FILES ICB/debug_c.h DESTINATION include/arpack)
-  install(FILES ICB/debug_c.hpp DESTINATION include/arpack)
-endif()
-
-install(FILES stat.h DESTINATION include/arpack)
-if(ICB)
-  install(FILES ICB/stat_c.h DESTINATION include/arpack)
-  install(FILES ICB/stat_c.hpp DESTINATION include/arpack)
-endif()
-
 target_link_libraries(arpack ${BLAS_LIBRARIES})
 target_link_libraries(arpack ${LAPACK_LIBRARIES} ${EXTRA_LDLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
@@ -337,11 +313,7 @@ else ()
     set(INTERFACE64 0)
 endif ()
 
-message("-- Generating arpackdef.h")
-configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
 include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h
-install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION include/arpack)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ############################
@@ -692,15 +664,42 @@ if (MPI)
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif ()
 
+if(ICB)
+  install(FILES ICB/arpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/arpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  if (MPI)
+    install(FILES ICB/parpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+    install(FILES ICB/parpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  endif()
+  if (ICBEXMM)
+    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  endif()
+endif()
+
+install(FILES debug.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+if(ICB)
+  install(FILES ICB/debug_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/debug_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+endif()
+
+install(FILES stat.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+if(ICB)
+  install(FILES ICB/stat_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/stat_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+endif()
+
+configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake") # find_package(arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake) # find_package(arpack-ng)
 set(arpack_ng_MAJOR_VERSION 3)
 set(arpack_ng_MINOR_VERSION 7)
 set(arpack_ng_PATCH_VERSION 0)
 set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake")
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 
 # Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
 set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")
