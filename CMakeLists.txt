@@ -74,11 +74,12 @@ if (PYTHON3)
 endif ()
 
 if (ICBEXMM)
-    find_package(Eigen3 3.3)
+    find_package(Eigen3 3.3 QUIET)
     if (NOT EIGEN3_FOUND) # If not found, piggy-back pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)
+        set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
     endif ()
     find_program (BASH_PROGRAM bash)
 
