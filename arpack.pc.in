@@ -8,4 +8,4 @@ Description: Collection of Fortran77 subroutines designed to solve large scale e
 Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
 Libs: -L${libdir} -larpack@LIBSUFFIX@ @LAPACK_LIBS@ @BLAS_LIBS@
-Cflags: -I${includedir}/arpack @EIGEN3_CFLAGS@
+Cflags: -I${includedir}/arpack
