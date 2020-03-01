@@ -1,6 +1,8 @@
 LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)/ICB $(EIGEN3_CFLAGS)
 
+pkgincludedir = $(includedir)/arpack
+
 EXTRA_DIST = README
 
 check_PROGRAMS = arpackmm
