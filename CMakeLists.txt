@@ -15,6 +15,7 @@ if (POLICY CMP0042)
   cmake_policy (SET CMP0042 NEW)
 endif ()
 
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static libraries" ON)
 option(MPI "Enable parallel support" OFF)
 option(ICB "Enable support for *[ae]upd_c with ISO_C_BINDING" OFF)
 option(ICBEXMM "Enable support for matrix market example based on ICB" OFF)

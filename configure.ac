@@ -46,7 +46,7 @@ ifdef([LT_INIT], [], [
   m4exit([1])])
 
 LT_PREREQ([2.4.2])
-LT_INIT([win32-dll])
+LT_INIT([win32-dll disable-static])
 
 dnl See if compiling parpack
 AC_ARG_ENABLE([mpi],
