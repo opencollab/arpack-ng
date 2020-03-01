@@ -12,6 +12,7 @@ AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
+AC_PROG_SED
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
@@ -244,7 +245,7 @@ AC_SUBST([CMAKE_INSTALL_FULL_LIBDIR], ["$libdir"])  # FIXME: need to recursively
 AC_SUBST([CMAKE_INSTALL_FULL_INCLUDEDIR], ["$includedir"])
 AC_SUBST([BLAS_LIBRARIES], ["$BLAS_LIBS"])  # FIXME: need a filename, not a -l flag
 AC_SUBST([LAPACK_LIBRARIES], ["$LAPACK_LIBS"])
-AC_SUBST([EIGEN3_INCLUDE_DIR], ["${EIGEN3_CFLAGS/-I/}"])  # FIXME: bashism
+AC_SUBST([EIGEN3_INCLUDE_DIR], [`echo "$EIGEN3_CFLAGS" | sed -e s/-I//`])
 AC_CONFIG_FILES([arpack-ng-config.cmake])
 
 AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
