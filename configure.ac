@@ -20,7 +20,9 @@ dnl Check for LAPACK libraries
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
+PYINT="int32"
 if test x"$INTERFACE64" == x"1"; then
+  PYINT="int64"
   AC_LANG_PUSH([Fortran 77])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FFLAGS="$FFLAGS -fdefault-integer-8",
                         AX_CHECK_COMPILE_FLAG(-i8, FFLAGS="$FFLAGS -i8",
@@ -75,6 +77,30 @@ AC_ARG_ENABLE([icb-exmm],
                               [matrix market example based on ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [AS_VAR_SET([enable_icb_exmm], [no])])
+
+See if compiling boost.python binding based on ICB
+AC_ARG_ENABLE([python3],
+              [AS_HELP_STRING([--enable-python3],
+                              [boost.python binding based on ISO_C_BINDING])],
+              [
+               AS_VAR_SET([enable_icb], [$enableval])
+               AS_VAR_SET([enable_icb_exmm], [$enableval])
+              ],
+              [AS_VAR_SET([enable_python3], [no])])
+
+if test x"$enable_python3" != x"no"; then
+  m4_define_default([_AM_PYTHON_INTERPRETER_LIST],[python3])
+  AM_PATH_PYTHON
+  AX_PYTHON_DEVEL([>= '3.0'])
+  AX_BOOST_BASE
+  AX_BOOST_PYTHON
+  dnl AX_BOOST_NUMPY does not seem to exist yet... So rely on hand-made BOOST_NUMPY_LIB.
+  AS_IF(
+        [test x"$BOOST_NUMPY_LIB" == x""],
+        [BOOST_NUMPY_LIB="-lboost_numpy"]
+       )
+  AC_SUBST(BOOST_NUMPY_LIB)
+fi
 
 if test x"$enable_icb_exmm" != x"no"; then
 	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
@@ -236,6 +262,7 @@ AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
+AM_CONDITIONAL([PYTHON3], [test x"$enable_python3" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
@@ -265,6 +292,21 @@ AC_CONFIG_FILES([
 	EXAMPLES/SVD/Makefile
 	EXAMPLES/SYM/Makefile
 	EXAMPLES/MATRIX_MARKET/Makefile
+	EXAMPLES/PYARPACK/Makefile
+	EXAMPLES/PYARPACK/pyarpackDenseLDLT.py
+	EXAMPLES/PYARPACK/pyarpackDenseLLT.py
+	EXAMPLES/PYARPACK/pyarpackDenseLUPP.py
+	EXAMPLES/PYARPACK/pyarpackDenseLURR.py
+	EXAMPLES/PYARPACK/pyarpackDenseQRPP.py
+	EXAMPLES/PYARPACK/pyarpackDenseQRRR.py
+	EXAMPLES/PYARPACK/pyarpackSparseBiCGDiag.py
+	EXAMPLES/PYARPACK/pyarpackSparseBiCGILU.py
+	EXAMPLES/PYARPACK/pyarpackSparseCGDiag.py
+	EXAMPLES/PYARPACK/pyarpackSparseCGILU.py
+	EXAMPLES/PYARPACK/pyarpackSparseLDLT.py
+	EXAMPLES/PYARPACK/pyarpackSparseLLT.py
+	EXAMPLES/PYARPACK/pyarpackSparseLU.py
+	EXAMPLES/PYARPACK/pyarpackSparseQR.py
 	PARPACK/Makefile
 	PARPACK/SRC/MPI/Makefile
 	PARPACK/SRC/BLACS/Makefile
@@ -309,6 +351,14 @@ LAPACK              : $LAPACK_LIBS
 EIGEN               : $EIGEN3_CFLAGS
 LIBS                : $LIBS
 LDADD               : $LDADD
+PYTHON              : $PYTHON
+PYTHON_CPPFLAGS     : $PYTHON_CPPFLAGS
+PYTHON_LIBS         : $PYTHON_LIBS
+PYTHON_EXTRA_LIBS   : $PYTHON_EXTRA_LIBS
+BOOST_CPPFLAGS      : $BOOST_CPPFLAGS
+BOOST_LDFLAGS       : $BOOST_LDFLAGS
+BOOST_PYTHON_LIB    : $BOOST_PYTHON_LIB
+BOOST_NUMPY_LIB     : $BOOST_NUMPY_LIB
 --------------------------------------------------
 Configuration OK
 --------------------------------------------------

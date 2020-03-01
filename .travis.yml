@@ -254,6 +254,16 @@ jobs:
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
+       apt-get -y install libeigen3-dev                                                   && \
+       apt-get -y install python3-minimal python3-pip python3-numpy                       && \
+       pip3 install numpy                                                                 && \
+       apt-get -y install wget                                                            && \
+       wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && \
+       tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0                                     && \
+       ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3              && \
+       ./b2 install                                                                       && \
+       apt-get install locate                                                             && \
+       updatedb                                                                           && \
        cd /tmp                                                                                                       && \
        cd arpack-ng                                                                                                  && \
        git status                                                                                                    && \
@@ -265,7 +275,7 @@ jobs:
        export FCFLAGS='-I/usr/include/mkl'                                                                           && \
        export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'                               && \
        export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-icb --enable-mpi                        \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-python3                    \
                    --disable-dependency-tracking                                                                     && \
        export VERBOSE=1                                                                                              && \
        make all                                                                                                      && \
