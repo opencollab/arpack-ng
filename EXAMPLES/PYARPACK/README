@@ -32,7 +32,7 @@ You can use sparse or dense matrices, and, play with iterative or direct mode so
 
 You can also:
 
-1. restart a solve from the workspace of a previous solve: check out pyarpackRestart.py.in.
+1. restart a solve from the workspace of a previous solve: check out pyarpackRestart.py.
 2. compute eigen and / or schur vectors.
 
 Note:
@@ -51,5 +51,5 @@ Note:
 Examples:
 ---------
 
-~/arpack-ng> find . -name *.py.in (template files from which python scripts will result)
+~/arpack-ng> find . -name *.py (template files from which python scripts will result)
 
