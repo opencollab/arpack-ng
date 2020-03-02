@@ -679,7 +679,7 @@ class arpackSolver {
         if (is_same<RC,  float>::value && symPb) ipntrSz = 11;
         return 0;
       }
-      else if (aeupd == "eupd") {
+      if (aeupd == "eupd") {
         if (is_same<RC, double>::value && symPb) {iparamSz = 7; ipntrSz = 11;}
         if (is_same<RC,  float>::value && symPb) {iparamSz = 7; ipntrSz = 11;}
         return 0;
