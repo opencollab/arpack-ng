@@ -130,6 +130,47 @@ BOOST_PYTHON_MODULE(pyarpack)
     .def(bp::vector_indexing_suite<std::vector<EigVecZ>>())
   ;
 
+  // Documentation of the python module.
+
+  std::ostringstream doc;
+  doc << "You can use sparse or dense matrices, and, play with iterative or direct mode solvers (CG, LU, ...):" << std::endl;
+  doc << "1. choose arpack solver with a given mode solver" << std::endl;
+  doc << "   1.1. if you need to handle sparse matrices" << std::endl;
+  doc << "        >> from pyarpack import sparseBiCG as pyarpackSlv" << std::endl;
+  doc << "   1.2. if you need to handle dense matrices" << std::endl;
+  doc << "        >> from pyarpack import denseBiCG as pyarpackSlv" << std::endl;
+  doc << "2. choose arpack data type (float, double, ...)" << std::endl;
+  doc << "   >> arpackSlv = pyarpackSlv.double()" << std::endl;
+  doc << "3. solve the eigen problem" << std::endl;
+  doc << "   >> arpackSlv.solve(A, B)" << std::endl;
+  doc << "4. get eigen values and vectors" << std::endl;
+  doc << "   >> print(arpackSlv.vec)" << std::endl;
+  doc << "   >> print(arpackSlv.val)" << std::endl;
+  doc << std::endl;
+  doc << "Notes:" << std::endl;
+  doc << "1. arpack data type (float, double, ...) must be consistent with A/B numpy dtypes (float32, float64, ...)." << std::endl;
+  doc << "   at python side, the data MUST be casted in the EXACT expected type (int32, int64, float, double, ...)." << std::endl;
+  doc << "   otherwise, C++ may not get the data the way it expects them: C++ will not know how to read python data." << std::endl;
+  doc << "   if you are not sure how data have been passed from python to C++, set arpackSlv.debug = 1 and check out debug traces." << std::endl;
+  doc << "   in other words, pyarpack users MUST :" << std::endl;
+  doc << "   1.1. create numpy arrays specifying explicitly the type:" << std::endl;
+  doc << "        >> Aij = np.array([], dtype='complex128')" << std::endl;
+  doc << "   1.2. filling numpy arrays casting value on append:" << std::endl;
+  doc << "        >> Aij = np.append(Aij, np.complex128(np.complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type." << std::endl;
+  doc << "   1.3. calling the solver flavor which is consistent with the numpy array data type:" << std::endl;
+  doc << "        >> arpackSlv = pyarpackSlv.complexDouble() # Caution: complexDouble <=> np.array(..., dtype='complex128')" << std::endl;
+  doc << "   note: NO data type check can be done at C++ side, the pyarpack user MUST insure data consistency." << std::endl;
+  doc << "2. sparse matrices must be provided in coo format (n, i, j, Mij), that is, as a tuple where:" << std::endl;
+  doc << "   2.1. n is an integer." << std::endl;
+  doc << "   2.2. i, j, Mij are 1 x nnz numpy arrays." << std::endl;
+  doc << "3. dense  matrices must be provided in raw format (Mij, rowOrdered), that is, as a tuple where:" << std::endl;
+  doc << "   3.1. Mij is an n x n numpy array." << std::endl;
+  doc << "   3.2. rowOrdered is a boolean (column ordered if False)." << std::endl;
+  doc << "4. arpack mode solver are provided by eigen:" << std::endl;
+  doc << "   4.1. when solver is iterative, A and B can be sparse only." << std::endl;
+  doc << "   4.2. when solver is direct,    A and B can be sparse or dense." << std::endl;
+  bp::scope().attr("__doc__") = doc.str().c_str();
+
   // Specify that this module is actually a package.
 
   bp::object package = bp::scope();
