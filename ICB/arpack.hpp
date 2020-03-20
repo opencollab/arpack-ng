@@ -69,7 +69,7 @@ inline char const* convert_to_char(which const option) {
 }
 
 inline char const* convert_to_char(bmat const option) {
-  return option == bmat::identity ? "I" : "B";
+  return option == bmat::identity ? "I" : "G";
 }
 
 inline char const* convert_to_char(howmny const option) {

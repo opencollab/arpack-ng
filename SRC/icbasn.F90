@@ -7,7 +7,7 @@ subroutine snaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),                         intent(inout) :: ido
-  character(kind=c_char), dimension(1),        intent(in)    :: bmat
+  character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
   integer(kind=c_int),    value,               intent(in)    :: nev
@@ -22,7 +22,15 @@ subroutine snaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call snaupd(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+  
+  character(len=2):: w
+  integer         :: i
+  
+  do i =1,2
+      w(i:i) = which(i)
+  end do
+
+  call snaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine snaupd_c
 
@@ -35,7 +43,7 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: rvec
-  character(kind=c_char), dimension(1),        intent(in)    :: howmny
+  character(kind=c_char),                     intent(in)    :: howmny
   integer(kind=c_int),    dimension(ncv),      intent(in)    :: select
   real(kind=c_float),     dimension(nev+1),    intent(out)   :: dr
   real(kind=c_float),     dimension(nev+1),    intent(out)   :: di
@@ -44,7 +52,7 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   real(kind=c_float),     value,               intent(in)    :: sigmar
   real(kind=c_float),     value,               intent(in)    :: sigmai
   real(kind=c_float),     dimension(3*ncv),    intent(out)   :: workev
-  character(kind=c_char), dimension(1),        intent(in)    :: bmat
+  character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
   integer(kind=c_int),    value,               intent(in)    :: nev
@@ -65,7 +73,9 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   logical :: rv
   logical, dimension(ncv) :: slt
   integer :: idx
-
+  character(len=2):: w
+  integer         :: i
+  
   rv = .false.
   if (rvec .ne. 0) rv = .true.
 
@@ -74,10 +84,13 @@ subroutine sneupd_c(rvec, howmny, select,                        &
     if (select(idx) .ne. 0) slt(idx) = .true.
   enddo
 
+  do i =1,2
+      w(i:i) = which(i)
+  end do
   ! call arpack.
 
   call sneupd(rv, howmny, slt,                             &
               dr, di, z, ldz, sigmar, sigmai, workev,      &
-              bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+              bmat, n, w, nev, tol, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine sneupd_c

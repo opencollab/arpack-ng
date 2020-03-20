@@ -7,7 +7,7 @@ subroutine znaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),                                  intent(inout) :: ido
-  character(kind=c_char),           dimension(1),       intent(in)    :: bmat
+  character(kind=c_char),                               intent(in)    :: bmat
   integer(kind=c_int),              value,              intent(in)    :: n
   character(kind=c_char),           dimension(2),       intent(in)    :: which
   integer(kind=c_int),              value,              intent(in)    :: nev
@@ -23,7 +23,15 @@ subroutine znaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   integer(kind=c_int),              value,              intent(in)    :: lworkl
   real(kind=c_double),              dimension(ncv),     intent(out)   :: rwork
   integer(kind=c_int),                                  intent(inout) :: info
-  call znaupd(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+  
+  character(len=2):: w
+  integer         :: i
+  
+  do i =1,2
+      w(i:i) = which(i)
+  end do
+  
+  call znaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine znaupd_c
 
@@ -35,14 +43,14 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   implicit none
 #include "arpackdef.h"
   integer(kind=c_int),              value,              intent(in)    :: rvec
-  character(kind=c_char),           dimension(1),       intent(in)    :: howmny
+  character(kind=c_char),                               intent(in)    :: howmny
   integer(kind=c_int),              dimension(ncv),     intent(in)    :: select
   complex(kind=c_double_complex),   dimension(nev),     intent(out)   :: d
   complex(kind=c_double_complex),   dimension(n, nev),  intent(out)   :: z
   integer(kind=c_int),              value,              intent(in)    :: ldz
   complex(kind=c_double_complex),   value,              intent(in)    :: sigma
   complex(kind=c_double_complex),   dimension(2*ncv),   intent(out)   :: workev
-  character(kind=c_char),           dimension(1),       intent(in)    :: bmat
+  character(kind=c_char),                               intent(in)    :: bmat
   integer(kind=c_int),              value,              intent(in)    :: n
   character(kind=c_char),           dimension(2),       intent(in)    :: which
   integer(kind=c_int),              value,              intent(in)    :: nev
@@ -64,6 +72,8 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   logical :: rv
   logical, dimension(ncv) :: slt
   integer :: idx
+  character(len=2):: w
+  integer         :: i
 
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -73,9 +83,12 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
     if (select(idx) .ne. 0) slt(idx) = .true.
   enddo
 
+  do i =1,2
+      w(i:i) = which(i)
+  end do
   ! call arpack.
 
   call zneupd(rv, howmny, slt, d, z, ldz, sigma, workev,     &
-              bmat, n, which, nev, tol, resid, ncv, v, ldv,  &
+              bmat, n, w, nev, tol, resid, ncv, v, ldv,  &
               iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine zneupd_c
