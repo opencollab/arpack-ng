@@ -8,7 +8,7 @@ subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
 #include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   integer(kind=c_int),                         intent(inout) :: ido
-  character(kind=c_char), dimension(1),        intent(in)    :: bmat
+  character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
   integer(kind=c_int),    value,               intent(in)    :: nev
@@ -23,7 +23,15 @@ subroutine pssaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   real(kind=c_float),     dimension(lworkl),   intent(out)   :: workl
   integer(kind=c_int),    value,               intent(in)    :: lworkl
   integer(kind=c_int),                         intent(inout) :: info
-  call pssaupd(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+  
+  character(len=2):: w
+  integer         :: i
+  
+  do i =1,2
+      w(i:i) = which(i)
+  end do
+  
+  call pssaupd(comm, ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
 end subroutine pssaupd_c
 
@@ -36,13 +44,13 @@ subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
 #include "arpackdef.h"
   integer(kind=c_int),    value,               intent(in)    :: comm
   integer(kind=c_int),    value,               intent(in)    :: rvec
-  character(kind=c_char), dimension(1),        intent(in)    :: howmny
+  character(kind=c_char),                      intent(in)    :: howmny
   integer(kind=c_int),    dimension(ncv),      intent(in)    :: select
   real(kind=c_float),     dimension(nev),      intent(out)   :: d
   real(kind=c_float),     dimension(n, nev),   intent(out)   :: z
   integer(kind=c_int),    value,               intent(in)    :: ldz
   real(kind=c_float),     value,               intent(in)    :: sigma
-  character(kind=c_char), dimension(1),        intent(in)    :: bmat
+  character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=c_int),    value,               intent(in)    :: n
   character(kind=c_char), dimension(2),        intent(in)    :: which
   integer(kind=c_int),    value,               intent(in)    :: nev
@@ -63,7 +71,9 @@ subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
   logical :: rv
   logical, dimension(ncv) :: slt
   integer :: idx
-
+  character(len=2):: w
+  integer         :: i
+  
   rv = .false.
   if (rvec .ne. 0) rv = .true.
 
@@ -71,10 +81,14 @@ subroutine psseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
   do idx=1, ncv
     if (select(idx) .ne. 0) slt(idx) = .true.
   enddo
+  
+  do i =1,2
+      w(i:i) = which(i)
+  end do
 
   ! call arpack.
 
   call psseupd(comm, rv, howmny, slt, d, z, ldz, sigma,     &
-               bmat, n, which, nev, tol, resid, ncv, v, ldv,&
+               bmat, n, w, nev, tol, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, info)
 end subroutine psseupd_c
