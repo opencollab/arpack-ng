@@ -11,15 +11,14 @@
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
  */
 
-#include "parpack.hpp"
-
 #include <array>
 #include <cmath>
 #include <iostream>
 #include <vector>
 
 #include "debug_c.hpp"  // debug parpack.
-#include "stat_c.hpp"   // arpack statistics.
+#include "parpack.hpp"
+#include "stat_c.hpp"  // arpack statistics.
 
 void diagonal_matrix_vector_product(float const* const x, float* const y) {
   for (int i = 0; i < 1000; ++i) {
@@ -76,8 +75,10 @@ void real_symmetric_runner() {
                                    &(workd[ipntr[1] - 1]));
   }
   // check number of ev found by arpack.
-  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
-    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ ||
+      info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev
+              << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
@@ -157,8 +158,10 @@ void complex_symmetric_runner() {
   }
 
   // check number of ev found by arpack
-  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
-    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ ||
+      info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev
+              << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
@@ -173,8 +176,10 @@ void complex_symmetric_runner() {
     std::cout << "rank " << rank << " - " << std::real(d[i]) << " "
               << std::imag(d[i]) << '\n';
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) > 1. ||
-        std::abs(std::imag(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) > 1.) {
+    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) >
+            1. ||
+        std::abs(std::imag(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) >
+            1.) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
