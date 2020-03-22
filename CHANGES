@@ -1,5 +1,10 @@
 arpack-ng - 3.8.0
 
+[ Myron Oikonomakis ]
+ * [BUG FIX]: bmat return "G" instead of "B" for generalized matrix in arpack.hpp
+ * [BUG FIX]: pass arrays of chars as scalar in fortran calls in order not to crash
+ * when calling subroutines through icb interface
+
 [ Izaak "Zaak" Beekman ]
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
