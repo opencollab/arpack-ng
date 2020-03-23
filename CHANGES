@@ -20,7 +20,6 @@ arpack-ng - 3.8.0
  * [BUG FIX] ICB using rvec/select: rvec/select turned to integer
    bool should be, but, is not always supported (depend on compiler, options).
  * extract arpackSolver.hpp from arpakmm.cpp.
- * [BUG FIX] fix cmake/pc files: enable linking from outside (add blas, lapack, eigen).
  * arpackmm: add --slvItrPC option (PC: Jacobi, ILU).
  * arpackmm: add --slv LLT LDLT (for SPD matrices).
  * arpackmm: add --simplePrec option (to enable use of s*upd).

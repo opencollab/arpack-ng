@@ -15,9 +15,9 @@
 # Create local variables.
 set(arpack_ng_INCLUDE_DIRS "@CMAKE_INSTALL_FULL_INCLUDEDIR@/arpack;${MPI_Fortran_INCLUDE_DIRS};${MPI_C_INCLUDE_DIRS};${MPI_CXX_INCLUDE_DIRS}")
 if(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@")
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a")
 elseif(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@")
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so")
 endif()
 if(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.a")
   set(parpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.a;${arpack_ng_LIBRARIES};${MPI_Fortran_LIBRARIES};${MPI_C_LIBRARIES};${MPI_CXX_LIBRARIES}")

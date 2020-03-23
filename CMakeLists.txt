@@ -686,15 +686,15 @@ set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
-# Convert (LAPACK|BLAS)_LIBRARIES to -l flags, store in ARPACK_PC_LIBS.
+# Convert (LAPACK|BLAS)_LIBRARIES to -l flags, store in ARPACK_PC_LIBS_PRIVATE.
 # LAPACK_LIBRARIES contains transitive deps, no need to parse BLAS_LIBRARIES.
-set(ARPACK_PC_LIBS)
+set(ARPACK_PC_LIBS_PRIVATE)
 foreach(lib ${LAPACK_LIBRARIES})
     get_filename_component(libname ${lib} NAME)
     string(REGEX REPLACE "^lib([^.]+).*$" "-l\\1" libname ${libname})
-    list(APPEND ARPACK_PC_LIBS "${libname}")
+    list(APPEND ARPACK_PC_LIBS_PRIVATE "${libname}")
 endforeach()
-string(REPLACE ";" " " ARPACK_PC_LIBS "${ARPACK_PC_LIBS}")
+string(REPLACE ";" " " ARPACK_PC_LIBS_PRIVATE "${ARPACK_PC_LIBS_PRIVATE}")
 configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
 
 

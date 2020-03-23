@@ -254,13 +254,11 @@ AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
-AC_SUBST([ARPACK_PC_LIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
+AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_CONFIG_FILES([SRC/arpack$LIBSUFFIX.pc:SRC/arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_SUBST([CMAKE_INSTALL_FULL_LIBDIR], ["$libdir"])  # FIXME: need to recursively expand these
 AC_SUBST([CMAKE_INSTALL_FULL_INCLUDEDIR], ["$includedir"])
-AC_SUBST([BLAS_LIBRARIES], ["$BLAS_LIBS"])  # FIXME: need a filename, not a -l flag
-AC_SUBST([LAPACK_LIBRARIES], ["$LAPACK_LIBS"])
 AC_CONFIG_FILES([arpack-ng-config.cmake])
 
 AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
