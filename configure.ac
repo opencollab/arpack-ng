@@ -254,7 +254,8 @@ AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
-AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
+AC_SUBST([ARPACK_PC_LIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
+AC_CONFIG_FILES([SRC/arpack$LIBSUFFIX.pc:SRC/arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_SUBST([CMAKE_INSTALL_FULL_LIBDIR], ["$libdir"])  # FIXME: need to recursively expand these
 AC_SUBST([CMAKE_INSTALL_FULL_INCLUDEDIR], ["$includedir"])

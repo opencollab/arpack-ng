@@ -33,3 +33,8 @@ if ICB
 libarpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
 libarpack@LIBSUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
 endif
+
+pkgconfig_DATA = arpack@LIBSUFFIX@.pc
+
+# Due to the LIBSUFFIX, configure doesn't automatically clean this file:
+DISTCLEANFILES = arpack@LIBSUFFIX@.pc

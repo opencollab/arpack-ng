@@ -6,6 +6,11 @@ endif ()
 
 project(arpack C Fortran)
 
+set(arpack_ng_MAJOR_VERSION 3)
+set(arpack_ng_MINOR_VERSION 7)
+set(arpack_ng_PATCH_VERSION 0)
+set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 # Adopted from https://github.com/feymark/arpack.git
@@ -30,6 +35,8 @@ option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS an
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+# We don't want this to run on every build.
+option(COVERALLS "Generate coveralls data" OFF)
 if (COVERALLS)
     include(Coveralls)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
@@ -671,10 +678,32 @@ endif()
 # 'make install' to the correct location
 include(GNUInstallDirs)
 
+# Convert variable names to those expected by the .pc file.
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix \${prefix})
+set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
+set(PACKAGE_NAME ${PROJECT_NAME})
+set(PACKAGE_VERSION ${arpack_ng_VERSION})
+set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
+# Convert (LAPACK|BLAS)_LIBRARIES to -l flags, store in ARPACK_PC_LIBS.
+# LAPACK_LIBRARIES contains transitive deps, no need to parse BLAS_LIBRARIES.
+set(ARPACK_PC_LIBS)
+foreach(lib ${LAPACK_LIBRARIES})
+    get_filename_component(libname ${lib} NAME)
+    string(REGEX REPLACE "^lib([^.]+).*$" "-l\\1" libname ${libname})
+    list(APPEND ARPACK_PC_LIBS "${libname}")
+endforeach()
+string(REPLACE ";" " " ARPACK_PC_LIBS "${ARPACK_PC_LIBS}")
+configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
+
+
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
   install(TARGETS parpack
@@ -716,10 +745,6 @@ install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_IN
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake) # find_package(arpack-ng)
-set(arpack_ng_MAJOR_VERSION 3)
-set(arpack_ng_MINOR_VERSION 7)
-set(arpack_ng_PATCH_VERSION 0)
-set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 
@@ -730,24 +755,6 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
-
-# Convert variable names to those expected by the .pc file.
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix \${prefix})
-set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
-set(PACKAGE_NAME ${PROJECT_NAME})
-set(PACKAGE_VERSION ${arpack_ng_VERSION})
-set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
-set(LAPACK_LIBS "${LAPACK_LIBRARIES}")
-set(BLAS_LIBS "${BLAS_LIBRARIES}")
-configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
-# We don't want this to run on every build.
-option(COVERALLS "Generate coveralls data" OFF)
-
 
 if (COVERALLS)
     set(arpack_TST_SRC
