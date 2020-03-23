@@ -10,6 +10,9 @@ endif
 if ICB
 AM_DISTCHECK_CONFIGURE_FLAGS += --enable-icb
 endif
+if ICBEXMM
+AM_DISTCHECK_CONFIGURE_FLAGS += --enable-icb-exmm
+endif
 
 SUBDIRS = .
 if ICB

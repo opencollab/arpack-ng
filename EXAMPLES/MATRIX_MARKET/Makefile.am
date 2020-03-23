@@ -14,6 +14,7 @@ arpackmm_SOURCES = arpackmm.cpp
 
 if ICBEXMM
 pkginclude_HEADERS = arpackSolver.hpp
+pkgconfig_DATA = arpackSolver.pc
 endif
 
 CLEANFILES = \

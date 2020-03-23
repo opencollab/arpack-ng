@@ -707,6 +707,7 @@ string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 
 configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
 configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(EXAMPLES/MATRIX_MARKET/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" @ONLY)
 
 
 install(TARGETS arpack
@@ -734,6 +735,7 @@ if(ICB)
   endif()
   if (ICBEXMM)
     install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+    install(FILES "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 

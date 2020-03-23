@@ -262,6 +262,7 @@ AC_CONFIG_FILES([
 ], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
+	EXAMPLES/MATRIX_MARKET/arpackSolver.pc
 	arpackdef.h
 	arpackicb.h
 	arpack-ng-config-version.cmake

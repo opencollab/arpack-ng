@@ -32,7 +32,7 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'eval: Syntax error: "(" unexpected' error at build time.
  * Only build shared libraries by default.  To build static libraries, use
    --enable-static (autotools) or -DBUILD_SHARED_LIBS=OFF (cmake).
- * Add parpack.pc.
+ * Add parpack.pc and arpackSolver.pc.
 
 [ David Schwörer ]
  * Support of gfortran 10
