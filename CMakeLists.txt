@@ -744,9 +744,9 @@ install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_IN
 
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake) # find_package(arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng) # find_package(arpack-ng)
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng)
 
 # Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
 set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")

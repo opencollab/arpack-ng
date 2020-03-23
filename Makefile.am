@@ -21,7 +21,7 @@ SUBDIRS += PARPACK
 endif
 
 EXTRA_DIST = README.md PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
-detect_arpack_bug.m4 CMakeLists.txt arpack-ng-config.cmake.in arpack-ng-config-version.cmake.in
+detect_arpack_bug.m4 CMakeLists.txt
 
-cmkdir = $(prefix)/lib/cmake
-cmk_DATA = arpack-ng-config.cmake arpack-ng-config-version.cmake
+cmakedir = $(libdir)/cmake/arpack-ng
+cmake_DATA = arpack-ng-config.cmake arpack-ng-config-version.cmake
