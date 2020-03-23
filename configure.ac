@@ -257,16 +257,11 @@ m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir
 AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_CONFIG_FILES([SRC/arpack$LIBSUFFIX.pc:SRC/arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
 
-AC_SUBST([CMAKE_INSTALL_FULL_LIBDIR], ["$libdir"])  # FIXME: need to recursively expand these
-AC_SUBST([CMAKE_INSTALL_FULL_INCLUDEDIR], ["$includedir"])
-AC_CONFIG_FILES([arpack-ng-config.cmake])
-
-AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
-AC_CONFIG_FILES([arpack-ng-config-version.cmake])
-
 AC_CONFIG_FILES([
 	arpackdef.h
 	arpackicb.h
+	arpack-ng-config-version.cmake
+	arpack-ng-config.cmake
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile
