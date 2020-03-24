@@ -686,6 +686,7 @@ set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
+
 # Convert (LAPACK|BLAS)_LIBRARIES to -l flags, store in ARPACK_PC_LIBS_PRIVATE.
 # LAPACK_LIBRARIES contains transitive deps, no need to parse BLAS_LIBRARIES.
 set(ARPACK_PC_LIBS_PRIVATE)
@@ -695,7 +696,17 @@ foreach(lib ${LAPACK_LIBRARIES})
     list(APPEND ARPACK_PC_LIBS_PRIVATE "${libname}")
 endforeach()
 string(REPLACE ";" " " ARPACK_PC_LIBS_PRIVATE "${ARPACK_PC_LIBS_PRIVATE}")
+
+set(PARPACK_PC_LIBS_PRIVATE)
+foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
+    get_filename_component(libname ${lib} NAME)
+    string(REGEX REPLACE "^lib([^.]+).*$" "-l\\1" libname ${libname})
+    list(APPEND PARPACK_PC_LIBS_PRIVATE "${libname}")
+endforeach()
+string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
+
 configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
 
 
 install(TARGETS arpack
@@ -710,6 +721,8 @@ if (MPI)
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(FILES "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc"
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
 if(ICB)

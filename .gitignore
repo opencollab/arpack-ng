@@ -16,6 +16,7 @@ config.status
 libtool
 .deps/
 arpack.pc
+parpack.pc
 arpackdef.h
 arpackicb.h
 arpack-ng-config.cmake
