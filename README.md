@@ -22,16 +22,21 @@ Important Features:
     (resp. LP64) support, you MUST insure your BLAS/LAPACK is compliant with ILP64
     (resp. LP64).
   * users: set INTERFACE64 at configure time.
-  * developers:
+  * F77/F90 developers:
+    * all files which needs ILP64 support must include "arpackicb.h".
+    * when coding, use i_int (defined in arpackicb.h) instead of c_int.
+      i_int stands for "iso_c_binding int": it's #defined to c_int or c_int64_t
+      according to the architecture.
+  * C/C++ developers:
     * all files which needs ILP64 support must include "arpackdef.h".
     * when coding, use a_int (defined in arpackdef.h) instead of int.
       a_int stands for "architecture int": it's #defined to int or int64_t according
       to the architecture.
   * example: to test arpack with sequential ILP64 MKL assuming you use gnu compilers
     ```$ ./bootstrap
-    $ export FFLAGS='-I/usr/include/mkl'
-    $ export FCFLAGS='-I/usr/include/mkl'
-    $ export LIBS='-Wl,--no-as-needed -lmkl_sequential -lmkl_core -lpthread -lm -ldl'
+    $ export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'
+    $ export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'
+    $ export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl'
     $ export INTERFACE64=1
     $ ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
     $ make all check```

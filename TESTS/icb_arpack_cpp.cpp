@@ -9,25 +9,24 @@
  * matrix with entries 1000, 999, ... , 2, 1 on the diagonal.
  */
 
-#include "arpack.hpp"
-
 #include <array>
 #include <cmath>
 #include <iostream>
 #include <vector>
 
+#include "arpack.hpp"
 #include "debug_c.hpp"  // debug arpack.
 #include "stat_c.hpp"   // arpack statistics.
 
-template<typename Real>
+template <typename Real>
 void diagonal_matrix_vector_product(Real const* const x, Real* const y) {
   for (int i = 0; i < 1000; ++i) {
     y[i] = static_cast<Real>(i + 1) * x[i];
   }
 }
 
-template<typename Real>
-void real_symmetric_runner(double const & tol_check) {
+template <typename Real>
+void real_symmetric_runner(double const& tol_check) {
   a_int const N = 1000;
   a_int const nev = 9;
 
@@ -38,7 +37,7 @@ void real_symmetric_runner(double const & tol_check) {
 
   a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  Real const tol = 0.0;
+  Real const tol = 0.000001; // small tol => more stable checks after EV computation.
   Real const sigma = 0.0;
 
   a_int const rvec = 1;
@@ -73,8 +72,10 @@ void real_symmetric_runner(double const & tol_check) {
   }
 
   // check number of ev found by arpack.
-  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
-    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ ||
+      info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev
+              << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
@@ -88,17 +89,20 @@ void real_symmetric_runner(double const & tol_check) {
                 workl.data(), lworkl, info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << d[i] << "\n";
+    Real val = d[i];
+    Real ref = static_cast<Real>(N - (nev - 1) + i);
+    Real eps = std::fabs(val - ref);
+    std::cout << val << " - " << ref << " - " << eps << std::endl;
 
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
+    if (eps > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
   std::cout << "------\n";
 }
 
-template<typename Real>
+template <typename Real>
 void diagonal_matrix_vector_product(std::complex<Real> const* const x,
                                     std::complex<Real>* const y) {
   for (int i = 0; i < 1000; ++i) {
@@ -106,8 +110,8 @@ void diagonal_matrix_vector_product(std::complex<Real> const* const x,
   }
 }
 
-template<typename Real>
-void complex_symmetric_runner(double const & tol_check) {
+template <typename Real>
+void complex_symmetric_runner(double const& tol_check) {
   a_int const N = 1000;
   a_int const nev = 9;
 
@@ -118,7 +122,7 @@ void complex_symmetric_runner(double const & tol_check) {
 
   a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  Real const tol = 0.0;
+  Real const tol = 0.000001; // small tol => more stable checks after EV computation.
   std::complex<Real> const sigma(0.0, 0.0);
 
   a_int const rvec = 0;
@@ -154,8 +158,10 @@ void complex_symmetric_runner(double const & tol_check) {
   }
 
   // check number of ev found by arpack.
-  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ || info != 0) {
-    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev << ", info " << info << std::endl;
+  if (iparam[4] < nev /*arpack may succeed to compute more EV than expected*/ ||
+      info != 0) {
+    std::cout << "ERROR: iparam[4] " << iparam[4] << ", nev " << nev
+              << ", info " << info << std::endl;
     throw std::domain_error("Error inside ARPACK routines");
   }
 
@@ -169,11 +175,16 @@ void complex_symmetric_runner(double const & tol_check) {
                 workl.data(), lworkl, rwork.data(), info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << d[i] << "\n";
+    Real rval = std::real(d[i]);
+    Real rref = static_cast<Real>(N - (nev - 1) + i);
+    Real reps = std::fabs(rval - rref);
+    Real ival = std::imag(d[i]);
+    Real iref = static_cast<Real>(N - (nev - 1) + i);
+    Real ieps = std::fabs(ival - iref);
+    std::cout << rval << " " << ival << " - " << rref << " " << iref << " - " << reps << " " << ieps << std::endl;
 
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check ||
-        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
+    if (reps > tol_check || ieps > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -183,7 +194,7 @@ int main() {
   sstats_c();
 
   // arpack without debug
-  real_symmetric_runner<float>(1);
+  real_symmetric_runner<float>(1.);
   real_symmetric_runner<double>(1.e-05);
 
   a_int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
@@ -206,7 +217,7 @@ int main() {
           1);
 
   // arpack with debug
-  complex_symmetric_runner<float>(1);
+  complex_symmetric_runner<float>(1.);
   complex_symmetric_runner<double>(1.e-05);
 
   return 0;

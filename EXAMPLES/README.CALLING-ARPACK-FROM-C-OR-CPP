@@ -1,2 +1,4 @@
-In ../TESTS, the file icb_arpack_c.c     is an example of how to call arpack from C.
-In ../TESTS, the file icb_arpack_cpp.cpp is an example of how to call arpack from C++.
+In../ TESTS,
+    the file icb_arpack_c.c is an example of how to call arpack from C.In../
+        TESTS,
+    the file icb_arpack_cpp.cpp is an example of how to call arpack from C++.

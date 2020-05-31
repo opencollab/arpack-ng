@@ -313,7 +313,7 @@ else ()
     set(INTERFACE64 0)
 endif ()
 
-include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h
+include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h and arpackicb.h
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ############################
@@ -691,6 +691,9 @@ endif()
 
 configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+
+configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
 
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
