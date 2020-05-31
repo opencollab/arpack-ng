@@ -133,29 +133,20 @@ jobs:
   # bionic <=> test "recent" systems, with ICB
   - stage: bionic
     dist: bionic
-    script: |
-      ./bootstrap                           && \
-      ./configure --enable-icb --enable-mpi && \
-      export VERBOSE=1                      && \
-      make all                              && \
-      make check                            && \
+    script: ./bootstrap && ./configure --enable-icb --enable-mpi && export VERBOSE=1 && make all && make check
   - stage: bionic
     dist: bionic
-    script: |
-      apt-get -y install python3-minimal python3-pip python3-numpy                       && \
-      pip3 install numpy                                                                 && \
-      apt-get -y install wget                                                            && \
-      wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && \
-      tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0                                     && \
-      ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3              && \
-      ./b2 install                                                                       && \
-      apt-get install locate                                                             && \
-      updatedb                                                                           && \
-      mkdir -p build && cd build                                                         && \
-      cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' ..         && \
-      export VERBOSE=1                                                                   && \
-      make all                                                                           && \
-      make test                                                                          && \
+    before_install:
+    - apt-get -y install python3-minimal python3-pip python3-numpy
+    - pip3 install numpy
+    - apt-get -y install wget
+    - wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz
+    - tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0
+    - ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3
+    - ./b2 install
+    - apt-get install locate
+    - updatedb
+    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && export VERBOSE=1 && make all && make test
   # bionic <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
@@ -182,10 +173,11 @@ jobs:
   # bionic <=> interface64: "recent" systems with ICB + MKL + ILP64
   - stage: interface64
     dist: bionic
+    before_install:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get -y install dialog
+    - echo yes | apt-get -y install intel-mkl libmkl-dev
     script: |
-      export DEBIAN_FRONTEND=noninteractive                                                                       && \
-      apt-get -y install dialog                                                                                   && \
-      echo yes | apt-get -y install intel-mkl libmkl-dev                                                          && \
       ./bootstrap                                                                                                 && \
       export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                              && \
       export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                             && \
