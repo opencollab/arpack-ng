@@ -250,7 +250,7 @@ jobs:
        apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
        apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
        cat /etc/os-release                                                                                           && \
-       apt-get -y install dialog apt-utils                                                                           && \
+       apt-get -y install dialog                                                                                     && \
        echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
        apt-get -y install build-essential                                                                            && \
        apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
