@@ -253,6 +253,7 @@ AC_CONFIG_FILES([arpack-ng-config-version.cmake])
 
 AC_CONFIG_FILES([
 	arpackdef.h
+	arpackicb.h
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile

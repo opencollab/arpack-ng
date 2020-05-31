@@ -35,7 +35,7 @@ void real_symmetric_runner() {
   a_int ldv = N;
 
   a_int rvec = 1;
-  float tol = 0.0f;
+  float tol = 0.000001; // small tol => more stable checks after EV computation.
   float sigma = 0.0f;
 
   std::array<a_int, 14> ipntr;
@@ -89,9 +89,13 @@ void real_symmetric_runner() {
                 workl.data(), lworkl, info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << "rank " << rank << " - " << d[i] << std::endl;
+    float val = d[i];
+    float ref = (N - (nev - 1) + i);
+    float eps = std::fabs(val - ref);
+    std::cout << "rank " << rank  << " : " << val << " - " << ref << " - " << eps << std::endl;
+
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(d[i] - static_cast<float>(1000 - (nev - 1) + i)) > 1.) {
+    if (eps > 1.) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -111,7 +115,7 @@ void complex_symmetric_runner() {
   a_int ldv = N;
   a_int ldz = N + 1;
 
-  float tol = 0.0f;
+  float tol = 0.000001; // small tol => more stable checks after EV computation.
   a_int rvec = 0;
   std::complex<float> sigma(0.0f, 0.0f);
 
@@ -173,13 +177,16 @@ void complex_symmetric_runner() {
                 info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << "rank " << rank << " - " << std::real(d[i]) << " "
-              << std::imag(d[i]) << '\n';
+    float rval = std::real(d[i]);
+    float rref = (N-(nev-1)+i);
+    float reps = std::fabs(rval - rref);
+    float ival = std::imag(d[i]);
+    float iref = (N-(nev-1)+i);
+    float ieps = std::fabs(ival - iref);
+    std::cout << "rank " << rank << " : " << rval << " " << ival << " - " << rref << " " << iref << " - " << reps << " " << ieps << std::endl;
+
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(std::real(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) >
-            1. ||
-        std::abs(std::imag(d[i]) - static_cast<float>(1000 - (nev - 1) + i)) >
-            1.) {
+    if (reps > 1. || ieps > 1.) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }

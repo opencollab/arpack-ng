@@ -17,6 +17,7 @@ libtool
 .deps/
 arpack.pc
 arpackdef.h
+arpackicb.h
 arpack-ng-config.cmake
 arpack-ng-config-version.cmake
 

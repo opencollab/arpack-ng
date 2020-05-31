@@ -37,7 +37,7 @@ void real_symmetric_runner(double const& tol_check) {
 
   a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  Real const tol = 0.0;
+  Real const tol = 0.000001; // small tol => more stable checks after EV computation.
   Real const sigma = 0.0;
 
   a_int const rvec = 1;
@@ -89,10 +89,13 @@ void real_symmetric_runner(double const& tol_check) {
                 workl.data(), lworkl, info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << d[i] << "\n";
+    Real val = d[i];
+    Real ref = static_cast<Real>(N - (nev - 1) + i);
+    Real eps = std::fabs(val - ref);
+    std::cout << val << " - " << ref << " - " << eps << std::endl;
 
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(d[i] - static_cast<Real>(1000 - (nev - 1) + i)) > tol_check) {
+    if (eps > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -119,7 +122,7 @@ void complex_symmetric_runner(double const& tol_check) {
 
   a_int const lworkl = 3 * (ncv * ncv) + 6 * ncv;
 
-  Real const tol = 0.0;
+  Real const tol = 0.000001; // small tol => more stable checks after EV computation.
   std::complex<Real> const sigma(0.0, 0.0);
 
   a_int const rvec = 0;
@@ -172,13 +175,16 @@ void complex_symmetric_runner(double const& tol_check) {
                 workl.data(), lworkl, rwork.data(), info);
 
   for (int i = 0; i < nev; ++i) {
-    std::cout << d[i] << "\n";
+    Real rval = std::real(d[i]);
+    Real rref = static_cast<Real>(N - (nev - 1) + i);
+    Real reps = std::fabs(rval - rref);
+    Real ival = std::imag(d[i]);
+    Real iref = static_cast<Real>(N - (nev - 1) + i);
+    Real ieps = std::fabs(ival - iref);
+    std::cout << rval << " " << ival << " - " << rref << " " << iref << " - " << reps << " " << ieps << std::endl;
 
     /*eigen value order: smallest -> biggest*/
-    if (std::abs(std::real(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) >
-            tol_check ||
-        std::abs(std::imag(d[i]) - static_cast<Real>(1000 - (nev - 1) + i)) >
-            tol_check) {
+    if (reps > tol_check || ieps > tol_check) {
       throw std::domain_error("Correct eigenvalues not computed");
     }
   }
@@ -188,7 +194,7 @@ int main() {
   sstats_c();
 
   // arpack without debug
-  real_symmetric_runner<float>(1);
+  real_symmetric_runner<float>(1.);
   real_symmetric_runner<double>(1.e-05);
 
   a_int nopx_c, nbx_c, nrorth_c, nitref_c, nrstrt_c;
@@ -211,7 +217,7 @@ int main() {
           1);
 
   // arpack with debug
-  complex_symmetric_runner<float>(1);
+  complex_symmetric_runner<float>(1.);
   complex_symmetric_runner<double>(1.e-05);
 
   return 0;
