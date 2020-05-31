@@ -130,82 +130,35 @@ jobs:
   - stage: xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
-  # bionic <=> test ubuntu:bionic with autotools/cmake
-  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
-  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
-  #                                                               note: docker-cp works only if copy from/to containers (not images)
-  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  # bionic <=> test "recent" systems, with ICB
   - stage: bionic
-    dist: xenial
+    dist: bionic
     script: |
-      sudo docker pull ubuntu:bionic                                                                                    \
-      &&                                                                                                                \
-      sudo docker create --name mobydick ubuntu:bionic /bin/bash -c                                                     \
-      "cat /etc/os-release                                                                                           && \
-       apt-get -y                                                                 update                             && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
-       apt-get -y install build-essential                                                                            && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
-       apt-get -y install libblas-dev liblapack-dev                                                                  && \
-       cd /tmp                                                                                                       && \
-       cd arpack-ng                                                                                                  && \
-       git status                                                                                                    && \
-       git log -2                                                                                                    && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
-       ./bootstrap                                                                                                   && \
-       ./configure --enable-icb --enable-mpi --disable-dependency-tracking                                           && \
-       export VERBOSE=1                                                                                              && \
-       make all                                                                                                      && \
-       make check                                                                                                    && \
-       find . -name test-suite.log | xargs tail -n 300"                                                                 \
-      &&                                                                                                                \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
-      &&                                                                                                                \
-      sudo docker start -a mobydick
+      ./bootstrap                           && \
+      ./configure --enable-icb --enable-mpi && \
+      export VERBOSE=1                      && \
+      make all                              && \
+      make check                            && \
   - stage: bionic
-    dist: xenial
+    dist: bionic
     script: |
-      sudo docker pull ubuntu:bionic                                                         \
-      &&                                                                                     \
-      sudo docker create --name mobydick ubuntu:bionic /bin/bash -c                          \
-      "cat /etc/os-release                                                                && \
-       apt-get -y                                                                 update  && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade && \
-       apt-get -y install build-essential                                                 && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev cmake           && \
-       apt-get -y install libblas-dev liblapack-dev                                       && \
-       apt-get -y install libeigen3-dev                                                   && \
-       apt-get -y install python3-minimal python3-pip python3-numpy                       && \
-       pip3 install numpy                                                                 && \
-       apt-get -y install wget                                                            && \
-       wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && \
-       tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0                                     && \
-       ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3              && \
-       ./b2 install                                                                       && \
-       apt-get install locate                                                             && \
-       updatedb                                                                           && \
-       cd /tmp                                                                            && \
-       cd arpack-ng                                                                       && \
-       git status                                                                         && \
-       git log -2                                                                         && \
-       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
-       mkdir -p build && cd build                                                         && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' ..         && \
-       export VERBOSE=1                                                                   && \
-       make all                                                                           && \
-       make test                                                                          && \
-       tail -n 300 ./Testing/Temporary/LastTest.log"                                         \
-      &&                                                                                     \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
-      &&                                                                                     \
-      sudo docker start -a mobydick
-  # xenial <=> coverage: "recent" systems with ICB
+      apt-get -y install python3-minimal python3-pip python3-numpy                       && \
+      pip3 install numpy                                                                 && \
+      apt-get -y install wget                                                            && \
+      wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && \
+      tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0                                     && \
+      ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3              && \
+      ./b2 install                                                                       && \
+      apt-get install locate                                                             && \
+      updatedb                                                                           && \
+      mkdir -p build && cd build                                                         && \
+      cmake -DEXAMPLES=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' ..         && \
+      export VERBOSE=1                                                                   && \
+      make all                                                                           && \
+      make test                                                                          && \
+  # bionic <=> coverage: "recent" systems with ICB
   - stage: coverage
-    dist: xenial
+    dist: bionic
     script: |
       mkdir -p build && cd build                                                   \
       &&                                                                           \
@@ -226,59 +179,29 @@ jobs:
       head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
       &&                                                                           \
       head -n 50 coveralls.json && tail -n 50 coveralls.json
-  # xenial <=> interface64: "recent" systems with ICB + MKL + ILP64
-  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
-  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
-  #                                                               note: docker-cp works only if copy from/to containers (not images)
-  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  # bionic <=> interface64: "recent" systems with ICB + MKL + ILP64
   - stage: interface64
-    allow_failure:
-    dist: xenial
+    dist: bionic
     script: |
-      sudo docker pull ubuntu:bionic                                                                                    \
-      &&                                                                                                                \
-      sudo docker create --name mobydick ubuntu:bionic /bin/bash -c                                                     \
-      "cat /etc/os-release                                                                                           && \
-       export DEBIAN_FRONTEND=noninteractive                                                                         && \
-       apt-get -y                                                                 update                             && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
-       cat /etc/os-release                                                                                           && \
-       apt-get -y install dialog                                                                                     && \
-       echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
-       apt-get -y install build-essential                                                                            && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
-       apt-get -y install libeigen3-dev                                                                              && \
-       cd /tmp                                                                                                       && \
-       cd arpack-ng                                                                                                  && \
-       git status                                                                                                    && \
-       git log -2                                                                                                    && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
-       ./bootstrap                                                                                                   && \
-       export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                                && \
-       export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                               && \
-       export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl'   && \
-       export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-icb-exmm                   \
-                   --disable-dependency-tracking                                                                     && \
-       export VERBOSE=1                                                                                              && \
-       make all                                                                                                      && \
-       make check                                                                                                    && \
-       find . -name   test-suite.log | xargs tail -n 300"                                                               \
-      &&                                                                                                                \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
-      &&                                                                                                                \
-      sudo docker start -a mobydick
+      export DEBIAN_FRONTEND=noninteractive                                                                       && \
+      apt-get -y install dialog                                                                                   && \
+      echo yes | apt-get -y install intel-mkl libmkl-dev                                                          && \
+      ./bootstrap                                                                                                 && \
+      export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                              && \
+      export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                             && \
+      export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl' && \
+      export INTERFACE64=1                                                                                        && \
+      ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-icb-exmm              && \
+      export VERBOSE=1                                                                                            && \
+      make all                                                                                                    && \
+      make check                                                                                                  && \
   # fedora (released fedora with openmpi)
   - stage: fedora
-    dist: xenial
+    dist: bionic
     script: ./scripts/travis_fedora.sh setup openmpi latest
-
   # fedora (with gcc 10 and mpich)
   - stage: fedora
-    dist: xenial
+    dist: bionic
     script: ./scripts/travis_fedora.sh setup mpich rawhide
 
 after_failure:
