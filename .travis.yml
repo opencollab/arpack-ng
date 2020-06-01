@@ -196,6 +196,18 @@ jobs:
       export VERBOSE=1                                                                                            && \
       make all                                                                                                    && \
       make check                                                                                                  && \
+  - stage: interface64
+    dist: bionic
+    before_install:
+    - export DEBIAN_FRONTEND=noninteractive
+    - sudo apt-get -y install dialog
+    - echo yes | sudo apt-get -y install intel-mkl libmkl-dev
+    script: |
+      mkdir -p build && cd build                                                                   && \
+      BLA_VENDOR='Intel10_64ilp_seq' cmake -DINTERFACE64=ON -DEXAMPLES=ON -DICBEXMM=ON -DMPI=ON .. && \
+      export VERBOSE=1                                                                             && \
+      make all                                                                                     && \
+      make check                                                                                   && \
 
 after_failure:
 
