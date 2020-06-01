@@ -159,9 +159,9 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
-  # bionic <=> coverage: "recent" systems with ICB
+  # xenial <=> coverage: "recent" systems with ICB
   - stage: coverage
-    dist: bionic
+    dist: xenial
     script: |
       mkdir -p build && cd build                                                   \
       &&                                                                           \
