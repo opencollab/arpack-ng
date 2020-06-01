@@ -187,6 +187,7 @@ jobs:
     dist: bionic
     before_install:
     - export DEBIAN_FRONTEND=noninteractive
+    - sudo apt-get -y update
     - sudo apt-get -y install dialog
     - echo yes | sudo apt-get -y install intel-mkl libmkl-dev
     script: |
@@ -203,6 +204,7 @@ jobs:
     dist: bionic
     before_install:
     - export DEBIAN_FRONTEND=noninteractive
+    - sudo apt-get -y update
     - sudo apt-get -y install dialog
     - echo yes | sudo apt-get -y install intel-mkl libmkl-dev
     script: |
