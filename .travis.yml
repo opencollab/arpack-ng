@@ -40,6 +40,14 @@ stages:
 
 jobs:
   include:
+  # fedora (released fedora with openmpi)
+  - stage: fedora
+    dist: bionic
+    script: ./scripts/travis_fedora.sh setup openmpi latest
+  # fedora (with gcc 10 and mpich)
+  - stage: fedora
+    dist: bionic
+    script: ./scripts/travis_fedora.sh setup mpich rawhide
   # osx <=> macOS 10.13 (high sierra)
   - stage: osx
     os: osx
@@ -188,14 +196,6 @@ jobs:
       export VERBOSE=1                                                                                            && \
       make all                                                                                                    && \
       make check                                                                                                  && \
-  # fedora (released fedora with openmpi)
-  - stage: fedora
-    dist: bionic
-    script: ./scripts/travis_fedora.sh setup openmpi latest
-  # fedora (with gcc 10 and mpich)
-  - stage: fedora
-    dist: bionic
-    script: ./scripts/travis_fedora.sh setup mpich rawhide
 
 after_failure:
 
