@@ -155,7 +155,10 @@ jobs:
     - sudo ./b2 install
     - sudo apt-get install locate
     - sudo updatedb
-    script: mkdir -p build && cd build && cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && export VERBOSE=1 && make all && make test
+    script: |
+      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
+      cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
+      export VERBOSE=1 && make all && make test
   # bionic <=> coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
