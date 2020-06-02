@@ -163,13 +163,9 @@ jobs:
       &&                                                                           \
       tail -n 50 cmake.log                                                         \
       &&                                                                           \
-      make all                                                    &> compil.log    \
+      make all                                                                     \
       &&                                                                           \
-      tail -n 50 compil.log                                                        \
-      &&                                                                           \
-      make test                                                   &> test.log      \
-      &&                                                                           \
-      tail -n 50 test.log                                                          \
+      make test                                                                    \
       &&                                                                           \
       make coveralls                                              &> coveralls.log \
       &&                                                                           \
