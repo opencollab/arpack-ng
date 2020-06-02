@@ -278,11 +278,13 @@ jobs:
       sudo docker start -a mobydick
   # fedora (released fedora with openmpi)
   - stage: fedora
+    name: "Fedora latest with openmpi"
     dist: xenial
     script: ./scripts/travis_fedora.sh setup openmpi latest
 
   # fedora (with gcc 10 and mpich)
   - stage: fedora
+    name: "Fedora rawhide with mpich"
     dist: xenial
     script: ./scripts/travis_fedora.sh setup mpich rawhide
 
