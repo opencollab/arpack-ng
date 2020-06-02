@@ -159,7 +159,7 @@ jobs:
     script: |
       mkdir -p build && cd build                                                   \
       &&                                                                           \
-      cmake -DEXAMPLES=ON -DMPI=ON -DICBEXMM=ON -DCOVERALLS=ON .. &> cmake.log     \
+      cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..     &> cmake.log     \
       &&                                                                           \
       tail -n 50 cmake.log                                                         \
       &&                                                                           \
