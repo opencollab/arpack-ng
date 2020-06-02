@@ -27,6 +27,9 @@ test . != ".$1" && mpi="$1" || mpi=openmpi
 ## If we are called as root, setup everything
 if [ $UID -eq 0 ]
 then
+    cat /etc/os-release
+    # Ignore weak depencies
+    echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
     time dnf -y upgrade
     time dnf -y install environment-modules git \
         gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
