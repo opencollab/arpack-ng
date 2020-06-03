@@ -36,7 +36,7 @@ if (COVERALLS)
     set(COVERALLS_FLAGS "-g1 -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${COVERALLS_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERALLS_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERALLS_FLAGS} --param ggc-min-expand=1 --param ggc-min-heapsize=32768")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERALLS_FLAGS} --param ggc-min-expand=0 --param ggc-min-heapsize=8192")
     # The no space is by design: issue in cmake. See CMP0004.
     set(EXTRA_LDLAGS "${EXTRA_LDLAGS}-lgcov")
 endif()
