@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: archlinux
   - name: fedora
   - name: osx
   - name: precise
@@ -40,6 +41,30 @@ stages:
 
 jobs:
   include:
+  # archlinux: "recent" systems with ICB
+  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
+  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
+  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #                                                               note: docker-cp works only if copy from/to containers (not images)
+  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  - stage: archlinux
+    dist: bionic
+    script: |
+      sudo docker pull archlinux                                                                         \
+      &&                                                                                                 \
+      sudo docker create --name mobydick archlinux /bin/bash -c                                          \
+      "pacman -Sy pacman gcc openmpi blas lapack cmake git                                            && \
+       cd /tmp                                                                                        && \
+       cd arpack-ng                                                                                   && \
+       git status                                                                                     && \
+       git log -2                                                                                     && \
+       mkdir -p build && cd build                                                                     && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                                       && \
+       make all && make test"                                                                            \
+      &&                                                                                                 \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                \
+      &&                                                                                                 \
+      sudo docker start -a mobydick
   # fedora (released fedora with openmpi)
   - stage: fedora
     dist: bionic
