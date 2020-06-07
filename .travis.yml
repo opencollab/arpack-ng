@@ -62,7 +62,7 @@ jobs:
        cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                                       && \
        make all && make test"                                                                            \
       &&                                                                                                 \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR}/arpack-ng mobydick:/tmp                                      \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                \
       &&                                                                                                 \
       sudo docker start -a mobydick
   # fedora (released fedora with openmpi)
