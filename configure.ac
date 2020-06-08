@@ -78,7 +78,7 @@ AC_ARG_ENABLE([icb-exmm],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
 if test x"$enable_icb_exmm" != x"no"; then
-	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
+	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
 	AC_LANG_PUSH([C++])
 	CPPFLAGS_SAVE=$CPPFLAGS
 	CPPFLAGS=$EIGEN3_CFLAGS
