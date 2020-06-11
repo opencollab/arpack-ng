@@ -12,10 +12,23 @@ then
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
     test . != ".$2" && mpi="$2" || mpi=openmpi
-    test . != ".$3" && version="$3" || version=latest
-    time sudo docker pull registry.fedoraproject.org/fedora:$version ||
-	sudo docker pull fedora:$version
-    time sudo docker create --name mobydick fedora:$version \
+    test . != ".$3" && os="$3" || os=fedora:latest
+    base=${version%:*}
+    release=${os#*:}
+    case $base in
+	fedora)
+	    reg=registry.fedoraproject.org
+	    ;;
+	centos)
+	    reg=registry.centos.org
+	    ;;
+	*)
+	    echo "Unknonw OS"
+	    exit 1
+    esac
+    time sudo docker pull $reg/$os ||
+	sudo docker pull $os
+    time sudo docker create --name mobydick $os \
 	/tmp/arpack-ng/scripts/travis_fedora.sh $mpi
     time sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp
     time sudo docker start -a mobydick ; e=$?
@@ -27,6 +40,10 @@ test . != ".$1" && mpi="$1" || mpi=openmpi
 ## If we are called as root, setup everything
 if [ $UID -eq 0 ]
 then
+    if grep centos -i /etc/os-release ; then
+	dnf install -y dnf-plugins-core #epel-release
+	dnf config-manager --set-enabled PowerTools
+    fi
     time dnf -y upgrade
     time dnf -y install environment-modules git \
         gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
@@ -35,6 +52,12 @@ then
     sudo -u test $0 $mpi
 ## If we are called as normal user, run test
 else
+    on_err() {
+	env || :
+	tail -n 300 config.log || :
+	tail -n 300 ./Testing/Temporary/LastTest.log || :
+    }
+    trap on_err ERR
     . /etc/profile.d/modules.sh
     module load mpi
     export OMPI_MCA_rmaps_base_oversubscribe=yes

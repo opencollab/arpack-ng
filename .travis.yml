@@ -42,46 +42,18 @@ stages:
 jobs:
   include:
   # centos: "recent" systems with ICB
-  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
-  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
-  #                                                               note: docker-cp works only if copy from/to containers (not images)
-  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
   - stage: centos
     dist: bionic
-    script: |
-      sudo docker pull centos                                                  \
-      &&                                                                       \
-      sudo docker create --name mobydick centos /bin/bash -c                   \
-      "dnf install -y dnf-plugins-core epel-release                         && \
-       dnf upgrade -y                                                       && \
-       dnf config-manager --set-enabled PowerTools                          && \
-       dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
-       dnf install -y cmake                                                 && \
-       dnf install -y openmpi-devel                                         && \
-       dnf --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
-       . /etc/profile.d/modules.sh                                          && \
-       module avail && module load mpi && module list                       && \
-       cd /tmp                                                              && \
-       cd arpack-ng                                                         && \
-       git status                                                           && \
-       git log -2                                                           && \
-       mkdir -p build && cd build                                           && \
-       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                             && \
-       make all && make test                                                && \
-       tail -n 300 ./Testing/Temporary/LastTest.log"                           \
-      &&                                                                       \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
-      &&                                                                       \
-      sudo docker start -a mobydick
+    script: ./scripts/travis_fedora.sh setup openmpi centos:latest
+    name: "CentOS"
   # fedora (released fedora with openmpi)
   - stage: fedora
     dist: bionic
-    script: ./scripts/travis_fedora.sh setup openmpi latest
+    script: ./scripts/travis_fedora.sh setup openmpi fedora:latest
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     dist: bionic
-    script: ./scripts/travis_fedora.sh setup mpich rawhide
+    script: ./scripts/travis_fedora.sh setup mpich fedora:rawhide
   # osx <=> macOS 10.13 (high sierra)
   - stage: osx
     os: osx
