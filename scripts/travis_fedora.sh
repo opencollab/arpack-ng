@@ -49,7 +49,7 @@ then
     fi
     time dnf -y upgrade
     time dnf -y install environment-modules git \
-        gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
+        gcc-gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
     useradd test
     chown -R test /tmp
     sudo -u test $0 $mpi
