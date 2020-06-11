@@ -13,7 +13,7 @@ then
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
     test . != ".$2" && mpi="$2" || mpi=openmpi
     test . != ".$3" && os="$3" || os=fedora:latest
-    base=${version%:*}
+    base=${os%:*}
     release=${os#*:}
     case $base in
 	fedora)
