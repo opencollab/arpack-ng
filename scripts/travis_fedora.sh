@@ -48,7 +48,7 @@ then
 	dnf config-manager --set-enabled PowerTools
     fi
     time dnf -y upgrade
-    time dnf -y install environment-modules git \
+    time dnf -y install environment-modules git sudo \
         gcc-gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
     useradd test
     chown -R test /tmp
