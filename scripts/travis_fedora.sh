@@ -40,6 +40,9 @@ test . != ".$1" && mpi="$1" || mpi=openmpi
 ## If we are called as root, setup everything
 if [ $UID -eq 0 ]
 then
+    cat /etc/os-release
+    # Ignore weak depencies
+    echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
     if grep centos -i /etc/os-release ; then
 	dnf install -y dnf-plugins-core #epel-release
 	dnf config-manager --set-enabled PowerTools

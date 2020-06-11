@@ -48,12 +48,15 @@ jobs:
     name: "CentOS"
   # fedora (released fedora with openmpi)
   - stage: fedora
+    name: "Fedora latest with openmpi"
     dist: bionic
     script: ./scripts/travis_fedora.sh setup openmpi fedora:latest
   # fedora (with gcc 10 and mpich)
   - stage: fedora
+    name: "Fedora rawhide with mpich"
     dist: bionic
     script: ./scripts/travis_fedora.sh setup mpich fedora:rawhide
+
   # osx <=> macOS 10.13 (high sierra)
   - stage: osx
     os: osx
@@ -231,6 +234,7 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
       &&                                                                                                                \
       sudo docker start -a mobydick
+
 
 after_failure:
 
