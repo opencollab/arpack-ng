@@ -151,20 +151,9 @@ jobs:
     script: ./bootstrap && ./configure --enable-icb --enable-icb-exmm --enable-mpi && export VERBOSE=1 && make all && make check
   - stage: ubuntu_bionic
     dist: bionic
-    before_install:
-    - sudo apt-get -y install python3-minimal python3-pip python3-numpy
-    - sudo pip3 install --system numpy
-    # need to build boost-python from source for python 3 (repository package is built for python 2)
-    - sudo apt-get -y install wget
-    - wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz
-    - tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0
-    - ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3
-    - sudo ./b2 install
-    - sudo apt-get install locate
-    - sudo updatedb
     script: |
-      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
-      cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
+      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&    \
+      cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON .. && \
       export VERBOSE=1 && make all && make test
   # ubuntu_eoan <=> test "recent" systems, with ICB
   - stage: ubuntu_eoan
