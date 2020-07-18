@@ -35,6 +35,8 @@ stages:
   - name: trusty
   - name: xenial
   - name: bionic
+  - name: eoan
+  - name: focal
   - name: coverage
   - name: interface64
 
@@ -153,6 +155,14 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
+  # eoan <=> test "recent" systems, with ICB
+  - stage: eoan
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh eoan
+  # focal <=> test "recent" systems, with ICB
+  - stage: focal
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh focal
   # coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
