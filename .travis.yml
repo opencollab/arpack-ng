@@ -37,6 +37,7 @@ stages:
   - name: ubuntu_bionic
   - name: ubuntu_eoan
   - name: ubuntu_focal
+  - name: linuxmint
   - name: coverage
   - name: debian_interface64
 
@@ -134,11 +135,15 @@ jobs:
   # ubuntu_eoan <=> test "recent" systems, with ICB
   - stage: ubuntu_eoan
     dist: bionic
-    script: ./scripts/travis_ubuntu.sh eoan
+    script: ./scripts/travis_ubuntu.sh ubuntu :eoan
   # ubuntu_focal <=> test "recent" systems, with ICB
   - stage: ubuntu_focal
     dist: bionic
-    script: ./scripts/travis_ubuntu.sh focal
+    script: ./scripts/travis_ubuntu.sh ubuntu :focal
+  # linuxmint <=> test "recent" systems, with ICB
+  - stage: linuxmint
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh linuxmintd /mint20-amd64
   # coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic

@@ -3,9 +3,9 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
-sudo docker pull ubuntu:"$1"                                                                                      \
+sudo docker pull "$1$2"                                                                                           \
 &&                                                                                                                \
-sudo docker create --name mobydick ubuntu:"$1" /bin/bash -c                                                       \
+sudo docker create --name mobydick "$1$2" /bin/bash -c                                                            \
 "apt-get    update                                                                                             && \
  ln -snf /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo 'Europe/Paris' > /etc/timezone                && \
  apt-get -y install build-essential                                                                            && \
