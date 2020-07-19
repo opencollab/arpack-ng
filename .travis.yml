@@ -31,14 +31,14 @@ stages:
   # order stages
   - name: fedora
   - name: osx
-  - name: precise
-  - name: trusty
-  - name: xenial
-  - name: bionic
-  - name: eoan
-  - name: focal
+  - name: ubuntu_precise
+  - name: ubuntu_trusty
+  - name: ubuntu_xenial
+  - name: ubuntu_bionic
+  - name: ubuntu_eoan
+  - name: ubuntu_focal
   - name: coverage
-  - name: interface64
+  - name: debian_interface64
 
 jobs:
   include:
@@ -89,32 +89,32 @@ jobs:
       ./bootstrap && ./configure --enable-mpi --enable-icb && make VERBOSE=1 && \
       cd $TRAVIS_BUILD_DIR/EXAMPLES/BAND        && make check TESTS="snbdr2 dnbdr2 cnbdr2 znbdr2" && \
       cd $TRAVIS_BUILD_DIR/PARPACK/EXAMPLES/MPI && make check TESTS="psndrv1 pdndrv1 pcndrv1"
-  # precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
-  - stage: precise
+  # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
+  - stage: ubuntu_precise
     dist: precise
     script: ./bootstrap && ./configure                                                  && make VERBOSE=1 && make check && make distcheck;
-  - stage: precise
+  - stage: ubuntu_precise
     dist: precise
     script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
-  # trusty <=> test "older" systems, without ICB
-  - stage: trusty
+  # ubuntu_trusty <=> test "older" systems, without ICB
+  - stage: ubuntu_trusty
     dist: trusty
     script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF .. && make VERBOSE=1 && make test  && make package_source;
-  - stage: trusty
+  - stage: ubuntu_trusty
     dist: trusty
     script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
-  # xenial <=> test "recent" systems, with ICB
-  - stage: xenial
+  # ubuntu_xenial <=> test "recent" systems, with ICB
+  - stage: ubuntu_xenial
     dist: xenial
     script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. && make VERBOSE=1 && make test  && make package_source;
-  - stage: xenial
+  - stage: ubuntu_xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
-  # bionic <=> test "recent" systems, with ICB
-  - stage: bionic
+  # ubuntu_bionic <=> test "recent" systems, with ICB
+  - stage: ubuntu_bionic
     dist: bionic
     script: ./bootstrap && ./configure --enable-icb --enable-icb-exmm --enable-mpi && export VERBOSE=1 && make all && make check
-  - stage: bionic
+  - stage: ubuntu_bionic
     dist: bionic
     before_install:
     - sudo apt-get -y install python3-minimal python3-pip python3-numpy
@@ -131,12 +131,12 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
-  # eoan <=> test "recent" systems, with ICB
-  - stage: eoan
+  # ubuntu_eoan <=> test "recent" systems, with ICB
+  - stage: ubuntu_eoan
     dist: bionic
     script: ./scripts/travis_ubuntu.sh eoan
-  # focal <=> test "recent" systems, with ICB
-  - stage: focal
+  # ubuntu_focal <=> test "recent" systems, with ICB
+  - stage: ubuntu_focal
     dist: bionic
     script: ./scripts/travis_ubuntu.sh focal
   # coverage: "recent" systems with ICB
@@ -162,13 +162,13 @@ jobs:
       head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
       &&                                                                           \
       head -n 50 coveralls.json && tail -n 50 coveralls.json
-  # interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
+  # debian_interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
   #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
-  - stage: interface64
+  - stage: debian_interface64
     dist: xenial
     script: |
       sudo docker pull debian                                                                                           \
