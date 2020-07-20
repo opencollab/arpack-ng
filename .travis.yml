@@ -57,7 +57,7 @@ jobs:
   # osx <=> macOS 10.13 (high sierra)
   - stage: osx
     os: osx
-    osx_image: xcode10.1
+    osx_image: xcode11
     before_install:
     - brew list -1 | while read line; do brew unlink $line; done;
     - brew list gcc      || brew install gcc
@@ -65,6 +65,7 @@ jobs:
     - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
     - brew list openmpi  || brew install openmpi
+    - brew list arpack   || brew install arpack && brew remove arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
     script: |
@@ -78,7 +79,7 @@ jobs:
       make test ARGS="-R pcndrv1_ex"
   - stage: osx
     os: osx
-    osx_image: xcode10.1
+    osx_image: xcode12
     before_install:
     - brew list -1 | while read line; do brew unlink $line; done;
     - brew list gcc      || brew install gcc
@@ -87,6 +88,7 @@ jobs:
     - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
     - brew list openmpi  || brew install openmpi
+    - brew list arpack   || brew install arpack && brew remove arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
     script: |
