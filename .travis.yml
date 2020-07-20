@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: opensuse
   - name: fedora
   - name: osx
   - name: ubuntu_precise
@@ -43,6 +44,34 @@ stages:
 
 jobs:
   include:
+  # opensuse: "recent" systems with ICB
+  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
+  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
+  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #                                                               note: docker-cp works only if copy from/to containers (not images)
+  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+  - stage: opensuse
+    dist: bionic
+    script: |
+      sudo docker pull opensuse/tumbleweed                                                   \
+      &&                                                                                     \
+      sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
+      "zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
+       zypper install -y cmake                                                            && \
+       zypper install -y blas-devel lapack-devel                                          && \
+       cd /tmp                                                                            && \
+       cd arpack-ng                                                                       && \
+       git status                                                                         && \
+       git log -2                                                                         && \
+       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
+       mkdir -p build && cd build                                                         && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                           && \
+       export PATH=/usr/lib64/mpi/gcc/openmpi2/bin:/usr/lib/mpi/gcc/openmpi2/bin/:$PATH   && \
+       make all && make test"                                                                \
+      &&                                                                                     \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
+      &&                                                                                     \
+      sudo docker start -a mobydick
   # fedora (released fedora with openmpi)
   - stage: fedora
     name: "Fedora latest with openmpi"
