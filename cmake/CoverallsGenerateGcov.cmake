@@ -63,7 +63,7 @@ endif()
 # "1;2;3" format to an external process, we have replaced the
 # ";" with "*", so reverse that here so we get it back into the
 # CMake list format.
-string(REGEX REPLACE "\\*" ";" COVERAGE_SRCS ${COVERAGE_SRCS})
+string(REGEX REPLACE "\\*" ";" COVERAGE_SRCS "${COVERAGE_SRCS}")
 
 find_program(GCOV_EXECUTABLE gcov)
 
@@ -127,8 +127,8 @@ macro(get_source_path_from_gcov_filename _SRC_FILENAME _GCOV_FILENAME)
 	get_filename_component(_GCOV_FILENAME_WEXT ${_GCOV_FILENAME} NAME)
 
 	# #path#to#project#root#subdir#the_file.c.gcov -> /path/to/project/root/subdir/the_file.c
-	string(REGEX REPLACE "\\.gcov$" "" SRC_FILENAME_TMP ${_GCOV_FILENAME_WEXT})
-	string(REGEX REPLACE "\#" "/" SRC_FILENAME_TMP ${SRC_FILENAME_TMP})
+	string(REGEX REPLACE "\\.gcov$" "" SRC_FILENAME_TMP "${_GCOV_FILENAME_WEXT}")
+	string(REGEX REPLACE "\#" "/" SRC_FILENAME_TMP "${SRC_FILENAME_TMP}")
 	set(${_SRC_FILENAME} "${SRC_FILENAME_TMP}")
 endmacro()
 
@@ -372,7 +372,7 @@ foreach (GCOV_FILE ${GCOV_FILES})
 
 	# Advanced way of removing the trailing comma in the JSON array.
 	# "[1, 2, 3, " -> "[1, 2, 3"
-	string(REGEX REPLACE ",[ ]*$" "" GCOV_FILE_COVERAGE ${GCOV_FILE_COVERAGE})
+	string(REGEX REPLACE ",[ ]*$" "" GCOV_FILE_COVERAGE "${GCOV_FILE_COVERAGE}")
 
 	# Append the trailing ] to complete the JSON array.
 	set(GCOV_FILE_COVERAGE "${GCOV_FILE_COVERAGE}]")
@@ -406,7 +406,7 @@ foreach(NOT_COVERED_SRC ${COVERAGE_SRCS_REMAINING})
 	endforeach()
 
 	# Remove trailing comma, and complete JSON array with ]
-	string(REGEX REPLACE ",[ ]*$" "" GCOV_FILE_COVERAGE ${GCOV_FILE_COVERAGE})
+	string(REGEX REPLACE ",[ ]*$" "" GCOV_FILE_COVERAGE "${GCOV_FILE_COVERAGE}")
 	set(GCOV_FILE_COVERAGE "${GCOV_FILE_COVERAGE}]")
 
 	# Generate the final JSON for this file.
@@ -416,7 +416,7 @@ foreach(NOT_COVERED_SRC ${COVERAGE_SRCS_REMAINING})
 endforeach()
 
 # Get rid of trailing comma.
-string(REGEX REPLACE ",[ ]*$" "" JSON_GCOV_FILES ${JSON_GCOV_FILES})
+string(REGEX REPLACE ",[ ]*$" "" JSON_GCOV_FILES "${JSON_GCOV_FILES}")
 set(JSON_GCOV_FILES "${JSON_GCOV_FILES}]")
 
 # Generate the final complete JSON!
