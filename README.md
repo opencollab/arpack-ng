@@ -117,6 +117,10 @@ Furthermore, ARPACK-NG now provides CMake functionality:
     $ make install
    builds everything including examples and parallel support (with MPI).
 
+On mac OS, with GNU compilers, you may need to customize options:
+
+    $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure
+
 To build with code coverage:
    
     $ mkdir build
