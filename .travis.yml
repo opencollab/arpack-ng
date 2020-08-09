@@ -110,30 +110,7 @@ jobs:
     name: "Fedora rawhide with mpich"
     dist: bionic
     script: ./scripts/travis_fedora.sh setup mpich rawhide
-
-  # osx <=> macOS 10.13 (high sierra)
-  - stage: osx
-    os: osx
-    osx_image: xcode11
-    before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
-    - brew list cmake    || brew install cmake
-    - brew list openblas || brew install openblas
-    - brew list lapack   || brew install lapack
-    - brew list openmpi  || brew install openmpi
-    - brew list arpack   || brew install arpack && brew remove arpack # Test osx formula
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
-    # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
-    script: |
-      mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON -D ICB=ON  .. && make VERBOSE=1 && \
-      make test ARGS="-R  snbdr2_ex" && \
-      make test ARGS="-R  dnbdr2_ex" && \
-      make test ARGS="-R  cnbdr2_ex" && \
-      make test ARGS="-R  znbdr2_ex" && \
-      make test ARGS="-R psndrv1_ex" && \
-      make test ARGS="-R pdndrv1_ex" && \
-      make test ARGS="-R pcndrv1_ex"
+  # osx
   - stage: osx
     os: osx
     osx_image: xcode12
@@ -142,16 +119,52 @@ jobs:
     - brew list gcc      || brew install gcc
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
+    - brew list openmpi  || brew install openmpi
+    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - softwareupdate --install -a
+    # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
+    # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
+    script: |
+      ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make VERBOSE=1 && make check
+  - stage: osx
+    os: osx
+    osx_image: xcode12
+    before_install:
+    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list cmake    || brew install cmake
     - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
     - brew list openmpi  || brew install openmpi
-    - brew list arpack   || brew install arpack && brew remove arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
-    # full build but only partial testing as some tests crash on osx (no stack: if you get one, open an issue https://github.com/opencollab/arpack-ng/issues)
+    # full build and testing with openblas and lapack
+    # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
-      ./bootstrap && ./configure --enable-mpi --enable-icb && make VERBOSE=1 && \
-      cd $TRAVIS_BUILD_DIR/EXAMPLES/BAND        && make check TESTS="snbdr2 dnbdr2 cnbdr2 znbdr2" && \
-      cd $TRAVIS_BUILD_DIR/PARPACK/EXAMPLES/MPI && make check TESTS="psndrv1 pdndrv1 pcndrv1"
+      mkdir -p build && cd build && FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+  - stage: osx
+    os: osx
+    osx_image: xcode11
+    before_install:
+    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list openblas || brew install openblas
+    - brew list lapack   || brew install lapack
+    - brew list openmpi  || brew install openmpi
+    - brew list arpack   || brew install arpack # Test osx formula
+    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    script: ls # Need fake script.
+  - stage: osx
+    os: osx
+    osx_image: xcode12
+    before_install:
+    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list openblas || brew install openblas
+    - brew list lapack   || brew install lapack
+    - brew list openmpi  || brew install openmpi
+    - brew list arpack   || brew install arpack # Test osx formula
+    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    script: ls # Need fake script.
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
     dist: precise
