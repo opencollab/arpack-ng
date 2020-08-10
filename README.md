@@ -117,6 +117,20 @@ Furthermore, ARPACK-NG now provides CMake functionality:
     $ make install
    builds everything including examples and parallel support (with MPI).
 
+To use arpack from CMake, use ARPACK::ARPACK target:
+
+    find_package(arpack-ng)
+    add_executable(main main.f)
+    target_include_directories(main PUBLIC ARPACK::ARPACK)
+    target_link_libraries(main ARPACK::ARPACK)
+
+To use parpack from CMake, use PARPACK::PARPACK target:
+
+    find_package(arpack-ng)
+    add_executable(main main.f)
+    target_include_directories(main PUBLIC PARPACK::PARPACK)
+    target_link_libraries(main PARPACK::PARPACK)
+
 On mac OS, with GNU compilers, you may need to customize options:
 
     $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure

@@ -1,14 +1,34 @@
-# Config file for the arpack-ng package. It defines the following variables:
-# - arpack_ng_INCLUDE_DIRS - include directories
-# - arpack_ng_LIBRARIES    - libraries to link against
-set(arpack_ng_INCLUDE_DIRS "@CMAKE_INSTALL_FULL_INCLUDEDIR@/arpack;@EIGEN3_INCLUDE_DIR@" CACHE PATH "arpack-ng: include directories" FORCE)
+# Config file for the arpack-ng package.
+#
+# To use arpack from CMake, use ARPACK::ARPACK target:
+#   find_package(arpack-ng)
+#   add_executable(main main.f)
+#   target_include_directories(main PUBLIC ARPACK::ARPACK)
+#   target_link_libraries(main ARPACK::ARPACK)
+#
+# To use parpack from CMake, use PARPACK::PARPACK target:
+#   find_package(arpack-ng)
+#   add_executable(main main.f)
+#   target_include_directories(main PUBLIC PARPACK::PARPACK)
+#   target_link_libraries(main PARPACK::PARPACK)
+
+# Create local variables.
+set(arpack_ng_INCLUDE_DIRS "@CMAKE_INSTALL_FULL_INCLUDEDIR@/arpack;@EIGEN3_INCLUDE_DIR@;${MPI_Fortran_INCLUDE_DIRS};${MPI_C_INCLUDE_DIRS};${MPI_CXX_INCLUDE_DIRS}")
 if(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.a;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@")
 elseif(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libarpack.so;@LAPACK_LIBRARIES@;@BLAS_LIBRARIES@")
 endif()
 if(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.a")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.a;${arpack_ng_LIBRARIES}" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(parpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.a;${arpack_ng_LIBRARIES};${MPI_Fortran_LIBRARIES};${MPI_C_LIBRARIES};${MPI_CXX_LIBRARIES}")
 elseif(EXISTS "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.so")
-  set(arpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.so;${arpack_ng_LIBRARIES}" CACHE FILEPATH "arpack-ng: libraries" FORCE)
+  set(parpack_ng_LIBRARIES "@CMAKE_INSTALL_FULL_LIBDIR@/libparpack.so;${arpack_ng_LIBRARIES};${MPI_Fortran_LIBRARIES};${MPI_C_LIBRARIES};${MPI_CXX_LIBRARIES}")
 endif()
+
+# Create arpack targets.
+add_library(ARPACK::ARPACK INTERFACE IMPORTED)
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${arpack_ng_INCLUDE_DIRS}")
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "${arpack_ng_LIBRARIES}")
+add_library(PARPACK::PARPACK INTERFACE IMPORTED)
+set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${arpack_ng_INCLUDE_DIRS}")
+set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "${parpack_ng_LIBRARIES}")
