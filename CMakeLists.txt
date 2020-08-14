@@ -731,6 +731,9 @@ if(ICB)
   endif()
 endif()
 
+# Testing cmake find_package:
+add_test(NAME find_package COMMAND "${CMAKE_COMMAND}" -P "${PROJECT_SOURCE_DIR}/cmake/TestFindPackage.cmake")
+
 ############################
 # install
 ############################
