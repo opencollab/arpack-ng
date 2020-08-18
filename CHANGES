@@ -9,6 +9,10 @@ arpack-ng - 3.8.0
  * [BUG FIX]: fix 'Unknown CMake command "check_symbol_exists".' when ICB=ON.
 
 [ Franck Houssen ]
+ * CI: Support for Mac OS X added in automation (GNU + "-ff2c -fno-second-underscore" options).
+ * CI: Support for centos added in automation.
+ * CI: Support for opensuse added in automation.
+ * arpackSolver/arpackmm: switch eigen version to 3.3.
  * [BUG FIX] fix arpackdef.h (resp. arpackicb.h) must be included only by C/C++ (resp. F77/F90).
  * [BUG FIX] iparam/ipntr sizes may change depending on cases.
  * pyarpack: python binding based on Boost.Python.Numpy exposing C++ API.

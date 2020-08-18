@@ -56,11 +56,19 @@ AC_ARG_ENABLE([mpi],
 	[],
 	[AS_VAR_SET([enable_mpi], [no])])
 AS_IF([test x"$enable_mpi" != x"no"], [
+	FCFLAGS_SAVE=$FCFLAGS
+	FCFLAGS=""
+	FFLAGS_SAVE=$FFLAGS
+	FFLAGS=""
+
 	AC_LANG_PUSH([Fortran 77])
 	AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
 	AC_SUBST([MPI_Fortran_LIBS], [$MPILIBS])
 	F77=$MPIF77
 	AC_LANG_POP([Fortran 77])
+
+	FCFLAGS=$FCFLAGS_SAVE
+	FFLAGS=$FFLAGS_SAVE
 ])
 
 dnl See if compiling with ISO_C_BINDING support
@@ -78,7 +86,7 @@ AC_ARG_ENABLE([icb-exmm],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
 if test x"$enable_icb_exmm" != x"no"; then
-	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.2], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
+	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
 	AC_LANG_PUSH([C++])
 	CPPFLAGS_SAVE=$CPPFLAGS
 	CPPFLAGS=$EIGEN3_CFLAGS
@@ -137,6 +145,11 @@ if test x"$enable_icb" != x"no"; then
   AC_LANG_POP([Fortran])
 
   if test x"$enable_mpi" != x"no"; then
+    FCFLAGS_SAVE=$FCFLAGS
+    FCFLAGS=""
+    FFLAGS_SAVE=$FFLAGS
+    FFLAGS=""
+
     AC_LANG_PUSH([Fortran])
     AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
     FC=$MPIFC
@@ -172,6 +185,9 @@ if test x"$enable_icb" != x"no"; then
                    ]
                   )
     AC_LANG_POP([C])
+
+    FCFLAGS=$FCFLAGS_SAVE
+    FFLAGS=$FFLAGS_SAVE
   fi
   AX_CXX_COMPILE_STDCXX(11)
 else
