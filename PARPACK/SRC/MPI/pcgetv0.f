@@ -200,8 +200,8 @@ c
       Real
      &           pscnorm2, slapy2
       Complex
-     &           cdotc
-      external   cdotc, pscnorm2, slapy2
+     &           ccdotc
+      external   ccdotc, pscnorm2, slapy2
 c
 c     %-----------------%
 c     | Data Statements |
@@ -331,7 +331,7 @@ c
 c
       first = .FALSE.
       if (bmat .eq. 'G') then
-          cnorm_buf = cdotc (n, resid, 1, workd, 1)
+          cnorm_buf = ccdotc (n, resid, 1, workd, 1)
           call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &          MPI_COMPLEX, MPI_SUM, comm, ierr )
           cnorm = buf2(1)
@@ -393,7 +393,7 @@ c
       end if
 c
       if (bmat .eq. 'G') then
-         cnorm_buf = cdotc (n, resid, 1, workd, 1)
+         cnorm_buf = ccdotc (n, resid, 1, workd, 1)
          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &            MPI_COMPLEX, MPI_SUM, comm, ierr )
          cnorm = buf2(1)

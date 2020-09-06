@@ -200,8 +200,8 @@ c
       Double precision
      &           pdznorm2 , dlapy2
       Complex*16
-     &           zdotc
-      external   zdotc , pdznorm2 , dlapy2
+     &           zzdotc
+      external   zzdotc , pdznorm2 , dlapy2
 c
 c     %-----------------%
 c     | Data Statements |
@@ -331,7 +331,7 @@ c
 c
       first = .FALSE.
       if (bmat .eq. 'G') then
-          cnorm_buf = zdotc  (n, resid, 1, workd, 1)
+          cnorm_buf = zzdotc  (n, resid, 1, workd, 1)
           call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &          MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
           cnorm = buf2(1)
@@ -393,7 +393,7 @@ c
       end if
 c
       if (bmat .eq. 'G') then
-         cnorm_buf = zdotc  (n, resid, 1, workd, 1)
+         cnorm_buf = zzdotc  (n, resid, 1, workd, 1)
          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &            MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
          cnorm = buf2(1)

@@ -340,8 +340,8 @@ c
       external   scnrm2,pslamch10,slapy2
 c
       Complex
-     &           cdotc
-      external   cdotc
+     &           ccdotc
+      external   ccdotc
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -743,7 +743,7 @@ c                 | upper triangular, thus the length of the |
 c                 | inner product can be set to j.           |
 c                 %------------------------------------------%
 c
-                  workev(j) = cdotc(j, workl(ihbds), 1,
+                  workev(j) = ccdotc(j, workl(ihbds), 1,
      &                        workl(invsub+(j-1)*ldq), 1)
  40         continue
 c

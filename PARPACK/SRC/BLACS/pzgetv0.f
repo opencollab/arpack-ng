@@ -197,8 +197,8 @@ c
       Double precision
      &           pdznorm2 , dlapy2
       Complex*16
-     &           zdotc
-      external   zdotc , pdznorm2 , dlapy2
+     &           zzdotc
+      external   zzdotc , pdznorm2 , dlapy2
 c
 c     %-----------------%
 c     | Data Statements |
@@ -335,7 +335,7 @@ c
 c
       first = .FALSE.
       if (bmat .eq. 'G') then
-          cnorm = zdotc  (n, resid, 1, workd, 1)
+          cnorm = zzdotc  (n, resid, 1, workd, 1)
           call zgsum2d ( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
           rnorm0 = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
       else if (bmat .eq. 'I') then
@@ -394,7 +394,7 @@ c
       end if
 c
       if (bmat .eq. 'G') then
-         cnorm = zdotc  (n, resid, 1, workd, 1)
+         cnorm = zzdotc  (n, resid, 1, workd, 1)
          call zgsum2d ( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
          rnorm = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
       else if (bmat .eq. 'I') then

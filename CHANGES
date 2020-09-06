@@ -1,5 +1,7 @@
 arpack-ng - 3.9.0
  
+* Avoid calling [c|z]dotc for better portability on macOS
+
 [ Dima Pasechnik ]
 * [BUG FIX] autotools: replace obsolete AC_TRY_COMPILE macros.
 * Support for NAG's nagfor Fortran compiler

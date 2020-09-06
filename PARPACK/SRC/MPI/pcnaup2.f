@@ -257,10 +257,10 @@ c     | External functions |
 c     %--------------------%
 c
       Complex
-     &           cdotc
+     &           ccdotc
       Real
      &           pscnorm2, pslamch10, slapy2
-      external   cdotc, pscnorm2, pslamch10, slapy2
+      external   ccdotc, pscnorm2, pslamch10, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -770,7 +770,7 @@ c
          end if
 c
          if (bmat .eq. 'G') then
-            cmpnorm_buf = cdotc (n, resid, 1, workd, 1)
+            cmpnorm_buf = ccdotc (n, resid, 1, workd, 1)
             call MPI_ALLREDUCE( [cmpnorm_buf], buf2, 1,
      &               MPI_COMPLEX, MPI_SUM, comm, ierr )
             cmpnorm = buf2(1)

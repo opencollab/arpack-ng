@@ -303,10 +303,10 @@ c     | External Functions |
 c     %--------------------%
 c
       Complex
-     &           cdotc
+     &           ccdotc
       Real
      &           pslamch, pscnorm2, clanhs, slapy2
-      external   cdotc, pscnorm2, clanhs, pslamch, slapy2
+      external   ccdotc, pscnorm2, clanhs, pslamch, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -573,7 +573,7 @@ c        | Compute the B-norm of OP*v_{j}.     |
 c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm = ccdotc (n, resid, 1, workd(ipj), 1)
              call cgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
              wnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
@@ -647,7 +647,7 @@ c        | Compute the B-norm of r_{j}. |
 c        %------------------------------%
 c
          if (bmat .eq. 'G') then
-            cnorm = cdotc (n, resid, 1, workd(ipj), 1)
+            cnorm = ccdotc (n, resid, 1, workd(ipj), 1)
             call cgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
             rnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
@@ -749,7 +749,7 @@ c        | Compute the B-norm of the corrected residual r_{j}. |
 c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm = ccdotc (n, resid, 1, workd(ipj), 1)
              call cgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
              rnorm1 = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then

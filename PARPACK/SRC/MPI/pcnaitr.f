@@ -307,10 +307,10 @@ c     | External Functions |
 c     %--------------------%
 c
       Complex
-     &           cdotc
+     &           ccdotc
       Real
      &           pslamch10, pscnorm2, clanhs, slapy2
-      external   cdotc, pscnorm2, clanhs, pslamch10, slapy2
+      external   ccdotc, pscnorm2, clanhs, pslamch10, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -576,7 +576,7 @@ c        | Compute the B-norm of OP*v_{j}.     |
 c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
              cnorm = buf2(1)
@@ -653,7 +653,7 @@ c        | Compute the B-norm of r_{j}. |
 c        %------------------------------%
 c
          if (bmat .eq. 'G') then
-            cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
+            cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
             cnorm = buf2(1)
@@ -758,7 +758,7 @@ c        | Compute the B-norm of the corrected residual r_{j}. |
 c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm_buf = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
      &           MPI_COMPLEX, MPI_SUM, comm, ierr )
              cnorm = buf2(1)
