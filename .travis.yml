@@ -73,6 +73,31 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
       &&                                                                                     \
       sudo docker start -a mobydick
+
+  - stage: opensuse
+    arch: ppc64le
+    dist: bionic
+    script: |
+      sudo docker pull opensuse/tumbleweed                                                   \
+      &&                                                                                     \
+      sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
+      "zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
+       zypper install -y cmake                                                            && \
+       zypper install -y blas-devel lapack-devel                                          && \
+       cd /tmp                                                                            && \
+       cd arpack-ng                                                                       && \
+       git status                                                                         && \
+       git log -2                                                                         && \
+       sed -e 's/mpirun /mpirun --allow-run-as-root --oversubscribe /' -i CMakeLists.txt  && \
+       mkdir -p build && cd build                                                         && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                                           && \
+       export PATH=/usr/lib64/mpi/gcc/openmpi2/bin:/usr/lib/mpi/gcc/openmpi2/bin/:$PATH   && \
+       make all && make test"                                                                \
+      &&                                                                                     \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
+      &&                                                                                     \
+      sudo docker start -a mobydick
+
   # centos: "recent" systems with ICB
   - stage: centos
     dist: bionic
@@ -100,16 +125,59 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
       &&                                                                       \
       sudo docker start -a mobydick
+
+  - stage: centos
+    arch: ppc64le
+    dist: bionic
+    script: |
+      sudo docker pull centos                                                  \
+      &&                                                                       \
+      sudo docker create --name mobydick centos /bin/bash -c                   \
+      "dnf install -y dnf-plugins-core epel-release                         && \
+       dnf upgrade -y                                                       && \
+       dnf config-manager --set-enabled PowerTools                          && \
+       dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
+       dnf install -y cmake                                                 && \
+       dnf install -y mpich-devel                                           && \
+       dnf --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
+       . /etc/profile.d/modules.sh                                          && \
+       module avail && module load mpi && module list                       && \
+       cd /tmp                                                              && \
+       cd arpack-ng                                                         && \
+       git status                                                           && \
+       git log -2                                                           && \
+       mkdir -p build && cd build                                           && \
+       cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                             && \
+       make all && make test"                                                  \
+      &&                                                                       \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
+      &&                                                                       \
+      sudo docker start -a mobydick
+  
   # fedora (released fedora with openmpi)
   - stage: fedora
     name: "Fedora latest with openmpi"
     dist: bionic
     script: ./scripts/travis_fedora.sh setup openmpi latest
+
+  - stage: fedora
+    name: "Fedora latest with openmpi"
+    arch: ppc64le
+    dist: bionic
+    script: ./scripts/travis_fedora.sh setup openmpi latest
+
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     name: "Fedora rawhide with mpich"
     dist: bionic
     script: ./scripts/travis_fedora.sh setup mpich rawhide
+
+  - stage: fedora
+    name: "Fedora rawhide with mpich"
+    arch: ppc64le
+    dist: bionic
+    script: ./scripts/travis_fedora.sh setup mpich rawhide
+
   # osx
   - stage: osx
     os: osx
