@@ -403,7 +403,7 @@ jobs:
       &&                                                                           \
       head -n 50 coveralls.json && tail -n 50 coveralls.json
  
- - stage: debian_interface64
+  - stage: debian_interface64
     dist: xenial
     script: |
       sudo docker pull debian                                                                                           \
@@ -446,7 +446,7 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
       &&                                                                                                                \
       sudo docker start -a mobydick
- - stage: debian_interface64
+  - stage: debian_interface64
     arch: ppc64le
     dist: xenial
     script: |
