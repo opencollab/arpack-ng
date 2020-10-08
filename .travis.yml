@@ -233,6 +233,7 @@ jobs:
     - brew list arpack   || brew install arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
+  
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
     dist: precise
@@ -240,6 +241,15 @@ jobs:
   - stage: ubuntu_precise
     dist: precise
     script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
+  - stage: ubuntu_precise
+    arch: ppc64le
+    dist: precise
+    script: ./bootstrap && ./configure                                                  && make VERBOSE=1 && make check && make distcheck;
+  - stage: ubuntu_precise
+    arch: ppc64le
+    dist: precise
+    script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
+  
   # ubuntu_trusty <=> test "older" systems, without ICB
   - stage: ubuntu_trusty
     dist: trusty
@@ -247,6 +257,15 @@ jobs:
   - stage: ubuntu_trusty
     dist: trusty
     script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
+  - stage: ubuntu_trusty
+    arch: ppc64le
+    dist: trusty
+    script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF .. && make VERBOSE=1 && make test  && make package_source;
+  - stage: ubuntu_trusty
+    arch: ppc64le
+    dist: trusty
+    script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
+  
   # ubuntu_xenial <=> test "recent" systems, with ICB
   - stage: ubuntu_xenial
     dist: xenial
@@ -254,6 +273,15 @@ jobs:
   - stage: ubuntu_xenial
     dist: xenial
     script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
+  - stage: ubuntu_xenial
+    arch: ppc64le
+    dist: xenial
+    script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. && make VERBOSE=1 && make test  && make package_source;
+  - stage: ubuntu_xenial
+    arch: ppc64le
+    dist: xenial
+    script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
+  
   # ubuntu_bionic <=> test "recent" systems, with ICB
   - stage: ubuntu_bionic
     dist: bionic
@@ -275,18 +303,52 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
+  - stage: ubuntu_bionic
+    arch: ppc64le
+    dist: bionic
+    script: ./bootstrap && ./configure --enable-icb --enable-icb-exmm --enable-mpi && export VERBOSE=1 && make all && make check
+  - stage: ubuntu_bionic
+    arch: ppc64le
+    dist: bionic
+    before_install:
+    - sudo apt-get -y install python3-minimal python3-pip python3-numpy
+    - sudo pip3 install --system numpy
+    # need to build boost-python from source for python 3 (repository package is built for python 2)
+    - sudo apt-get -y install wget
+    - wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz
+    - tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0
+    - ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3
+    - sudo ./b2 install
+    - sudo apt-get install locate
+    - sudo updatedb
+    script: |
+      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
+      cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
+      export VERBOSE=1 && make all && make test
+      
   # ubuntu_eoan <=> test "recent" systems, with ICB
   - stage: ubuntu_eoan
     dist: bionic
     script: ./scripts/travis_ubuntu.sh ubuntu :eoan
+  - stage: ubuntu_eoan
+    arch: ppc64le
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh ubuntu :eoan
+    
   # ubuntu_focal <=> test "recent" systems, with ICB
   - stage: ubuntu_focal
     dist: bionic
     script: ./scripts/travis_ubuntu.sh ubuntu :focal
+  - stage: ubuntu_focal
+    arch: ppc64le
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh ubuntu :focal
+   
   # linuxmint <=> test "recent" systems, with ICB
   - stage: linuxmint
     dist: bionic
     script: ./scripts/travis_ubuntu.sh linuxmintd /mint20-amd64
+  
   # coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
@@ -316,7 +378,32 @@ jobs:
   #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
-  - stage: debian_interface64
+ 
+  - stage: coverage
+    arch: ppc64le
+    dist: bionic
+    script: |
+      mkdir -p build && cd build                                                   \
+      &&                                                                           \
+      cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..     &> cmake.log     \
+      &&                                                                           \
+      tail -n 50 cmake.log                                                         \
+      &&                                                                           \
+      make all                                                    &> compil.log    \
+      &&                                                                           \
+      tail -n 50 compil.log                                                        \
+      &&                                                                           \
+      make test                                                   &> test.log      \
+      &&                                                                           \
+      tail -n 50 test.log                                                          \
+      &&                                                                           \
+      make coveralls                                              &> coveralls.log \
+      &&                                                                           \
+      head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
+      &&                                                                           \
+      head -n 50 coveralls.json && tail -n 50 coveralls.json
+ 
+ - stage: debian_interface64
     dist: xenial
     script: |
       sudo docker pull debian                                                                                           \
@@ -359,7 +446,50 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
       &&                                                                                                                \
       sudo docker start -a mobydick
-
+ - stage: debian_interface64
+    arch: ppc64le
+    dist: xenial
+    script: |
+      sudo docker pull debian                                                                                           \
+      &&                                                                                                                \
+      sudo docker create --name mobydick debian /bin/bash -c                                                            \
+      "cat /etc/os-release                                                                                           && \
+       cat /etc/apt/sources.list                                                                                     && \
+       sed -e 's/stretch/testing/'            -i /etc/apt/sources.list                                               && \
+       sed -e 's/main/main non-free contrib/' -i /etc/apt/sources.list                                               && \
+       sed -e '/security.debian.org/d'        -i /etc/apt/sources.list                                               && \
+       cat /etc/apt/sources.list                                                                                     && \
+       export DEBIAN_FRONTEND=noninteractive                                                                         && \
+       apt-get -y                                                                 update                             && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
+       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
+       cat /etc/os-release                                                                                           && \
+       apt-get -y install dialog                                                                                     && \
+       echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
+       apt-get -y install build-essential                                                                            && \
+       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
+       apt-get -y install libeigen3-dev                                                                              && \
+       cd /tmp                                                                                                       && \
+       cd arpack-ng                                                                                                  && \
+       git status                                                                                                    && \
+       git log -2                                                                                                    && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
+       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
+       ./bootstrap                                                                                                   && \
+       export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                                && \
+       export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                               && \
+       export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl'   && \
+       export INTERFACE64=1                                                                                          && \
+       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-icb-exmm                   \
+                   --disable-dependency-tracking                                                                     && \
+       export VERBOSE=1                                                                                              && \
+       make all                                                                                                      && \
+       make check                                                                                                    && \
+       find . -name test-suite.log | xargs tail -n 300"                                                                 \
+      &&                                                                                                                \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
+      &&                                                                                                                \
+      sudo docker start -a mobydick
 
 after_failure:
 
