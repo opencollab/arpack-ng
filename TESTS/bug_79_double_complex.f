@@ -217,7 +217,12 @@ c           %----------------------------------%
             go to 9000
          end if
  9000 continue
-      if (res1 .ne. res2) then
+c     Compare difference to double precision 0 instead of using
+c     bitwise comparison operator .ne.
+      if (abs(res1 - res2) > 0.0D+0) then
+         write(6,'(a,e24.16,a,e24.16,a,e24.16)')
+     &        "ERROR res1 (", res1, " ) not equal to res2 (", res2,
+     &        " ); difference = ", res1 - res2
          stop 1
       end if
       end
