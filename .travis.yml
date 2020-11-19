@@ -39,7 +39,6 @@ stages:
   - name: ubuntu_bionic
   - name: ubuntu_eoan
   - name: ubuntu_focal
-  - name: linuxmint
   - name: coverage
   - name: debian_interface64
 
@@ -119,7 +118,7 @@ jobs:
     - brew list gcc      || brew install gcc
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
-    - brew list openmpi  || brew install openmpi
+    - brew list mpich    || brew install mpich
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     - softwareupdate --install -a
     # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
@@ -135,7 +134,7 @@ jobs:
     - brew list cmake    || brew install cmake
     - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
-    - brew list openmpi  || brew install openmpi
+    - brew list mpich    || brew install mpich
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
@@ -146,10 +145,6 @@ jobs:
     osx_image: xcode11
     before_install:
     - brew list -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
-    - brew list openblas || brew install openblas
-    - brew list lapack   || brew install lapack
-    - brew list openmpi  || brew install openmpi
     - brew list arpack   || brew install arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
@@ -158,10 +153,6 @@ jobs:
     osx_image: xcode12
     before_install:
     - brew list -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
-    - brew list openblas || brew install openblas
-    - brew list lapack   || brew install lapack
-    - brew list openmpi  || brew install openmpi
     - brew list arpack   || brew install arpack # Test osx formula
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
@@ -215,10 +206,6 @@ jobs:
   - stage: ubuntu_focal
     dist: bionic
     script: ./scripts/travis_ubuntu.sh ubuntu :focal
-  # linuxmint <=> test "recent" systems, with ICB
-  - stage: linuxmint
-    dist: bionic
-    script: ./scripts/travis_ubuntu.sh linuxmintd /mint20-amd64
   # coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
