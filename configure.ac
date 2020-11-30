@@ -12,7 +12,6 @@ AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
-AC_PROG_SED
 
 dnl Check for BLAS libraries
 AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
@@ -46,7 +45,7 @@ ifdef([LT_INIT], [], [
   m4exit([1])])
 
 LT_PREREQ([2.4.2])
-LT_INIT([win32-dll])
+LT_INIT([win32-dll disable-static])
 
 dnl See if compiling parpack
 AC_ARG_ENABLE([mpi],
@@ -86,7 +85,7 @@ AC_ARG_ENABLE([icb-exmm],
               [AS_VAR_SET([enable_icb_exmm], [no])])
 
 if test x"$enable_icb_exmm" != x"no"; then
-	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3], [], [AC_MSG_ERROR([Eigen not found. Give hints with PKG_CONFIG_PATH. Disable the need of this dependency using --disable-icb-exmm])])
+	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3])
 	AC_LANG_PUSH([C++])
 	CPPFLAGS_SAVE=$CPPFLAGS
 	CPPFLAGS=$EIGEN3_CFLAGS
@@ -255,21 +254,19 @@ AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
-AC_CONFIG_FILES([arpack$LIBSUFFIX.pc:arpack.pc.in], [], [LIBSUFFIX="$LIBSUFFIX"])
-
-AC_SUBST([CMAKE_INSTALL_FULL_LIBDIR], ["$libdir"])  # FIXME: need to recursively expand these
-AC_SUBST([CMAKE_INSTALL_FULL_INCLUDEDIR], ["$includedir"])
-AC_SUBST([BLAS_LIBRARIES], ["$BLAS_LIBS"])  # FIXME: need a filename, not a -l flag
-AC_SUBST([LAPACK_LIBRARIES], ["$LAPACK_LIBS"])
-AC_SUBST([EIGEN3_INCLUDE_DIR], [`echo "$EIGEN3_CFLAGS" | sed -e s/-I//`])
-AC_CONFIG_FILES([arpack-ng-config.cmake])
-
-AC_SUBST([arpack_ng_VERSION], ["$VERSION"])
-AC_CONFIG_FILES([arpack-ng-config-version.cmake])
+AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
+AC_SUBST([PARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS $MPI_Fortran_LIBS"])
+AC_CONFIG_FILES([
+	SRC/arpack$LIBSUFFIX.pc:SRC/arpack.pc.in
+	PARPACK/SRC/MPI/parpack$LIBSUFFIX.pc:PARPACK/SRC/MPI/parpack.pc.in
+], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 AC_CONFIG_FILES([
+	EXAMPLES/MATRIX_MARKET/arpackSolver.pc
 	arpackdef.h
 	arpackicb.h
+	arpack-ng-config-version.cmake
+	arpack-ng-config.cmake
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile

@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+includedir=@includedir@
+
+Name: arpackSolver
+Description: Utility to test arpack with matrix market files
+Version: @PACKAGE_VERSION@
+URL: @PACKAGE_URL@
+Requires: arpack, eigen3 >= 3.3
+Cflags: -I${includedir}/arpack

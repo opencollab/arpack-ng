@@ -6,6 +6,11 @@ endif ()
 
 project(arpack C Fortran)
 
+set(arpack_ng_MAJOR_VERSION 3)
+set(arpack_ng_MINOR_VERSION 7)
+set(arpack_ng_PATCH_VERSION 0)
+set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 # Adopted from https://github.com/feymark/arpack.git
@@ -15,6 +20,7 @@ if (POLICY CMP0042)
   cmake_policy (SET CMP0042 NEW)
 endif ()
 
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static libraries" ON)
 option(MPI "Enable parallel support" OFF)
 option(ICB "Enable support for *[ae]upd_c with ISO_C_BINDING" OFF)
 option(ICBEXMM "Enable support for matrix market example based on ICB" OFF)
@@ -29,13 +35,15 @@ option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS an
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+# We don't want this to run on every build.
+option(COVERALLS "Generate coveralls data" OFF)
 if (COVERALLS)
     include(Coveralls)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     # The no space is by design: issue in cmake. See CMP0004.
-    set(EXTRA_LDLAGS "${EXTRA_LDLAGS}-lgcov")
+    set(EXTRA_LDFLAGS "${EXTRA_LDFLAGS}-lgcov")
 endif()
 
 function(prefixlist list_name prefix)
@@ -50,7 +58,7 @@ function(examples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
-        target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+	target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
         add_test(NAME "${lwe}_ex" COMMAND ${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 endfunction(examples)
@@ -73,11 +81,12 @@ if (PYTHON3)
 endif ()
 
 if (ICBEXMM)
-    find_package(Eigen3 3.3)
+    find_package(Eigen3 3.3 QUIET)
     if (NOT EIGEN3_FOUND) # If not found, piggy-back pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)
+        set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
     endif ()
     find_program (BASH_PROGRAM bash)
 
@@ -298,7 +307,7 @@ endif()
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
 target_link_libraries(arpack BLAS::BLAS)
-target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDFLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
@@ -520,7 +529,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
 add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
 set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
-target_link_libraries(dnsimp_test arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(dnsimp_test arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_custom_command(TARGET dnsimp_test POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
 )
@@ -528,39 +537,39 @@ add_test(dnsimp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dnsimp)
 
 if (NOT ICB)
     add_executable(bug_1315_single TESTS/bug_1315_single.c)
-    target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+    target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
     add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
 
     add_executable(bug_1315_double TESTS/bug_1315_double.c)
-    target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+    target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
     add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
 endif()
 
 add_executable(bug_1323 TESTS/bug_1323.f)
-target_link_libraries(bug_1323 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(bug_1323 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_test(bug_1323_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1323)
 
 add_executable(bug_58_double TESTS/bug_58_double.f)
-target_link_libraries(bug_58_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(bug_58_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_test(bug_58_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_58_double)
 
 add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
-target_link_libraries(bug_79_double_complex arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(bug_79_double_complex arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_test(bug_79_double_complex_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_79_double_complex)
 
 add_executable(bug_142 TESTS/bug_142.f)
-target_link_libraries(bug_142 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(bug_142 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_test(bug_142_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142)
 
 add_executable(bug_142_gen TESTS/bug_142_gen.f)
-target_link_libraries(bug_142_gen arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+target_link_libraries(bug_142_gen arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
 add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 
 if(MPI)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
-  target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+  target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
   add_test(issue46_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
 endif()
 
@@ -569,12 +578,12 @@ if(ICB)
 
   add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
   target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
-  target_link_libraries(icb_arpack_c arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+  target_link_libraries(icb_arpack_c arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
   add_test(icb_arpack_c_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_c)
 
   add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
   target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
-  target_link_libraries(icb_arpack_cpp arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+  target_link_libraries(icb_arpack_cpp arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
   add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
   if (ICBEXMM)
@@ -582,7 +591,7 @@ if(ICB)
 
     add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
     target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
-    target_link_libraries(arpackmm arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS})
+    target_link_libraries(arpackmm arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
     configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
     configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
     configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
@@ -653,12 +662,12 @@ if(ICB)
 
     add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
     target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
-    target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS} MPI::MPI_C)
+    target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_C)
     add_test(icb_parpack_c_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
 
     add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
     target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
-    target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDLAGS} MPI::MPI_CXX)
+    target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_CXX)
     add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
   endif()
 endif()
@@ -669,16 +678,52 @@ endif()
 # 'make install' to the correct location
 include(GNUInstallDirs)
 
+# Convert variable names to those expected by the .pc file.
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix \${prefix})
+set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
+set(PACKAGE_NAME ${PROJECT_NAME})
+set(PACKAGE_VERSION ${arpack_ng_VERSION})
+set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
+
+# Convert (LAPACK|BLAS)_LIBRARIES to -l flags, store in ARPACK_PC_LIBS_PRIVATE.
+# LAPACK_LIBRARIES contains transitive deps, no need to parse BLAS_LIBRARIES.
+set(ARPACK_PC_LIBS_PRIVATE)
+foreach(lib ${LAPACK_LIBRARIES})
+    get_filename_component(libname ${lib} NAME)
+    string(REGEX REPLACE "^lib([^.]+).*$" "-l\\1" libname ${libname})
+    list(APPEND ARPACK_PC_LIBS_PRIVATE "${libname}")
+endforeach()
+string(REPLACE ";" " " ARPACK_PC_LIBS_PRIVATE "${ARPACK_PC_LIBS_PRIVATE}")
+
+set(PARPACK_PC_LIBS_PRIVATE)
+foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
+    get_filename_component(libname ${lib} NAME)
+    string(REGEX REPLACE "^lib([^.]+).*$" "-l\\1" libname ${libname})
+    list(APPEND PARPACK_PC_LIBS_PRIVATE "${libname}")
+endforeach()
+string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
+
+configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(EXAMPLES/MATRIX_MARKET/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" @ONLY)
+
+
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
   install(TARGETS parpack
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(FILES "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc"
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
 if(ICB)
@@ -690,6 +735,7 @@ if(ICB)
   endif()
   if (ICBEXMM)
     install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+    install(FILES "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 
@@ -713,13 +759,9 @@ install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_IN
 
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake) # find_package(arpack-ng)
-set(arpack_ng_MAJOR_VERSION 3)
-set(arpack_ng_MINOR_VERSION 7)
-set(arpack_ng_PATCH_VERSION 0)
-set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng) # find_package(arpack-ng)
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng)
 
 # Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
 set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")
@@ -728,25 +770,6 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
-
-# Convert variable names to those expected by the .pc file.
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix \${prefix})
-set(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
-set(PACKAGE_NAME ${PROJECT_NAME})
-set(PACKAGE_VERSION ${arpack_ng_VERSION})
-set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
-set(LAPACK_LIBS "${LAPACK_LIBRARIES}")
-set(BLAS_LIBS "${BLAS_LIBRARIES}")
-set(EIGEN3_CFLAGS "-I${EIGEN3_INCLUDE_DIR}")
-configure_file(arpack.pc.in arpack${LIBSUFFIX}.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/arpack${LIBSUFFIX}.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
-# We don't want this to run on every build.
-option(COVERALLS "Generate coveralls data" OFF)
-
 
 if (COVERALLS)
     set(arpack_TST_SRC
