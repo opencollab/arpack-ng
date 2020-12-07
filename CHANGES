@@ -37,7 +37,7 @@ arpack-ng - 3.8.0
 [ David Schwörer ]
  * Support of gfortran 10
 
- -- Sylvestre Ledru <sylvestre@debian.org> Mon, 1 April 2019 16:24:00 +0100
+ -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:35:57 +0100
 
 arpack-ng - 3.7.0
 

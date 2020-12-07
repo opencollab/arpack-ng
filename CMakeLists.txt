@@ -7,7 +7,7 @@ endif ()
 project(arpack C Fortran)
 
 set(arpack_ng_MAJOR_VERSION 3)
-set(arpack_ng_MINOR_VERSION 7)
+set(arpack_ng_MINOR_VERSION 8)
 set(arpack_ng_PATCH_VERSION 0)
 set(arpack_ng_VERSION ${arpack_ng_MAJOR_VERSION}.${arpack_ng_MINOR_VERSION}.${arpack_ng_PATCH_VERSION})
 
