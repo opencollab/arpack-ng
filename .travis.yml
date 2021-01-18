@@ -90,6 +90,7 @@ jobs:
     - brew list gcc      || brew install gcc
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
+    - brew list libtool  || brew install libtool
     - brew list mpich    || brew install mpich
     - brew list -1 | while read line; do brew link --overwrite $line; done;
     - softwareupdate --install -a
