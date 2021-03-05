@@ -205,16 +205,33 @@ else()
     FortranCInterface_VERIFY()
 endif ()
 
-if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
-    find_package(BLAS REQUIRED)
-
-    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
-    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(BLAS::BLAS INTERFACE IMPORTED)
-        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+if(TESTS OR EXAMPLES)
+    if(NOT BUILD_SHARED_LIBS)
+        set(BLA_STATIC ON) # Lets find_package find static libraries for both BLAS and LAPACK
     endif()
+    if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
+        find_package(BLAS REQUIRED)
+
+        # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
+        if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+            add_library(BLAS::BLAS INTERFACE IMPORTED)
+            set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+        endif()
+    endif()
+    get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
+    if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
+        find_package(LAPACK REQUIRED)
+
+        # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
+        if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+            add_library(LAPACK::LAPACK INTERFACE IMPORTED)
+            set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
+        endif()
+    endif()
+    get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
 endif()
-get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
@@ -257,16 +274,6 @@ if (MPI)
     endif()
 endif()
 
-if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
-    find_package(LAPACK REQUIRED)
-
-    # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
-    if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
-        set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
-    endif()
-endif()
-get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 if (MPI)
     set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
@@ -307,8 +314,7 @@ endif()
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
-target_link_libraries(arpack BLAS::BLAS)
-target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDFLAGS})
+target_link_libraries(arpack ${EXTRA_LDFLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
