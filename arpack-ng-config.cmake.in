@@ -12,14 +12,45 @@
 #   target_link_libraries(main PARPACK::PARPACK)
 
 # Create local variables.
-set(prefix "@prefix@")
-set(exec_prefix "@exec_prefix@")
-set(libdir "@libdir@")
-set(includedir "@includedir@")
+set(prefix @prefix@)
+set(exec_prefix @exec_prefix@)
+set(libdir @libdir@)
+set(includedir @includedir@)
 
 # Create arpack targets.
-add_library(ARPACK::ARPACK INTERFACE IMPORTED)
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${includedir}/arpack")
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "arpack")
-add_library(PARPACK::PARPACK INTERFACE IMPORTED)
-set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES    "parpack")
+find_library(ARPACK_LIBRARIES arpack HINTS @libdir@ REQUIRED NO_DEFAULT_PATH)
+add_library(ARPACK::ARPACK UNKNOWN IMPORTED) # May be static or shared
+set_target_properties(ARPACK::ARPACK PROPERTIES IMPORTED_LOCATION ${ARPACK_LIBRARIES})
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES @includedir@/arpack)
+
+# Link BLAS and LAPACK dependencies
+include(CMakeFindDependencyMacro)
+if(NOT DEFINED BLA_STATIC AND NOT BUILD_SHARED_LIBS)
+    set(BLA_STATIC ON)
+endif()
+
+find_dependency(BLAS REQUIRED)
+if(TARGET BLAS::BLAS)
+    target_link_libraries(ARPACK::ARPACK INTERFACE BLAS::BLAS)
+elseif(BLAS_FOUND AND BLAS_LIBRARIES)
+    # For CMake version < 3.18
+    target_link_libraries(ARPACK::ARPACK INTERFACE ${BLAS_LIBRARIES})
+    target_link_libraries(ARPACK::ARPACK INTERFACE ${BLAS_LINKER_FLAGS}) # Could use target_link_options after CMake 3.13
+endif()
+
+find_dependency(LAPACK REQUIRED)
+if(TARGET LAPACK::LAPACK)
+    target_link_libraries(ARPACK::ARPACK INTERFACE LAPACK::LAPACK)
+elseif(LAPACK_FOUND AND LAPACK_LIBRARIES)
+    # For CMake version < 3.18
+    target_link_libraries(ARPACK::ARPACK INTERFACE ${LAPACK_LIBRARIES})
+    target_link_libraries(ARPACK::ARPACK INTERFACE ${LAPACK_LINKER_FLAGS}) # Could use target_link_options after CMake 3.13
+endif()
+
+# Create parpack targets.
+find_library(PARPACK_LIBRARIES parpack HINTS @libdir@ NO_DEFAULT_PATH)
+if(PARPACK_LIBRARIES)
+    add_library(PARPACK::PARPACK UNKNOWN IMPORTED) # May be static or shared
+    set_target_properties(PARPACK::PARPACK PROPERTIES IMPORTED_LOCATION ${PARPACK_LIBRARIES})
+    target_link_libraries(PARPACK::PARPACK INTERFACE ARPACK::ARPACK)
+endif()
