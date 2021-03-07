@@ -234,42 +234,39 @@ if(TESTS OR EXAMPLES)
 endif()
 
 if (MPI)
+    enable_language(C CXX Fortran)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
-        include(FindMPI)
-        find_package(MPI REQUIRED)
-
-        # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
-        if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_C INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_CXX INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
+        if(CMAKE_VERSION VERSION_LESS "3.10")
+            find_package(MPI REQUIRED)
+            if (NOT TARGET MPI::MPI_Fortran) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_Fortran INTERFACE ${MPI_Fortran_LIBRARIES} ${MPI_Fortran_LINK_FLAGS})
+                target_include_directories(MPI::MPI_Fortran SYSTEM INTERFACE ${MPI_Fortran_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_Fortran INTERFACE ${MPI_Fortran_COMPILE_FLAGS})
+            endif()
+            if (NOT TARGET MPI::MPI_C) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_C INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_C INTERFACE ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})
+                target_include_directories(MPI::MPI_C SYSTEM INTERFACE ${MPI_C_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_C INTERFACE ${MPI_C_COMPILE_FLAGS})
+            endif()
+            if (NOT TARGET MPI::MPI_CXX) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_CXX INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_CXX INTERFACE ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+                target_include_directories(MPI::MPI_CXX SYSTEM INTERFACE ${MPI_CXX_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_CXX INTERFACE ${MPI_CXX_COMPILE_FLAGS})
+            endif()
+        else()
+            # MPI::MPI_* target are created by FindMPI.cmake if cmake version >= 3.10
+            find_package(MPI COMPONENTS C CXX Fortran REQUIRED)
         endif()
     endif()
-    get_target_property(MPI_Fortran_INCLUDE_DIRS MPI::MPI_Fortran INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-    get_target_property(MPI_Fortran_LIBRARIES    MPI::MPI_Fortran INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 
     if(ICB)
-        get_target_property(MPI_C_INCLUDE_DIRS   MPI::MPI_C       INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_C_LIBRARIES      MPI::MPI_C       INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_CXX_INCLUDE_DIRS MPI::MPI_CXX     INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_CXX_LIBRARIES    MPI::MPI_CXX     INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-
         include(CheckSymbolExists)
         check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_DIRS}/mpi.h" MPI_Comm_c2f_FOUND)
         if(NOT ${MPI_Comm_c2f_FOUND})
-          message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
+            message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
         endif()
     endif()
 endif()
