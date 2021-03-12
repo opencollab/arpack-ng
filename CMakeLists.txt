@@ -27,6 +27,7 @@ option(ICBEXMM "Enable support for matrix market example based on ICB" OFF)
 option(PYTHON3 "Enable python3 support" OFF)
 set(BOOST_PYTHON_LIBSUFFIX "" CACHE STRING "suffix to add to custom boost python libs")
 option(EXAMPLES "Compile ARPACK examples" OFF)
+option(TESTS "Compile ARPACK tests" OFF)
 set(LIBSUFFIX ""
     CACHE STRING "suffix to add to ARPACK libraries names")
 set(SYMBOLSUFFIX ""
@@ -58,7 +59,7 @@ function(examples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
-	target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+	    target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
         add_test(NAME "${lwe}_ex" COMMAND ${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 endfunction(examples)
@@ -67,7 +68,7 @@ function(pexamples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${parpackexample_DIR}/${l} )
-        target_link_libraries(${lwe} parpack arpack MPI::MPI_Fortran)
+        target_link_libraries(${lwe} parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_Fortran)
         add_test(NAME "${lwe}_ex" COMMAND mpirun -n 2 ./${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 endfunction(pexamples)
@@ -204,68 +205,72 @@ else()
     FortranCInterface_VERIFY()
 endif ()
 
-if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
-    find_package(BLAS REQUIRED)
-
-    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
-    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(BLAS::BLAS INTERFACE IMPORTED)
-        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+if(TESTS OR EXAMPLES)
+    if(NOT BUILD_SHARED_LIBS)
+        set(BLA_STATIC ON) # Lets find_package find static libraries for both BLAS and LAPACK
     endif()
+    if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
+        find_package(BLAS REQUIRED)
+
+        # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
+        if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+            add_library(BLAS::BLAS INTERFACE IMPORTED)
+            set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+        endif()
+    endif()
+    get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
+    if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
+        find_package(LAPACK REQUIRED)
+
+        # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
+        if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+            add_library(LAPACK::LAPACK INTERFACE IMPORTED)
+            set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
+        endif()
+    endif()
+    get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
 endif()
-get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 if (MPI)
+    enable_language(C CXX Fortran)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
-        include(FindMPI)
-        find_package(MPI REQUIRED)
-
-        # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
-        if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_C INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_CXX INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
+        if(CMAKE_VERSION VERSION_LESS "3.10")
+            find_package(MPI REQUIRED)
+            if (NOT TARGET MPI::MPI_Fortran) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_Fortran INTERFACE ${MPI_Fortran_LIBRARIES} ${MPI_Fortran_LINK_FLAGS})
+                target_include_directories(MPI::MPI_Fortran SYSTEM INTERFACE ${MPI_Fortran_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_Fortran INTERFACE ${MPI_Fortran_COMPILE_FLAGS})
+            endif()
+            if (NOT TARGET MPI::MPI_C) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_C INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_C INTERFACE ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})
+                target_include_directories(MPI::MPI_C SYSTEM INTERFACE ${MPI_C_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_C INTERFACE ${MPI_C_COMPILE_FLAGS})
+            endif()
+            if (NOT TARGET MPI::MPI_CXX) # Create target "by hand" to ensure compatibility if cmake version <= 3.9
+                add_library(MPI::MPI_CXX INTERFACE IMPORTED)
+                target_link_libraries(MPI::MPI_CXX INTERFACE ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+                target_include_directories(MPI::MPI_CXX SYSTEM INTERFACE ${MPI_CXX_INCLUDE_DIRS})
+                target_compile_options(MPI::MPI_CXX INTERFACE ${MPI_CXX_COMPILE_FLAGS})
+            endif()
+        else()
+            # MPI::MPI_* target are created by FindMPI.cmake if cmake version >= 3.10
+            find_package(MPI COMPONENTS C CXX Fortran REQUIRED)
         endif()
     endif()
-    get_target_property(MPI_Fortran_INCLUDE_DIRS MPI::MPI_Fortran INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-    get_target_property(MPI_Fortran_LIBRARIES    MPI::MPI_Fortran INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 
     if(ICB)
-        get_target_property(MPI_C_INCLUDE_DIRS   MPI::MPI_C       INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_C_LIBRARIES      MPI::MPI_C       INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_CXX_INCLUDE_DIRS MPI::MPI_CXX     INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_CXX_LIBRARIES    MPI::MPI_CXX     INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-
         include(CheckSymbolExists)
         check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_DIRS}/mpi.h" MPI_Comm_c2f_FOUND)
         if(NOT ${MPI_Comm_c2f_FOUND})
-          message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
+            message(FATAL_ERROR "symbol MPI_Comm_c2f does not exist")
         endif()
     endif()
 endif()
 
-if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
-    find_package(LAPACK REQUIRED)
-
-    # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
-    if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
-        set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
-    endif()
-endif()
-get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 if (MPI)
     set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
@@ -306,8 +311,7 @@ endif()
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
-target_link_libraries(arpack BLAS::BLAS)
-target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDFLAGS})
+target_link_libraries(arpack ${EXTRA_LDFLAGS})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
@@ -520,156 +524,157 @@ endif()
 ############################
 # TEST
 ############################
+if(TESTS)
+    enable_testing()
 
-enable_testing()
+    set(CMAKE_CTEST_COMMAND ctest -V)
 
-set(CMAKE_CTEST_COMMAND ctest -V)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
+    add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
+    set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
+    target_link_libraries(dnsimp_test arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_custom_command(TARGET dnsimp_test POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
+    )
+    add_test(dnsimp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dnsimp)
 
-add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
-set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
-target_link_libraries(dnsimp_test arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_custom_command(TARGET dnsimp_test POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
-)
-add_test(dnsimp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dnsimp)
+    if (NOT ICB)
+        add_executable(bug_1315_single TESTS/bug_1315_single.c)
+        target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+        add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
 
-if (NOT ICB)
-    add_executable(bug_1315_single TESTS/bug_1315_single.c)
-    target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-    add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
+        add_executable(bug_1315_double TESTS/bug_1315_double.c)
+        target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+        add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
+    endif()
 
-    add_executable(bug_1315_double TESTS/bug_1315_double.c)
-    target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-    add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
-endif()
+    add_executable(bug_1323 TESTS/bug_1323.f)
+    target_link_libraries(bug_1323 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_test(bug_1323_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1323)
 
-add_executable(bug_1323 TESTS/bug_1323.f)
-target_link_libraries(bug_1323 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_test(bug_1323_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1323)
+    add_executable(bug_58_double TESTS/bug_58_double.f)
+    target_link_libraries(bug_58_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_test(bug_58_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_58_double)
 
-add_executable(bug_58_double TESTS/bug_58_double.f)
-target_link_libraries(bug_58_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_test(bug_58_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_58_double)
+    add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
+    target_link_libraries(bug_79_double_complex arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_test(bug_79_double_complex_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_79_double_complex)
 
-add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
-target_link_libraries(bug_79_double_complex arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_test(bug_79_double_complex_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_79_double_complex)
+    add_executable(bug_142 TESTS/bug_142.f)
+    target_link_libraries(bug_142 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_test(bug_142_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142)
 
-add_executable(bug_142 TESTS/bug_142.f)
-target_link_libraries(bug_142 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_test(bug_142_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142)
+    add_executable(bug_142_gen TESTS/bug_142_gen.f)
+    target_link_libraries(bug_142_gen arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 
-add_executable(bug_142_gen TESTS/bug_142_gen.f)
-target_link_libraries(bug_142_gen arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
+    if(MPI)
+      set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
-if(MPI)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
+      add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
+      target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      add_test(issue46_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
+    endif()
 
-  add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
-  target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-  add_test(issue46_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
-endif()
+    if(ICB)
+      set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
-if(ICB)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
+      add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
+      target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
+      target_link_libraries(icb_arpack_c arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      add_test(icb_arpack_c_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_c)
 
-  add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
-  target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
-  target_link_libraries(icb_arpack_c arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-  add_test(icb_arpack_c_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_c)
+      add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
+      target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
+      target_link_libraries(icb_arpack_cpp arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
-  add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
-  target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
-  target_link_libraries(icb_arpack_cpp arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-  add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
+      if (ICBEXMM)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
 
-  if (ICBEXMM)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
+        add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
+        target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
+        target_link_libraries(arpackmm arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+        configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
+        configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
+        configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
+        configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
+        configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
+        configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
+        add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
+      endif()
 
-    add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
-    target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
-    target_link_libraries(arpackmm arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-    configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
-    configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
-    add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
-  endif()
+      if (PYTHON3)
+        python_add_module(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
+        target_compile_definitions(pyarpack PRIVATE PY_MAJOR_VERSION="3")
+        set(pyarpack_HDR ${PROJECT_SOURCE_DIR}/ICB ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK)
+        target_include_directories(pyarpack PUBLIC ${pyarpack_HDR} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
+        target_link_libraries(pyarpack BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+        install(TARGETS pyarpack
+                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGDiag.py" @ONLY)
+        add_test(NAME pyarpackSparseBiCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGDiag.py)
+        set_tests_properties(pyarpackSparseBiCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGILU.py.in"  "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGILU.py" @ONLY)
+        add_test(NAME pyarpackSparseBiCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGILU.py)
+        set_tests_properties(pyarpackSparseBiCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGDiag.py" @ONLY)
+        add_test(NAME pyarpackSparseCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGDiag.py)
+        set_tests_properties(pyarpackSparseCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGILU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGILU.py" @ONLY)
+        add_test(NAME pyarpackSparseCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGILU.py)
+        set_tests_properties(pyarpackSparseCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLLT.py" @ONLY)
+        add_test(NAME pyarpackSparseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLLT.py)
+        set_tests_properties(pyarpackSparseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLDLT.py" @ONLY)
+        add_test(NAME pyarpackSparseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLDLT.py)
+        set_tests_properties(pyarpackSparseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLU.py" @ONLY)
+        add_test(NAME pyarpackSparseLU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLU.py)
+        set_tests_properties(pyarpackSparseLU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseQR.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseQR.py" @ONLY)
+        add_test(NAME pyarpackSparseQR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseQR.py)
+        set_tests_properties(pyarpackSparseQR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLLT.py" @ONLY)
+        add_test(NAME pyarpackDenseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLLT.py)
+        set_tests_properties(pyarpackDenseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLDLT.py" @ONLY)
+        add_test(NAME pyarpackDenseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLDLT.py)
+        set_tests_properties(pyarpackDenseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLURR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLURR.py" @ONLY)
+        add_test(NAME pyarpackDenseLURR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLURR.py)
+        set_tests_properties(pyarpackDenseLURR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRRR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRRR.py" @ONLY)
+        add_test(NAME pyarpackDenseQRRR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRRR.py)
+        set_tests_properties(pyarpackDenseQRRR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLUPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLUPP.py" @ONLY)
+        add_test(NAME pyarpackDenseLUPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLUPP.py)
+        set_tests_properties(pyarpackDenseLUPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRPP.py" @ONLY)
+        add_test(NAME pyarpackDenseQRPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRPP.py)
+        set_tests_properties(pyarpackDenseQRPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+        configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackRestart.py.in" "${CMAKE_BINARY_DIR}/pyarpackRestart.py" @ONLY)
+        add_test(NAME pyarpackRestart_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackRestart.py)
+        set_tests_properties(pyarpackRestart_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
+      endif()
 
-  if (PYTHON3)
-    python_add_module(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
-    target_compile_definitions(pyarpack PRIVATE PY_MAJOR_VERSION="3")
-    set(pyarpack_HDR ${PROJECT_SOURCE_DIR}/ICB ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK)
-    target_include_directories(pyarpack PUBLIC ${pyarpack_HDR} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
-    target_link_libraries(pyarpack BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
-    install(TARGETS pyarpack
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGDiag.py" @ONLY)
-    add_test(NAME pyarpackSparseBiCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGDiag.py)
-    set_tests_properties(pyarpackSparseBiCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGILU.py.in"  "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGILU.py" @ONLY)
-    add_test(NAME pyarpackSparseBiCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGILU.py)
-    set_tests_properties(pyarpackSparseBiCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGDiag.py" @ONLY)
-    add_test(NAME pyarpackSparseCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGDiag.py)
-    set_tests_properties(pyarpackSparseCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGILU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGILU.py" @ONLY)
-    add_test(NAME pyarpackSparseCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGILU.py)
-    set_tests_properties(pyarpackSparseCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLLT.py" @ONLY)
-    add_test(NAME pyarpackSparseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLLT.py)
-    set_tests_properties(pyarpackSparseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLDLT.py" @ONLY)
-    add_test(NAME pyarpackSparseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLDLT.py)
-    set_tests_properties(pyarpackSparseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLU.py" @ONLY)
-    add_test(NAME pyarpackSparseLU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLU.py)
-    set_tests_properties(pyarpackSparseLU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseQR.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseQR.py" @ONLY)
-    add_test(NAME pyarpackSparseQR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseQR.py)
-    set_tests_properties(pyarpackSparseQR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLLT.py" @ONLY)
-    add_test(NAME pyarpackDenseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLLT.py)
-    set_tests_properties(pyarpackDenseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLDLT.py" @ONLY)
-    add_test(NAME pyarpackDenseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLDLT.py)
-    set_tests_properties(pyarpackDenseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLURR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLURR.py" @ONLY)
-    add_test(NAME pyarpackDenseLURR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLURR.py)
-    set_tests_properties(pyarpackDenseLURR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRRR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRRR.py" @ONLY)
-    add_test(NAME pyarpackDenseQRRR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRRR.py)
-    set_tests_properties(pyarpackDenseQRRR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLUPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLUPP.py" @ONLY)
-    add_test(NAME pyarpackDenseLUPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLUPP.py)
-    set_tests_properties(pyarpackDenseLUPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRPP.py" @ONLY)
-    add_test(NAME pyarpackDenseQRPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRPP.py)
-    set_tests_properties(pyarpackDenseQRPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-    configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackRestart.py.in" "${CMAKE_BINARY_DIR}/pyarpackRestart.py" @ONLY)
-    add_test(NAME pyarpackRestart_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackRestart.py)
-    set_tests_properties(pyarpackRestart_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
-  endif()
+      if (MPI)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
-  if (MPI)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
+        add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
+        target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
+        target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_C)
+        add_test(icb_parpack_c_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
 
-    add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
-    target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
-    target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_C)
-    add_test(icb_parpack_c_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
-
-    add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
-    target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
-    target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_CXX)
-    add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
-  endif()
+        add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
+        target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
+        target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_CXX)
+        add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
+      endif()
+    endif()
 endif()
 
 ############################
