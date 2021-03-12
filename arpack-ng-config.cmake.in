@@ -21,7 +21,7 @@ set(includedir @includedir@)
 find_library(ARPACK_LIBRARIES arpack HINTS @libdir@ REQUIRED NO_DEFAULT_PATH)
 add_library(ARPACK::ARPACK UNKNOWN IMPORTED) # May be static or shared
 set_target_properties(ARPACK::ARPACK PROPERTIES IMPORTED_LOCATION ${ARPACK_LIBRARIES})
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES @includedir@/arpack)
+target_include_directories(ARPACK::ARPACK SYSTEM INTERFACE @includedir@/arpack)
 
 # Link BLAS and LAPACK dependencies
 include(CMakeFindDependencyMacro)
