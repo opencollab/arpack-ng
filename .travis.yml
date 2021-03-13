@@ -57,6 +57,7 @@ jobs:
       sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
       "zypper ref                                                                         && \
        zypper update                                                                      && \
+       zypper rm patterns-openSUSE-kvm_server patterns-server-kvm_tools                   && \
        zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
        zypper install -y cmake                                                            && \
        zypper install -y blas-devel lapack-devel                                          && \
