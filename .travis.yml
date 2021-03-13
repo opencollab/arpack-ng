@@ -76,9 +76,9 @@ jobs:
       sudo docker start -a mobydick
   # fedora (released fedora with openmpi)
   - stage: fedora
-    name: "Fedora latest with openmpi"
+    name: "Fedora rawhide with openmpi"
     dist: bionic
-    script: ./scripts/travis_fedora.sh setup openmpi latest
+    script: ./scripts/travis_fedora.sh setup openmpi rawhide
   # fedora (with gcc 10 and mpich)
   - stage: fedora
     name: "Fedora rawhide with mpich"
