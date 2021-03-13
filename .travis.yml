@@ -54,7 +54,8 @@ jobs:
     script: |
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
-      sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
+      sudo docker create --security-opt seccomp:unconfined                                   \
+                         --name mobydick opensuse/tumbleweed /bin/bash -c                    \
       "zypper ref                                                                         && \
        zypper update                                                                      && \
        zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
