@@ -55,7 +55,9 @@ jobs:
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
       sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
-      "zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
+      "zypper ref                                                                         && \
+       zypper update                                                                      && \
+       zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
        zypper install -y cmake                                                            && \
        zypper install -y blas-devel lapack-devel                                          && \
        cd /tmp                                                                            && \
