@@ -51,11 +51,11 @@ jobs:
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
   - stage: opensuse
-    dist: focal
+    dist: bionic
     script: |
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
-      sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
+      sudo docker create --security-opt seccomp:unconfined --name mobydick opensuse/tumbleweed /bin/bash -c                    \
       "zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
        zypper install -y cmake                                                            && \
        zypper install -y blas-devel lapack-devel                                          && \
