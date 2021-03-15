@@ -51,7 +51,7 @@ jobs:
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
   - stage: opensuse
-    dist: bionic
+    dist: focal
     script: |
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
