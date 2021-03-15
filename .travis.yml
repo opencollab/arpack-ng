@@ -114,12 +114,13 @@ jobs:
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list gcc      || brew install gcc
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
     - brew list mpich    || brew install mpich
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - brew list --formula -1
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     - softwareupdate --install -a
     # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
@@ -129,13 +130,13 @@ jobs:
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list gcc      || brew install gcc
     - brew list cmake    || brew install cmake
     - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
     - brew list mpich    || brew install mpich
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
@@ -144,18 +145,17 @@ jobs:
     os: osx
     osx_image: xcode11
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list arpack   || brew install arpack # Test osx formula
-    - brew list -1
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
   - stage: osx
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list arpack   || brew install arpack # Test osx formula
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
