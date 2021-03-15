@@ -29,15 +29,14 @@ services:
 
 stages:
   # order stages
+  - name: osx
   - name: opensuse
   - name: centos
   - name: fedora
-  - name: osx
   - name: ubuntu_precise
   - name: ubuntu_trusty
   - name: ubuntu_xenial
   - name: ubuntu_bionic
-  - name: ubuntu_eoan
   - name: ubuntu_focal
   - name: coverage
   - name: debian_interface64
@@ -119,7 +118,6 @@ jobs:
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
     - brew list mpich    || brew install mpich
-    - brew list --formula -1
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     - softwareupdate --install -a
     # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
@@ -134,13 +132,15 @@ jobs:
     - brew list gcc      || brew install gcc
     - brew list cmake    || brew install cmake
     - brew list openblas || brew install openblas
-    - brew list lapack   || brew install lapack
     - brew list mpich    || brew install mpich
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+    - mpiexec --version
+    - gcc -v
+    - gfortran -v
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
-      mkdir -p build && cd build && FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+      mkdir -p build && cd build && LDFLAGS="-L/usr/local/opt/openblas/lib" CPPFLAGS="-I/usr/local/opt/openblas/include" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/openblas -DMPIEXEC_EXCUTABLE=`which mpiexec` -DBLA_VENDOR=OpenBLAS -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
   - stage: osx
     os: osx
     osx_image: xcode11
@@ -199,10 +199,6 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
-  # ubuntu_eoan <=> test "recent" systems, with ICB
-  - stage: ubuntu_eoan
-    dist: bionic
-    script: ./scripts/travis_ubuntu.sh ubuntu :eoan
   # ubuntu_focal <=> test "recent" systems, with ICB
   - stage: ubuntu_focal
     dist: bionic
@@ -287,3 +283,5 @@ after_failure:
   - if [[ -f $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log ]]; then tail -n 300 $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log; fi
   - find . -name test-suite.log | xargs tail -n 300
   - find . -name arpackmm.run.log | xargs tail -n 300
+  - find . -name CMakeOutput.log | xargs cat
+  - find . -name CMakeError.log | xargs cat
