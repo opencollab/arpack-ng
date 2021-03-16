@@ -134,13 +134,13 @@ jobs:
     - brew list openblas || brew install openblas
     - brew list mpich    || brew install mpich
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    - mpiexec --version
-    - gcc -v
-    - gfortran -v
+    - test -n $CC && unset CC
+    - test -n $CXX && unset CXX
+    - mpicc -show
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
-      mkdir -p build && cd build && LDFLAGS="-L/usr/local/opt/openblas/lib" CPPFLAGS="-I/usr/local/opt/openblas/include" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/openblas -DMPIEXEC_EXCUTABLE=`which mpiexec` -DBLA_VENDOR=OpenBLAS -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+      mkdir -p build && cd build && LDFLAGS="-L/usr/local/opt/openblas/lib" CPPFLAGS="-I/usr/local/opt/openblas/include" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/openblas -DBLA_VENDOR=OpenBLAS -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
   - stage: osx
     os: osx
     osx_image: xcode11
