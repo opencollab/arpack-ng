@@ -137,6 +137,8 @@ jobs:
     - test -n $CC && unset CC
     - test -n $CXX && unset CXX
     - mpicc -show
+    - sed -i '' 's/pi\[ce\]/pi[ce]|ramework/' $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake
+    - cat $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake | grep ramework
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
