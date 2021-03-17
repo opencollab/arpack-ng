@@ -109,56 +109,56 @@ jobs:
     dist: bionic
     script: ./scripts/travis_fedora.sh setup mpich rawhide
   # osx
+  #- stage: osx
+  #  os: osx
+  #  osx_image: xcode12
+  #  before_install:
+  #  - brew list --formula -1 | while read line; do brew unlink $line; done;
+  #  - brew list gcc      || brew install gcc
+  #  - brew list autoconf || brew install autoconf
+  #  - brew list automake || brew install automake
+  #  - brew list mpich    || brew install mpich
+  #  - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+  #  - softwareupdate --install -a
+  #  # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
+  #  # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
+  #  script: |
+  #    ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make VERBOSE=1 && make check
   - stage: osx
     os: osx
     osx_image: xcode12
     before_install:
     - brew list --formula -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
-    - brew list autoconf || brew install autoconf
-    - brew list automake || brew install automake
-    - brew list mpich    || brew install mpich
-    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    - softwareupdate --install -a
-    # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
-    # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
-    script: |
-      ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make VERBOSE=1 && make check
-  - stage: osx
-    os: osx
-    osx_image: xcode12
-    before_install:
-    - brew list --formula -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
+    - brew list gcc      || brew install gcc@10
     - brew list cmake    || brew install cmake
     - brew list openblas || brew install openblas
+    - brew list lapack   || brew install lapack
     - brew list mpich    || brew install mpich
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    - test -n $CC && unset CC
-    - test -n $CXX && unset CXX
+    - export CC=gcc-10
+    - export CXX=g++-10
     - mpicc -show
     - sed -i '' 's/pi\[ce\]/pi[ce]|ramework/' $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake
-    - cat $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake | grep ramework
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
-      mkdir -p build && cd build && LDFLAGS="-L/usr/local/opt/openblas/lib" CPPFLAGS="-I/usr/local/opt/openblas/include" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/openblas -DBLA_VENDOR=OpenBLAS -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
-  - stage: osx
-    os: osx
-    osx_image: xcode11
-    before_install:
-    - brew list --formula -1 | while read line; do brew unlink $line; done;
-    - brew list arpack   || brew install arpack # Test osx formula
-    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    script: ls # Need fake script.
-  - stage: osx
-    os: osx
-    osx_image: xcode12
-    before_install:
-    - brew list --formula -1 | while read line; do brew unlink $line; done;
-    - brew list arpack   || brew install arpack # Test osx formula
-    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    script: ls # Need fake script.
+      mkdir -p build && cd build && LDFLAGS="-L/usr/local/opt/openblas/lib -L/usr/local/opt/lapack/lib" CPPFLAGS="-I/usr/local/opt/openblas/include -I/usr/local/opt/lapack/include" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DCMAKE_PREFIX_PATH="/usr/local/opt/openblas;/usr/local/opt/lapack" -DBLA_VENDOR=OpenBLAS -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+  #- stage: osx
+  #  os: osx
+  #  osx_image: xcode11
+  #  before_install:
+  #  - brew list --formula -1 | while read line; do brew unlink $line; done;
+  #  - brew list arpack   || brew install arpack # Test osx formula
+  #  - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+  #  script: ls # Need fake script.
+  #- stage: osx
+  #  os: osx
+  #  osx_image: xcode12
+  #  before_install:
+  #  - brew list --formula -1 | while read line; do brew unlink $line; done;
+  #  - brew list arpack   || brew install arpack # Test osx formula
+  #  - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+  #  script: ls # Need fake script.
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
     dist: precise
