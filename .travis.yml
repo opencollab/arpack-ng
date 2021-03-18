@@ -23,15 +23,6 @@ addons:
       - diffutils
       - findutils
       - libeigen3-dev
-  homebrew:
-    packages:
-      - gcc@10
-      - autoconf
-      - automake
-      - cmake
-      - lapack
-      - mpich
-    update: false
 
 services:
   - docker
@@ -126,6 +117,13 @@ jobs:
   - stage: osx
     os: osx
     osx_image: xcode12
+    before_install:
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc
+    - brew list autoconf || brew install autoconf
+    - brew list automake || brew install automake
+    - brew list mpich    || brew install mpich
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
@@ -133,7 +131,13 @@ jobs:
   - stage: osx
     os: osx
     osx_image: xcode12
-    before_script:
+    before_install:
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc@10
+    - brew list cmake    || brew install cmake
+    - brew list lapack   || brew install lapack
+    - brew list mpich    || brew install mpich
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     - export CC=gcc-10
     - export CXX=g++-10
     - mpicc -show
