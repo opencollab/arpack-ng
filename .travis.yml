@@ -136,13 +136,12 @@ jobs:
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     - export CC=gcc-10
     - export CXX=g++-10
-    - export DYLD_LIBRARY_PATH=$(brew --prefix lapack):${DYLD_LIBRARY_PATH}
     - mpicc -show
     - sed -i '' 's/pi\[ce\]/pi[ce]|ramework/' $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake
     # full build and testing with openblas and lapack
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
-      mkdir -p build && cd build && FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+      mkdir -p build && cd build && cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
   #- stage: osx
   #  os: osx
   #  osx_image: xcode11
