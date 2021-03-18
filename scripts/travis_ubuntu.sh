@@ -3,10 +3,17 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
+cmd=ls
+if [ $3 = "old" ]; then
+    cmd="sed -i 's/\(security\|archive\).ubuntu/old-releases.ubuntu/g' /etc/apt/sources.list"
+fi 
+
 sudo docker pull "$1$2"                                                                                           \
 &&                                                                                                                \
 sudo docker create --name mobydick "$1$2" /bin/bash -c                                                            \
-"apt-get    update                                                                                             && \
+"${cmd} &&
+                     \
+ apt-get    update                                                                                             && \
  ln -snf /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo 'Europe/Paris' > /etc/timezone                && \
  apt-get -y install build-essential                                                                            && \
  apt-get -y install dialog apt-utils                                                                           && \
