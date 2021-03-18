@@ -27,9 +27,6 @@ addons:
 services:
   - docker
 
-before_script:
-  - if [ $TRAVIS_OS_NAME = linux ]; then echo de4bc63e-edf4-4749-9581-f5fba3536b8f | docker login -u ryanbernx --password-stdin || true; fi
-
 stages:
   # order stages
   - name: osx
