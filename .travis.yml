@@ -23,6 +23,15 @@ addons:
       - diffutils
       - findutils
       - libeigen3-dev
+  homebrew:
+    packages:
+      - gcc@10
+      - autoconf
+      - automake
+      - cmake
+      - lapack
+      - mpich
+    update: false
 
 services:
   - docker
@@ -32,8 +41,6 @@ before_script:
 
 stages:
   # order stages
-  - name: ubuntu_eoan
-  - name: ubuntu_groovy
   - name: osx
   - name: opensuse
   - name: centos
@@ -42,7 +49,9 @@ stages:
   - name: ubuntu_trusty
   - name: ubuntu_xenial
   - name: ubuntu_bionic
+  - name: ubuntu_eoan
   - name: ubuntu_focal
+  - name: ubuntu_groovy
   - name: coverage
   - name: debian_interface64
 
@@ -132,19 +141,16 @@ jobs:
   - stage: osx
     os: osx
     osx_image: xcode12
-    before_install:
-    - brew list --formula -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc@10
-    - brew list cmake    || brew install cmake
-    - brew list lapack   || brew install lapack
-    - brew list mpich    || brew install mpich
-    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+    before_script:
     - export CC=gcc-10
     - export CXX=g++-10
     - mpicc -show
+    # manually fix a bug in cmake + osx
+    # this line should be removed when cmake officially fixes it
     - sed -i '' 's/pi\[ce\]/pi[ce]|ramework/' $(brew --prefix cmake)/share/cmake/Modules/FindMPI.cmake
-    # full build and testing with openblas and lapack
-    # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
+    # full build and testing with blas and lapack
+    # note: -ff2c and -fno-second-underscore are NOT needed when using generic
+    # blas/lapack
     script: |
       mkdir -p build && cd build && cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
   #- stage: osx
