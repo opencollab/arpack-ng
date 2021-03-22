@@ -3,8 +3,9 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
+# for non-LTS && EOL'ed ubuntu, the mirror url must be modified to run `apt update`
 cmd=ls
-if [ $3 = "old" ]; then
+if [ $2 = ":eoan" ]; then
     cmd="sed -i 's/\(security\|archive\).ubuntu/old-releases.ubuntu/g' /etc/apt/sources.list"
 fi 
 
