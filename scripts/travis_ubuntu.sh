@@ -12,7 +12,7 @@ fi
 sudo docker pull "$1$2"                                                                                           \
 &&                                                                                                                \
 sudo docker create --name mobydick "$1$2" /bin/bash -c                                                            \
-"${cmd} &&
+"${cmd} && \
  apt-get    update                                                                                             && \
  ln -snf /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo 'Europe/Paris' > /etc/timezone                && \
  apt-get -y install build-essential                                                                            && \
