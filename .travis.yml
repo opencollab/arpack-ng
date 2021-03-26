@@ -29,16 +29,17 @@ services:
 
 stages:
   # order stages
+  - name: osx
   - name: opensuse
   - name: centos
   - name: fedora
-  - name: osx
   - name: ubuntu_precise
   - name: ubuntu_trusty
   - name: ubuntu_xenial
   - name: ubuntu_bionic
   - name: ubuntu_eoan
   - name: ubuntu_focal
+  - name: ubuntu_groovy
   - name: coverage
   - name: debian_interface64
 
@@ -55,7 +56,7 @@ jobs:
     script: |
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
-      sudo docker create --name mobydick opensuse/tumbleweed /bin/bash -c                    \
+      sudo docker create --security-opt seccomp:unconfined --name mobydick opensuse/tumbleweed /bin/bash -c                    \
       "zypper install -y git gcc gcc-fortran gcc-c++ openmpi2-devel                       && \
        zypper install -y cmake                                                            && \
        zypper install -y blas-devel lapack-devel                                          && \
@@ -81,7 +82,7 @@ jobs:
       sudo docker create --name mobydick centos /bin/bash -c                   \
       "dnf install -y dnf-plugins-core epel-release                         && \
        dnf upgrade -y                                                       && \
-       dnf config-manager --set-enabled PowerTools                          && \
+       dnf config-manager --set-enabled powertools                          && \
        dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
        dnf install -y cmake                                                 && \
        dnf install -y mpich-devel                                           && \
@@ -114,13 +115,12 @@ jobs:
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list gcc      || brew install gcc
     - brew list autoconf || brew install autoconf
     - brew list automake || brew install automake
     - brew list mpich    || brew install mpich
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
-    - softwareupdate --install -a
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     # full build and testing with Accelerate framework (xcode provides vecLib which stands for BLAS/LAPACK)
     # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
     script: |
@@ -129,32 +129,38 @@ jobs:
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
-    - brew list gcc      || brew install gcc
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
+    - brew list gcc      || brew install gcc@10
     - brew list cmake    || brew install cmake
-    - brew list openblas || brew install openblas
     - brew list lapack   || brew install lapack
-    - brew list mpich    || brew install mpich
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
-    # full build and testing with openblas and lapack
-    # note: -ff2c to convert fortran code to C, -fno-second-underscore to force underscoring of external symbols to link
+    # note: mpich not working due to a cmake bug
+    - brew list open-mpi || brew install open-mpi
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
+    - export CC=gcc-10
+    - export CXX=g++-10
+    - mpicc -show
+    # full build and testing with blas and lapack
+    # note: -ff2c and -fno-second-underscore are NOT needed when using generic
+    # blas/lapack
     script: |
-      mkdir -p build && cd build && FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
+      mkdir -p build && cd build && cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make VERBOSE=1 && make test
   - stage: osx
     os: osx
     osx_image: xcode11
+    # note: in xcode11 image, brew list only lists all formulae
     before_install:
     - brew list -1 | while read line; do brew unlink $line; done;
     - brew list arpack   || brew install arpack # Test osx formula
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    # note: brew has updated itself so we must add --formula to only list formulae
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
   - stage: osx
     os: osx
     osx_image: xcode12
     before_install:
-    - brew list -1 | while read line; do brew unlink $line; done;
+    - brew list --formula -1 | while read line; do brew unlink $line; done;
     - brew list arpack   || brew install arpack # Test osx formula
-    - brew list -1 | while read line; do brew link --overwrite $line; done;
+    - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
@@ -198,7 +204,7 @@ jobs:
       cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
       cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
       export VERBOSE=1 && make all && make test
-  # ubuntu_eoan <=> test "recent" systems, with ICB
+  # ubuntu_eoan <=> test "recent EOL" systems, with ICB
   - stage: ubuntu_eoan
     dist: bionic
     script: ./scripts/travis_ubuntu.sh ubuntu :eoan
@@ -206,6 +212,10 @@ jobs:
   - stage: ubuntu_focal
     dist: bionic
     script: ./scripts/travis_ubuntu.sh ubuntu :focal
+  # ubuntu_groovy <=> test "recent non-LTS" systems, with ICB
+  - stage: ubuntu_groovy
+    dist: bionic
+    script: ./scripts/travis_ubuntu.sh ubuntu :groovy
   # coverage: "recent" systems with ICB
   - stage: coverage
     dist: bionic
@@ -286,3 +296,5 @@ after_failure:
   - if [[ -f $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log ]]; then tail -n 300 $TRAVIS_BUILD_DIR/build/Testing/Temporary/LastTest.log; fi
   - find . -name test-suite.log | xargs tail -n 300
   - find . -name arpackmm.run.log | xargs tail -n 300
+  - find . -name CMakeOutput.log | xargs cat
+  - find . -name CMakeError.log | xargs cat
