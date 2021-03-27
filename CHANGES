@@ -1,6 +1,7 @@
 arpack-ng - 3.9.0
 
- * Please update
+[ Robert Schütz ]
+ * use CMAKE_INSTALL_FULL_<dir> in arpack.pc
 
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 
