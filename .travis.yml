@@ -29,6 +29,7 @@ services:
 
 stages:
   # order stages
+  - name: windows
   - name: osx
   - name: opensuse
   - name: centos
@@ -45,6 +46,23 @@ stages:
 
 jobs:
   include:
+  # windows
+  - stage: windows
+    os: windows
+    before_install:
+      - choco install -y msys2
+      - choco upgrade --no-progress -y msys2
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain cmake git make gcc gcc-fortran
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- git clone https://github.com/msys2/MINGW-packages.git
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where MINGW-packages\mingw-w64-lapack -c \$\* -- makepkg -sLf
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where MINGW-packages\mingw-w64-lapack -c \$\* -- pacman --upgrade mingw-w64-lapack*.pkg.tar.xz
+    env:
+      - PATH=/C/tools/msys64/mingw64/bin:$PATH
+    script:
+      - mkdir build
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake ..
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make all
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make test
   # opensuse: "recent" systems with ICB
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
