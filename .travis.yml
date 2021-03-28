@@ -73,6 +73,32 @@ jobs:
       sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                    \
       &&                                                                                     \
       sudo docker start -a mobydick
+  # centos: "stable" systems with ICB and MPICH
+  - stage: centos
+    dist: bionic
+    script: |
+      sudo docker pull centos:7                                                \
+      &&                                                                       \
+      sudo docker create --name mobydick centos:7 /bin/bash -c                 \
+      "yum install -y yum-plugins-core epel-release                         && \
+       yum upgrade -y                                                       && \
+       yum install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
+       yum install -y cmake3                                                && \
+       yum install -y mpich-devel                                           && \
+       yum --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
+       . /etc/profile.d/modules.sh                                          && \
+       module avail && module load mpi && module list                       && \
+       cd /tmp                                                              && \
+       cd arpack-ng                                                         && \
+       git status                                                           && \
+       git log -2                                                           && \
+       mkdir -p build && cd build                                           && \
+       cmake3 -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
+       make all && make test"                                                  \
+      &&                                                                       \
+      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
+      &&                                                                       \
+      sudo docker start -a mobydick
   # centos: "recent" systems with ICB
   - stage: centos
     dist: bionic
