@@ -1,5 +1,8 @@
 arpack-ng - 3.9.0
 
+[ Franck Houssen ]
+* [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
+
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0
  * CMake: add C99 standard checking
