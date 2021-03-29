@@ -47,28 +47,7 @@ ifdef([LT_INIT], [], [
 LT_PREREQ([2.4.2])
 LT_INIT([win32-dll disable-static])
 
-dnl See if compiling parpack
-AC_ARG_ENABLE([mpi],
-	[AS_HELP_STRING(
-		[--enable-mpi],
-		[build parallel version of arpack with MPI])],
-	[],
-	[AS_VAR_SET([enable_mpi], [no])])
-AS_IF([test x"$enable_mpi" != x"no"], [
-	FCFLAGS_SAVE=$FCFLAGS
-	FCFLAGS=""
-	FFLAGS_SAVE=$FFLAGS
-	FFLAGS=""
-
-	AC_LANG_PUSH([Fortran 77])
-	AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
-	AC_SUBST([MPI_Fortran_LIBS], [$MPILIBS])
-	F77=$MPIF77
-	AC_LANG_POP([Fortran 77])
-
-	FCFLAGS=$FCFLAGS_SAVE
-	FFLAGS=$FFLAGS_SAVE
-])
+dnl Reminder: checking for ISO_C_BINDING must be done before MPI as MPI changes compilers.
 
 dnl See if compiling with ISO_C_BINDING support
 AC_ARG_ENABLE([icb],
@@ -76,6 +55,30 @@ AC_ARG_ENABLE([icb],
                               [build support for *[ae]upd_c with ISO_C_BINDING])],
               [],
               [AS_VAR_SET([enable_icb], [no])])
+
+if test x"$enable_icb" != x"no"; then
+  AC_LANG_PUSH([Fortran])
+  AC_MSG_CHECKING([for iso_c_binding module compilation])
+  AC_LINK_IFELSE(
+                 [
+                  AC_LANG_PROGRAM(
+                                  [],
+                                  [
+                                   USE iso_c_binding
+                                   IMPLICIT NONE
+                                   INTEGER(C_INT) :: a
+                                   a = 1
+                                  ]
+                                 )
+                 ],
+                 [AC_MSG_RESULT([yes])],
+                 [
+                  AC_MSG_RESULT([no])
+                  AC_MSG_ERROR([Fortran compiler does not support iso_c_binding])
+                 ]
+                )
+  AC_LANG_POP([Fortran])
+fi
 
 dnl See if compiling matrix market example based on ICB
 AC_ARG_ENABLE([icb-exmm],
@@ -120,29 +123,30 @@ if test x"$enable_icb_exmm" != x"no"; then
 	AC_LANG_POP([C++])
 fi
 
-if test x"$enable_icb" != x"no"; then
-  AC_LANG_PUSH([Fortran])
-  AC_MSG_CHECKING([for iso_c_binding module compilation])
-  AC_LINK_IFELSE(
-                 [
-                  AC_LANG_PROGRAM(
-                                  [],
-                                  [
-                                   USE iso_c_binding
-                                   IMPLICIT NONE
-                                   INTEGER(C_INT) :: a
-                                   a = 1
-                                  ]
-                                 )
-                 ],
-                 [AC_MSG_RESULT([yes])],
-                 [
-                  AC_MSG_RESULT([no])
-                  AC_MSG_ERROR([Fortran compiler does not support iso_c_binding])
-                 ]
-                )
-  AC_LANG_POP([Fortran])
+dnl See if compiling parpack
+AC_ARG_ENABLE([mpi],
+	[AS_HELP_STRING(
+		[--enable-mpi],
+		[build parallel version of arpack with MPI])],
+	[],
+	[AS_VAR_SET([enable_mpi], [no])])
+AS_IF([test x"$enable_mpi" != x"no"], [
+	FCFLAGS_SAVE=$FCFLAGS
+	FCFLAGS=""
+	FFLAGS_SAVE=$FFLAGS
+	FFLAGS=""
 
+	AC_LANG_PUSH([Fortran 77])
+	AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
+	AC_SUBST([MPI_Fortran_LIBS], [$MPILIBS])
+	F77=$MPIF77
+	AC_LANG_POP([Fortran 77])
+
+	FCFLAGS=$FCFLAGS_SAVE
+	FFLAGS=$FFLAGS_SAVE
+])
+
+if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
     FCFLAGS_SAVE=$FCFLAGS
     FCFLAGS=""
