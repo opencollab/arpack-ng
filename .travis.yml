@@ -53,9 +53,7 @@ jobs:
       - choco install -y msys2
       - choco upgrade --no-progress -y msys2
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain cmake git make gcc gcc-fortran
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- git clone https://github.com/msys2/MINGW-packages.git
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where MINGW-packages\mingw-w64-lapack -c \$\* -- makepkg -sLf
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where MINGW-packages\mingw-w64-lapack -c \$\* -- pacman --upgrade mingw-w64-lapack*.pkg.tar.xz
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm openblas
     env:
       - PATH=/C/tools/msys64/mingw64/bin:$PATH
     script:
