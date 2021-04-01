@@ -58,7 +58,7 @@ jobs:
       - PATH=/C/tools/msys64/mingw64/bin:$PATH
     script:
       - mkdir build
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake ..
+      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -G "MSYS Makefiles" ..
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make all
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make test
   # opensuse: "recent" systems with ICB
