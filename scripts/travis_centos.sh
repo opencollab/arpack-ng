@@ -21,27 +21,27 @@ else # for 8+, stream
     cmd_powertools="dnf config-manager --set-enabled powertools &&"
 fi
 
-sudo docker pull "${prefix}centos$1"                                        \
-    &&                                                                      \
-    sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c       \
-    "$pm install -y ${pm}-plugins-core epel-release                      && \
-    $pm upgrade -y                                                       && \
-    $cmd_powertools                                                         \
-    $pm install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
-    $pm install -y $cmake                                                && \
-    $pm install -y mpich-devel                                           && \
-    $pm --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
-    . /etc/profile.d/modules.sh                                          && \
-    module avail && module load mpi && module list                       && \
-    cd /tmp                                                              && \
-    cd arpack-ng                                                         && \
-    git status                                                           && \
-    git log -2                                                           && \
-    mkdir -p build && cd build                                           && \
-    $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
-    make all && make test"                                                  \
-    &&                                                                      \
-    sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                     \
-    &&                                                                      \
-    sudo docker start -a mobydick
+sudo docker pull "${prefix}centos$1"                                     \
+&&                                                                       \
+sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c        \
+"$pm install -y ${pm}-plugins-core epel-release                       && \
+ $pm upgrade -y                                                       && \
+ $cmd_powertools                                                         \
+ $pm install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
+ $pm install -y $cmake                                                && \
+ $pm install -y mpich-devel                                           && \
+ $pm --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
+ . /etc/profile.d/modules.sh                                          && \
+ module avail && module load mpi && module list                       && \
+ cd /tmp                                                              && \
+ cd arpack-ng                                                         && \
+ git status                                                           && \
+ git log -2                                                           && \
+ mkdir -p build && cd build                                           && \
+ $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
+ make all && make test"                                                  \
+&&                                                                       \
+sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
+&&                                                                       \
+sudo docker start -a mobydick
 
