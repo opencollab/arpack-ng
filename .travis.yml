@@ -49,7 +49,7 @@ jobs:
   # windows
   - stage: windows
     os: windows
-    name: "windows with cmake"
+    name: "windows"
     before_install:
       - choco install -y msys2
       - choco upgrade --no-progress -y msys2
@@ -63,22 +63,6 @@ jobs:
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -DICB=ON ..
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make all
       - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make test
-  - stage: windows
-    os: windows
-    name: "windows with autotools"
-    before_install:
-      - choco install -y msys2
-      - choco upgrade --no-progress -y msys2
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm git autoconf automake libtool make
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-openblas
-    env:
-      - PATH=/C/tools/msys64/mingw64/bin:$PATH
-    script:
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- ./bootstrap
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- ./configure --enable-icb
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- make all
-      - C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- make check
   # opensuse: "recent" systems with ICB
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
