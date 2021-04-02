@@ -3,6 +3,8 @@ arpack-ng - 3.9.0
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0
  * CMake: add C99 standard checking
+ * CI: Support for centos7 added.
+ * CI: Add `scripts/travis_centos.sh` for centos builds
 
 [ Robert Schütz ]
  * use CMAKE_INSTALL_FULL_<dir> in arpack.pc
