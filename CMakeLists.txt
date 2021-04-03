@@ -160,67 +160,44 @@ if (ICB)
       message("-- Fortran compiler does support iso_c_binding.")
     endif()
 else()
-    # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap...
-
-    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -ffixed-line-length-none")
-    elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp -extend-source")
-    else ()
-      message(WARNING "build script does not know how to enable your Fortran compiler's preprocessor and support for lines longer than 72 characters: set them manually via FFLAGS.")
-    endif ()
-
-    set(SCALARFUNS naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb)
-    set(COMPLEXFUNS, naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc)
-
-    set(BLASFUNS1 axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs)
-    set(BLASFUNS2 dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap)
-    set(BLASFUNS3 dotc geru unm2r)
-    set(BLASFUNS4 COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV)
-    set(BLASFUNS5 scnrm2 dznrm2 csscal zdscal)
+    # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap... For arpack symbols (only).
 
     if (SYMBOLSUFFIX)
-        foreach (f IN LISTS SCALARFUNS BLASFUNS1 BLASFUNS2)
+        if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
+          set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -ffixed-line-length-none")
+        elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
+          set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp -extend-source")
+        else ()
+          message(WARNING "build script does not know how to enable your Fortran compiler's preprocessor and support for lines longer than 72 characters: set them manually via FFLAGS.")
+        endif ()
+
+        set(SCALARFUNS naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb)
+        set(COMPLEXFUNS, naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc)
+
+        foreach (f IN LISTS SCALARFUNS)
             set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ds${f}=s${f}${SYMBOLSUFFIX} -Dd${f}=d${f}${SYMBOLSUFFIX}")
         endforeach ()
 
-        foreach (f IN LISTS COMPLEXFUNS BLASFUNS1 BLASFUNS3)
+        foreach (f IN LISTS COMPLEXFUNS)
             set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Dc${f}=c${f}${SYMBOLSUFFIX} -Dz${f}=z${f}${SYMBOLSUFFIX}")
         endforeach ()
 
-        foreach (f IN LISTS BLASFUNS4)
-            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DS${f}=S${f}${SYMBOLSUFFIX} -DD${f}=D${f}${SYMBOLSUFFIX}")
+        set(CFUNS snaupd sneupd dnaupd dneupd)
+        foreach (f IN LISTS CFUNS)
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
+            list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
         endforeach ()
 
-        foreach (f IN LISTS BLASFUNS5)
-            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
-        endforeach ()
+        include(FortranCInterface)
+        FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
+
+        FortranCInterface_VERIFY()
     endif ()
-
-    set(CFUNS sgemm snaupd sneupd dnaupd dneupd cheev)
-    foreach (f IN LISTS CFUNS)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
-        list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
-    endforeach ()
-
-    include(FortranCInterface)
-    FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
-
-    FortranCInterface_VERIFY()
 endif ()
 
-if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
-    find_package(BLAS REQUIRED)
-
-    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
-    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(BLAS::BLAS INTERFACE IMPORTED)
-        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
-    endif()
-endif()
-get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+# Find MPI
 
 if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
@@ -274,6 +251,21 @@ if (MPI)
     endif()
 endif()
 
+# Find BLAS
+
+if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
+    find_package(BLAS REQUIRED)
+
+    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
+    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+        add_library(BLAS::BLAS INTERFACE IMPORTED)
+        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+    endif()
+endif()
+get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
+# Find LAPACK
+
 if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
     find_package(LAPACK REQUIRED)
 
@@ -284,6 +276,53 @@ if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMake
     endif()
 endif()
 get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
+
+# As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
+
+if (SYMBOLSUFFIX)
+    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -ffixed-line-length-none")
+    elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp -extend-source")
+    else ()
+      message(WARNING "build script does not know how to enable your Fortran compiler's preprocessor and support for lines longer than 72 characters: set them manually via FFLAGS.")
+    endif ()
+
+    set(BLASFUNS1 axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs)
+    set(BLASFUNS2 dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap)
+    set(BLASFUNS3 dotc geru unm2r)
+    set(BLASFUNS4 COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV)
+    set(BLASFUNS5 scnrm2 dznrm2 csscal zdscal)
+
+    foreach (f IN LISTS BLASFUNS1 BLASFUNS2)
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ds${f}=s${f}${SYMBOLSUFFIX} -Dd${f}=d${f}${SYMBOLSUFFIX}")
+    endforeach ()
+
+    foreach (f IN LISTS BLASFUNS1 BLASFUNS3)
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Dc${f}=c${f}${SYMBOLSUFFIX} -Dz${f}=z${f}${SYMBOLSUFFIX}")
+    endforeach ()
+
+    foreach (f IN LISTS BLASFUNS4)
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DS${f}=S${f}${SYMBOLSUFFIX} -DD${f}=D${f}${SYMBOLSUFFIX}")
+    endforeach ()
+
+    foreach (f IN LISTS BLASFUNS5)
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
+    endforeach ()
+
+    set(CFUNS sgemm cheev)
+    foreach (f IN LISTS CFUNS)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
+        list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
+    endforeach ()
+
+    include(FortranCInterface)
+    FortranCInterface_HEADER(FCMangle.h SYMBOLS ${CFUNS_SUFFIXED})
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINCLUDE_FCMANGLE")
+
+    FortranCInterface_VERIFY()
+endif ()
 
 if (MPI)
     set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
