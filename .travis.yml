@@ -33,6 +33,7 @@ stages:
   - name: centos
   - name: fedora
   - name: osx
+  - name: debian
   - name: ubuntu_precise
   - name: ubuntu_trusty
   - name: ubuntu_xenial
@@ -150,6 +151,11 @@ jobs:
     - brew list arpack   || brew install arpack # Test osx formula
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
     script: ls # Need fake script.
+  # debian <=> test "recent" systems, with ICB
+  - stage: debian
+    name: "debian testing"
+    dist: focal
+    script: ./scripts/travis_debian.sh debian :testing
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
     name: "ubuntu precise with autotools without MPI"
@@ -204,17 +210,17 @@ jobs:
   - stage: ubuntu_eoan
     name: "ubuntu eoan"
     dist: bionic
-    script: ./scripts/travis_ubuntu.sh ubuntu :eoan
+    script: ./scripts/travis_debian.sh ubuntu :eoan
   # ubuntu_focal <=> test "recent" systems, with ICB
   - stage: ubuntu_focal
     name: "unbuntu focal"
     dist: bionic
-    script: ./scripts/travis_ubuntu.sh ubuntu :focal
+    script: ./scripts/travis_debian.sh ubuntu :focal
   # ubuntu_groovy <=> test "recent non-LTS" systems, with ICB
   - stage: ubuntu_groovy
     name: "ubuntu groovy"
     dist: bionic
-    script: ./scripts/travis_ubuntu.sh ubuntu :groovy
+    script: ./scripts/travis_debian.sh ubuntu :groovy
   # coverage: "recent" systems with ICB
   - stage: coverage
     name: "coverage"
