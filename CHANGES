@@ -2,6 +2,7 @@ arpack-ng - 3.9.0
 
 [ Franck Houssen ]
 * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
+* [BUG FIX] BLAS/LAPACK: allow suffixes in case BLAS/LAPACK can not provide ICB.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0

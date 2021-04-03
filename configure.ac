@@ -194,7 +194,7 @@ if test x"$enable_icb" != x"no"; then
   fi
   AX_CXX_COMPILE_STDCXX(11)
 else
-  # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap...
+  # ICB saves you from old-fashion-boring-cumbersome-fortran/C crap... For arpack symbols (only).
 
   if test x"$SYMBOLSUFFIX" != x""; then
     dnl Need to rely on non-F77 features
@@ -210,47 +210,81 @@ else
     SCALARFUNS="naitr napps naup2 naupd nconv neigh neupd ngets statn saitr sapps saup2 saupd sconv seigt seupd sgets stats getv0 sortc sortr sesrt stqrb"
     COMPLEXFUNS="naitr napps naup2 naupd neigh neupd ngets statn getv0 sortc"
 
-    BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs"
-    BLASFUNS2="dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap"
-    BLASFUNS3="dotc geru unm2r"
-    BLASFUNS4="COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV"
-    BLASFUNS5="scnrm2 dznrm2 csscal zdscal"
-
-    FUNS1="$SCALARFUNS $BLASFUNS1 $BLASFUNS2"
+    FUNS1="$SCALARFUNS"
     for f in $FUNS1
     do
       FFLAGS="$FFLAGS -Ds$f=s$f$SYMBOLSUFFIX -Dd$f=d$f$SYMBOLSUFFIX"
     done
 
-    FUNS2="$COMPLEXFUNS $BLASFUNS1 $BLASFUNS3"
+    FUNS2="$COMPLEXFUNS"
     for f in $FUNS2
     do
       FFLAGS="$FFLAGS -Dc$f=c$f$SYMBOLSUFFIX -Dz$f=z$f$SYMBOLSUFFIX"
-    done
-
-    for f in $BLASFUNS4
-    do
-      FFLAGS="$FFLAGS -DS$f=S$f$SYMBOLSUFFIX -DD$f=D$f$SYMBOLSUFFIX"
-    done
-
-    for f in $BLASFUNS5
-    do
-      FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX -D$f=$f$SYMBOLSUFFIX"
     done
   fi
 
   dnl Both a lowercase and uppercase variable are needed
   dnl since the macro changes the case of the whole expression
   symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemmsuff)
   AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupdsuff)
   AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupdsuff)
   AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupdsuff)
   AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupdsuff)
+  dnl Needed for BLAS check and for tests (even when suffix is empty)
+  CPPFLAGS="$CPPFLAGS -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff"
+fi
+
+dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
+
+if test x"$SYMBOLSUFFIX" != x""; then
+  dnl Need to rely on non-F77 features
+  AC_FC_LINE_LENGTH(unlimited)
+  FFLAGS="$FFLAGS $ac_cv_fc_line_length"
+
+  AC_LANG_PUSH([Fortran 77])
+  AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS="$FFLAGS -cpp",
+                        AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS="$FFLAGS -fpp",
+                                              AC_MSG_WARN([configure does not know how to enable your Fortran compiler's preprocessor: set it manually via FFLAGS.])))
+  AC_LANG_POP([Fortran 77])
+
+  BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs"
+  BLASFUNS2="dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap"
+  BLASFUNS3="dotc geru unm2r"
+  BLASFUNS4="COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV"
+  BLASFUNS5="scnrm2 dznrm2 csscal zdscal"
+
+  FUNS1="$BLASFUNS1 $BLASFUNS2"
+  for f in $FUNS1
+  do
+    FFLAGS="$FFLAGS -Ds$f=s$f$SYMBOLSUFFIX -Dd$f=d$f$SYMBOLSUFFIX"
+  done
+
+  FUNS2="$BLASFUNS1 $BLASFUNS3"
+  for f in $FUNS2
+  do
+    FFLAGS="$FFLAGS -Dc$f=c$f$SYMBOLSUFFIX -Dz$f=z$f$SYMBOLSUFFIX"
+  done
+
+  for f in $BLASFUNS4
+  do
+    FFLAGS="$FFLAGS -DS$f=S$f$SYMBOLSUFFIX -DD$f=D$f$SYMBOLSUFFIX"
+  done
+
+  for f in $BLASFUNS5
+  do
+    FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX -D$f=$f$SYMBOLSUFFIX"
+  done
+
+  dnl Both a lowercase and uppercase variable are needed
+  dnl since the macro changes the case of the whole expression
+  symbolsuffix=$SYMBOLSUFFIX
+  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemmsuff)
   AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
   dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff -Dcheev=$cheevsuff"
+  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dcheev=$cheevsuff"
 fi
+
+dnl Set conditional for Makefiles.
 
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
