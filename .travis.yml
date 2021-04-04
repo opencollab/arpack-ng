@@ -42,7 +42,6 @@ stages:
   - name: ubuntu_focal
   - name: ubuntu_groovy
   - name: coverage
-  - name: debian_interface64
 
 jobs:
   include:
@@ -155,7 +154,11 @@ jobs:
   - stage: debian
     name: "debian testing"
     dist: focal
-    script: ./scripts/travis_debian.sh debian :testing
+    script: ./scripts/travis_debian.sh debian :testing REG
+  - stage: debian
+    name: "debian testing with ILP64"
+    dist: focal
+    script: ./scripts/travis_debian.sh debian :testing ILP64
   # ubuntu_precise <=> test "older" systems, without ICB, without cmake (too old to be supported)
   - stage: ubuntu_precise
     name: "ubuntu precise with autotools without MPI"
@@ -189,38 +192,31 @@ jobs:
     dist: bionic
     script: ./bootstrap && ./configure --enable-icb --enable-icb-exmm --enable-mpi && export VERBOSE=1 && make all && make check
   - stage: ubuntu_bionic
-    name: "ubuntu bionic with cmake with MPI with ICB with boost-python"
+    name: "ubuntu bionic with cmake with MPI with ICB"
     dist: bionic
-    before_install:
-    - sudo apt-get -y install python3-minimal python3-pip python3-numpy
-    - sudo pip3 install --system numpy
-    # need to build boost-python from source for python 3 (repository package is built for python 2)
-    - sudo apt-get -y install wget
-    - wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz
-    - tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0
-    - ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3
-    - sudo ./b2 install
-    - sudo apt-get install locate
-    - sudo updatedb
     script: |
-      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&                                  \
-      cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX='36' .. && \
+      cd $TRAVIS_BUILD_DIR && mkdir -p build && cd build &&    \
+      cmake -DEXAMPLES=ON -DICB=ON -DICBEXMM=ON -DMPI=ON .. && \
       export VERBOSE=1 && make all && make test
   # ubuntu_eoan <=> test "recent EOL" systems, with ICB
   - stage: ubuntu_eoan
     name: "ubuntu eoan"
     dist: bionic
-    script: ./scripts/travis_debian.sh ubuntu :eoan
+    script: ./scripts/travis_debian.sh ubuntu :eoan REG
   # ubuntu_focal <=> test "recent" systems, with ICB
   - stage: ubuntu_focal
     name: "unbuntu focal"
     dist: bionic
-    script: ./scripts/travis_debian.sh ubuntu :focal
+    script: ./scripts/travis_debian.sh ubuntu :focal REG
   # ubuntu_groovy <=> test "recent non-LTS" systems, with ICB
   - stage: ubuntu_groovy
     name: "ubuntu groovy"
     dist: bionic
-    script: ./scripts/travis_debian.sh ubuntu :groovy
+    script: ./scripts/travis_debian.sh ubuntu :groovy REG
+  - stage: ubuntu_groovy
+    name: "ubuntu groovy with boost-python"
+    dist: bionic
+    script: ./scripts/travis_debian.sh ubuntu :groovy BP
   # coverage: "recent" systems with ICB
   - stage: coverage
     name: "coverage"
@@ -245,57 +241,6 @@ jobs:
       head -n 50 coveralls.log && tail -n 50 coveralls.log                         \
       &&                                                                           \
       head -n 50 coveralls.json && tail -n 50 coveralls.json
-  # debian_interface64: "recent" systems with ICB + MKL + ILP64 (need debian/testing to get MKL-ILP64)
-  #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
-  #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
-  #                                                               note: docker-cp works only if copy from/to containers (not images)
-  #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
-  - stage: debian_interface64
-    name: "debian ILP64"
-    dist: xenial
-    script: |
-      sudo docker pull debian                                                                                           \
-      &&                                                                                                                \
-      sudo docker create --name mobydick debian /bin/bash -c                                                            \
-      "cat /etc/os-release                                                                                           && \
-       cat /etc/apt/sources.list                                                                                     && \
-       sed -e 's/stretch/testing/'            -i /etc/apt/sources.list                                               && \
-       sed -e 's/main/main non-free contrib/' -i /etc/apt/sources.list                                               && \
-       sed -e '/security.debian.org/d'        -i /etc/apt/sources.list                                               && \
-       cat /etc/apt/sources.list                                                                                     && \
-       export DEBIAN_FRONTEND=noninteractive                                                                         && \
-       apt-get -y                                                                 update                             && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef      upgrade                            && \
-       apt-get -y --allow-unauthenticated -o Dpkg::Options::=--force-confdef dist-upgrade                            && \
-       cat /etc/os-release                                                                                           && \
-       apt-get -y install dialog                                                                                     && \
-       echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
-       apt-get -y install build-essential                                                                            && \
-       apt-get -y install git gfortran gcc g++ openmpi-bin libopenmpi-dev automake autoconf libtool pkg-config       && \
-       apt-get -y install libeigen3-dev                                                                              && \
-       cd /tmp                                                                                                       && \
-       cd arpack-ng                                                                                                  && \
-       git status                                                                                                    && \
-       git log -2                                                                                                    && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/EXAMPLES/MPI/Makefile.am && \
-       sed -e 's/LOG_FLAGS = /LOG_FLAGS = --allow-run-as-root --oversubscribe /' -i PARPACK/TESTS/MPI/Makefile.am    && \
-       ./bootstrap                                                                                                   && \
-       export FFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                                && \
-       export FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl'                                                               && \
-       export LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl'   && \
-       export INTERFACE64=1                                                                                          && \
-       ./configure --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 --enable-mpi --enable-icb-exmm                   \
-                   --disable-dependency-tracking                                                                     && \
-       export VERBOSE=1                                                                                              && \
-       make all                                                                                                      && \
-       make check                                                                                                    && \
-       find . -name test-suite.log | xargs tail -n 300"                                                                 \
-      &&                                                                                                                \
-      sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
-      &&                                                                                                                \
-      sudo docker start -a mobydick
-
 
 after_failure:
 
