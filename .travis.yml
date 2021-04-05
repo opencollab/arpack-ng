@@ -169,11 +169,11 @@ jobs:
   - stage: ubuntu_trusty
     name: "ubuntu trusty with cmake with MPI"
     dist: trusty
-    script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=OFF .. && make VERBOSE=1 && make test  && make package_source;
+    script: mkdir -p build && cd build && cmake -D EXAMPLES=ON -D MPI=ON  -D ICB=ON  .. && make VERBOSE=1 && make test  && make package_source;
   - stage: ubuntu_trusty
     name: "ubuntu trusty with autotools with MPI"
     dist: trusty
-    script: ./bootstrap && ./configure --enable-mpi                                     && make VERBOSE=1 && make check && make distcheck;
+    script: ./bootstrap && ./configure --enable-mpi --enable-icb                        && make VERBOSE=1 && make check && make distcheck;
   # ubuntu_xenial <=> test "recent" systems, with ICB
   - stage: ubuntu_xenial
     name: "ubuntu xenial with cmake with MPI with ICB"
