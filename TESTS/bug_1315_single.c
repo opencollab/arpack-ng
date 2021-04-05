@@ -2,14 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "arpackdef.h"
+#include "arpack.h"
 
 // This test calls fortran from C the old-fashion cumbersome way.
 // Note: icb_arpack_c tests the same kind of things using ICB.
-
-#ifdef INCLUDE_FCMANGLE
-#include "FCMangle.h"
-#endif
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
@@ -18,15 +14,6 @@
  * This is not efficient since the problem is
  * symmetric but is done to exhibit the bug.
  */
-
-extern void snaupd(a_int *, char *, a_int *, char *, a_int *, float *, float *,
-                   a_int *, float *, a_int *, a_int *, a_int *, float *,
-                   float *, a_int *, a_int *);
-
-extern void sneupd(a_int *, char *, a_int *, float *, float *, float *, a_int *,
-                   float *, float *, float *, char *, a_int *, char *, a_int *,
-                   float *, float *, a_int *, float *, a_int *, a_int *,
-                   a_int *, float *, float *, a_int *, a_int *);
 
 void matVec(float *x, float *y) {
   int i;
@@ -69,19 +56,19 @@ int main() {
   iparam[3] = 1;
   iparam[6] = 1;
 
-  snaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr,
-         workd, workl, &lworkl, &info);
+  snaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
+         workd, workl, lworkl, &info);
 
   while (ido == -1 || ido == 1) {
     matVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
 
-    snaupd(&ido, bmat, &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam,
-           ipntr, workd, workl, &lworkl, &info);
+    snaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam,
+           ipntr, workd, workl, lworkl, &info);
   }
 
-  sneupd(&rvec, howmny, select, dr, di, z, &ldz, &sigmar, &sigmai, workev, bmat,
-         &N, which, &nev, &tol, resid, &ncv, V, &ldv, iparam, ipntr, workd,
-         workl, &lworkl, &info);
+  sneupd_c(rvec, howmny, select, dr, di, z, ldz, sigmar, sigmai, workev, bmat,
+         N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr, workd,
+         workl, lworkl, &info);
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f\n", dr[i]);
