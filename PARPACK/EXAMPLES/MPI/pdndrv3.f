@@ -55,7 +55,11 @@ c
 c\EndLib
 c--------------------------------------------------------------------------
 c
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
       include 'mpif.h'
+#endif
       include 'debug.h'
       include 'stat.h'
 
@@ -64,11 +68,20 @@ c     | MPI INTERFACE                 |
 c     | ILP64 is not supported by MPI |
 c     | integer*4 must be imposed in  |
 c     | all calls involving MPI.      |
+c     | MPI communicators must be     |
+c     | declared with MPI_Comm type.  |
+c     | Use mpi_f08 to get correct    |
+c     | types (= ICB provided by MPI) |
 c     |                               |
 c     | Use ierr for MPI calls.       |
 c     %-------------------------------%
 
-      integer*4         comm, myid, nprocs, rc, ierr
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm)    comm
+#else
+      integer*4         comm
+#endif
+      integer*4         myid, nprocs, rc, ierr
 
 c
 c     %-----------------------------%
@@ -507,11 +520,20 @@ c
       subroutine av (comm, nloc, n, v, w)
 c
 c     .. MPI Declarations ...
-      include           'mpif.h'
-      integer*4         comm, nprocs, myid, ierr,
-     &                  status(MPI_STATUS_SIZE)
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
+      include 'mpif.h'
+#endif
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm)    comm
+      type(MPI_Status)  status
+#else
+      integer*4         comm, status(MPI_STATUS_SIZE)
+#endif
+      integer*4         nprocs, myid, ierr, next, prev
 c
-      integer           nloc, n, j, next, prev
+      integer           nloc, n, j
       Double precision
      &                  v(nloc), w(nloc), one, two, dd, dl, du,
      &                  s, h, rho, mv_buf
@@ -565,11 +587,20 @@ c
       subroutine mv (comm, nloc, v, w)
 c
 c     .. MPI Declarations ...
-      include           'mpif.h'
-      integer*4         comm, nprocs, myid, ierr,
-     &                  status(MPI_STATUS_SIZE)
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
+      include 'mpif.h'
+#endif
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm)    comm
+      type(MPI_Status)  status
+#else
+      integer*4         comm, status(MPI_STATUS_SIZE)
+#endif
+      integer*4         nprocs, myid, ierr, next, prev
 c
-      integer           nloc, j, next, prev
+      integer           nloc, j
       Double precision
      &                  v(nloc), w(nloc), one, four, mv_buf
       parameter         ( one = 1.0, four = 4.0)

@@ -65,6 +65,9 @@ function(pexamples list_name)
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${parpackexample_DIR}/${l} )
         target_link_libraries(${lwe} parpack arpack MPI::MPI_Fortran)
+        if (HAVE_MPI_ICB)
+            target_compile_definitions(${lwe} PRIVATE HAVE_MPI_ICB=1)
+        endif()
         add_test(NAME "${lwe}_ex" COMMAND mpirun -n 2 ./${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 endfunction(pexamples)
@@ -206,6 +209,35 @@ if (MPI)
     endif()
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
+
+    # Check if we can use ISO_C_BINDING provided by MPI.
+    file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
+         "
+          PROGRAM PROG_ICB
+          USE :: mpi_f08
+          IMPLICIT NONE
+          type(MPI_Comm)    comm
+          type(MPI_Status)  status
+          END PROGRAM PROG_ICB
+         ")
+         try_compile(COMPILE_ICB ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90 LINK_LIBRARIES MPI::MPI_Fortran)
+    if(NOT ${COMPILE_ICB})
+      message("-- MPI library does not support iso_c_binding.")
+      set(HAVE_MPI_ICB 0)
+    else()
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DHAVE_MPI_ICB")
+      message("-- MPI library does support iso_c_binding.")
+      set(HAVE_MPI_ICB 1)
+    endif()
+
+    # As MPI can be used with or without ISO_C_BINDING (#ifdef), we need to preprocess code before compiling.
+    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp")
+    elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpp")
+    else ()
+      message(WARNING "build script does not know how to preprocess Fortran code: set it manually via FFLAGS.")
+    endif ()
 
     if(ICB)
         if (NOT TARGET MPI::MPI_C) # Search only if not already found by upper CMakeLists.txt
@@ -376,6 +408,15 @@ if (INTERFACE64)
     else ()
       message(WARNING "build script does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.")
     endif ()
+
+    # Compiling with INTERFACE64 means you need to have control on integer type.
+    # If MPI is also required, then MPI types must be consistent with ILP64:
+    # to make sure of this, we must use the ISO_C_BINDING API provided by MPI.
+    if (MPI)
+      if (NOT HAVE_MPI_ICB)
+        message(FATAL_ERROR "ILP64 support require use of MPI library which provides ISO_C_BINDING support.")
+      endif()
+    endif()
 else ()
     set(INTERFACE64 0)
 endif ()
@@ -614,6 +655,9 @@ if(MPI)
 
   add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
   target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  if (HAVE_MPI_ICB)
+    target_compile_definitions(issue46 PRIVATE HAVE_MPI_ICB=1)
+  endif()
   add_test(issue46_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
 endif()
 

@@ -2,16 +2,29 @@ c
 c----------- Example to reproduce issue#46 ----------------------------------------------
 c
       program issue46
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
       include 'mpif.h'
+#endif
 c     %-------------------------------%
 c     | MPI INTERFACE                 |
 c     | ILP64 is not supported by MPI |
 c     | integer*4 must be imposed in  |
 c     | all calls involving MPI.      |
+c     | MPI communicators must be     |
+c     | declared with MPI_Comm type.  |
+c     | Use mpi_f08 to get correct    |
+c     | types (= ICB provided by MPI) |
 c     |                               |
 c     | Use ierr for MPI calls.       |
 c     %-------------------------------%
-      integer*4 ierr, comm, myid, nprocs, cnprocs, color
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+#else
+      integer*4      comm
+#endif
+      integer*4      ierr, myid, nprocs, cnprocs, color
       call MPI_INIT( ierr )
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
       call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs, ierr )
@@ -33,11 +46,20 @@ c     Create commuticator to run arnoldi only on the first CPU
 
 
       subroutine parnoldi(comm)
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
       include 'mpif.h'
+#endif
       include 'debug.h'
       include 'stat.h'
 
-      integer*4         comm, myid, nprocs, rc, ierr
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm)    comm
+#else
+      integer*4         comm
+#endif
+      integer*4         myid, nprocs, rc, ierr
 c
 c     %-----------------------------%
 c     | Define leading dimensions   |
@@ -71,8 +93,9 @@ c     | (call to BLAS, LAPACK, ARPACK).    |
 c     %------------------------------------%
 c
       character        bmat*1, which*2
+      integer*4        nx
       integer          ido, n, nev, ncv, lworkl, info, nloc, j,
-     &                 nx, nconv, maxitr, mode, ishfts
+     &                 nconv, maxitr, mode, ishfts
       logical          rvec
       Double precision
      &                 tol, sigma
@@ -396,10 +419,19 @@ c
       subroutine av (comm, nloc, nx, mv_buf, v, w)
 c
 c     .. MPI Declarations ...
-      include           'mpif.h'
-      integer*4         comm, nprocs, myid, ierr,
-     &                  status(MPI_STATUS_SIZE)
-      integer           nloc, nx, np, j, lo, next, prev
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
+      include 'mpif.h'
+#endif
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm)    comm
+      type(MPI_Status)  status
+#else
+      integer*4         comm, status(MPI_STATUS_SIZE)
+#endif
+      integer*4         nprocs, myid, ierr, nx, next, prev
+      integer           nloc, np, j, lo
       Double precision
      &                  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
