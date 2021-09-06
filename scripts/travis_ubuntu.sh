@@ -9,6 +9,8 @@ if [ $2 = ":eoan" ]; then
     cmd="sed -i 's/\(security\|archive\).ubuntu/old-releases.ubuntu/g' /etc/apt/sources.list"
 fi 
 
+echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin                                   \
+&&                                                                                                                \
 sudo docker pull "$1$2"                                                                                           \
 &&                                                                                                                \
 sudo docker create --name mobydick "$1$2" /bin/bash -c                                                            \

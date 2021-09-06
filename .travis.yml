@@ -54,6 +54,8 @@ jobs:
   - stage: opensuse
     dist: bionic
     script: |
+      echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin        \
+      &&                                                                                     \
       sudo docker pull opensuse/tumbleweed                                                   \
       &&                                                                                     \
       sudo docker create --security-opt seccomp:unconfined --name mobydick opensuse/tumbleweed /bin/bash -c                    \
@@ -229,6 +231,8 @@ jobs:
   - stage: debian_interface64
     dist: xenial
     script: |
+      echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin                                   \
+      &&                                                                                                                \
       sudo docker pull debian                                                                                           \
       &&                                                                                                                \
       sudo docker create --name mobydick debian /bin/bash -c                                                            \
@@ -279,3 +283,7 @@ after_failure:
   - find . -name arpackmm.run.log | xargs tail -n 300
   - find . -name CMakeOutput.log | xargs cat
   - find . -name CMakeError.log | xargs cat
+env:
+  global:
+    secure: J/At9MoteQg3BwZb8uodIPMAF9GACrou3QE17M9BYsBHr2B47heLHOdmRRuNqMhSE5V+xBXh48JOCgJuEctYLQPoMN+e+kAY5u3gfSD4/u6HAg5QUKNc21Q9hBMitwnoB7Nhj7r4OLo5+HilYNXen2rDJTYsDCG+lIgfUqN44/s=
+    secure: g3JKvqQryhNw+6T8P7MinlGuDrZUothYjHn5AQn011s7bnmX6tJeOm5vPglpl2kzeiX3DyzdTpu5hpY7i/ouIr5xc+CHLY8LJ2I+x5XWRk5tDTlCfgVtXWtiuQJdP7lbYkKYazM6hpgs1/mIMIP27ekRp1GBeNksm4YELG394/o=

@@ -11,6 +11,7 @@ then
   #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
+    echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin
     test . != ".$2" && mpi="$2" || mpi=openmpi
     test . != ".$3" && version="$3" || version=latest
     time sudo docker pull registry.fedoraproject.org/fedora:$version ||
