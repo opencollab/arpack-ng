@@ -119,8 +119,6 @@ jobs:
     # note: mpich not working due to a cmake bug
     - brew list open-mpi || brew install open-mpi
     - brew list --formula -1 | while read line; do brew link --overwrite $line; done;
-    - export CC=gcc-10
-    - export CXX=g++-10
     - mpicc -show
     # full build and testing with blas and lapack
     # note: -ff2c and -fno-second-underscore are NOT needed when using generic
