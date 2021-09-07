@@ -85,3 +85,14 @@ jobs:
         run: brew install gcc autoconf automake libtool pkg-config mpich
       - name: Run job
         run: ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make all && make check
+  windows_latest_cmake:
+    runs-on: windows-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: choco install -y msys2 && choco upgrade --no-progress -y msys2 && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm git cmake make && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-openblas
+      - name: Run job
+        run: mkdir build && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -DICB=ON ..  && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make all && C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make test
