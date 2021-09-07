@@ -44,3 +44,18 @@ jobs:
         run : sudo apt-get -y install wget && wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz && tar -xf boost_1_67_0.tar.gz && cd boost_1_67_0 && ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 && sudo ./b2 install && sudo apt-get install locate && sudo updatedb
       - name: Run job
         run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
+  ubuntu_latest_autotools_ilp64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool libeigen3-dev
+      - name: Install Intel MKL (ILP64 blas/lapack)
+        run: echo yes | apt-get -y install intel-mkl libmkl-dev                                                            && \
+      - name: Run job
+        run: ./bootstrap && FFLAGS='-DMKL_ILP64 -I/usr/include/mkl' FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl' LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl' INTERFACE64=1 ./configure --enable-mpi --enable-icb --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 && make all && make check
