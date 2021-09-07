@@ -59,3 +59,29 @@ jobs:
         run: echo yes | sudo apt-get -y install intel-mkl libmkl-dev
       - name: Run job
         run: ./bootstrap && FFLAGS='-DMKL_ILP64 -I/usr/include/mkl' FCFLAGS='-DMKL_ILP64 -I/usr/include/mkl' LIBS='-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl' INTERFACE64=1 ./configure --enable-mpi --enable-icb --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64 && make all && make check
+  macos_latest_cmake:
+    runs-on: macos-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: brew update
+      - name: Install brew dependencies
+        run: brew install gcc cmake mpich
+      - name: Run job
+        run: mkdir -p build && cd build && cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make all && make test
+  macos_latest_autotools:
+    runs-on: macos-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: brew update
+      - name: Install brew dependencies
+        run: brew install gcc autoconf automake libtool pkg-config mpich
+      - name: Run job
+        run: ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make all && make check
