@@ -41,7 +41,7 @@ jobs:
       - name: Install python dependencies
         run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
       - name: Build boost-python for python3 (not provided by apt-cache)
-        run : sudo apt-get -y install wget && wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz && tar -xf boost_1_77_0.tar.gz && cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 && sudo ./b2 install && sudo apt-get install locate && sudo updatedb
+        run : sudo apt-get -y install wget && wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz && tar -xf boost_1_77_0.tar.gz && cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc && sudo ./b2 install && sudo apt-get install locate && sudo updatedb
       - name: Run job
         run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
   ubuntu_latest_autotools_ilp64:
