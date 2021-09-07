@@ -13,7 +13,13 @@ jobs:
       - name: Install apt-get dependencies
         run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
       - name: Run job
-        run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON .. && make all test && make package_source
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
+          make all
+          make test
+          make package_source
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +32,12 @@ jobs:
       - name: Install apt-get dependencies
         run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool
       - name: Run job
-        run: ./bootstrap && ./configure --enable-mpi --enable-icb && make all && make check && make distcheck
+        run: |
+          ./bootstrap
+          ./configure --enable-mpi --enable-icb
+          make all
+          make check
+          make distcheck
   ubuntu_latest_cmake_python:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +52,15 @@ jobs:
       - name: Install python dependencies
         run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
       - name: Build boost-python for python3 (not provided by apt-cache)
-        run : sudo apt-get -y install wget && wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz && tar -xf boost_1_77_0.tar.gz && cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc && sudo ./b2 toolset=gcc install && sudo apt-get install locate && sudo updatedb
+        run : |
+          sudo apt-get -y install wget
+          wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz
+          tar -xf boost_1_77_0.tar.gz
+          cd boost_1_77_0
+          ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
+          sudo ./b2 toolset=gcc install
+          sudo apt-get install locate
+          sudo updatedb
       - name: Run job
         run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
   ubuntu_latest_autotools_ilp64:
@@ -80,7 +99,12 @@ jobs:
       - name: Install brew dependencies
         run: brew install gcc cmake mpich
       - name: Run job
-        run: mkdir -p build && cd build && cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON .. && make all && make test
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          make all
+          make test
   macos_latest_autotools:
     runs-on: macos-latest
     steps:
@@ -93,7 +117,11 @@ jobs:
       - name: Install brew dependencies
         run: brew install gcc autoconf automake libtool pkg-config mpich
       - name: Run job
-        run: ./bootstrap && LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi && make all && make check
+        run: |
+          ./bootstrap
+          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi
+          make all
+          make check
   windows_latest_cmake:
     runs-on: windows-latest
     steps:
