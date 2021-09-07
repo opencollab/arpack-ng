@@ -1,0 +1,29 @@
+name: arpack-ng
+on: [push]
+jobs:
+  ubuntu_latest_cmake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+      - name: Run job
+        run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON .. && make all test && make package_source
+  ubuntu_latest_autotools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool
+      - name: Run job
+        run: ./bootstrap && ./configure --enable-mpi --enable-icb && make all && make check && make distcheck
