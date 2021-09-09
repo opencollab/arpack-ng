@@ -99,7 +99,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc cmake mpich
+          brew install gcc cmake open-mpi
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
       - name: Run job
         run: |
@@ -120,7 +120,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc autoconf automake libtool pkg-config mpich
+          brew install gcc autoconf automake libtool pkg-config open-mpi
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
       - name: Run job
         run: |
