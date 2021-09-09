@@ -142,12 +142,13 @@ jobs:
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-cmake
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-make
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-ninja
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-openblas
       - name: Run job
         run: |
           mkdir build
-          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -G 'MSYS Makefiles' -DICB=ON ..
-          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make all
-          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- make test
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -G 'Ninja' -DICB=ON ..
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja all
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja test
         env:
           PATH: "C:\\tools\\msys64\\mingw64\\bin"
