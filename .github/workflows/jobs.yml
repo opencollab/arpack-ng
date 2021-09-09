@@ -99,7 +99,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc cmake open-mpi
+          brew install gcc cmake mpich
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
       - name: Run job
         run: |
@@ -108,6 +108,8 @@ jobs:
           cmake -DBLA_VENDOR=Generic -DCMAKE_PREFIX_PATH=$(brew --prefix lapack) -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
           make test
+        env:
+          PATH: "/usr/local/opt/mpich/bin"
   macos_latest_autotools:
     runs-on: macos-latest
     steps:
@@ -120,7 +122,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc autoconf automake libtool pkg-config open-mpi
+          brew install gcc autoconf automake libtool pkg-config mpich
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
       - name: Run job
         run: |
@@ -128,6 +130,8 @@ jobs:
           LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi
           make all
           make check
+        env:
+          PATH: "/usr/local/opt/mpich/bin"
   windows_latest_cmake:
     runs-on: windows-latest
     steps:
