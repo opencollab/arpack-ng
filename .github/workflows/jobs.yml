@@ -95,7 +95,9 @@ jobs:
       - name: Check commit
         run: git log -1
       - name: Update OS
-        run: brew update
+        run: |
+          brew update
+          brew upgrade
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
@@ -117,7 +119,9 @@ jobs:
       - name: Check commit
         run: git log -1
       - name: Update OS
-        run: brew update
+        run: |
+          brew update
+          brew upgrade
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
