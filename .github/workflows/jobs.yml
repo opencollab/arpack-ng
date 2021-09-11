@@ -99,11 +99,9 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          # On macos, mpich conflicts with open-mpi.
-          brew remove mpich
-          brew install gcc cmake open-mpi
+          brew install gcc cmake mpich
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
-          brew info open-mpi
+          brew info mpich
       - name: Run job
         run: |
           mkdir -p build
@@ -123,8 +121,6 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          # On macos, mpich conflicts with open-mpi.
-          brew remove open-mpi
           brew install gcc autoconf automake libtool pkg-config mpich
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
           brew info mpich
