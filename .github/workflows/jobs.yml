@@ -152,9 +152,8 @@ jobs:
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-openblas
       - name: Run job
         run: |
+          echo "C:\\tools\\msys64\\mingw64\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           mkdir build
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -G 'Ninja' -DICB=ON ..
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja all
           C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja test CTEST_OUTPUT_ON_FAILURE=TRUE
-        env:
-          PATH: "C:\\tools\\msys64\\mingw64\\bin"
