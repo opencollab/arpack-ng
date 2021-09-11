@@ -21,8 +21,6 @@ else # for 8+, stream
     cmd_powertools="dnf config-manager --set-enabled powertools &&"
 fi
 
-echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin \
-&&                                                                              \
 sudo docker pull "${prefix}centos$1"                                     \
 &&                                                                       \
 sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c        \
