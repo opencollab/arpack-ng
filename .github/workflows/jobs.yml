@@ -113,8 +113,6 @@ jobs:
       - name: Update OS
         run: |
           brew update
-          brew cask upgrade
-          brew install `brew outdated`
           softwareupdate --install --all
       - name: Install brew dependencies
         run: |
@@ -138,8 +136,6 @@ jobs:
       - name: Update OS
         run: |
           brew update
-          brew cask upgrade
-          brew install `brew outdated`
           softwareupdate --install --all
       - name: Install brew dependencies
         run: |
