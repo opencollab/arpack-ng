@@ -77,12 +77,13 @@ function(pexamples list_name)
 endfunction(pexamples)
 
 if (PYTHON3)
+    enable_language(C CXX) # Boost requirement.
+    set(CMAKE_CXX_STANDARD 14) # Boost requirement.
+
     find_package(PythonInterp 3 REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
     find_package(Boost COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
 
-    enable_language(C CXX) # Boost requirement.
-    set(CMAKE_CXX_STANDARD 14) # Boost requirement.
     set(ICBEXMM "ON")
 endif ()
 
