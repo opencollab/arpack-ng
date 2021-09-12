@@ -237,9 +237,6 @@ if (MPI)
     get_target_property(MPI_Fortran_INCLUDE_DIRS MPI::MPI_Fortran INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
     get_target_property(MPI_Fortran_LIBRARIES    MPI::MPI_Fortran INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
-    message("DEBUG OSX -- MPI_Fortran_INCLUDE_DIRS ${MPI_Fortran_INCLUDE_DIRS}")
-    message("DEBUG OSX -- MPI_Fortran_LIBRARIES    ${MPI_Fortran_LIBRARIES}")
-
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 
     if(ICB)
@@ -256,9 +253,6 @@ if (MPI)
         get_target_property(MPI_C_INCLUDE_DIRS   MPI::MPI_C       INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
         get_target_property(MPI_C_LIBRARIES      MPI::MPI_C       INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
-        message("DEBUG OSX -- MPI_C_INCLUDE_DIRS ${MPI_C_INCLUDE_DIRS}")
-        message("DEBUG OSX -- MPI_C_LIBRARIES    ${MPI_C_LIBRARIES}")
-
         if (NOT TARGET MPI::MPI_CXX) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
             find_package(MPI REQUIRED COMPONENTS CXX)
@@ -271,9 +265,6 @@ if (MPI)
         endif()
         get_target_property(MPI_CXX_INCLUDE_DIRS MPI::MPI_CXX     INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
         get_target_property(MPI_CXX_LIBRARIES    MPI::MPI_CXX     INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
-
-        message("DEBUG OSX -- MPI_CXX_INCLUDE_DIRS ${MPI_CXX_INCLUDE_DIRS}")
-        message("DEBUG OSX -- MPI_CXX_LIBRARIES    ${MPI_CXX_LIBRARIES}")
 
         include(CheckSymbolExists)
         check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_DIRS}/mpi.h" MPI_Comm_c2f_FOUND)
