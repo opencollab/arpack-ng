@@ -13,7 +13,7 @@ then
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
     test . != ".$2" && mpi="$2" || mpi=openmpi
     time sudo docker pull fedora
-    time sudo docker create --name mobydick fedora "/tmp/arpack-ng/scripts/travis_fedora.sh $mpi"
+    time sudo docker create --name mobydick fedora /tmp/arpack-ng/scripts/travis_fedora.sh $mpi
     time sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp
     time sudo docker start -a mobydick ; e=$?
     exit $e
@@ -28,8 +28,7 @@ then
     # Ignore weak depencies
     echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
     time dnf -y upgrade
-    time dnf -y install environment-modules git \
-        gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
+    time dnf -y install environment-modules git gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
     useradd test
     chown -R test /tmp
     sudo -u test $0 $mpi
