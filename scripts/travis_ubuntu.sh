@@ -9,8 +9,6 @@ if [ $2 = ":eoan" ]; then
     cmd="sed -i 's/\(security\|archive\).ubuntu/old-releases.ubuntu/g' /etc/apt/sources.list"
 fi 
 
-echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin                                   \
-&&                                                                                                                \
 sudo docker pull "$1$2"                                                                                           \
 &&                                                                                                                \
 sudo docker create --name mobydick "$1$2" /bin/bash -c                                                            \
@@ -39,6 +37,6 @@ sudo docker create --name mobydick "$1$2" /bin/bash -c                          
  make all                                                                                                      && \
  make test; tail -n 50 ./Testing/Temporary/LastTest.log"                                                          \
 &&                                                                                                                \
-sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
+sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                                                               \
 &&                                                                                                                \
 sudo docker start -a mobydick
