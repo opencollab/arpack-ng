@@ -87,6 +87,24 @@ jobs:
           FCFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
           LIBS: "-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl"
           INTERFACE64: "1"
+  ubuntu_latest_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..
+          make all
+          make test
   docker_centos:
     runs-on: ubuntu-latest
     steps:
