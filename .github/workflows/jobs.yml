@@ -109,6 +109,7 @@ jobs:
         run: git log -1
       - name: Update OS
         run: |
+          brew rm gcc
           brew update
           softwareupdate --install --all
       - name: Install brew dependencies
@@ -132,6 +133,7 @@ jobs:
         run: git log -1
       - name: Update OS
         run: |
+          brew rm gcc
           brew update
           softwareupdate --install --all
       - name: Install brew dependencies
