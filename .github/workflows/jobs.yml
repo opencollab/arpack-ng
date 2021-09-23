@@ -97,7 +97,7 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Login to Docker Hub
-        run: echo ${{ secrets.DOCKER_USERNAME }} | docker login -u ${{ secrets.DOCKER_TOKEN }} --password-stdin
+        run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: Run job
         run: ./scripts/travis_centos.sh
   macos_latest_cmake:
