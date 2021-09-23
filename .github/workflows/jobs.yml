@@ -105,6 +105,7 @@ jobs:
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..
           make all
           make test
+          make coveralls
   docker_centos:
     runs-on: ubuntu-latest
     steps:
