@@ -41,7 +41,7 @@ sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c        \
  $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
  make all && make test"                                                  \
 &&                                                                       \
-sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                      \
+sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                      \
 &&                                                                       \
 sudo docker start -a mobydick
 
