@@ -130,7 +130,7 @@ jobs:
       - name: Login to Docker Hub
         run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
       - name: Run job
-        run: ./scripts/travis_fedora.sh setup mpich fedora
+        run: ./scripts/travis_fedora.sh setup mpich
   docker_debian:
     runs-on: ubuntu-latest
     steps:

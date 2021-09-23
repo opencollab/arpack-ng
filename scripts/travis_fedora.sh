@@ -12,11 +12,8 @@ then
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
     test . != ".$2" && mpi="$2" || mpi=openmpi
-    test . != ".$3" && version="$3" || version=latest
-    time sudo docker pull registry.fedoraproject.org/fedora:$version ||
-    sudo docker pull fedora:$version
-    time sudo docker create --name mobydick fedora:$version \
-    /tmp/arpack-ng/scripts/travis_fedora.sh $mpi
+    time sudo docker pull fedora
+    time sudo docker create --name mobydick fedora "/tmp/arpack-ng/scripts/travis_fedora.sh $mpi"
     time sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp
     time sudo docker start -a mobydick ; e=$?
     exit $e
