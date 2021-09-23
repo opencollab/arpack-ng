@@ -8,17 +8,16 @@ then
   # fedora
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #         2. docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
-    echo "$DOCKER_TOKEN" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin
     test . != ".$2" && mpi="$2" || mpi=openmpi
     test . != ".$3" && version="$3" || version=latest
     time sudo docker pull registry.fedoraproject.org/fedora:$version ||
-	sudo docker pull fedora:$version
+    sudo docker pull fedora:$version
     time sudo docker create --name mobydick fedora:$version \
-	/tmp/arpack-ng/scripts/travis_fedora.sh $mpi
-    time sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp
+    /tmp/arpack-ng/scripts/travis_fedora.sh $mpi
+    time sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp
     time sudo docker start -a mobydick ; e=$?
     exit $e
 fi
