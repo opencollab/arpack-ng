@@ -111,7 +111,6 @@ jobs:
         run: |
           brew update
           softwareupdate --install --all
-          brew upgrade
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
@@ -135,7 +134,6 @@ jobs:
         run: |
           brew update
           softwareupdate --install --all
-          brew upgrade
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
