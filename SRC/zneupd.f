@@ -516,11 +516,11 @@ c
          do 11 j = 1,ncv
             rtemp = max(eps23,
      &                 dlapy2 ( dble(workl(irz+ncv-j)),
-     &                          dimag(workl(irz+ncv-j)) ))
+     &                          aimag(workl(irz+ncv-j)) ))
             jj = workl(bounds + ncv - j)
             if (numcnv .lt. nconv .and.
      &          dlapy2( dble(workl(ibd+jj-1)),
-     &          dimag(workl(ibd+jj-1)) )
+     &          aimag(workl(ibd+jj-1)) )
      &          .le. tol*rtemp) then
                select(jj) = .true.
                numcnv = numcnv + 1

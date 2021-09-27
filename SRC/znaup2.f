@@ -256,7 +256,7 @@ c     %---------------------%
 c     | Intrinsic Functions |
 c     %---------------------%
 c
-      intrinsic  dimag , dble , min, max
+      intrinsic  aimag , dble , min, max
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -489,8 +489,8 @@ c
 c
          do 25 i = 1, nev
             rtemp = max( eps23, dlapy2 ( dble (ritz(np+i)),
-     &                                  dimag (ritz(np+i)) ) )
-            if ( dlapy2 (dble (bounds(np+i)),dimag (bounds(np+i)))
+     &                                  aimag (ritz(np+i)) ) )
+            if ( dlapy2 (dble (bounds(np+i)),aimag (bounds(np+i)))
      &                 .le. tol*rtemp ) then
                nconv = nconv + 1
             end if
@@ -550,7 +550,7 @@ c           |  Use h( 3,1 ) as storage to communicate  |
 c           |  rnorm to zneupd  if needed               |
 c           %------------------------------------------%
 
-            h(3,1) = dcmplx (rnorm,rzero)
+            h(3,1) = cmplx (rnorm,rzero,Kind=Kind(0d0))
 c
 c           %----------------------------------------------%
 c           | Sort Ritz values so that converged Ritz      |
@@ -575,7 +575,7 @@ c           %--------------------------------------------------%
 c
             do 35 j = 1, nev0
                 rtemp = max( eps23, dlapy2 ( dble (ritz(j)),
-     &                                       dimag (ritz(j)) ) )
+     &                                       aimag (ritz(j)) ) )
                 bounds(j) = bounds(j)/rtemp
  35         continue
 c
@@ -596,7 +596,7 @@ c           %----------------------------------------------%
 c
             do 40 j = 1, nev0
                 rtemp = max( eps23, dlapy2 ( dble (ritz(j)),
-     &                                       dimag (ritz(j)) ) )
+     &                                       aimag (ritz(j)) ) )
                 bounds(j) = bounds(j)*rtemp
  40         continue
 c
@@ -755,7 +755,7 @@ c
 c
          if (bmat .eq. 'G') then
             cmpnorm = zdotc  (n, resid, 1, workd, 1)
-            rnorm = sqrt(dlapy2 (dble (cmpnorm),dimag (cmpnorm)))
+            rnorm = sqrt(dlapy2 (dble (cmpnorm),aimag (cmpnorm)))
          else if (bmat .eq. 'I') then
             rnorm = dznrm2 (n, resid, 1)
          end if

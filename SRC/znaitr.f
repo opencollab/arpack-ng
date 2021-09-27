@@ -289,7 +289,7 @@ c     %---------------------%
 c     | Intrinsic Functions |
 c     %---------------------%
 c
-      intrinsic  dimag, dble, max, sqrt
+      intrinsic  aimag, dble, max, sqrt
 c
 c     %-----------------%
 c     | Data statements |
@@ -551,7 +551,7 @@ c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm = zdotc (n, resid, 1, workd(ipj), 1)
-             wnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
+             wnorm = sqrt( dlapy2(dble(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              wnorm = dznrm2(n, resid, 1)
          end if
@@ -581,7 +581,7 @@ c
          call zgemv ('N', n, j, -one, v, ldv, h(1,j), 1,
      &               one, resid, 1)
 c
-         if (j .gt. 1) h(j,j-1) = dcmplx(betaj, rzero)
+         if (j .gt. 1) h(j,j-1) = cmplx(betaj, rzero, Kind=Kind(0d0))
 c
          call arscnd (t4)
 c
@@ -623,7 +623,7 @@ c        %------------------------------%
 c
          if (bmat .eq. 'G') then
             cnorm = zdotc (n, resid, 1, workd(ipj), 1)
-            rnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
+            rnorm = sqrt( dlapy2(dble(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
             rnorm = dznrm2(n, resid, 1)
          end if
@@ -723,7 +723,7 @@ c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
              cnorm  = zdotc (n, resid, 1, workd(ipj), 1)
-             rnorm1 = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
+             rnorm1 = sqrt( dlapy2(dble(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              rnorm1 = dznrm2(n, resid, 1)
          end if
@@ -811,11 +811,11 @@ c              | Use a standard test as in the QR algorithm |
 c              | REFERENCE: LAPACK subroutine zlahqr        |
 c              %--------------------------------------------%
 c
-               tst1 = dlapy2(dble(h(i,i)),dimag(h(i,i)))
-     &              + dlapy2(dble(h(i+1,i+1)), dimag(h(i+1,i+1)))
+               tst1 = dlapy2(dble(h(i,i)),aimag(h(i,i)))
+     &              + dlapy2(dble(h(i+1,i+1)), aimag(h(i+1,i+1)))
                if( tst1.eq.dble(zero) )
      &              tst1 = zlanhs( '1', k+np, h, ldh, workd(n+1) )
-               if( dlapy2(dble(h(i+1,i)),dimag(h(i+1,i))) .le.
+               if( dlapy2(dble(h(i+1,i)),aimag(h(i+1,i))) .le.
      &                    max( ulp*tst1, smlnum ) )
      &             h(i+1,i) = zero
  110        continue
