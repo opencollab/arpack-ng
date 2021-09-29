@@ -1,0 +1,218 @@
+name: arpack-ng
+on: [push]
+jobs:
+  ubuntu_latest_cmake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
+          make all
+          make test
+          make package_source
+  ubuntu_latest_autotools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool
+      - name: Run job
+        run: |
+          ./bootstrap
+          ./configure --enable-mpi --enable-icb
+          make all
+          make check
+          make distcheck
+  ubuntu_latest_cmake_python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake libeigen3-dev
+      - name: Install python dependencies
+        run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
+      - name: Build boost-python for python3 (not provided by apt-cache)
+        run : |
+          sudo apt-get -y install wget
+          wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz
+          tar -xf boost_1_77_0.tar.gz
+          cd boost_1_77_0
+          ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
+          sudo ./b2 toolset=gcc install
+          sudo apt-get install locate
+          sudo updatedb
+      - name: Run job
+        run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
+  ubuntu_latest_autotools_ilp64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool libeigen3-dev
+      - name: Install Intel MKL (ILP64 blas/lapack)
+        run: echo yes | sudo apt-get -y install intel-mkl libmkl-dev
+      - name: Run job
+        run: |
+          ./bootstrap
+          ./configure --enable-mpi --enable-icb --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
+          make all
+          make check
+        env:
+          FFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
+          FCFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
+          LIBS: "-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl"
+          INTERFACE64: "1"
+  ubuntu_latest_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..
+          make all
+          make test
+          make coveralls
+  docker_centos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Login to Docker Hub
+        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+      - name: Run job
+        run: ./scripts/travis_centos.sh
+  docker_fedora:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Login to Docker Hub
+        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+      - name: Run job
+        run: ./scripts/travis_fedora.sh setup mpich
+  docker_debian:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Login to Docker Hub
+        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+      - name: Run job
+        run: ./scripts/travis_ubuntu.sh debian
+  macos_latest_cmake:
+    runs-on: macos-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: |
+          brew rm gcc
+          brew update
+          softwareupdate --install --all
+      - name: Install brew dependencies
+        run: |
+          brew list --formula -1 | while read line; do brew unlink $line; done
+          brew install gcc cmake mpich
+          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+      - name: Run job
+        run: |
+          mkdir -p build
+          cd build
+          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          make all
+          make test
+  macos_latest_autotools:
+    runs-on: macos-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: |
+          brew rm gcc
+          brew update
+          softwareupdate --install --all
+      - name: Install brew dependencies
+        run: |
+          brew list --formula -1 | while read line; do brew unlink $line; done
+          brew install gcc autoconf automake libtool pkg-config mpich
+          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+      - name: Run job
+        run: |
+          ./bootstrap
+          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi
+          make all
+          make check
+  windows_latest_cmake:
+    runs-on: windows-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+      - name: Check commit
+        run: git log -1
+      - name: Update OS
+        run: |
+          choco install -y msys2
+          choco upgrade --no-progress -y msys2
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-cmake
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-toolchain
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-make
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-ninja
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -here -c \$\* -- pacman --sync --noconfirm mingw-w64-x86_64-openblas
+      - name: Run job
+        run: |
+          echo "C:\\tools\\msys64\\mingw64\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          mkdir build
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- cmake -G 'Ninja' -DICB=ON .. # -DEXAMPLES=ON KO
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja all
+          C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -mingw64 -full-path -where build -c \$\* -- ninja test

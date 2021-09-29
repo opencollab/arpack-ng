@@ -8,16 +8,13 @@ then
   # fedora
   #   note: when you PR, docker-cp provides, in the container, the branch associated with the PR (not master where there's nothing new)
   #         1. docker create --name mobydick IMAGE CMD        <=> create a container (= instance of image) but container is NOT yet started
-  #         2. docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
+  #         2. docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp <=> copy git repository (CI worker, checkout-ed on PR branch) into the container
   #                                                               note: docker-cp works only if copy from/to containers (not images)
   #         3. docker start -a mobydick                       <=> start to run the container (initialized with docker-cp)
     test . != ".$2" && mpi="$2" || mpi=openmpi
-    test . != ".$3" && version="$3" || version=latest
-    time sudo docker pull registry.fedoraproject.org/fedora:$version ||
-	sudo docker pull fedora:$version
-    time sudo docker create --name mobydick fedora:$version \
-	/tmp/arpack-ng/scripts/travis_fedora.sh $mpi
-    time sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp
+    time sudo docker pull fedora
+    time sudo docker create --name mobydick fedora /tmp/arpack-ng/scripts/travis_fedora.sh $mpi
+    time sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp
     time sudo docker start -a mobydick ; e=$?
     exit $e
 fi
@@ -31,8 +28,7 @@ then
     # Ignore weak depencies
     echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
     time dnf -y upgrade
-    time dnf -y install environment-modules git \
-        gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
+    time dnf -y install environment-modules git gfortran openblas-devel cmake ${mpi}-devel make gcc-c++
     useradd test
     chown -R test /tmp
     sudo -u test $0 $mpi

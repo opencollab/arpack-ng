@@ -37,6 +37,6 @@ sudo docker create --name mobydick "$1$2" /bin/bash -c                          
  make all                                                                                                      && \
  make test; tail -n 50 ./Testing/Temporary/LastTest.log"                                                          \
 &&                                                                                                                \
-sudo docker cp -a ${TRAVIS_BUILD_DIR} mobydick:/tmp                                                               \
+sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                                                               \
 &&                                                                                                                \
 sudo docker start -a mobydick

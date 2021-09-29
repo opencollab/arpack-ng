@@ -77,6 +77,9 @@ function(pexamples list_name)
 endfunction(pexamples)
 
 if (PYTHON3)
+    enable_language(C CXX) # Boost requirement.
+    set(CMAKE_CXX_STANDARD 14) # Boost requirement.
+
     find_package(PythonInterp 3 REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
     find_package(Boost COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
@@ -222,23 +225,13 @@ get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get va
 if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
         include(FindMPI)
-        find_package(MPI REQUIRED)
+        find_package(MPI REQUIRED COMPONENTS Fortran)
 
         # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
         if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
             add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
             set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
             set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_C INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
-        endif()
-        if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_CXX INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
         endif()
     endif()
     get_target_property(MPI_Fortran_INCLUDE_DIRS MPI::MPI_Fortran INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
@@ -247,8 +240,29 @@ if (MPI)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 
     if(ICB)
+        if (NOT TARGET MPI::MPI_C) # Search only if not already found by upper CMakeLists.txt
+            include(FindMPI)
+            find_package(MPI REQUIRED COMPONENTS C)
+
+            if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
+                add_library(MPI::MPI_C INTERFACE IMPORTED)
+                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
+                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
+            endif()
+        endif()
         get_target_property(MPI_C_INCLUDE_DIRS   MPI::MPI_C       INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
         get_target_property(MPI_C_LIBRARIES      MPI::MPI_C       INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
+
+        if (NOT TARGET MPI::MPI_CXX) # Search only if not already found by upper CMakeLists.txt
+            include(FindMPI)
+            find_package(MPI REQUIRED COMPONENTS CXX)
+
+            if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
+                add_library(MPI::MPI_CXX INTERFACE IMPORTED)
+                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
+                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
+            endif()
+        endif()
         get_target_property(MPI_CXX_INCLUDE_DIRS MPI::MPI_CXX     INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
         get_target_property(MPI_CXX_LIBRARIES    MPI::MPI_CXX     INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
