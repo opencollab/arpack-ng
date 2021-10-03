@@ -316,6 +316,13 @@ class options {
       }
     }
 
+    // Sanity checks.
+
+    if (!stdPb && fileB.empty()) {
+      cerr << "Error: generalized problem without B matrix" << endl;
+      return usage();
+    }
+
     return 0;
   };
 
