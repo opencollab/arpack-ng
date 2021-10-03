@@ -659,7 +659,11 @@ class arpackSolver {
       if (restartFromFile) {
         ifstream ifs(fileName.c_str());
         if (ifs.is_open()) {
-          a_int nbCV = 1; if (readNbCV) {ifs >> nbCV; if (nbCV < nbCV) nbCV = nbCV;}
+          a_int nbCV = 1;
+          if (readNbCV) {
+            ifs >> nbCV;
+            if (nbCV < nbDim) nbCV = nbDim; // Cut-off in case previous run used different nbDim.
+          }
           for (a_int n = 0; rv && n < nbDim*nbCV; n++) ifs >> rv[n];
           if (verbose >= 1) {
             cout << endl << "arpackSolver:" << endl;
