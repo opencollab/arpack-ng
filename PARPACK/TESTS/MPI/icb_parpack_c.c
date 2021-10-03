@@ -46,7 +46,8 @@ int ds() {
   char howmny[] = "A";
   double* d = (double*)malloc((nev + 1) * sizeof(double));
   a_int select[ncv];
-  for (int i = 0; i < ncv; i++) select[i] = 1;
+  int i; // C99 compliant.
+  for (i = 0; i < ncv; i++) select[i] = 1;
   double z[(N + 1) * (nev + 1)];
   a_int ldz = N + 1;
   double sigma = 0;
@@ -79,7 +80,6 @@ int ds() {
   pdseupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, bmat, N, which, nev,
             tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl,
             &info);
-  int i;
   for (i = 0; i < nev; ++i) {
     double val = d[i];
     double ref = (N-(nev-1)+i);
@@ -120,7 +120,8 @@ int zn() {
   double _Complex* d =
       (double _Complex*)malloc((nev + 1) * sizeof(double _Complex));
   a_int select[ncv];
-  for (int i = 0; i < ncv; i++) select[i] = 1;
+  int i; // C99 compliant.
+  for (i = 0; i < ncv; i++) select[i] = 1;
   double _Complex z[(N + 1) * (nev + 1)];
   a_int ldz = N + 1;
   double _Complex sigma = 0. + I * 0.;
@@ -155,7 +156,6 @@ int zn() {
   pzneupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which,
             nev, tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl,
             rwork, &info);
-  int i;
   for (i = 0; i < nev; ++i) {
     double rval = creal(d[i]);
     double rref = (N-(nev-1)+i);
