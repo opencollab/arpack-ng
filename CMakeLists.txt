@@ -592,12 +592,14 @@ add_custom_command(TARGET dnsimp_test POST_BUILD
 )
 add_test(dnsimp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dnsimp)
 
-if (NOT ICB)
+if (ICB)
     add_executable(bug_1315_single TESTS/bug_1315_single.c)
+    target_include_directories(bug_1315_single PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
     target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
     add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
 
     add_executable(bug_1315_double TESTS/bug_1315_double.c)
+    target_include_directories(bug_1315_double PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
     target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
     add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
 endif()
