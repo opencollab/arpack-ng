@@ -1,4 +1,8 @@
 arpack-ng - 3.9.0
+ 
+[ Dima Pasechnik ]
+* [BUG FIX] autotools: replace obsolete AC_TRY_COMPILE macros.
+
 
 [ Franck Houssen ]
 * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).

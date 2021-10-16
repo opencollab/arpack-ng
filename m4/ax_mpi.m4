@@ -80,7 +80,7 @@
 
 AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
-AC_PREREQ(2.50) dnl for AC_LANG_CASE
+AC_PREREQ([2.50]) dnl for AC_LANG_CASE
 
 AC_LANG_CASE([C], [
 	AC_REQUIRE([AC_PROG_CC])
@@ -151,16 +151,16 @@ if test x = x"$MPILIBS"; then
 	AC_CHECK_LIB(mpich, MPI_Init, [MPILIBS="-lmpich"])
 fi
 
-dnl We have to use AC_TRY_COMPILE and not AC_CHECK_HEADER because the
+dnl We have to use AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) and not AC_CHECK_HEADER because the
 dnl latter uses $CPP, not $CC (which may be mpicc).
 AC_LANG_CASE([C], [if test x != x"$MPILIBS"; then
 	AC_MSG_CHECKING([for mpi.h])
-	AC_TRY_COMPILE([#include <mpi.h>],[],[AC_MSG_RESULT(yes)], [MPILIBS=""
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <mpi.h>]], [[]])],[AC_MSG_RESULT(yes)],[MPILIBS=""
 		AC_MSG_RESULT(no)])
 fi],
 [C++], [if test x != x"$MPILIBS"; then
 	AC_MSG_CHECKING([for mpi.h])
-	AC_TRY_COMPILE([#include <mpi.h>],[],[AC_MSG_RESULT(yes)], [MPILIBS=""
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <mpi.h>]], [[]])],[AC_MSG_RESULT(yes)],[MPILIBS=""
 		AC_MSG_RESULT(no)])
 fi],
 [Fortran 77], [if test x != x"$MPILIBS"; then
