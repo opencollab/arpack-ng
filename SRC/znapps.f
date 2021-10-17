@@ -198,7 +198,7 @@ c     %----------------------%
 c     | Intrinsics Functions |
 c     %----------------------%
 c
-      intrinsic  abs, dimag, conjg, dcmplx, max, min, dble
+      intrinsic  abs, aimag, conjg, cmplx, max, min, dble
 c
 c     %---------------------%
 c     | Statement Functions |
@@ -206,7 +206,7 @@ c     %---------------------%
 c
       Double precision
      &           zabs1
-      zabs1( cdum ) = abs( dble( cdum ) ) + abs( dimag( cdum ) )
+      zabs1( cdum ) = abs( dble( cdum ) ) + abs( aimag( cdum ) )
 c
 c     %----------------%
 c     | Data statements |
@@ -405,12 +405,12 @@ c     %---------------------------------------------------%
 c
       do 120 j=1,kev
          if ( dble( h(j+1,j) ) .lt. rzero .or.
-     &        dimag( h(j+1,j) ) .ne. rzero ) then
-            t = h(j+1,j) / dlapy2(dble(h(j+1,j)),dimag(h(j+1,j)))
+     &        aimag( h(j+1,j) ) .ne. rzero ) then
+            t = h(j+1,j) / dlapy2(dble(h(j+1,j)),aimag(h(j+1,j)))
             call zscal( kplusp-j+1, conjg(t), h(j+1,j), ldh )
             call zscal( min(j+2, kplusp), t, h(1,j+1), 1 )
             call zscal( min(j+np+1,kplusp), t, q(1,j+1), 1 )
-            h(j+1,j) = dcmplx( dble( h(j+1,j) ), rzero )
+            h(j+1,j) = cmplx( dble( h(j+1,j) ), rzero, Kind=Kind(0d0) )
          end if
   120 continue
 c

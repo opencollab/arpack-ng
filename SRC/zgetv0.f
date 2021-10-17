@@ -294,7 +294,7 @@ c
       first = .FALSE.
       if (bmat .eq. 'G') then
           cnorm  = zdotc (n, resid, 1, workd, 1)
-          rnorm0 = sqrt(dlapy2(dble(cnorm),dimag(cnorm)))
+          rnorm0 = sqrt(dlapy2(dble(cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
            rnorm0 = dznrm2(n, resid, 1)
       end if
@@ -351,7 +351,7 @@ c
 c
       if (bmat .eq. 'G') then
          cnorm = zdotc (n, resid, 1, workd, 1)
-         rnorm = sqrt(dlapy2(dble(cnorm),dimag(cnorm)))
+         rnorm = sqrt(dlapy2(dble(cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
          rnorm = dznrm2(n, resid, 1)
       end if

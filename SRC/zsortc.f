@@ -96,7 +96,7 @@ c     %--------------------%
 c     | Intrinsic Functions |
 c     %--------------------%
        Intrinsic
-     &           dble, dimag
+     &           dble, aimag
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -119,8 +119,8 @@ c
 c
             if (j.lt.0) go to 30
 c
-            temp1 = dlapy2(dble(x(j)),dimag(x(j)))
-            temp2 = dlapy2(dble(x(j+igap)),dimag(x(j+igap)))
+            temp1 = dlapy2(dble(x(j)),aimag(x(j)))
+            temp2 = dlapy2(dble(x(j+igap)),aimag(x(j+igap)))
 c
             if (temp1.gt.temp2) then
                 temp = x(j)
@@ -156,8 +156,8 @@ c
 c
             if (j .lt. 0) go to 60
 c
-            temp1 = dlapy2(dble(x(j)),dimag(x(j)))
-            temp2 = dlapy2(dble(x(j+igap)),dimag(x(j+igap)))
+            temp1 = dlapy2(dble(x(j)),aimag(x(j)))
+            temp2 = dlapy2(dble(x(j+igap)),aimag(x(j+igap)))
 c
             if (temp1.lt.temp2) then
                temp = x(j)
@@ -259,7 +259,7 @@ c
 c
             if (j.lt.0) go to 150
 c
-            if (dimag(x(j)).gt.dimag(x(j+igap))) then
+            if (aimag(x(j)).gt.aimag(x(j+igap))) then
                temp = x(j)
                x(j) = x(j+igap)
                x(j+igap) = temp
@@ -292,7 +292,7 @@ c
 c
             if (j.lt.0) go to 180
 c
-            if (dimag(x(j)).lt.dimag(x(j+igap))) then
+            if (aimag(x(j)).lt.aimag(x(j+igap))) then
                temp = x(j)
                x(j) = x(j+igap)
                x(j+igap) = temp
