@@ -768,6 +768,9 @@ configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc
 configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
 configure_file(EXAMPLES/MATRIX_MARKET/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" @ONLY)
 
+if (INTERFACE64)
+  set(SUFFIX64 64)
+endif()
 
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -786,41 +789,41 @@ if (MPI)
 endif ()
 
 if(ICB)
-  install(FILES ICB/arpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
-  install(FILES ICB/arpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/arpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
+  install(FILES ICB/arpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
   if (MPI)
-    install(FILES ICB/parpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
-    install(FILES ICB/parpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+    install(FILES ICB/parpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
+    install(FILES ICB/parpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
   endif()
   if (ICBEXMM)
-    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
     install(FILES "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 
-install(FILES debug.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+install(FILES debug.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 if(ICB)
-  install(FILES ICB/debug_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
-  install(FILES ICB/debug_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/debug_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
+  install(FILES ICB/debug_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 endif()
 
-install(FILES stat.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+install(FILES stat.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 if(ICB)
-  install(FILES ICB/stat_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
-  install(FILES ICB/stat_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+  install(FILES ICB/stat_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
+  install(FILES ICB/stat_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 endif()
 
 configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 
 configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack)
+install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack${SUFFIX64})
 
 # Provide find_package for arpack-ng to users.
 configure_file(arpack-ng-config.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng) # find_package(arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack${SUFFIX64}-ng) # find_package(arpack-ng)
 configure_file(arpack-ng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpack-ng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack${SUFFIX64}-ng)
 
 # Packaging: ease arpack-ng distribution (precompiled binaries and sources tarballs).
 set(CPACK_VERSION_MAJOR "${arpack_ng_MAJOR_VERSION}")
