@@ -737,6 +737,10 @@ endif()
 # 'make install' to the correct location
 include(GNUInstallDirs)
 
+if (INTERFACE64)
+  set(SUFFIX64 64)
+endif()
+
 # Convert variable names to those expected by the .pc file.
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix \${prefix})
@@ -767,10 +771,6 @@ string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
 configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
 configure_file(EXAMPLES/MATRIX_MARKET/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" @ONLY)
-
-if (INTERFACE64)
-  set(SUFFIX64 64)
-endif()
 
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
