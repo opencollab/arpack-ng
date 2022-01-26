@@ -20,6 +20,6 @@ set(includedir "@includedir@")
 # Create arpack targets.
 add_library(ARPACK::ARPACK INTERFACE IMPORTED)
 set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${includedir}/arpack")
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "arpack")
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "arpack@LIBSUFFIX@")
 add_library(PARPACK::PARPACK INTERFACE IMPORTED)
-set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES    "parpack")
+set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES    "parpack@LIBSUFFIX@")
