@@ -90,9 +90,9 @@ int ds() {
   return 0;
 }
 
-void zMatVec(double _Complex* x, double _Complex* y) {
+void zMatVec(a_dcomplex* x, a_dcomplex* y) {
   int i;
-  for (i = 0; i < 1000; ++i) y[i] = x[i] * (i + 1.0 + _Complex_I * (i + 1.0));
+  for (i = 0; i < 1000; ++i) y[i] = x[i] * CMPLX(i + 1.0, i + 1.0);
 };
 
 int zn() {
@@ -102,30 +102,30 @@ int zn() {
   char which[] = "LM";
   a_int nev = 9;
   double tol = 0.000001; // small tol => more stable checks after EV computation.
-  double _Complex resid[N];
+  a_dcomplex resid[N];
   a_int ncv = 2 * nev + 1;
-  double _Complex V[ncv * N];
+  a_dcomplex V[ncv * N];
   a_int ldv = N;
   a_int iparam[11];
   a_int ipntr[14];
-  double _Complex workd[3 * N];
+  a_dcomplex workd[3 * N];
   a_int rvec = 0;
   char howmny[] = "A";
-  double _Complex* d =
-      (double _Complex*)malloc((nev + 1) * sizeof(double _Complex));
+  a_dcomplex* d =
+      (a_dcomplex*)malloc((nev + 1) * sizeof(a_dcomplex));
   a_int select[ncv];
   int i; // C99 compliant.
   for (i = 0; i < ncv; i++) select[i] = 1;
-  double _Complex z[(N + 1) * (nev + 1)];
+  a_dcomplex z[(N + 1) * (nev + 1)];
   a_int ldz = N + 1;
-  double _Complex sigma = 0. + I * 0.;
+  a_dcomplex sigma = CMPLX(0., 0.);
   int k;
   for (k = 0; k < 3 * N; ++k) workd[k] = 0;
-  double _Complex workl[3 * (ncv * ncv) + 6 * ncv];
+  a_dcomplex workl[3 * (ncv * ncv) + 6 * ncv];
   for (k = 0; k < 3 * (ncv * ncv) + 6 * ncv; ++k) workl[k] = 0;
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
   double rwork[ncv];
-  double _Complex workev[2 * ncv];
+  a_dcomplex workev[2 * ncv];
   a_int info = 0;
 
   iparam[0] = 1;

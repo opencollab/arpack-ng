@@ -186,10 +186,10 @@ inline void naupd(a_int& ido, bmat const bmat_option, a_int n,
                   float* rwork, a_int& info) {
   internal::cnaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
-                     reinterpret_cast<_Complex float*>(resid), ncv,
-                     reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
-                     reinterpret_cast<_Complex float*>(workd),
-                     reinterpret_cast<_Complex float*>(workl), lworkl,
+                     reinterpret_cast<a_fcomplex*>(resid), ncv,
+                     reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
+                     reinterpret_cast<a_fcomplex*>(workd),
+                     reinterpret_cast<a_fcomplex*>(workl), lworkl,
                      rwork, &info);
 }
 
@@ -203,16 +203,16 @@ inline void neupd(a_int rvec, howmny const howmny_option, a_int* select,
                   a_int lworkl, float* rwork, a_int& info) {
   std::complex<float> sigma2 = sigma;
   internal::cneupd_c(rvec, internal::convert_to_char(howmny_option), select,
-                     reinterpret_cast<_Complex float*>(d),
-                     reinterpret_cast<_Complex float*>(z), ldz,
-                     *reinterpret_cast<_Complex float*>(&sigma2),
-                     reinterpret_cast<_Complex float*>(workev),
+                     reinterpret_cast<a_fcomplex*>(d),
+                     reinterpret_cast<a_fcomplex*>(z), ldz,
+                     *reinterpret_cast<a_fcomplex*>(&sigma2),
+                     reinterpret_cast<a_fcomplex*>(workev),
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
-                     reinterpret_cast<_Complex float*>(resid), ncv,
-                     reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
-                     reinterpret_cast<_Complex float*>(workd),
-                     reinterpret_cast<_Complex float*>(workl), lworkl,
+                     reinterpret_cast<a_fcomplex*>(resid), ncv,
+                     reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
+                     reinterpret_cast<a_fcomplex*>(workd),
+                     reinterpret_cast<a_fcomplex*>(workl), lworkl,
                      rwork, &info);
 }
 
@@ -224,10 +224,10 @@ inline void naupd(a_int& ido, bmat const bmat_option, a_int n,
                   double* rwork, a_int& info) {
   internal::znaupd_c(&ido, internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
-                     reinterpret_cast<_Complex double*>(resid), ncv,
-                     reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
-                     reinterpret_cast<_Complex double*>(workd),
-                     reinterpret_cast<_Complex double*>(workl), lworkl,
+                     reinterpret_cast<a_dcomplex*>(resid), ncv,
+                     reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
+                     reinterpret_cast<a_dcomplex*>(workd),
+                     reinterpret_cast<a_dcomplex*>(workl), lworkl,
                      rwork, &info);
 }
 
@@ -241,16 +241,16 @@ inline void neupd(a_int rvec, howmny const howmny_option, a_int* select,
                   a_int lworkl, double* rwork, a_int& info) {
   std::complex<double> sigma2 = sigma;
   internal::zneupd_c(rvec, internal::convert_to_char(howmny_option), select,
-                     reinterpret_cast<_Complex double*>(d),
-                     reinterpret_cast<_Complex double*>(z), ldz,
-                     *reinterpret_cast<_Complex double*>(&sigma2),
-                     reinterpret_cast<_Complex double*>(workev),
+                     reinterpret_cast<a_dcomplex*>(d),
+                     reinterpret_cast<a_dcomplex*>(z), ldz,
+                     *reinterpret_cast<a_dcomplex*>(&sigma2),
+                     reinterpret_cast<a_dcomplex*>(workev),
                      internal::convert_to_char(bmat_option), n,
                      internal::convert_to_char(ritz_option), nev, tol,
-                     reinterpret_cast<_Complex double*>(resid), ncv,
-                     reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
-                     reinterpret_cast<_Complex double*>(workd),
-                     reinterpret_cast<_Complex double*>(workl), lworkl,
+                     reinterpret_cast<a_dcomplex*>(resid), ncv,
+                     reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
+                     reinterpret_cast<a_dcomplex*>(workd),
+                     reinterpret_cast<a_dcomplex*>(workl), lworkl,
                      rwork, &info);
 }
 }  // namespace arpack
