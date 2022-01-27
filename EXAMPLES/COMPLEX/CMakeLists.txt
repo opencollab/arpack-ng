@@ -1,0 +1,10 @@
+add_arpack_examples(
+  SOURCES
+  cndrv1.f
+  cndrv2.f
+  cndrv3.f
+  cndrv4.f
+  zndrv1.f
+  zndrv2.f
+  zndrv3.f
+  zndrv4.f)

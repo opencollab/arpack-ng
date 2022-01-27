@@ -1,0 +1,6 @@
+if (PYTHON3)
+	file(GLOB PYTHON3_TESTS "*.py.in")
+	foreach(python_test ${PYTHON3_TESTS})
+		add_pyarpack_test(${python_test})
+	endforeach()
+endif()

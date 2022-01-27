@@ -1,0 +1,66 @@
+# Config file for the arpack-ng package.
+#
+# To use arpack from CMake, use ARPACK::ARPACK target:
+#   find_package(arpack-ng)
+#   add_executable(main main.f)
+#   target_include_directories(main PRIVATE ARPACK::ARPACK)
+#   target_link_libraries(main ARPACK::ARPACK)
+#
+# To use parpack from CMake, use PARPACK::PARPACK target:
+#   find_package(arpack-ng)
+#   add_executable(main main.f)
+#   target_link_libraries(main PARPACK::PARPACK)
+
+# Create local variables.
+set(prefix "@prefix@")
+set(exec_prefix "@exec_prefix@")
+set(libdir "@libdir@")
+set(includedir "@includedir@")
+
+include(CMakeFindDependencyMacro)
+if (NOT TARGET BLAS::BLAS)
+    find_dependency(BLAS REQUIRED)
+    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+        add_library(BLAS::BLAS INTERFACE IMPORTED)
+        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
+    endif()
+endif()
+if (NOT TARGET LAPACK::LAPACK)
+    find_dependency(LAPACK REQUIRED)
+    if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
+        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
+        set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
+    endif()
+endif()
+if (@MPI@)
+    if (@ICB@)
+        find_dependency(MPI REQUIRED COMPONENTS Fortran C CXX)
+    else()
+        find_dependency(MPI REQUIRED COMPONENTS Fortran)
+    endif()
+    # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
+    if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
+        add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
+        set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
+        set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
+    endif()
+    if (@ICB@)
+        if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
+            add_library(MPI::MPI_C INTERFACE IMPORTED)
+            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
+            set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
+        endif()
+        if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
+            add_library(MPI::MPI_CXX INTERFACE IMPORTED)
+            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
+            set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
+        endif()
+    endif())
+endif()
+
+# Add the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/arpack-ng-targets.cmake")
+add_library(ARPACK::ARPACK ALIAS arpack::arpack)
+if (@MPI@)
+    add_library(PARPACK::PARPACK ALIAS arpack::parpack)
+endif()

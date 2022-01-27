@@ -1,0 +1,6 @@
+add_subdirectory("BAND")
+add_subdirectory("COMPLEX")
+add_subdirectory("NONSYM")
+add_subdirectory("SIMPLE")
+add_subdirectory("SVD")
+add_subdirectory("SYM")

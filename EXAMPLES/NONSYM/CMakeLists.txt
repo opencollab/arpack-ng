@@ -1,0 +1,14 @@
+add_arpack_examples(
+  SOURCES
+  dndrv1.f
+  dndrv2.f
+  dndrv3.f
+  dndrv4.f
+  dndrv5.f
+  dndrv6.f
+  sndrv1.f
+  sndrv2.f
+  sndrv3.f
+  sndrv4.f
+  sndrv5.f
+  sndrv6.f)
