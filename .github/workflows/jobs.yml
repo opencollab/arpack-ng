@@ -1,13 +1,18 @@
 name: arpack-ng
-on: [push, pull_request_target]
+on: [push, pull_request]
 jobs:
   ubuntu_latest_cmake:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -25,8 +30,13 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -43,8 +53,13 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -68,8 +83,13 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -87,74 +107,21 @@ jobs:
           FCFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
           LIBS: "-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl"
           INTERFACE64: "1"
-  ubuntu_latest_coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone and check out repository code
-        uses: actions/checkout@v2
-      - name: Check commit
-        run: git log -1
-      - name: Update OS
-        run: sudo apt-get update
-      - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
-      - name: Run job
-        run: |
-          mkdir build
-          cd build
-          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..
-          make all
-          make test
-          make coveralls
-  docker_centos:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone and check out repository code
-        uses: actions/checkout@v2
-      - name: Check commit
-        run: git log -1
-      - name: Update OS
-        run: sudo apt-get update
-      - name: Login to Docker Hub
-        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
-      - name: Run job
-        run: ./scripts/travis_centos.sh
-  docker_fedora:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone and check out repository code
-        uses: actions/checkout@v2
-      - name: Check commit
-        run: git log -1
-      - name: Update OS
-        run: sudo apt-get update
-      - name: Login to Docker Hub
-        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
-      - name: Run job
-        run: ./scripts/travis_fedora.sh setup mpich
-  docker_debian:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone and check out repository code
-        uses: actions/checkout@v2
-      - name: Check commit
-        run: git log -1
-      - name: Update OS
-        run: sudo apt-get update
-      - name: Login to Docker Hub
-        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
-      - name: Run job
-        run: ./scripts/travis_ubuntu.sh debian
   macos_latest_cmake:
     runs-on: macos-latest
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: |
-          brew rm gcc
+          brew uninstall --ignore-dependencies gcc
           brew update
           softwareupdate --install --all
       - name: Install brew dependencies
@@ -166,7 +133,13 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          export FC=mpif90 # Uses gfortran.
+          export FFLAGS="-ff2c -fno-second-underscore"
+          export CC=mpicc # Uses clang.
+          export CFLAGS="-Qunused-arguments"
+          export CXX=mpic++ # Uses clang++.
+          export CXXFLAGS="-Qunused-arguments"
+          LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
           make test
   macos_latest_autotools:
@@ -174,11 +147,16 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: |
-          brew rm gcc
+          brew uninstall --ignore-dependencies gcc
           brew update
           softwareupdate --install --all
       - name: Install brew dependencies
@@ -197,8 +175,13 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
-        run: git log -1
+        run: |
+          git log -1
       - name: Update OS
         run: |
           choco install -y msys2
