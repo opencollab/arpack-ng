@@ -6,8 +6,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -25,8 +29,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -43,8 +51,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -68,8 +80,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -92,8 +108,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
@@ -111,8 +131,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Login to Docker Hub
@@ -124,8 +148,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Login to Docker Hub
@@ -137,8 +165,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: sudo apt-get update
       - name: Login to Docker Hub
@@ -150,8 +182,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: |
           brew rm gcc
@@ -174,8 +210,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: |
           brew rm gcc
@@ -197,8 +237,12 @@ jobs:
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check commit
-        run: git log -1
+        run: |
+          git checkout "${{github.ref}}" # Checkout master or PR branch.
+          git log -1
       - name: Update OS
         run: |
           choco install -y msys2
