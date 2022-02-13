@@ -11,7 +11,7 @@ cmd_powertools="dnf config-manager --set-enabled powertools &&"
 
 podman pull registry.access.redhat.com/ubi8/ubi                          \
 &&                                                                       \
-podman create --name mobydick ${prefix}centos$1 /bin/bash -c             \
+podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
 "$pm install -y ${pm}-plugins-core epel-release                       && \
  $pm upgrade -y                                                       && \
  $cmd_powertools                                                         \
@@ -29,7 +29,7 @@ podman create --name mobydick ${prefix}centos$1 /bin/bash -c             \
  $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
  make all && make test"                                                  \
 &&                                                                       \
-podman cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                           \
+podman cp -a ${GITHUB_WORKSPACE} ubi:/tmp                                \
 &&                                                                       \
-podman start -a mobydick
+podman start -a ubi
 
