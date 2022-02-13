@@ -5,20 +5,19 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
-pm="dnf"
 cmake="cmake"
 cmd_powertools="dnf config-manager --set-enabled powertools &&"
 
 podman pull registry.access.redhat.com/ubi8/ubi                          \
 &&                                                                       \
 podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
-"$pm install -y ${pm}-plugins-core epel-release                       && \
- $pm upgrade -y                                                       && \
+"dnf install -y dnf-plugins-core epel-release                         && \
+ dnf upgrade -y                                                       && \
  $cmd_powertools                                                         \
- $pm install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
- $pm install -y $cmake                                                && \
- $pm install -y mpich-devel                                           && \
- $pm --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
+ dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
+ dnf install -y $cmake                                                && \
+ dnf install -y mpich-devel                                           && \
+ dnf --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
  . /etc/profile.d/modules.sh                                          && \
  module avail && module load mpi && module list                       && \
  cd /tmp                                                              && \
