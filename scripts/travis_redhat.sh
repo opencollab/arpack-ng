@@ -5,7 +5,6 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
-cmake="cmake"
 cmd_powertools="dnf config-manager --set-enabled powertools &&"
 
 podman pull registry.access.redhat.com/ubi8/ubi                          \
@@ -15,7 +14,7 @@ podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
  dnf upgrade -y                                                       && \
  $cmd_powertools                                                         \
  dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
- dnf install -y $cmake                                                && \
+ dnf install -y cmake                                                 && \
  dnf install -y mpich-devel                                           && \
  dnf --enablerepo=\"epel\" install -y openblas-devel lapack-devel     && \
  . /etc/profile.d/modules.sh                                          && \
@@ -25,7 +24,7 @@ podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
  git status                                                           && \
  git log -2                                                           && \
  mkdir -p build && cd build                                           && \
- $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
+ cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                             && \
  make all && make test"                                                  \
 &&                                                                       \
 podman cp -a ${GITHUB_WORKSPACE} ubi:/tmp                                \
