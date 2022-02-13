@@ -150,7 +150,7 @@ jobs:
         # runtime of choice for Red Hat Enterprise Linux 8 systems.
         run: sudo apt-get install podman
       - name: Run job
-        run: podman run --rm --name=myubi registry.access.redhat.com/ubi8/ubi cat /etc/os-release
+        run: ./scripts/travis_redhat.sh
   docker_fedora:
     runs-on: ubuntu-latest
     steps:
