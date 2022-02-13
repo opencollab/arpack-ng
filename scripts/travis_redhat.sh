@@ -5,14 +5,12 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
-cmd_powertools="dnf config-manager --set-enabled powertools &&"
-
 podman pull registry.access.redhat.com/ubi8/ubi                          \
 &&                                                                       \
 podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
 "dnf install -y dnf-plugins-core epel-release                         && \
  dnf upgrade -y                                                       && \
- $cmd_powertools                                                         \
+ dnf config-manager --set-enabled powertools                          && \
  dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
  dnf install -y cmake                                                 && \
  dnf install -y mpich-devel                                           && \
