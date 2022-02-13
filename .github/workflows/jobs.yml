@@ -8,9 +8,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -31,9 +32,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -53,9 +55,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -82,9 +85,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -110,9 +114,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -133,9 +138,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -150,9 +156,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -167,9 +174,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: sudo apt-get update
@@ -184,9 +192,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: |
@@ -212,9 +221,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: |
@@ -239,9 +249,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
-          git checkout "${{github.ref}}" # Checkout master or PR branch.
           git log -1
       - name: Update OS
         run: |
