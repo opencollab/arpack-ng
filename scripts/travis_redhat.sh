@@ -5,23 +5,11 @@
 ## -x be verbose; write what we are doing, as we do it
 set -ex
 
-# centos-stream should be pulled from quay.io
-# note: a RedHad account is required after 2021.06,
-#       see https://quay.io/repository/centos/centos?tab=tags
-if [ $1 = ":stream" ]; then
-    prefix="quay.io/centos/"
-fi
+pm="dnf"
+cmake="cmake"
+cmd_powertools="dnf config-manager --set-enabled powertools &&"
 
-if [ $1 = ":7" ]; then # for 7
-    pm="yum"
-    cmake="cmake3"
-else # for 8+, stream
-    pm="dnf"
-    cmake="cmake"
-    cmd_powertools="dnf config-manager --set-enabled powertools &&"
-fi
-
-podman pull "${prefix}centos$1"                                          \
+podman pull registry.access.redhat.com/ubi8/ubi                          \
 &&                                                                       \
 podman create --name mobydick ${prefix}centos$1 /bin/bash -c             \
 "$pm install -y ${pm}-plugins-core epel-release                       && \
