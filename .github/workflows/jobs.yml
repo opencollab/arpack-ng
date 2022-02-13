@@ -131,7 +131,7 @@ jobs:
           make all
           make test
           make coveralls
-  docker_redhat:
+  podman_redhat:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
