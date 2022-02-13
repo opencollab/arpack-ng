@@ -21,9 +21,9 @@ else # for 8+, stream
     cmd_powertools="dnf config-manager --set-enabled powertools &&"
 fi
 
-docker pull "${prefix}centos$1"                                          \
+podman pull "${prefix}centos$1"                                          \
 &&                                                                       \
-docker create --name mobydick ${prefix}centos$1 /bin/bash -c             \
+podman create --name mobydick ${prefix}centos$1 /bin/bash -c             \
 "$pm install -y ${pm}-plugins-core epel-release                       && \
  $pm upgrade -y                                                       && \
  $cmd_powertools                                                         \
@@ -41,7 +41,7 @@ docker create --name mobydick ${prefix}centos$1 /bin/bash -c             \
  $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
  make all && make test"                                                  \
 &&                                                                       \
-docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                           \
+podman cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                           \
 &&                                                                       \
-docker start -a mobydick
+podman start -a mobydick
 
