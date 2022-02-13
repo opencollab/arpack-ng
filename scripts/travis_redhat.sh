@@ -8,7 +8,8 @@ set -ex
 podman pull registry.access.redhat.com/ubi8/ubi                          \
 &&                                                                       \
 podman create --name ubi ${prefix}centos$1 /bin/bash -c                  \
-"dnf install -y dnf-plugins-core epel-release                         && \
+"cat /etc/os-release                                                  && \
+ dnf install -y dnf-plugins-core epel-release                         && \
  dnf upgrade -y                                                       && \
  dnf config-manager --set-enabled powertools                          && \
  dnf install -y git make gcc gcc-gfortran gcc-c++ environment-modules && \
