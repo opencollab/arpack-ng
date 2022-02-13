@@ -21,9 +21,9 @@ else # for 8+, stream
     cmd_powertools="dnf config-manager --set-enabled powertools &&"
 fi
 
-sudo docker pull "${prefix}centos$1"                                     \
+docker pull "${prefix}centos$1"                                          \
 &&                                                                       \
-sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c        \
+docker create --name mobydick ${prefix}centos$1 /bin/bash -c             \
 "$pm install -y ${pm}-plugins-core epel-release                       && \
  $pm upgrade -y                                                       && \
  $cmd_powertools                                                         \
@@ -41,7 +41,7 @@ sudo docker create --name mobydick ${prefix}centos$1 /bin/bash -c        \
  $cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..                            && \
  make all && make test"                                                  \
 &&                                                                       \
-sudo docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                      \
+docker cp -a ${GITHUB_WORKSPACE} mobydick:/tmp                           \
 &&                                                                       \
-sudo docker start -a mobydick
+docker start -a mobydick
 
