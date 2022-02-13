@@ -23,8 +23,10 @@ jobs:
           cd build
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
           make all
-          make CTEST_OUTPUT_ON_FAILURE=1 test
+          make test
           make package_source
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
     steps:
@@ -82,7 +84,9 @@ jobs:
           cd build
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON ..
           make all
-          make CTEST_OUTPUT_ON_FAILURE=1 test
+          make test
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
   ubuntu_latest_autotools_ilp64:
     runs-on: ubuntu-latest
     steps:
@@ -134,8 +138,10 @@ jobs:
           cd build
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DCOVERALLS=ON ..
           make all
-          make CTEST_OUTPUT_ON_FAILURE=1 test
+          make test
           make coveralls
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
   podman_redhat:
     runs-on: ubuntu-latest
     steps:
@@ -220,7 +226,9 @@ jobs:
           cd build
           LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
-          make CTEST_OUTPUT_ON_FAILURE=1 test
+          make test
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
   macos_latest_autotools:
     runs-on: macos-latest
     steps:
