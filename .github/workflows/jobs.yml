@@ -131,7 +131,7 @@ jobs:
           make all
           make test
           make coveralls
-  docker_centos:
+  podman_redhat:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
@@ -145,10 +145,12 @@ jobs:
           git log -1
       - name: Update OS
         run: sudo apt-get update
-      - name: Login to Docker Hub
-        run: sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+      - name: Install OS
+        # The podman container engine replaced docker as the preferred, maintained, and supported container
+        # runtime of choice for Red Hat Enterprise Linux 8 systems.
+        run: sudo apt-get install podman
       - name: Run job
-        run: ./scripts/travis_centos.sh
+        run: podman run --rm --name=myubi registry.access.redhat.com/ubi8/ubi cat /etc/os-release
   docker_fedora:
     runs-on: ubuntu-latest
     steps:
