@@ -11,15 +11,30 @@
 #   add_executable(main main.f)
 #   target_link_libraries(main PARPACK::PARPACK)
 
-# Create local variables.
-set(prefix "@prefix@")
-set(exec_prefix "@exec_prefix@")
-set(libdir "@libdir@")
-set(includedir "@includedir@")
+# Set arpack variables.
+set(ArpackNG_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "ArpackNG: include directories" FORCE)
+if(EXISTS "${CMAKE_INSTALL_PREFIX}/lib/libarpack.a")
+  set(ArpackNG_LIBRARIES "${CMAKE_INSTALL_PREFIX}/lib/libarpack.a" CACHE FILEPATH "ArpackNG: libraries" FORCE)
+elseif(EXISTS "${CMAKE_INSTALL_PREFIX}/lib/libarpack.so")
+  set(ArpackNG_LIBRARIES "${CMAKE_INSTALL_PREFIX}/lib/libarpack.so" CACHE FILEPATH "ArpackNG: libraries" FORCE)
+endif()
 
-# Create arpack targets.
-add_library(ARPACK::ARPACK INTERFACE IMPORTED)
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${includedir}/arpack")
-set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "arpack")
-add_library(PARPACK::PARPACK INTERFACE IMPORTED)
-set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES    "parpack")
+# Create arpack target.
+add_custom_target(arpack_libs DEPENDS ${ArpackNG_LIBRARIES})
+add_dependencies(ARPACK::ARPACK arpack_libs)
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${ArpackNG_INCLUDE_DIRS}")
+set_target_properties(ARPACK::ARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "${ArpackNG_LIBRARIES}")
+
+# Set parpack variables.
+set(PArpackNG_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "PArpackNG: include directories" FORCE)
+if(EXISTS "${CMAKE_INSTALL_PREFIX}/lib/libparpack.a")
+  set(PArpackNG_LIBRARIES "${CMAKE_INSTALL_PREFIX}/lib/libparpack.a" CACHE FILEPATH "PArpackNG: libraries" FORCE)
+elseif(EXISTS "${CMAKE_INSTALL_PREFIX}/lib/libparpack.so")
+  set(PArpackNG_LIBRARIES "${CMAKE_INSTALL_PREFIX}/lib/libparpack.so" CACHE FILEPATH "PArpackNG: libraries" FORCE)
+endif()
+
+# Create parpack target.
+add_custom_target(parpack_libs DEPENDS ${PArpackNG_LIBRARIES})
+add_dependencies(PARPACK::PARPACK parpack_libs)
+set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${PArpackNG_INCLUDE_DIRS}")
+set_target_properties(PARPACK::PARPACK PROPERTIES INTERFACE_LINK_LIBRARIES      "${PArpackNG_LIBRARIES}")
