@@ -150,7 +150,11 @@ jobs:
         # runtime of choice for Red Hat Enterprise Linux 8 systems.
         run: sudo apt-get install podman
       - name: Run job
-        run: ./scripts/travis_redhat.sh
+        run: |
+          git status
+          git log -1
+          git branch -a -vvv
+          ./scripts/travis_redhat.sh
   docker_fedora:
     runs-on: ubuntu-latest
     steps:
