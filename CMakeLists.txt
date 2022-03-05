@@ -732,7 +732,7 @@ if(ICB)
 endif()
 
 # Testing cmake find_package:
-add_test(NAME find_package COMMAND "${CMAKE_COMMAND}" -P "${PROJECT_SOURCE_DIR}/cmake/TestFindPackage.cmake")
+add_test(NAME find_package COMMAND "${CMAKE_COMMAND}" -DARPACK_TST_WITHOUT_TARGET=ON -P "${PROJECT_SOURCE_DIR}/cmake/TestFindPackage.cmake")
 
 ############################
 # install

@@ -8,14 +8,14 @@ endif ()
 set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/local/usr/local/lib/cmake") # Add directory that contains arpack-ng-config.cmake to CMAKE_PREFIX_PATH.
 find_package(arpack-ng CONFIG REQUIRED) # Use CONFIG as we look for arpack-ng-config.cmake (not FindXXX.cmake).
 
-# Build with arpack.
+# Build with arpack: can NOT use arpack targets as they can not be created/set in cmake files.
 add_executable(dnsimp_find_package ${PROJECT_SOURCE_DIR}/EXAMPLES/SIMPLE/dnsimp.f)
-target_include_directories(dnsimp_find_package PUBLIC ARPACK::ARPACK)
-target_link_libraries(dnsimp_find_package ARPACK::ARPACK)
+target_include_directories(dnsimp_find_package PUBLIC "${ArpackNG_INCLUDE_DIRS}")
+target_link_libraries(dnsimp_find_package "${ArpackNG_LIBRARIES}")
 
-# Build with parpack.
+# Build with parpack: can NOT use arpack targets as they can not be created/set in cmake files.
 if (MPI)
     add_executable(pdndrv1_find_package ${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.f)
-    target_include_directories(pdndrv1_find_package PUBLIC PARPACK::PARPACK)
-    target_link_libraries(pdndrv1_find_package PARPACK::PARPACK)
+    target_include_directories(pdndrv1_find_package PUBLIC "${PArpackNG_INCLUDE_DIRS}")
+    target_link_libraries(pdndrv1_find_package "${PArpackNG_LIBRARIES}")
 endif ()
