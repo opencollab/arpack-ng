@@ -131,19 +131,6 @@ jobs:
           make all
           make test
           make coveralls
-  podman_redhat:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run job
-        run: |
-          git remote add pr ${{github.event.pull_request.head.repo.full_name}}
-          git fetch update
-          git checkout ${{github.event.pull_request.head.ref}}
-          git branch -a -vvv
-          git log -1
-          sudo apt-get update
-          sudo apt-get install podman # The podman container engine replaced docker as Red Hat recommends.
-          ./scripts/travis_redhat.sh
   docker_fedora:
     runs-on: ubuntu-latest
     steps:
