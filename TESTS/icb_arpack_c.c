@@ -18,12 +18,12 @@
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
- * with entries 1000, 999, ... , 2, 1 on the diagonal.
+ * with entries 10000, 9990, ... , 20, 10 on the diagonal.
  * */
 
 void dMatVec(double* x, double* y) {
   int i;
-  for (i = 0; i < 1000; ++i) y[i] = ((double)(i + 1)) * x[i];
+  for (i = 0; i < 1000; ++i) y[i] = ((double)(i + 10)) * x[i];
 };
 
 int ds() {
