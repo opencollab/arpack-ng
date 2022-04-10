@@ -159,7 +159,7 @@ jobs:
           cd build
           export CFLAGS="-Qunused-arguments" # Clang: don’t emit warning for unused driver arguments.
           export CPPFLAGS="-Qunused-arguments" # Clang: don’t emit warning for unused driver arguments.
-          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          CC=clang CXX=clang FC=gfortran LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
           make test
   macos_latest_autotools:
