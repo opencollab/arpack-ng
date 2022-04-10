@@ -133,11 +133,11 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          export FC=gfortran
+          export FC=mpif90 # Uses gfortran.
           export FFLAGS="-ff2c -fno-second-underscore"
-          export CC=clang
+          export CC=mpicc # Uses clang.
           export CFLAGS="-Qunused-arguments"
-          export CXX=clang++
+          export CXX=mpic++ # Uses clang++.
           export CXXFLAGS="-Qunused-arguments"
           LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
