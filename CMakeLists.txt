@@ -39,17 +39,6 @@ option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS an
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# We don't want this to run on every build.
-option(COVERALLS "Generate coveralls data" OFF)
-if (COVERALLS)
-    include(Coveralls)
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    # The no space is by design: issue in cmake. See CMP0004.
-    set(EXTRA_LDFLAGS "${EXTRA_LDFLAGS}-lgcov")
-endif()
-
 function(prefixlist list_name prefix)
     set(${list_name}_TMP)
     foreach(l ${${list_name}})
@@ -829,38 +818,6 @@ set(CPACK_VERSION_PATCH "${arpack_ng_PATCH_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES "/BUILD/" "/Build/" "/build/" "/local/") # Do not ship (eventual) build or install directories in tarballs.
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "arpack-ng-${CPACK_VERSION_MAJOR}.${CPACK_VERSION_MINOR}.${CPACK_VERSION_PATCH}")
 include(CPack)
-
-if (COVERALLS)
-    set(arpack_TST_SRC
-        ${arpack_SOURCE_DIR}/TESTS/bug_1323.f
-        ${arpack_SOURCE_DIR}/TESTS/bug_142.f
-        ${arpack_SOURCE_DIR}/TESTS/bug_142_gen.f
-        ${arpack_SOURCE_DIR}/TESTS/bug_58_double.f
-        ${arpack_SOURCE_DIR}/TESTS/bug_79_double_complex.f
-        ${arpack_SOURCE_DIR}/TESTS/dnsimp.f
-        ${arpack_SOURCE_DIR}/TESTS/mmio.f
-        ${arpack_SOURCE_DIR}/TESTS/bug_1315_single.c
-        ${arpack_SOURCE_DIR}/TESTS/bug_1315_double.c
-        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_c.c
-        ${arpack_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp
-       )
-    file(GLOB_RECURSE arpack_EX_F_SRC "${arpack_SOURCE_DIR}/EXAMPLES/*/*.f")
-    set(arpack_EX_CPP_SRC ${arpack_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
-
-    set(parpack_TST_SRC
-        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/issue46.f
-        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c
-        ${arpack_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp
-       )
-    file(GLOB_RECURSE parpack_EX_F_SRC "${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/*.f")
-
-    # Create the coveralls target.
-    # Also lists the c/cpp files for test purposes
-    coveralls_setup(
-        "${arpacksrc_STAT_SRCS} ${arpackutil_STAT_SRCS} ${arpacksrc_ICB} ${arpack_TST_SRC} ${arpack_EX_F_SRC} ${arpack_EX_CPP_SRC} ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB} ${parpack_TST_SRC} ${parpack_EX_F_SRC}" # The source files.
-        ON                 # If we should upload.
-        "${PROJECT_SOURCE_DIR}/cmake/") # (Optional) Alternate project cmake module path.
-endif()
 
 function(libsummary title include libraries)
     message("   -- ${title}:")
