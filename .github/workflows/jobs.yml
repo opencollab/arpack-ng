@@ -133,7 +133,13 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          FC=gfortran FCFLAGS="-ff2c -fno-second-underscore" CC=clang CFLAGS="-Qunused-arguments" CXX=clang++ CXXFLAGS="-Qunused-arguments" LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          export FC=gfortran
+          export FFLAGS="-ff2c -fno-second-underscore"
+          export CC=clang
+          export CFLAGS="-Qunused-arguments"
+          export CXX=clang++
+          export CXXFLAGS="-Qunused-arguments"
+          LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
           make test
   macos_latest_autotools:
