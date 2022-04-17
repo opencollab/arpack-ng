@@ -1,5 +1,4 @@
 prefix=@prefix@
-exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
@@ -9,4 +8,4 @@ Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
 Libs: -L${libdir} -larpack@LIBSUFFIX@
 Libs.private: @ARPACK_PC_LIBS_PRIVATE@
-Cflags: -I${includedir}/arpack
+Cflags: -I${includedir}

@@ -25,6 +25,7 @@ jobs:
           make all
           make test
           make package_source
+          bash ./tstCMakeInstall.sh
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
     steps:

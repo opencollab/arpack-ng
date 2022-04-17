@@ -1,0 +1,100 @@
+#!/bin/bash -eu
+# Testing that find_package works.
+# Note: this script must not be added to the test suite as it will change cmake options.
+
+# 1. Define temporary directory.
+
+export TMP_DIR="/tmp/tstCMakeInstall"
+mkdir -p "${TMP_DIR}"
+
+# 2. Rerun cmake with prefix, install arpack-ng.
+#    Note: this script must not be added to the test suite as it will change cmake options.
+
+export TMP_PREFIX="${TMP_DIR}/local"
+cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON .
+make all install
+
+# 3. Setup environment for find_package to work (what you typically in module-environment files).
+
+cd "${TMP_DIR}"
+export ARCH="$(ls ./local/lib/)"
+export PKG_CONFIG_PATH="${TMP_PREFIX}/lib/${ARCH}/pkgconfig"
+export arpackng_DIR="${TMP_PREFIX}/lib/${ARCH}/cmake/arpack-ng"
+
+# 4. Create new cmake project, in temporary directory, with files from arpack-ng.
+
+mkdir -p tstCMakeInstall
+cd tstCMakeInstall
+
+cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnband.f" .
+cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnbdr1.f" .
+cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnbdr3.f" .
+cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
+cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv3.f" .
+
+echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "project(tstCMakeInstall Fortran)"                                 >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
+echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
+echo "find_package(MPI REQUIRED COMPONENTS Fortran)"                    >> CMakeLists.txt
+echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
+echo "target_include_directories(dnbdr1 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
+echo "target_link_libraries(dnbdr1 BLAS::BLAS)"                         >> CMakeLists.txt
+echo "target_include_directories(dnbdr1 INTERFACE LAPACK::LAPACK)"      >> CMakeLists.txt
+echo "target_link_libraries(dnbdr1 LAPACK::LAPACK)"                     >> CMakeLists.txt
+echo "target_include_directories(dnbdr1 INTERFACE ARPACK::ARPACK)"      >> CMakeLists.txt
+echo "target_link_libraries(dnbdr1 ARPACK::ARPACK)"                     >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(pdndrv1 dnband.f pdndrv1.f)"                       >> CMakeLists.txt
+echo "target_include_directories(pdndrv1 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
+echo "target_link_libraries(pdndrv1 BLAS::BLAS)"                        >> CMakeLists.txt
+echo "target_include_directories(pdndrv1 INTERFACE LAPACK::LAPACK)"     >> CMakeLists.txt
+echo "target_link_libraries(pdndrv1 LAPACK::LAPACK)"                    >> CMakeLists.txt
+echo "target_include_directories(pdndrv1 INTERFACE MPI::MPI_Fortran)"   >> CMakeLists.txt
+echo "target_link_libraries(pdndrv1 MPI::MPI_Fortran)"                  >> CMakeLists.txt
+echo "target_include_directories(pdndrv1 INTERFACE ARPACK::ARPACK)"     >> CMakeLists.txt
+echo "target_link_libraries(pdndrv1 ARPACK::ARPACK)"                    >> CMakeLists.txt
+echo "target_include_directories(pdndrv1 INTERFACE PARPACK::PARPACK)"   >> CMakeLists.txt
+echo "target_link_libraries(pdndrv1 PARPACK::PARPACK)"                  >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "find_package(PkgConfig REQUIRED)"                                 >> CMakeLists.txt
+echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack)"        >> CMakeLists.txt
+echo "pkg_check_modules(PARPACK IMPORTED_TARGET REQUIRED parpack)"      >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(dnbdr3 dnband.f dnbdr3.f)"                         >> CMakeLists.txt
+echo "target_include_directories(dnbdr3 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
+echo "target_link_libraries(dnbdr3 BLAS::BLAS)"                         >> CMakeLists.txt
+echo "target_include_directories(dnbdr3 INTERFACE LAPACK::LAPACK)"      >> CMakeLists.txt
+echo "target_link_libraries(dnbdr3 LAPACK::LAPACK)"                     >> CMakeLists.txt
+echo "target_include_directories(dnbdr3 INTERFACE PkgConfig::ARPACK)"   >> CMakeLists.txt
+echo "target_link_libraries(dnbdr3 PkgConfig::ARPACK)"                  >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(pdndrv3 dnband.f pdndrv3.f)"                       >> CMakeLists.txt
+echo "target_include_directories(pdndrv3 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
+echo "target_link_libraries(pdndrv3 BLAS::BLAS)"                        >> CMakeLists.txt
+echo "target_include_directories(pdndrv3 INTERFACE LAPACK::LAPACK)"     >> CMakeLists.txt
+echo "target_link_libraries(pdndrv3 LAPACK::LAPACK)"                    >> CMakeLists.txt
+echo "target_include_directories(pdndrv3 INTERFACE MPI::MPI_Fortran)"   >> CMakeLists.txt
+echo "target_link_libraries(pdndrv3 MPI::MPI_Fortran)"                  >> CMakeLists.txt
+echo "target_include_directories(pdndrv3 INTERFACE PkgConfig::ARPACK)"  >> CMakeLists.txt
+echo "target_link_libraries(pdndrv3 PkgConfig::ARPACK)"                 >> CMakeLists.txt
+echo "target_include_directories(pdndrv3 INTERFACE PkgConfig::PARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(pdndrv3 PkgConfig::PARPACK)"                >> CMakeLists.txt
+
+# 5. Build and test this new project with cmake: for this to be possible, find_package must work.
+
+mkdir -p build
+cd build
+
+cmake ..
+make all VERBOSE=1
+
+./dnbdr1
+mpirun -n 2 ./pdndrv1
+./dnbdr3
+mpirun -n 2 ./pdndrv3
+
