@@ -280,10 +280,10 @@ c     | External Functions |
 c     %--------------------%
 c
       Complex
-     &           cdotc
+     &           ccdotc
       Real
      &           slamch,  scnrm2, clanhs, slapy2
-      external   cdotc, scnrm2, clanhs, slamch, slapy2
+      external   ccdotc, scnrm2, clanhs, slamch, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -550,7 +550,7 @@ c        | Compute the B-norm of OP*v_{j}.     |
 c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm = ccdotc (n, resid, 1, workd(ipj), 1)
              wnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              wnorm = scnrm2(n, resid, 1)
@@ -622,7 +622,7 @@ c        | Compute the B-norm of r_{j}. |
 c        %------------------------------%
 c
          if (bmat .eq. 'G') then
-            cnorm = cdotc (n, resid, 1, workd(ipj), 1)
+            cnorm = ccdotc (n, resid, 1, workd(ipj), 1)
             rnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
             rnorm = scnrm2(n, resid, 1)
@@ -722,7 +722,7 @@ c        | Compute the B-norm of the corrected residual r_{j}. |
 c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm  = cdotc (n, resid, 1, workd(ipj), 1)
+             cnorm  = ccdotc (n, resid, 1, workd(ipj), 1)
              rnorm1 = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
          else if (bmat .eq. 'I') then
              rnorm1 = scnrm2(n, resid, 1)

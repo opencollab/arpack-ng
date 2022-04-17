@@ -247,10 +247,10 @@ c     | External functions |
 c     %--------------------%
 c
       Complex
-     &           cdotc
+     &           ccdotc
       Real
      &           scnrm2, slamch, slapy2
-      external   cdotc, scnrm2, slamch, slapy2
+      external   ccdotc, scnrm2, slamch, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -754,7 +754,7 @@ c
          end if
 c
          if (bmat .eq. 'G') then
-            cmpnorm = cdotc (n, resid, 1, workd, 1)
+            cmpnorm = ccdotc (n, resid, 1, workd, 1)
             rnorm = sqrt(slapy2(real (cmpnorm),aimag(cmpnorm)))
          else if (bmat .eq. 'I') then
             rnorm = scnrm2(n, resid, 1)

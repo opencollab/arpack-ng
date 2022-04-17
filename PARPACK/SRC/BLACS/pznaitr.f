@@ -303,10 +303,10 @@ c     | External Functions |
 c     %--------------------%
 c
       Complex*16
-     &           zdotc
+     &           zzdotc
       Double precision
      &           pdlamch, pdznorm2, zlanhs, dlapy2
-      external   zdotc, pdznorm2, zlanhs, pdlamch, dlapy2
+      external   zzdotc, pdznorm2, zlanhs, pdlamch, dlapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -573,7 +573,7 @@ c        | Compute the B-norm of OP*v_{j}.     |
 c        %-------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm = zdotc (n, resid, 1, workd(ipj), 1)
+             cnorm = zzdotc (n, resid, 1, workd(ipj), 1)
              call zgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
              wnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
          else if (bmat .eq. 'I') then
@@ -647,7 +647,7 @@ c        | Compute the B-norm of r_{j}. |
 c        %------------------------------%
 c
          if (bmat .eq. 'G') then
-            cnorm = zdotc (n, resid, 1, workd(ipj), 1)
+            cnorm = zzdotc (n, resid, 1, workd(ipj), 1)
             call zgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
             rnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
          else if (bmat .eq. 'I') then
@@ -749,7 +749,7 @@ c        | Compute the B-norm of the corrected residual r_{j}. |
 c        %-----------------------------------------------------%
 c
          if (bmat .eq. 'G') then
-             cnorm = zdotc (n, resid, 1, workd(ipj), 1)
+             cnorm = zzdotc (n, resid, 1, workd(ipj), 1)
              call zgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
              rnorm1 = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
          else if (bmat .eq. 'I') then

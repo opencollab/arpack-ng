@@ -340,8 +340,8 @@ c
       external   dznrm2,pdlamch10,dlapy2
 c
       Complex*16
-     &           zdotc
-      external   zdotc
+     &           zzdotc
+      external   zzdotc
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -743,7 +743,7 @@ c                 | upper triangular, thus the length of the |
 c                 | inner product can be set to j.           |
 c                 %------------------------------------------%
 c
-                  workev(j) = zdotc(j, workl(ihbds), 1,
+                  workev(j) = zzdotc(j, workl(ihbds), 1,
      &                        workl(invsub+(j-1)*ldq), 1)
  40         continue
 c

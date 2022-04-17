@@ -9,10 +9,10 @@ DSRC = dnaitr.f dnapps.f dnaup2.f dnaupd.f dnconv.f dneigh.f dneupd.f dngets.f d
        dgetv0.f dsortc.f dsortr.f dsesrt.f dstqrb.f
 
 CSRC = cnaitr.f cnapps.f cnaup2.f cnaupd.f cneigh.f cneupd.f cngets.f cstatn.f \
-       cgetv0.f csortc.f
+       cgetv0.f csortc.f ccdotc.f
 
 ZSRC = znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f zstatn.f \
-       zgetv0.f zsortc.f
+       zgetv0.f zsortc.f zzdotc.f
 
 if ICB
 SSRC += icbass.F90 icbasn.F90
