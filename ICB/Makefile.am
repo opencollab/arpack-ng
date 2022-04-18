@@ -1,7 +1,5 @@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)
 
-pkgincludedir = $(includedir)/arpack
-
 pkginclude_HEADERS = debug_c.h debug_c.hpp
 pkginclude_HEADERS += stat_c.h stat_c.hpp
 pkginclude_HEADERS += arpack.h arpack.hpp
