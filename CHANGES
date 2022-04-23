@@ -11,9 +11,12 @@ arpack-ng - 3.9.0
 * Support for NAG's nagfor Fortran compiler
 
 [ Franck Houssen ]
+* Test CMake find_package (*.cmake files).
 * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
 * [BUG FIX] BLAS/LAPACK: allow suffixes in case BLAS/LAPACK can not provide ICB.
 * [BUG FIX] Compile C programs with ICB.
+* arpackmm: command line bug fix.
+* arpackmm: restart bug fix.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0
@@ -23,10 +26,6 @@ arpack-ng - 3.9.0
 
 [ Robert Schütz ]
  * use CMAKE_INSTALL_FULL_<dir> in arpack.pc
-
-[ Franck Houssen ]
- * arpackmm: command line bug fix.
- * arpackmm: restart bug fix.
 
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 

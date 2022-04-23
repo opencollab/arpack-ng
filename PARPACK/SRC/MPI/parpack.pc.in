@@ -1,6 +1,6 @@
 prefix=@prefix@
-exec_prefix=@exec_prefix@
 libdir=@libdir@
+includedir=@includedir@
 
 Name: @PACKAGE_NAME@
 Description: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
@@ -9,3 +9,4 @@ URL: @PACKAGE_URL@
 Requires.private: arpack@LIBSUFFIX@
 Libs: -L${libdir} -lparpack@LIBSUFFIX@
 Libs.private: @PARPACK_PC_LIBS_PRIVATE@
+Cflags: -I${includedir}

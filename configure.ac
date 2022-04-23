@@ -299,12 +299,11 @@ AC_CONFIG_FILES([
 	PARPACK/SRC/MPI/parpack$LIBSUFFIX.pc:PARPACK/SRC/MPI/parpack.pc.in
 ], [], [LIBSUFFIX="$LIBSUFFIX"])
 
+dnl We do NOT want arpackng*.cmake files to be created: @MPI@ can not be replaced.
 AC_CONFIG_FILES([
 	EXAMPLES/MATRIX_MARKET/arpackSolver.pc
 	arpackdef.h
 	arpackicb.h
-	arpack-ng-config-version.cmake
-	arpack-ng-config.cmake
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile
