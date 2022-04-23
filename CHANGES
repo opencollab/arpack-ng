@@ -1,5 +1,8 @@
 arpack-ng - 3.9.0
 
+[ Tom Payerle ]
+* Change the continuation line format for stat.h, debug.h
+
 [ John Doe ]
 * Avoid calling [c|z]dotc for better portability on macOS
 
