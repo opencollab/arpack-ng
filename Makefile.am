@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
 pkgincludedir = $(includedir)/arpack
-pkginclude_HEADERS = debug.h stat.h arpackdef.h
+pkginclude_HEADERS = debug.h stat.h debugF90.h statF90.h arpackdef.h
 
 AM_DISTCHECK_CONFIGURE_FLAGS =
 if MPI
