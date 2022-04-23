@@ -294,14 +294,19 @@ AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_SUBST([PARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS $MPI_Fortran_LIBS"])
+
 AC_CONFIG_FILES([
-	SRC/arpack$LIBSUFFIX.pc:SRC/arpack.pc.in
-	PARPACK/SRC/MPI/parpack$LIBSUFFIX.pc:PARPACK/SRC/MPI/parpack.pc.in
+	arpack$LIBSUFFIX.pc:pkg-config/arpack.pc.in
+	parpack$LIBSUFFIX.pc:pkg-config/parpack.pc.in
+	arpackSolver$LIBSUFFIX.pc:pkg-config/arpackSolver.pc.in
 ], [], [LIBSUFFIX="$LIBSUFFIX"])
 
 dnl We do NOT want arpackng*.cmake files to be created: @MPI@ can not be replaced.
 AC_CONFIG_FILES([
-	EXAMPLES/MATRIX_MARKET/arpackSolver.pc
+	tstAutotoolsInstall.sh:pkg-config/tstAutotoolsInstall.sh.in
+], [], [abs_top_builddir="$abs_top_builddir"])
+
+AC_CONFIG_FILES([
 	arpackdef.h
 	arpackicb.h
 	Makefile

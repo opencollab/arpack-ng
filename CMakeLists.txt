@@ -730,7 +730,7 @@ include(GNUInstallDirs)
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix \${prefix})
 set(libdir ${CMAKE_INSTALL_FULL_LIBDIR})
-set(includedir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+set(includedir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
@@ -753,16 +753,16 @@ foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
 endforeach()
 string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 
-configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc" @ONLY)
-configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc" @ONLY)
-configure_file(EXAMPLES/MATRIX_MARKET/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" @ONLY)
+configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}.pc" @ONLY)
+configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver.pc" @ONLY)
 
 
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}.pc"
+install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
@@ -770,7 +770,7 @@ if (MPI)
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(FILES "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}.pc"
+  install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}.pc"
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
@@ -783,7 +783,7 @@ if(ICB)
   endif()
   if (ICBEXMM)
     install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-    install(FILES "${PROJECT_BINARY_DIR}/EXAMPLES/MATRIX_MARKET/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES "${PROJECT_BINARY_DIR}/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 

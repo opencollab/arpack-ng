@@ -11,6 +11,7 @@ arpack-ng - 3.9.0
 * Support for NAG's nagfor Fortran compiler
 
 [ Franck Houssen ]
+* Test autotools pkg-config (*.pc files).
 * Test CMake find_package (*.cmake files).
 * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
 * [BUG FIX] BLAS/LAPACK: allow suffixes in case BLAS/LAPACK can not provide ICB.

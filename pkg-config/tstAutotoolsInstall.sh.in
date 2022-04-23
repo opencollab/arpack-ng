@@ -1,0 +1,94 @@
+#!/bin/bash -eu
+# Testing that PKG_CHECK_MODULES works.
+# Note: this script must not be added to the test suite as it will change cmake options.
+
+# 1. Define temporary directory.
+
+export TMP_DIR="/tmp/tstAutotoolsInstall"
+mkdir -p "${TMP_DIR}"
+
+# 2. Rerun cmake with prefix, install arpack-ng.
+#    Note: this script must not be added to the test suite as it will change cmake options.
+
+make clean
+make distclean
+
+export PROJECT_SOURCE_DIR="$(pwd)"
+export TMP_PREFIX="${TMP_DIR}/local"
+./configure --prefix="${TMP_PREFIX}" --enable-mpi
+make all install
+
+# 3. Setup environment for PKG_CHECK_MODULES to work (what you typically in module-environment files).
+
+cd "${TMP_DIR}"
+export PKG_CONFIG_PATH="${TMP_PREFIX}/lib/pkgconfig"
+
+# 4. Create new cmake project, in temporary directory, with files from arpack-ng.
+
+mkdir -p tstAutotoolsInstall
+cd tstAutotoolsInstall
+
+cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnband.f" .
+cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnbdr1.f" .
+cp "${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
+cp -fr "${PROJECT_SOURCE_DIR}/m4" .
+
+echo "AC_PREREQ([2.68])                                                       "  > configure.ac
+echo "AC_INIT([tstAutotoolsInstall], 1.0)                                     " >> configure.ac
+echo "AM_INIT_AUTOMAKE([foreign])                                             " >> configure.ac
+echo "AC_CONFIG_MACRO_DIR([m4])                                               " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_PROG_FC                                                              " >> configure.ac
+echo "AC_PROG_MKDIR_P                                                         " >> configure.ac
+echo "AC_PROG_MAKE_SET                                                        " >> configure.ac
+echo "PKG_PROG_PKG_CONFIG                                                     " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])               " >> configure.ac
+echo "AC_SUBST([BLAS_LIBS])                                                   " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])           " >> configure.ac
+echo "AC_SUBST([LAPACK_LIBS])                                                 " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([Fortran 77])                                              " >> configure.ac
+echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" >> configure.ac
+echo "F77=\$MPIF77                                                            " >> configure.ac
+echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "PKG_CHECK_MODULES([ARPACK], [arpack])                                   " >> configure.ac
+echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
+echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "PKG_CHECK_MODULES([PARPACK], [parpack])                                 " >> configure.ac
+echo "AC_SUBST([PARPACK_CFLAGS])                                              " >> configure.ac
+echo "AC_SUBST([PARPACK_LIBS])                                                " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "LT_INIT                                                                 " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_CONFIG_FILES([Makefile])                                             " >> configure.ac
+echo "AC_OUTPUT                                                               " >> configure.ac
+
+echo "AUTOMAKE_OPTIONS = foreign                                                                           "  > Makefile.am
+echo "ACLOCAL_AMFLAGS  = -I m4                                                                             " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "EXTRA_DIST = debug.h stat.h                                                                          " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "bin_PROGRAMS    = dnbdr1 pdndrv1                                                                     " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "dnbdr1_SOURCES = dnbdr1.f dnband.f                                                                   " >> Makefile.am
+echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                                                   " >> Makefile.am
+echo "dnbdr1_LDADD   = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                       " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "pdndrv1_SOURCES = pdndrv1.f dnband.f                                                                 " >> Makefile.am
+echo "pdndrv1_FFLAGS  = \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                                               " >> Makefile.am
+echo "pdndrv1_LDADD   = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_Fortran_LIBS)" >> Makefile.am
+
+# 5. Build and test this new project with cmake: for this to be possible, PKG_CHECK_MODULES must work.
+
+autoreconf --force --verbose --install
+
+./configure
+make all
+
+./dnbdr1
+mpirun -n 2 ./pdndrv1
+
