@@ -5,13 +5,15 @@
 # 1. Define temporary directory.
 
 export TMP_DIR="/tmp/tstCMakeInstall"
+rm -fr "${TMP_DIR}" # Make sure we restart from scratch.
 mkdir -p "${TMP_DIR}"
 
 # 2. Rerun cmake with prefix, install arpack-ng.
 #    Note: this script must not be added to the test suite as it will change cmake options.
 
 export TMP_PREFIX="${TMP_DIR}/local"
-cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON .
+export LIBSUFFIX="$1"
+cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON -DLIBSUFFIX="${LIBSUFFIX}" .
 make all install
 
 # 3. Setup environment for find_package to work (what you typically in module-environment files).
@@ -62,8 +64,8 @@ echo "target_include_directories(pdndrv1 INTERFACE PARPACK::PARPACK)"   >> CMake
 echo "target_link_libraries(pdndrv1 PARPACK::PARPACK)"                  >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "find_package(PkgConfig REQUIRED)"                                 >> CMakeLists.txt
-echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack)"        >> CMakeLists.txt
-echo "pkg_check_modules(PARPACK IMPORTED_TARGET REQUIRED parpack)"      >> CMakeLists.txt
+echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack${LIBSUFFIX})"   >> CMakeLists.txt
+echo "pkg_check_modules(PARPACK IMPORTED_TARGET REQUIRED parpack${LIBSUFFIX})" >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr3 dnband.f dnbdr3.f)"                         >> CMakeLists.txt
 echo "target_include_directories(dnbdr3 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt

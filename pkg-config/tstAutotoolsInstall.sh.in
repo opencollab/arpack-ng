@@ -5,6 +5,7 @@
 # 1. Define temporary directory.
 
 export TMP_DIR="/tmp/tstAutotoolsInstall"
+rm -fr "${TMP_DIR}" # Make sure we restart from scratch.
 mkdir -p "${TMP_DIR}"
 
 # 2. Rerun cmake with prefix, install arpack-ng.
@@ -15,7 +16,8 @@ make distclean
 
 export PROJECT_SOURCE_DIR="$(pwd)"
 export TMP_PREFIX="${TMP_DIR}/local"
-./configure --prefix="${TMP_PREFIX}" --enable-mpi
+export LIBSUFFIX="$1"
+LIBSUFFIX="${LIBSUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
 make all install
 
 # 3. Setup environment for PKG_CHECK_MODULES to work (what you typically in module-environment files).
@@ -54,11 +56,11 @@ echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" 
 echo "F77=\$MPIF77                                                            " >> configure.ac
 echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([ARPACK], [arpack])                                   " >> configure.ac
+echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}])                       " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
 echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([PARPACK], [parpack])                                 " >> configure.ac
+echo "PKG_CHECK_MODULES([PARPACK], [parpack${LIBSUFFIX}])                     " >> configure.ac
 echo "AC_SUBST([PARPACK_CFLAGS])                                              " >> configure.ac
 echo "AC_SUBST([PARPACK_LIBS])                                                " >> configure.ac
 echo "                                                                        " >> configure.ac
