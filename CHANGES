@@ -28,6 +28,9 @@ arpack-ng - 3.9.0
 [ Robert Schütz ]
  * use CMAKE_INSTALL_FULL_<dir> in arpack.pc
 
+[ Markus Mützel ]
+ * CMake: handle libraries without "lib" prefix.
+
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 
 arpack-ng - 3.8.0
