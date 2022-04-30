@@ -23,7 +23,9 @@ make all install
 # 3. Setup environment for PKG_CHECK_MODULES to work (what you typically in module-environment files).
 
 cd "${TMP_DIR}"
-export PKG_CONFIG_PATH="${TMP_PREFIX}/lib/pkgconfig"
+export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}.pc)"
+export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
+echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
 
 # 4. Create new cmake project, in temporary directory, with files from arpack-ng.
 
