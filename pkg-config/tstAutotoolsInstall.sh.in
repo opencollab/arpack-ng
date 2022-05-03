@@ -2,6 +2,8 @@
 # Testing that PKG_CHECK_MODULES works.
 # Note: this script must not be added to the test suite as it will change cmake options.
 
+echo "***************************************************************************************"
+
 # 1. Define temporary directory.
 
 export TMP_DIR="/tmp/tstAutotoolsInstall"
@@ -16,14 +18,18 @@ make distclean
 
 export PROJECT_SOURCE_DIR="$(pwd)"
 export TMP_PREFIX="${TMP_DIR}/local"
-export LIBSUFFIX="$1"
-LIBSUFFIX="${LIBSUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
+export LIBSUFFIX="${1%-*}"
+echo "LIBSUFFIX: $LIBSUFFIX"
+export ITF64SUFFIX="${1#*-}"
+echo "ITF64SUFFIX: $ITF64SUFFIX"
+LIBSUFFIX="${LIBSUFFIX}" ITF64SUFFIX="${ITF64SUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
 make all install
+tree "${TMP_PREFIX}"
 
 # 3. Setup environment for PKG_CHECK_MODULES to work (what you typically in module-environment files).
 
 cd "${TMP_DIR}"
-export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}.pc)"
+export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}${ITF64SUFFIX}.pc)"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
 
@@ -58,11 +64,11 @@ echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" 
 echo "F77=\$MPIF77                                                            " >> configure.ac
 echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}])                       " >> configure.ac
+echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
 echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([PARPACK], [parpack${LIBSUFFIX}])                     " >> configure.ac
+echo "PKG_CHECK_MODULES([PARPACK], [parpack${LIBSUFFIX}${ITF64SUFFIX}])       " >> configure.ac
 echo "AC_SUBST([PARPACK_CFLAGS])                                              " >> configure.ac
 echo "AC_SUBST([PARPACK_LIBS])                                                " >> configure.ac
 echo "                                                                        " >> configure.ac
@@ -95,4 +101,3 @@ make all
 
 ./dnbdr1
 mpirun -n 2 ./pdndrv1
-

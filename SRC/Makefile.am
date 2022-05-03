@@ -23,13 +23,13 @@ endif
 
 EXTRA_DIST = debug.h stat.h version.h
 
-lib_LTLIBRARIES = libarpack@LIBSUFFIX@.la
-libarpack@LIBSUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
-libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
-libarpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/staini.f
-libarpack@LIBSUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
-libarpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
+lib_LTLIBRARIES = libarpack@LIBSUFFIX@@ITF64SUFFIX@.la
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/staini.f
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
 if ICB
-libarpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libarpack@LIBSUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
 endif

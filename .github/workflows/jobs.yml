@@ -47,7 +47,9 @@ jobs:
           cd build
           cmake ..
           bash ./tstCMakeInstall.sh
-          bash ./tstCMakeInstall.sh 64
+          bash ./tstCMakeInstall.sh 64-
+          bash ./tstCMakeInstall.sh   -ILP64
+          bash ./tstCMakeInstall.sh 64-ILP64
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
     steps:
@@ -92,7 +94,9 @@ jobs:
           ./bootstrap
           ./configure
           bash ./tstAutotoolsInstall.sh
-          bash ./tstAutotoolsInstall.sh 64
+          bash ./tstAutotoolsInstall.sh 64-
+          bash ./tstAutotoolsInstall.sh   -ILP64
+          bash ./tstAutotoolsInstall.sh 64-ILP64
   ubuntu_latest_cmake_python:
     runs-on: ubuntu-latest
     steps:

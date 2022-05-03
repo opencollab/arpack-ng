@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
+LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 SIMPLE = sssimp dssimp snsimp dnsimp cnsimp znsimp
 

@@ -28,21 +28,21 @@ endif
 
 EXTRA_DIST = debug.h stat.h pcontext.h
 
-noinst_LTLIBRARIES = libparpack@LIBSUFFIX@_noopt.la
-libparpack@LIBSUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f
-libparpack@LIBSUFFIX@_noopt_la_FFLAGS = -O0
+noinst_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt.la
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_FFLAGS = -O0
 
-lib_LTLIBRARIES = libparpack@LIBSUFFIX@.la
-libparpack@LIBSUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
-libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
-libparpack@LIBSUFFIX@_la_SOURCES += $(top_builddir)/staini.f
-libparpack@LIBSUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
-libparpack@LIBSUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@_noopt.la \
+lib_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@.la
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/staini.f
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
-	$(top_builddir)/SRC/libarpack@LIBSUFFIX@.la \
+	$(top_builddir)/SRC/libarpack@LIBSUFFIX@@ITF64SUFFIX@.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
-libparpack@LIBSUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
 if ICB
-libparpack@LIBSUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libparpack@LIBSUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
 endif
