@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
+LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 CNDRV = cndrv1 cndrv2 cndrv3 cndrv4
 ZNDRV = zndrv1 zndrv2 zndrv3 zndrv4

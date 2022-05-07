@@ -31,8 +31,12 @@ option(ICBEXMM "Enable support for matrix market example based on ICB" OFF)
 option(PYTHON3 "Enable python3 support" OFF)
 set(BOOST_PYTHON_LIBSUFFIX "" CACHE STRING "suffix to add to custom boost python libs")
 option(EXAMPLES "Compile ARPACK examples" OFF)
+
+# Suffixes: LIBSUFFIX modify ONLY libraries names, ITF64SUFFIX modify BOTH libraries AND include directory names.
 set(LIBSUFFIX ""
     CACHE STRING "suffix to add to ARPACK libraries names")
+set(ITF64SUFFIX ""
+    CACHE STRING "suffix to add to ARPACK include directory and libraries names (use with INTERFACE64)")
 set(SYMBOLSUFFIX ""
     CACHE STRING "suffix to add to ARPACK, BLAS and LAPACK function names")
 option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK")
@@ -354,7 +358,7 @@ add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_IC
 
 target_link_libraries(arpack BLAS::BLAS)
 target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDFLAGS})
-set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX})
+set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX}${ITF64SUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
 
@@ -364,7 +368,7 @@ if (MPI)
 
     target_link_libraries(parpack MPI::MPI_Fortran)
     target_link_libraries(parpack arpack)
-    set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX})
+    set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX}${ITF64SUFFIX})
     set_target_properties(parpack PROPERTIES VERSION 2.1.0)
     set_target_properties(parpack PROPERTIES SOVERSION 2)
 endif ()
@@ -753,16 +757,16 @@ foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
 endforeach()
 string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 
-configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}.pc" @ONLY)
-configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}.pc" @ONLY)
-configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver.pc" @ONLY)
+configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
+configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
+configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
 
 
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}.pc"
+install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
@@ -770,42 +774,44 @@ if (MPI)
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}.pc"
+  install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
+set(ARPACK_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng${ITF64SUFFIX}")
+
 if(ICB)
-  install(FILES ICB/arpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-  install(FILES ICB/arpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+  install(FILES ICB/arpack.h DESTINATION "${ARPACK_INSTALL_INCLUDEDIR}")
+  install(FILES ICB/arpack.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
   if (MPI)
-    install(FILES ICB/parpack.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-    install(FILES ICB/parpack.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+    install(FILES ICB/parpack.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+    install(FILES ICB/parpack.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
   endif()
   if (ICBEXMM)
-    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-    install(FILES "${PROJECT_BINARY_DIR}/arpackSolver.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+    install(FILES "${PROJECT_BINARY_DIR}/arpackSolver${LIBSUFFIX}${ITF64SUFFIX}.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 
-install(FILES debug.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-install(FILES debugF90.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+install(FILES debug.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+install(FILES debugF90.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 if(ICB)
-  install(FILES ICB/debug_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-  install(FILES ICB/debug_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+  install(FILES ICB/debug_c.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+  install(FILES ICB/debug_c.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 endif()
 
-install(FILES stat.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-install(FILES statF90.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+install(FILES stat.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+install(FILES statF90.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 if(ICB)
-  install(FILES ICB/stat_c.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
-  install(FILES ICB/stat_c.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+  install(FILES ICB/stat_c.h DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+  install(FILES ICB/stat_c.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 endif()
 
 configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 
 configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 
 # Provide find_package for arpack-ng to users.
 configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config.cmake" @ONLY)

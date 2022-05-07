@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX).la
+LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX)$(ITF64SUFFIX).la
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)/ICB $(EIGEN3_CFLAGS)
 
 EXTRA_DIST = README
