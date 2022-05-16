@@ -1,5 +1,8 @@
 arpack-ng - 3.9.0
 
+[ Jose E. Roman ]
+* Avoid using isnan() in tests, since is GNU-specific
+
 [ Tom Payerle ]
 * Change the continuation line format for stat.h, debug.h
 
