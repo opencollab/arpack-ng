@@ -164,14 +164,14 @@ To get iso_c_binding support:
    Also look in the README.MD file for explanations concerning the
    other documents.
  
-6. Custom installation examples:
-
+Custom installation examples:
+    
     $ LIBSUFFIX="64" ./configure; make all install
     $ cmake -DLIBSUFFIX="64" ..; make all install
-
+    
     $ INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure; make all install
     $ cmake -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..; make all install
-
+    
     $ LIBSUFFIX="64" INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure; make all install
     $ cmake -DLIBSUFFIX="64" -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..; make all install
 
