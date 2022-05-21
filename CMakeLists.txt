@@ -204,8 +204,6 @@ if (MPI)
             set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
         endif()
     endif()
-    get_target_property(MPI_Fortran_INCLUDE_DIRS MPI::MPI_Fortran INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-    get_target_property(MPI_Fortran_LIBRARIES    MPI::MPI_Fortran INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 
@@ -220,8 +218,6 @@ if (MPI)
                 set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
             endif()
         endif()
-        get_target_property(MPI_C_INCLUDE_DIRS   MPI::MPI_C       INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_C_LIBRARIES      MPI::MPI_C       INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
         if (NOT TARGET MPI::MPI_CXX) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
@@ -233,8 +229,6 @@ if (MPI)
                 set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
             endif()
         endif()
-        get_target_property(MPI_CXX_INCLUDE_DIRS MPI::MPI_CXX     INTERFACE_INCLUDE_DIRECTORIES) # Get variables from target (*.pc/cmake, msg).
-        get_target_property(MPI_CXX_LIBRARIES    MPI::MPI_CXX     INTERFACE_LINK_LIBRARIES)      # Get variables from target (*.pc/cmake, msg).
 
         include(CheckSymbolExists)
         check_symbol_exists(MPI_Comm_c2f "${MPI_C_INCLUDE_DIRS}/mpi.h" MPI_Comm_c2f_FOUND)
@@ -255,7 +249,6 @@ if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeList
         set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
     endif()
 endif()
-get_target_property(BLAS_LIBRARIES BLAS::BLAS INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 # Find LAPACK
 
@@ -268,7 +261,6 @@ if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMake
         set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
     endif()
 endif()
-get_target_property(LAPACK_LIBRARIES LAPACK::LAPACK INTERFACE_LINK_LIBRARIES) # Get variables from target (*.pc/cmake, msg).
 
 # As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
 
