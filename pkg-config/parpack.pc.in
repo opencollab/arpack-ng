@@ -7,7 +7,7 @@ Name: @PACKAGE_NAME@
 Description: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
 Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
-Requires.private: arpack@LIBSUFFIX@@ITF64SUFFIX@
+Requires.private: arpack@ITF64SUFFIX@
 Libs: -L${libdir} -lparpack@LIBSUFFIX@@ITF64SUFFIX@
 Libs.private: @PARPACK_PC_LIBS_PRIVATE@
 Cflags: -I${includedir}

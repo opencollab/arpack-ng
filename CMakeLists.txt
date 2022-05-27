@@ -32,14 +32,18 @@ option(PYTHON3 "Enable python3 support" OFF)
 set(BOOST_PYTHON_LIBSUFFIX "" CACHE STRING "suffix to add to custom boost python libs")
 option(EXAMPLES "Compile ARPACK examples" OFF)
 
-# Suffixes: LIBSUFFIX modify ONLY libraries names, ITF64SUFFIX modify BOTH libraries AND include directory names.
+# LIBSUFFIX modify ONLY library names.
 set(LIBSUFFIX ""
     CACHE STRING "suffix to add to ARPACK libraries names")
-set(ITF64SUFFIX ""
-    CACHE STRING "suffix to add to ARPACK include directory and libraries names (use with INTERFACE64)")
+
 set(SYMBOLSUFFIX ""
     CACHE STRING "suffix to add to ARPACK, BLAS and LAPACK function names")
+
 option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK")
+if (INTERFACE64)
+  # Add suffix to library names, include directory name, and .pc and .cmake file names.
+  set(ITF64SUFFIX "64")
+endif ()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -749,16 +753,16 @@ foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
 endforeach()
 string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 
-configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
-configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
-configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
+configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${ITF64SUFFIX}.pc" @ONLY)
+configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${ITF64SUFFIX}.pc" @ONLY)
+configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver${ITF64SUFFIX}.pc" @ONLY)
 
 
 install(TARGETS arpack
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
+install(FILES "${PROJECT_BINARY_DIR}/arpack${ITF64SUFFIX}.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
@@ -766,7 +770,7 @@ if (MPI)
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
+  install(FILES "${PROJECT_BINARY_DIR}/parpack${ITF64SUFFIX}.pc"
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
@@ -781,7 +785,7 @@ if(ICB)
   endif()
   if (ICBEXMM)
     install(FILES EXAMPLES/MATRIX_MARKET/arpackSolver.hpp DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
-    install(FILES "${PROJECT_BINARY_DIR}/arpackSolver${LIBSUFFIX}${ITF64SUFFIX}.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES "${PROJECT_BINARY_DIR}/arpackSolver${ITF64SUFFIX}.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   endif()
 endif()
 
@@ -806,10 +810,10 @@ configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 
 # Provide find_package for arpack-ng to users.
-configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng) # find_package(arpackng)
-configure_file(cmake/arpackng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng)
+configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng${ITF64SUFFIX}-config.cmake" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/arpackng${ITF64SUFFIX}-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpackng${ITF64SUFFIX}) # find_package(arpackng) or find_package(arpackng64)
+configure_file(cmake/arpackng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpackng${ITF64SUFFIX}-config-version.cmake" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/arpackng${ITF64SUFFIX}-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpackng${ITF64SUFFIX})
 
 configure_file(cmake/tstCMakeInstall.sh.in ${PROJECT_BINARY_DIR}/tstCMakeInstall.sh @ONLY)
 
