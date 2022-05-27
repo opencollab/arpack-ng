@@ -16,19 +16,26 @@ mkdir -p "${TMP_DIR}"
 export TMP_PREFIX="${TMP_DIR}/local"
 export LIBSUFFIX="${1%-*}"
 echo "LIBSUFFIX: $LIBSUFFIX"
-export ITF64SUFFIX="${1#*-}"
-echo "ITF64SUFFIX: $ITF64SUFFIX"
-cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON -DLIBSUFFIX="${LIBSUFFIX}" -DITF64SUFFIX="${ITF64SUFFIX}" .
-make all install
+export INTERFACE64="${1#*-}"
+echo "INTERFACE64: $INTERFACE64"
+cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON -DLIBSUFFIX="${LIBSUFFIX}" -DINTERFACE64="${INTERFACE64}" .
+cmake --build .
+cmake --install .
 tree "${TMP_PREFIX}"
+
+if [ x$INTERFACE64 = xON ]; then
+  export ITF64SUFFIX="64"
+else
+  export ITF64SUFFIX=
+fi
 
 # 3. Setup environment for find_package to work (what you typically in module-environment files).
 
 cd "${TMP_DIR}"
-export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}${ITF64SUFFIX}.pc)"
+export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${ITF64SUFFIX}.pc)"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
-export arpackng_DIR="$(find ${TMP_PREFIX} -name arpackng-config.cmake)"
+export arpackng_DIR="$(find ${TMP_PREFIX} -name arpackng${ITF64SUFFIX}-config.cmake)"
 export arpackng_DIR="${arpackng_DIR%/*}" # Same as dirname.
 echo "arpackng_DIR: $arpackng_DIR"
 
@@ -50,7 +57,7 @@ echo ""                                                                 >> CMake
 echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
 echo "find_package(MPI REQUIRED COMPONENTS Fortran)"                    >> CMakeLists.txt
-echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
+echo "find_package(arpackng${ITF64SUFFIX} REQUIRED)"                    >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
 echo "target_include_directories(dnbdr1 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
@@ -73,8 +80,8 @@ echo "target_include_directories(pdndrv1 INTERFACE PARPACK::PARPACK)"   >> CMake
 echo "target_link_libraries(pdndrv1 PARPACK::PARPACK)"                  >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "find_package(PkgConfig REQUIRED)"                                 >> CMakeLists.txt
-echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack${LIBSUFFIX}${ITF64SUFFIX})"   >> CMakeLists.txt
-echo "pkg_check_modules(PARPACK IMPORTED_TARGET REQUIRED parpack${LIBSUFFIX}${ITF64SUFFIX})" >> CMakeLists.txt
+echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack${ITF64SUFFIX})"   >> CMakeLists.txt
+echo "pkg_check_modules(PARPACK IMPORTED_TARGET REQUIRED parpack${ITF64SUFFIX})" >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr3 dnband.f dnbdr3.f)"                         >> CMakeLists.txt
 echo "target_include_directories(dnbdr3 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
@@ -101,10 +108,13 @@ echo "target_link_libraries(pdndrv3 PkgConfig::PARPACK)"                >> CMake
 mkdir -p build
 cd build
 
-cmake ..
-make all VERBOSE=1
+cmake -DCMAKE_PREFIX_PATH=$arpackng_DIR/.. ..
+cmake --build . -v
 
-./dnbdr1
-mpirun -n 2 ./pdndrv1
-./dnbdr3
-mpirun -n 2 ./pdndrv3
+# There is no pre-built BLAS/LAPACK with 64-bit Fortran integers on Ubuntu
+if [ x$INTERFACE64 != xON ]; then
+  ./dnbdr1
+  mpirun -n 2 ./pdndrv1
+  ./dnbdr3
+  mpirun -n 2 ./pdndrv3
+fi

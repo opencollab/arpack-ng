@@ -20,16 +20,22 @@ export PROJECT_SOURCE_DIR="$(pwd)"
 export TMP_PREFIX="${TMP_DIR}/local"
 export LIBSUFFIX="${1%-*}"
 echo "LIBSUFFIX: $LIBSUFFIX"
-export ITF64SUFFIX="${1#*-}"
-echo "ITF64SUFFIX: $ITF64SUFFIX"
-LIBSUFFIX="${LIBSUFFIX}" ITF64SUFFIX="${ITF64SUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
+export INTERFACE64="${1#*-}"
+echo "INTERFACE64: $INTERFACE64"
+LIBSUFFIX="${LIBSUFFIX}" INTERFACE64="${INTERFACE64}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
 make all install
 tree "${TMP_PREFIX}"
+
+if [ x$INTERFACE64 = xON ]; then
+  export ITF64SUFFIX="64"
+else
+  export ITF64SUFFIX=
+fi
 
 # 3. Setup environment for PKG_CHECK_MODULES to work (what you typically in module-environment files).
 
 cd "${TMP_DIR}"
-export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}${ITF64SUFFIX}.pc)"
+export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${ITF64SUFFIX}.pc)"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
 
@@ -64,11 +70,11 @@ echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" 
 echo "F77=\$MPIF77                                                            " >> configure.ac
 echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
+echo "PKG_CHECK_MODULES([ARPACK], [arpack${ITF64SUFFIX}])                     " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
 echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "PKG_CHECK_MODULES([PARPACK], [parpack${LIBSUFFIX}${ITF64SUFFIX}])       " >> configure.ac
+echo "PKG_CHECK_MODULES([PARPACK], [parpack${ITF64SUFFIX}])                   " >> configure.ac
 echo "AC_SUBST([PARPACK_CFLAGS])                                              " >> configure.ac
 echo "AC_SUBST([PARPACK_LIBS])                                                " >> configure.ac
 echo "                                                                        " >> configure.ac
@@ -99,5 +105,8 @@ autoreconf --force --verbose --install
 ./configure
 make all
 
-./dnbdr1
-mpirun -n 2 ./pdndrv1
+# There is no pre-built BLAS/LAPACK with 64-bit Fortran integers on Ubuntu
+if [ x$INTERFACE64 != x1 ]; then
+  ./dnbdr1
+  mpirun -n 2 ./pdndrv1
+fi
