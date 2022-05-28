@@ -807,9 +807,9 @@ install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_I
 
 # Provide find_package for arpack-ng to users.
 configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng) # find_package(arpackng)
+install(FILES "${PROJECT_BINARY_DIR}/arpackng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng${LIBSUFFIX}${ITF64SUFFIX}) # find_package(arpackng)
 configure_file(cmake/arpackng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng)
+install(FILES "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng${LIBSUFFIX}${ITF64SUFFIX})
 
 configure_file(cmake/tstCMakeInstall.sh.in ${PROJECT_BINARY_DIR}/tstCMakeInstall.sh @ONLY)
 
