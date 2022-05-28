@@ -28,7 +28,7 @@ cd "${TMP_DIR}"
 export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}${ITF64SUFFIX}.pc)"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
-export arpackng_DIR="$(find ${TMP_PREFIX} -name arpackng${LIBSUFFIX}${ITF64SUFFIX}-config.cmake)"
+export arpackng_DIR="$(find ${TMP_PREFIX} -name arpackng-config.cmake)"
 export arpackng_DIR="${arpackng_DIR%/*}" # Same as dirname.
 echo "arpackng_DIR: $arpackng_DIR"
 
@@ -50,7 +50,7 @@ echo ""                                                                 >> CMake
 echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
 echo "find_package(MPI REQUIRED COMPONENTS Fortran)"                    >> CMakeLists.txt
-echo "find_package(arpackng${LIBSUFFIX}${ITF64SUFFIX} REQUIRED)"                                  >> CMakeLists.txt
+echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
 echo "target_include_directories(dnbdr1 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
