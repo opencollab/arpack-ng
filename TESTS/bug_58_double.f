@@ -417,7 +417,7 @@ c
          print *, ' '
 c
       end if
-      if (isnan(v(1,1))) then
+      if (v(1,1) /= v(1,1)) then   ! result is NaN
          stop 1
       end if
 c
