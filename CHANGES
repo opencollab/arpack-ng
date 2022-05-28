@@ -31,6 +31,7 @@ arpack-ng - 3.9.0
 [ Markus Mützel ]
  * CMake: Handle libraries without "lib" prefix.
  * CMake: Don't override BLAS/LAPACK/MPI flags. Directly use results from the Find* modules instead.
+ * Use automatic default suffix for builds with INTERFACE64.
 
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 
