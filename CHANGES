@@ -14,6 +14,7 @@ arpack-ng - 3.9.0
 * Support for NAG's nagfor Fortran compiler
 
 [ Franck Houssen ]
+* Create one .cmake file per arpack-ng flavor (32-bits, 64-bits, ILP64).
 * Test autotools pkg-config (*.pc files) with/without LIBSUFFIX/ITF64SUFFIX.
 * Test CMake find_package (*.cmake files) with/without LIBSUFFIX/ITF64SUFFIX.
 * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
