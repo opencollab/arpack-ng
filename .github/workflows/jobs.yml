@@ -239,7 +239,11 @@ jobs:
             mingw-w64-x86_64-gcc-fortran
             mingw-w64-x86_64-openblas
       - name: Clone and check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
       - name: Check commit
         run: |
           git log -1
