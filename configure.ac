@@ -20,6 +20,7 @@ dnl Check for LAPACK libraries
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
+dnl ITF64SUFFIX is suffix to add to ARPACK include directory and library names
 if test x"$INTERFACE64" == x"1"; then
   AC_LANG_PUSH([Fortran 77])
   AX_CHECK_COMPILE_FLAG(-fdefault-integer-8, FFLAGS="$FFLAGS -fdefault-integer-8",
@@ -32,13 +33,14 @@ if test x"$INTERFACE64" == x"1"; then
                         AX_CHECK_COMPILE_FLAG(-i8, FCFLAGS="$FCFLAGS -i8",
                                               AC_MSG_WARN([configure does not know how to make your Fortran compiler use 64-bit integers: set it manually via FCFLAGS.])))
   AC_LANG_POP([Fortran])
+  ITF64SUFFIX="64"
 else
   INTERFACE64=0
+  ITF64SUFFIX=""
 fi
 
-dnl Suffixes: LIBSUFFIX modify ONLY libraries names, ITF64SUFFIX modify BOTH libraries AND include directory names.
+dnl LIBSUFFIX modify ONLY library names
 AC_ARG_VAR(LIBSUFFIX, [suffix to add to ARPACK libraries names])
-AC_ARG_VAR(ITF64SUFFIX, [suffix to add to ARPACK include directory and libraries names (use with INTERFACE64)])
 AC_ARG_VAR(SYMBOLSUFFIX, [suffix to add to ARPACK, BLAS and LAPACK function names])
 
 ifdef([LT_INIT], [], [
@@ -298,10 +300,12 @@ AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_SUBST([PARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS $MPI_Fortran_LIBS"])
 
 AC_CONFIG_FILES([
-	arpack$LIBSUFFIX$ITF64SUFFIX.pc:pkg-config/arpack.pc.in
-	parpack$LIBSUFFIX$ITF64SUFFIX.pc:pkg-config/parpack.pc.in
-	arpackSolver$LIBSUFFIX$ITF64SUFFIX.pc:pkg-config/arpackSolver.pc.in
+	arpack$ITF64SUFFIX.pc:pkg-config/arpack.pc.in
+	parpack$ITF64SUFFIX.pc:pkg-config/parpack.pc.in
+	arpackSolver$ITF64SUFFIX.pc:pkg-config/arpackSolver.pc.in
 ], [], [LIBSUFFIX="$LIBSUFFIX"; ITF64SUFFIX="$ITF64SUFFIX"])
+
+AC_SUBST([ITF64SUFFIX], ["$ITF64SUFFIX"])
 
 dnl We do NOT want arpackng*.cmake files to be created: @MPI@ can not be replaced.
 AC_CONFIG_FILES([

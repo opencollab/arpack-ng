@@ -46,10 +46,10 @@ jobs:
           mkdir build
           cd build
           cmake ..
-          bash ./tstCMakeInstall.sh
-          bash ./tstCMakeInstall.sh 64-
-          bash ./tstCMakeInstall.sh   -ILP64
-          bash ./tstCMakeInstall.sh 64-ILP64
+          bash ./tstCMakeInstall.sh      -OFF
+          bash ./tstCMakeInstall.sh sfx64-OFF
+          bash ./tstCMakeInstall.sh      -ON
+          bash ./tstCMakeInstall.sh sfx64-ON
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
     steps:
@@ -94,9 +94,9 @@ jobs:
           ./bootstrap
           ./configure
           bash ./tstAutotoolsInstall.sh
-          bash ./tstAutotoolsInstall.sh 64-
-          bash ./tstAutotoolsInstall.sh   -ILP64
-          bash ./tstAutotoolsInstall.sh 64-ILP64
+          bash ./tstAutotoolsInstall.sh sfx64-
+          bash ./tstAutotoolsInstall.sh      -1
+          bash ./tstAutotoolsInstall.sh sfx64-1
   ubuntu_latest_cmake_python:
     runs-on: ubuntu-latest
     steps:
