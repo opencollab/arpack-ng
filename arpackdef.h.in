@@ -7,11 +7,31 @@
 
 #if INTERFACE64
 #include <stdint.h> /* Include this header for int64_t, uint64_t definition. */
-#define a_int    int64_t
-#define a_uint  uint64_t
+#define a_int int64_t
+#define a_uint uint64_t
 #else
-#define a_int            int
-#define a_uint  unsigned int
+#define a_int int
+#define a_uint unsigned int
+#endif
+#ifdef _MSC_VER
+#include <complex.h>
+#define a_fcomplex _Fcomplex
+#define a_dcomplex _Dcomplex
+#ifndef CMPLXF
+#define CMPLXF(r,i) _FCbuild(r,i)
+#endif
+#ifndef CMPLX
+#define CMPLX(r,i) _Cbuild(r,i)
+#endif
+#else
+#ifndef CMPLXF
+#define CMPLXF(r,i) ((float _Complex)((float)(r) + _Complex_I * (float)(i)))
+#endif
+#ifndef CMPLX
+#define CMPLX(r,i) ((double _Complex)((double)(r) + _Complex_I * (double)(i)))
+#endif
+#define a_fcomplex float _Complex
+#define a_dcomplex double _Complex
 #endif
 
 #endif

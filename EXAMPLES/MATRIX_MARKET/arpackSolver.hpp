@@ -437,18 +437,18 @@ class arpackSolver {
               a_int ldv, a_int * iparam, a_int * ipntr, complex<float> * workd, complex<float> * workl, a_int lworkl, float * & rwork,
               a_int * info) {
       if (!rwork) rwork = new float[nbCV];
-      cnaupd_c(ido, bMat, nbDim, which, nbEV, tol, reinterpret_cast<_Complex float*>(resid), nbCV,
-               reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr, reinterpret_cast<_Complex float*>(workd),
-               reinterpret_cast<_Complex float*>(workl), lworkl, rwork, info);
+      cnaupd_c(ido, bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_fcomplex*>(resid), nbCV,
+               reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr, reinterpret_cast<a_fcomplex*>(workd),
+               reinterpret_cast<a_fcomplex*>(workl), lworkl, rwork, info);
     };
 
     void aupd(a_int * ido, char const * bMat, a_int nbDim, char const * which, complex<double> * resid, complex<double> * v,
               a_int ldv, a_int * iparam, a_int * ipntr, complex<double> * workd, complex<double> * workl, a_int lworkl, double * & rwork,
               a_int * info) {
       if (!rwork) rwork = new double[nbCV];
-      znaupd_c(ido, bMat, nbDim, which, nbEV, tol, reinterpret_cast<_Complex double*>(resid), nbCV,
-               reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr, reinterpret_cast<_Complex double*>(workd),
-               reinterpret_cast<_Complex double*>(workl), lworkl, rwork, info);
+      znaupd_c(ido, bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_dcomplex*>(resid), nbCV,
+               reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr, reinterpret_cast<a_dcomplex*>(workd),
+               reinterpret_cast<a_dcomplex*>(workl), lworkl, rwork, info);
     };
 
     void spectrum(RC * d, RC * z, a_int nbDim, a_int * iparam) {
@@ -589,11 +589,11 @@ class arpackSolver {
       complex<float> * workev = new complex<float>[2*nbCV];
 
       complex<float> sigma = complex<float>((float) sigmaReal, (float) sigmaImag);
-      cneupd_c(rvec, howmny, select, reinterpret_cast<_Complex float*>(d), reinterpret_cast<_Complex float*>(z), ldz,
-               reinterpret_cast<_Complex float &>(sigma), reinterpret_cast<_Complex float*>(workev),
-               bMat, nbDim, which, nbEV, tol, reinterpret_cast<_Complex float*>(resid), nbCV,
-               reinterpret_cast<_Complex float*>(v), ldv, iparam, ipntr,
-               reinterpret_cast<_Complex float*>(workd), reinterpret_cast<_Complex float*>(workl), lworkl, rwork, &info);
+      cneupd_c(rvec, howmny, select, reinterpret_cast<a_fcomplex*>(d), reinterpret_cast<a_fcomplex*>(z), ldz,
+               reinterpret_cast<a_fcomplex &>(sigma), reinterpret_cast<a_fcomplex*>(workev),
+               bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_fcomplex*>(resid), nbCV,
+               reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
+               reinterpret_cast<a_fcomplex*>(workd), reinterpret_cast<a_fcomplex*>(workl), lworkl, rwork, &info);
       if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
       if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
 
@@ -613,11 +613,11 @@ class arpackSolver {
       complex<double> * workev = new complex<double>[2*nbCV];
 
       complex<double> sigma = complex<double>(sigmaReal, sigmaImag);
-      zneupd_c(rvec, howmny, select, reinterpret_cast<_Complex double*>(d), reinterpret_cast<_Complex double*>(z), ldz,
-               reinterpret_cast<_Complex double &>(sigma), reinterpret_cast<_Complex double*>(workev),
-               bMat, nbDim, which, nbEV, tol, reinterpret_cast<_Complex double*>(resid), nbCV,
-               reinterpret_cast<_Complex double*>(v), ldv, iparam, ipntr,
-               reinterpret_cast<_Complex double*>(workd), reinterpret_cast<_Complex double*>(workl), lworkl, rwork, &info);
+      zneupd_c(rvec, howmny, select, reinterpret_cast<a_dcomplex*>(d), reinterpret_cast<a_dcomplex*>(z), ldz,
+               reinterpret_cast<a_dcomplex &>(sigma), reinterpret_cast<a_dcomplex*>(workev),
+               bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_dcomplex*>(resid), nbCV,
+               reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
+               reinterpret_cast<a_dcomplex*>(workd), reinterpret_cast<a_dcomplex*>(workl), lworkl, rwork, &info);
       if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
       if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
 

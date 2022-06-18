@@ -36,6 +36,9 @@ arpack-ng - 3.9.0
  * CMake: Handle libraries without "lib" prefix.
  * CMake: Don't override BLAS/LAPACK/MPI flags. Directly use results from the Find* modules instead.
 
+[ Juan José García-Ripoll ]
+ * Adapt the C/C++ interface to accept also MSVC's non-standard complex types.
+
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 
 arpack-ng - 3.8.0
