@@ -5,10 +5,14 @@ Installation:
 
 Python3: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON3=ON -DBOOST_PYTHON_LIBSUFFIX="3" ..
          ~/arpack-ng/build> make all test
+         ~/arpack-ng/build> make install
 Note: Boost must have been compiled for Python3.
+Note: installation will install libpyarpack.so in the install directory.
 
 Usage:
 ------
+
+PYTHONPATH must include the directory where libpyarpack.so has been installed.
 
 >> export PYTHONPATH="/tmp/local/lib/pyarpack:${PYTHONPATH}"
 >> python
