@@ -225,7 +225,7 @@ jobs:
           export CXXFLAGS="-Qunused-arguments"
           LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DPYTHON3=ON ..
           make all
-          make test
+          CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_autotools:
     runs-on: macos-latest
     steps:
