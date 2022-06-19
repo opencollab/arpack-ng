@@ -211,7 +211,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc cmake boost-python3 eigen
+          brew install gcc cmake boost-python3 eigen python3
           brew list --formula -1 | while read line; do brew link --overwrite $line; done
       - name: Run job
         run: |
