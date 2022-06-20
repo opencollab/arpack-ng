@@ -23,7 +23,7 @@ jobs:
           cd build
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
           make all
-          make test
+          CTEST_OUTPUT_ON_FAILURE=1 make test
           make package_source
   ubuntu_latest_cmake_install:
     runs-on: ubuntu-latest
@@ -126,7 +126,12 @@ jobs:
           sudo apt-get install locate
           sudo updatedb
       - name: Run job
-        run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON ..
+          make all
+          CTEST_OUTPUT_ON_FAILURE=1 make test
   ubuntu_latest_autotools_ilp64:
     runs-on: ubuntu-latest
     steps:
@@ -190,7 +195,7 @@ jobs:
           export CXXFLAGS="-Qunused-arguments"
           LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
-          make test
+          CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_cmake_python:
     runs-on: macos-latest
     steps:
@@ -288,4 +293,4 @@ jobs:
           mkdir -p build && cd build
           cmake -GNinja -DICB=ON .. # -DEXAMPLES=ON KO
           cmake --build . -v
-          ctest
+          CTEST_OUTPUT_ON_FAILURE=1 make test
