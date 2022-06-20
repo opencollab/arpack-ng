@@ -293,4 +293,4 @@ jobs:
           mkdir -p build && cd build
           cmake -GNinja -DICB=ON .. # -DEXAMPLES=ON KO
           cmake --build . -v
-          CTEST_OUTPUT_ON_FAILURE=1 make test
+          ctest --output-on-failure
