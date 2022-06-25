@@ -8,6 +8,9 @@ Python3: ~/arpack-ng/build> cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DPYTHON3=ON
          ~/arpack-ng/build> make install
 Note: Boost must have been compiled for Python3.
 Note: installation will install libpyarpack.so in the install directory.
+Note: python3 minimal packages must be installed (apt-get install python3-minimal python3-pip).
+      numpy must be installed (apt-get install python3-numpy) as the A/B matrices used by arpack
+      solver must be numpy arrays.
 
 Usage:
 ------

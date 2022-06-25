@@ -23,7 +23,7 @@ jobs:
           cd build
           cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
           make all
-          make test
+          CTEST_OUTPUT_ON_FAILURE=1 make test
           make package_source
   ubuntu_latest_cmake_install:
     runs-on: ubuntu-latest
@@ -118,15 +118,20 @@ jobs:
       - name: Build boost-python for python3 (not provided by apt-cache)
         run : |
           sudo apt-get -y install wget
-          wget https://sourceforge.net/projects/boost/files/boost/1.77.0/boost_1_77_0.tar.gz
-          tar -xf boost_1_77_0.tar.gz
-          cd boost_1_77_0
+          wget https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.gz
+          tar -xf boost_1_79_0.tar.gz
+          cd boost_1_79_0
           ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
           sudo ./b2 toolset=gcc install
           sudo apt-get install locate
           sudo updatedb
       - name: Run job
-        run: mkdir build; cd build; cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON .. && make all test
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON ..
+          make all
+          CTEST_OUTPUT_ON_FAILURE=1 make test
   ubuntu_latest_autotools_ilp64:
     runs-on: ubuntu-latest
     steps:
@@ -190,7 +195,43 @@ jobs:
           export CXXFLAGS="-Qunused-arguments"
           LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
-          make test
+          CTEST_OUTPUT_ON_FAILURE=1 make test
+  macos_latest_cmake_python:
+    runs-on: macos-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: |
+          brew uninstall --ignore-dependencies gcc
+          brew update
+          softwareupdate --install --all
+      - name: Install brew dependencies
+        run: |
+          brew list --formula -1 | while read line; do brew unlink $line; done
+          brew install gcc cmake boost-python3 eigen python3
+          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+          pip3 install numpy
+      - name: Run job
+        run: |
+          mkdir -p build
+          cd build
+          export FC=gfortran
+          export FFLAGS="-ff2c -fno-second-underscore"
+          export CC=clang
+          export CFLAGS="-Qunused-arguments"
+          export CXX=clang++
+          export CXXFLAGS="-Qunused-arguments"
+          LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DPYTHON3=ON ..
+          make all
+          CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_autotools:
     runs-on: macos-latest
     steps:
@@ -252,4 +293,4 @@ jobs:
           mkdir -p build && cd build
           cmake -GNinja -DICB=ON .. # -DEXAMPLES=ON KO
           cmake --build . -v
-          ctest
+          ctest --output-on-failure
