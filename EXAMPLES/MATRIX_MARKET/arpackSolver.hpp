@@ -517,8 +517,8 @@ class arpackSolver {
 
         sseupd_c(rvec, howmny, select, d, z, ldz, sigmaReal,
                  bMat, nbDim, which, nbEV, tol, resid, nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-        if (info == -14) cerr << "Error: dseupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
-        if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dseupd - KO with info " << info << endl; return 1;}
+        if (info == -14) cerr << "Error: sseupd - KO: ssaupd did not find any eigenvalues to sufficient accuracy" << endl;
+        if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: sseupd - KO with info " << info << endl; return 1;}
 
         spectrum(d, z, nbDim, iparam);
 
@@ -531,8 +531,8 @@ class arpackSolver {
 
         sneupd_c(rvec, howmny, select, dr, di, z, ldz, sigmaReal, sigmaImag, workev,
                  bMat, nbDim, which, nbEV, tol, resid, nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-        if (info == -14) cerr << "Error: dneupd - KO: [dz]naupd did not find any eigenvalues to sufficient accuracy" << endl;
-        if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dneupd - KO with info " << info << endl; return 1;}
+        if (info == -14) cerr << "Error: sneupd - KO: snaupd did not find any eigenvalues to sufficient accuracy" << endl;
+        if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: sneupd - KO with info " << info << endl; return 1;}
 
         halfSpectrum(dr, di, z, nbDim, iparam);
 
@@ -568,7 +568,7 @@ class arpackSolver {
 
         dneupd_c(rvec, howmny, select, dr, di, z, ldz, sigmaReal, sigmaImag, workev,
                  bMat, nbDim, which, nbEV, tol, resid, nbCV, v, ldv, iparam, ipntr, workd, workl, lworkl, &info);
-        if (info == -14) cerr << "Error: dneupd - KO: [dz]naupd did not find any eigenvalues to sufficient accuracy" << endl;
+        if (info == -14) cerr << "Error: dneupd - KO: dnaupd did not find any eigenvalues to sufficient accuracy" << endl;
         if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: dneupd - KO with info " << info << endl; return 1;}
 
         halfSpectrum(dr, di, z, nbDim, iparam);
@@ -594,8 +594,8 @@ class arpackSolver {
                bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_fcomplex*>(resid), nbCV,
                reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
                reinterpret_cast<a_fcomplex*>(workd), reinterpret_cast<a_fcomplex*>(workl), lworkl, rwork, &info);
-      if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
-      if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
+      if (info == -14) cerr << "Error: cneupd - KO: cnaupd did not find any eigenvalues to sufficient accuracy" << endl;
+      if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: cneupd - KO with info " << info << endl; return 1;}
 
       spectrum(d, z, nbDim, iparam);
 
@@ -618,7 +618,7 @@ class arpackSolver {
                bMat, nbDim, which, nbEV, tol, reinterpret_cast<a_dcomplex*>(resid), nbCV,
                reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
                reinterpret_cast<a_dcomplex*>(workd), reinterpret_cast<a_dcomplex*>(workl), lworkl, rwork, &info);
-      if (info == -14) cerr << "Error: zneupd - KO: dsaupd did not find any eigenvalues to sufficient accuracy" << endl;
+      if (info == -14) cerr << "Error: zneupd - KO: znaupd did not find any eigenvalues to sufficient accuracy" << endl;
       if (info < 0 && info != -14 /*-14: don't break*/) {cerr << "Error: zneupd - KO with info " << info << endl; return 1;}
 
       spectrum(d, z, nbDim, iparam);
