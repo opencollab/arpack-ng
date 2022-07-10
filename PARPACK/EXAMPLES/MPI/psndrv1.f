@@ -118,8 +118,7 @@ c     | (call to BLAS, LAPACK, ARPACK).    |
 c     %------------------------------------%
 c
       character         bmat*1, which*2
-      integer*4         nx
-      integer           ido, n, nev, ncv, lworkl, info, j,
+      integer           ido, n, nev, ncv, lworkl, info, j, nx
      &                  nloc, nconv, maxitr, ishfts, mode
       Real
      &                  tol, sigmar, sigmai
@@ -502,9 +501,9 @@ c     .. MPI Declarations ...
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, nx, next, prev
+      integer*4         nprocs, myid, ierr, next, prev
 c
-      integer           nloc, np, j, lo
+      integer           nloc, np, j, lo, nx
       Real
      &                  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
