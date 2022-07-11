@@ -46,13 +46,13 @@
 
 
       subroutine parnoldi(comm)
-#include "debugF90.h"
-#include "statF90.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
 #include "mpif.h"
 #endif
+#include "debugF90.h"
+#include "statF90.h"
 
 #ifdef HAVE_MPI_ICB
       type(MPI_Comm)    comm
