@@ -55,12 +55,12 @@
 !\EndLib
 !--------------------------------------------------------------------------
 !
-      include 'debug.h'
-      include 'stat.h'
+#include "debug.h"
+#include "stat.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
-      include 'mpif.h'
+#include "mpif.h"
 #endif
 
 !     %-------------------------------%
@@ -523,7 +523,7 @@
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
-      include 'mpif.h'
+#include "mpif.h"
 #endif
 #ifdef HAVE_MPI_ICB
       type(MPI_Comm)    comm
@@ -590,7 +590,7 @@
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
-      include 'mpif.h'
+#include "mpif.h"
 #endif
 #ifdef HAVE_MPI_ICB
       type(MPI_Comm)    comm
