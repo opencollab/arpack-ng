@@ -19,21 +19,21 @@ TESTS = $(check_PROGRAMS)
 EXTRA_DIST = debug.h stat.h README.CALLING-PARPACK-FROM-C-OR-CPP
 
 # Simple nonsymmetric problem using single precision
-psndrv1_SOURCES = psndrv1.f
-psndrv3_SOURCES = psndrv3.f
+psndrv1_SOURCES = psndrv1.F90
+psndrv3_SOURCES = psndrv3.F90
 
 # Simple nonsymmetric problem using double precision
-pdndrv1_SOURCES = pdndrv1.f
-pdndrv3_SOURCES = pdndrv3.f
+pdndrv1_SOURCES = pdndrv1.F90
+pdndrv3_SOURCES = pdndrv3.F90
 
 # Simple symmetric problem using single precision
-pssdrv1_SOURCES = pssdrv1.f
+pssdrv1_SOURCES = pssdrv1.F90
 
 # Simple symmetric problem using double precision
-pdsdrv1_SOURCES = pdsdrv1.f
+pdsdrv1_SOURCES = pdsdrv1.F90
 
 # Complex problem using single complex
-pcndrv1_SOURCES = pcndrv1.f
+pcndrv1_SOURCES = pcndrv1.F90
 
 # Complex problem using double complex
-pzndrv1_SOURCES = pzndrv1.f
+pzndrv1_SOURCES = pzndrv1.F90

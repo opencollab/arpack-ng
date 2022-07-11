@@ -585,14 +585,14 @@ if (EXAMPLES)
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/EXAMPLES/MPI/)
 
         set(pexamples_STAT_SRCS
-            pcndrv1.f
-            pdndrv1.f
-            pdndrv3.f
-            pdsdrv1.f
-            psndrv1.f
-            psndrv3.f
-            pssdrv1.f
-            pzndrv1.f)
+            pcndrv1.F90
+            pdndrv1.F90
+            pdndrv3.F90
+            pdsdrv1.F90
+            psndrv1.F90
+            psndrv3.F90
+            pssdrv1.F90
+            pzndrv1.F90)
 
         pexamples(pexamples_STAT_SRCS)
     endif()
@@ -652,7 +652,7 @@ add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 if(MPI)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
-  add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
+  add_executable(issue46 PARPACK/TESTS/MPI/issue46.F90)
   target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
   if (HAVE_MPI_ICB)
     target_compile_definitions(issue46 PRIVATE HAVE_MPI_ICB=1)

@@ -15,7 +15,7 @@ endif
 
 EXTRA_DIST = debug.h stat.h
 
-issue46_SOURCES= issue46.f
+issue46_SOURCES= issue46.F90
 
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c
