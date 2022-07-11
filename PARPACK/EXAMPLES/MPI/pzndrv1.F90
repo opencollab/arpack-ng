@@ -56,8 +56,8 @@
 !\EndLib
 !---------------------------------------------------------------------------
 !
-#include "debug.h"
-#include "stat.h"
+#include "debugF90.h"
+#include "statF90.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
