@@ -55,13 +55,13 @@ c
 c\EndLib
 c--------------------------------------------------------------------------
 c
+      include 'debug.h'
+      include 'stat.h'
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
       include 'mpif.h'
 #endif
-      include 'debug.h'
-      include 'stat.h'
 
 c     %-------------------------------%
 c     | MPI INTERFACE                 |
