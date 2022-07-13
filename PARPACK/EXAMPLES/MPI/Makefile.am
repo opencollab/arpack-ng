@@ -20,28 +20,28 @@ EXTRA_DIST = debug.h stat.h README.CALLING-PARPACK-FROM-C-OR-CPP
 
 # Simple nonsymmetric problem using single precision
 psndrv1_SOURCES = psndrv1.F90
-psndrv1_CPPFLAGS = -I$(top_builddir)
+psndrv1_CPPFLAGS = -I$(top_srcdir)
 psndrv3_SOURCES = psndrv3.F90
-psndrv3_CPPFLAGS = -I$(top_builddir)
+psndrv3_CPPFLAGS = -I$(top_srcdir)
 
 # Simple nonsymmetric problem using double precision
 pdndrv1_SOURCES = pdndrv1.F90
-pdndrv1_CPPFLAGS = -I$(top_builddir)
+pdndrv1_CPPFLAGS = -I$(top_srcdir)
 pdndrv3_SOURCES = pdndrv3.F90
-pdndrv3_CPPFLAGS = -I$(top_builddir)
+pdndrv3_CPPFLAGS = -I$(top_srcdir)
 
 # Simple symmetric problem using single precision
 pssdrv1_SOURCES = pssdrv1.F90
-pssdrv1_CPPFLAGS = -I$(top_builddir)
+pssdrv1_CPPFLAGS = -I$(top_srcdir)
 
 # Simple symmetric problem using double precision
 pdsdrv1_SOURCES = pdsdrv1.F90
-pdsdrv1_CPPFLAGS = -I$(top_builddir)
+pdsdrv1_CPPFLAGS = -I$(top_srcdir)
 
 # Complex problem using single complex
 pcndrv1_SOURCES = pcndrv1.F90
-pcndrv1_CPPFLAGS = -I$(top_builddir)
+pcndrv1_CPPFLAGS = -I$(top_srcdir)
 
 # Complex problem using double complex
 pzndrv1_SOURCES = pzndrv1.F90
-pzndrv1_CPPFLAGS = -I$(top_builddir)
+pzndrv1_CPPFLAGS = -I$(top_srcdir)

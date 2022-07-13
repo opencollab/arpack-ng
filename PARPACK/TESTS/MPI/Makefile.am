@@ -16,7 +16,7 @@ endif
 EXTRA_DIST = debug.h stat.h
 
 issue46_SOURCES= issue46.F90
-issue46_CPPFLAGS = -I$(top_builddir)
+issue46_CPPFLAGS = -I$(top_srcdir)
 
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c
