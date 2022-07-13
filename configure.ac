@@ -164,8 +164,8 @@ AS_IF([test x"$enable_mpi" != x"no"], [
                  ],
                  [
                   AC_MSG_RESULT([yes])
-                  FCFLAGS=$FCFLAGS" -DHAVE_MPI_ICB"
-                  FFLAGS=$FFLAGS" -DHAVE_MPI_ICB"
+                  FCFLAGS=$FCFLAGS" -DHAVE_MPI_ICB=1"
+                  FFLAGS=$FFLAGS" -DHAVE_MPI_ICB=1"
                   AS_VAR_SET([enable_mpi_icb], [yes])
                  ],
                  [

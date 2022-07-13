@@ -64,6 +64,12 @@ echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" 
 echo "F77=\$MPIF77                                                            " >> configure.ac
 echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
 echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([Fortran 77])"                                                                                                                       >> configure.ac
+echo "AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS=\"$FFLAGS -cpp\","                                                                                             >> configure.ac
+echo "                      AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS=\"$FFLAGS -fpp\","                                                                       >> configure.ac
+echo "                                            AC_MSG_WARN([configure does not know how to preprocess Fortran code: set it manually via FFLAGS.])))" >> configure.ac
+echo "AC_LANG_POP([Fortran 77])"                                                                                                                        >> configure.ac
+echo "                                                                        " >> configure.ac
 echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
 echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
