@@ -40,7 +40,7 @@ cd tstAutotoolsInstall
 
 cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnband.f" .
 cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnbdr1.f" .
-cp "${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
+cp "${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.F90" .
 cp -fr "${PROJECT_SOURCE_DIR}/m4" .
 
 echo "AC_PREREQ([2.68])                                                       "  > configure.ac
@@ -88,7 +88,7 @@ echo "dnbdr1_SOURCES = dnbdr1.f dnband.f                                        
 echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                                                   " >> Makefile.am
 echo "dnbdr1_LDADD   = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                       " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
-echo "pdndrv1_SOURCES = pdndrv1.f dnband.f                                                                 " >> Makefile.am
+echo "pdndrv1_SOURCES = pdndrv1.F90 dnband.f                                                               " >> Makefile.am
 echo "pdndrv1_FFLAGS  = \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                                               " >> Makefile.am
 echo "pdndrv1_LDADD   = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_Fortran_LIBS)" >> Makefile.am
 

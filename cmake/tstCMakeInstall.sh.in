@@ -40,8 +40,8 @@ cd tstCMakeInstall
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnband.f" .
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnbdr1.f" .
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnbdr3.f" .
-cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
-cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv3.f" .
+cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv1.F90" .
+cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv3.F90" .
 
 echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
@@ -60,7 +60,7 @@ echo "target_link_libraries(dnbdr1 LAPACK::LAPACK)"                     >> CMake
 echo "target_include_directories(dnbdr1 INTERFACE ARPACK::ARPACK)"      >> CMakeLists.txt
 echo "target_link_libraries(dnbdr1 ARPACK::ARPACK)"                     >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
-echo "add_executable(pdndrv1 dnband.f pdndrv1.f)"                       >> CMakeLists.txt
+echo "add_executable(pdndrv1 dnband.f pdndrv1.F90)"                     >> CMakeLists.txt
 echo "target_include_directories(pdndrv1 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
 echo "target_link_libraries(pdndrv1 BLAS::BLAS)"                        >> CMakeLists.txt
 echo "target_include_directories(pdndrv1 INTERFACE LAPACK::LAPACK)"     >> CMakeLists.txt
@@ -84,7 +84,7 @@ echo "target_link_libraries(dnbdr3 LAPACK::LAPACK)"                     >> CMake
 echo "target_include_directories(dnbdr3 INTERFACE PkgConfig::ARPACK)"   >> CMakeLists.txt
 echo "target_link_libraries(dnbdr3 PkgConfig::ARPACK)"                  >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
-echo "add_executable(pdndrv3 dnband.f pdndrv3.f)"                       >> CMakeLists.txt
+echo "add_executable(pdndrv3 dnband.f pdndrv3.F90)"                     >> CMakeLists.txt
 echo "target_include_directories(pdndrv3 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
 echo "target_link_libraries(pdndrv3 BLAS::BLAS)"                        >> CMakeLists.txt
 echo "target_include_directories(pdndrv3 INTERFACE LAPACK::LAPACK)"     >> CMakeLists.txt
