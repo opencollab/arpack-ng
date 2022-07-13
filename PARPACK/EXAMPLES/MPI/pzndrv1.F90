@@ -102,13 +102,11 @@
 !
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
-      Complex*16
-     &                  ax(maxn), d(maxncv),
-     &                  v(ldv,maxncv), workd(3*maxn),
-     &                  workev(3*maxncv), resid(maxn),
-     &                  workl(3*maxncv*maxncv+5*maxncv)
-      Double precision
-     &                  rwork(maxncv), rd(maxncv,3)
+      Complex*16        ax(maxn), d(maxncv),&
+                        v(ldv,maxncv), workd(3*maxn),&
+                        workev(3*maxncv), resid(maxn),&
+                        workl(3*maxncv*maxncv+5*maxncv)
+      Double precision rwork(maxncv), rd(maxncv,3)
 !
 !     %------------------------------------%
 !     | Local Scalars                      |
@@ -118,27 +116,23 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, j, nx
-     &                  nloc, nconv, maxitr, ishfts, mode
-      Complex*16
-     &                  sigma
-      Double precision
-     &                  tol
+      integer           ido, n, nev, ncv, lworkl, info, j, nx,&
+                        nloc, nconv, maxitr, ishfts, mode
+      Complex*16        sigma
+      Double precision  tol
       logical           rvec
 !
 !     %----------------------------------------------%
 !     | Local Buffers needed for MPI communication |
 !     %----------------------------------------------%
 !
-      Complex*16
-     &                  mv_buf(maxn)
+      Complex*16        mv_buf(maxn)
 !
 !     %-----------------------------%
 !     | BLAS & LAPACK routines used |
 !     %-----------------------------%
 !
-      Double precision
-     &                  pdznorm2
+      Double precision  pdznorm2
       external          pdznorm2, zaxpy
 !
 !     %-----------------------%
@@ -244,9 +238,9 @@
 !        | has been exceeded.                          |
 !        %---------------------------------------------%
 !
-         call pznaupd ( comm, ido, bmat, nloc, which,
-     &        nev, tol, resid, ncv, v, ldv, iparam, ipntr,
-     &        workd, workl, lworkl, rwork,info )
+         call pznaupd ( comm, ido, bmat, nloc, which,&
+              nev, tol, resid, ncv, v, ldv, iparam, ipntr,&
+              workd, workl, lworkl, rwork,info )
 !
          if (ido .eq. -1 .or. ido .eq. 1) then
 !
@@ -260,8 +254,8 @@
 !           | product to workd(ipntr(2)).               |
 !           %-------------------------------------------%
 !
-            call av ( comm, nloc, nx, mv_buf,
-     &                workd(ipntr(1)), workd(ipntr(2)))
+            call av ( comm, nloc, nx, mv_buf,&
+                      workd(ipntr(1)), workd(ipntr(2)))
 !
 !           %-----------------------------------------%
 !           | L O O P   B A C K to call ZNAUPD again. |
@@ -303,10 +297,10 @@
 !
          rvec = .true.
 !
-         call pzneupd (comm, rvec, 'A', select, d, v, ldv, sigma,
-     &        workev, bmat, nloc, which, nev, tol, resid, ncv,
-     &        v, ldv, iparam, ipntr, workd, workl, lworkl,
-     &        rwork, info)
+         call pzneupd (comm, rvec, 'A', select, d, v, ldv, sigma,&
+              workev, bmat, nloc, which, nev, tol, resid, ncv,&
+              v, ldv, iparam, ipntr, workd, workl, lworkl,&
+              rwork, info)
 !
 !        %----------------------------------------------%
 !        | Eigenvalues are returned in the one          |
@@ -363,8 +357,8 @@
 !            | Display computed residuals. |
 !            %-----------------------------%
 !
-             call pdmout(comm, 6, nconv, 3, rd, maxncv, -6,
-     &            'Ritz values (Real, Imag) and direct residuals')
+             call pdmout(comm, 6, nconv, 3, rd, maxncv, -6,&
+                  'Ritz values (Real, Imag) and direct residuals')
           end if
 !
 !        %-------------------------------------------%
@@ -378,8 +372,8 @@
              print *, ' '
          else if ( info .eq. 3) then
              print *, ' '
-             print *, ' No shifts could be applied during implicit
-     &                  Arnoldi update, try increasing NCV.'
+             print *, ' No shifts could be applied during implicit'&
+                    , ' Arnoldi update, try increasing NCV.'
              print *, ' '
          end if
 !
@@ -390,13 +384,13 @@
          print *, ' Size of the matrix is ', n
          print *, ' The number of processors is ', nprocs
          print *, ' The number of Ritz values requested is ', nev
-         print *, ' The number of Arnoldi vectors generated',
-     &            ' (NCV) is ', ncv
+         print *, ' The number of Arnoldi vectors generated',&
+                  ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ',
-     &              nconv
-         print *, ' The number of Implicit Arnoldi update',
-     &            ' iterations taken is ', iparam(3)
+         print *, ' The number of converged Ritz values is ',&
+                    nconv
+         print *, ' The number of Implicit Arnoldi update',&
+                  ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
          print *, ' The convergence criterion is ', tol
          print *, ' '
@@ -459,8 +453,7 @@
       integer*4         nprocs, myid, ierr, next, prev
 !
       integer           nloc, np, j, lo, nx
-      Complex*16
-     &                  v(nloc), w(nloc), mv_buf(nx), one
+      Complex*16        v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = (1.0, 0.0))
       external          zaxpy, tv
 !
@@ -485,22 +478,22 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
-         call mpi_send( v((np-1)*nx+1), nx, MPI_DOUBLE_COMPLEX,
-     &                  next, myid+1, comm, ierr )
+         call mpi_send( v((np-1)*nx+1), nx, MPI_DOUBLE_COMPLEX,&
+                        next, myid+1, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, nx, MPI_DOUBLE_COMPLEX, prev, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_DOUBLE_COMPLEX, prev, myid,&
+                        comm, status, ierr )
          call zaxpy( nx, -one, mv_buf, 1, w(1), 1 )
       endif
 !
       if ( myid .gt. 0 ) then
-         call mpi_send( v(1), nx, MPI_DOUBLE_COMPLEX,
-     &                  prev, myid-1, comm, ierr )
+         call mpi_send( v(1), nx, MPI_DOUBLE_COMPLEX,&
+                        prev, myid-1, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, nx, MPI_DOUBLE_COMPLEX, next, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_DOUBLE_COMPLEX, next, myid,&
+                        comm, status, ierr )
          call zaxpy( nx, -one, mv_buf, 1, w(lo+1), 1 )
       endif
 !
@@ -510,11 +503,9 @@
       subroutine tv (nx, x, y)
 !
       integer           nx, j
-      Complex*16
-     &                  x(nx), y(nx), h, dd, dl, du
+      Complex*16        x(nx), y(nx), h, dd, dl, du
 !
-      Complex*16
-     &                  one, rho
+      Complex*16        one, rho
       parameter         (one = (1.0, 0.0), rho = (100.0, 0.0))
 !
 !     Compute the matrix vector multiplication y<---T*x

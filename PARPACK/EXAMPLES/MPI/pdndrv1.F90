@@ -104,11 +104,10 @@
 !
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
-      Double precision
-     &                  ax(maxnloc), d(maxncv,3), resid(maxnloc),
-     &                  v(ldv,maxncv), workd(3*maxnloc),
-     &                  workev(3*maxncv),
-     &                  workl(3*maxncv*maxncv+6*maxncv)
+      Double precision  ax(maxnloc), d(maxncv,3), resid(maxnloc),&
+                        v(ldv,maxncv), workd(3*maxnloc),&
+                        workev(3*maxncv),&
+                        workl(3*maxncv*maxncv+6*maxncv)
 !
 !     %------------------------------------%
 !     | Local Scalars                      |
@@ -118,33 +117,29 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, j, nx
-     &                  nloc, nconv, maxitr, ishfts, mode
-      Double precision
-     &                  tol, sigmar, sigmai
+      integer           ido, n, nev, ncv, lworkl, info, j, nx,&
+                        nloc, nconv, maxitr, ishfts, mode
+      Double precision  tol, sigmar, sigmai
       logical           first, rvec
 !
 !     %----------------------------------------------%
 !     | Local Buffers needed for MPI communication |
 !     %----------------------------------------------%
 !
-      Double precision
-     &                  mv_buf(maxnloc)
+      Double precision  mv_buf(maxnloc)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
-     &                  zero
+      Double precision  zero
       parameter         (zero = 0.0)
 !
 !     %-----------------------------%
 !     | BLAS & LAPACK routines used |
 !     %-----------------------------%
 !
-      Double precision
-     &                  dlapy2, pdnorm2
+      Double precision  dlapy2, pdnorm2
       external          dlapy2, daxpy, pdnorm2
 !
 !     %---------------------%
@@ -256,8 +251,8 @@
 !        | has been exceeded.                          |
 !        %---------------------------------------------%
 !
-         call pdnaupd(comm, ido, bmat, nloc, which, nev, tol, resid,
-     &        ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info )
+         call pdnaupd(comm, ido, bmat, nloc, which, nev, tol, resid,&
+              ncv, v, ldv, iparam, ipntr, workd, workl, lworkl, info )
 !
          if (ido .eq. -1 .or. ido .eq. 1) then
 !
@@ -271,8 +266,8 @@
 !           | product to workd(ipntr(2)).               |
 !           %-------------------------------------------%
 !
-            call av ( comm, nloc, nx, mv_buf,
-     &                workd(ipntr(1)), workd(ipntr(2)))
+            call av ( comm, nloc, nx, mv_buf,&
+                      workd(ipntr(1)), workd(ipntr(2)))
 !
 !           %-----------------------------------------%
 !           | L O O P   B A C K to call PDNAUPD again.|
@@ -315,10 +310,10 @@
 !
          rvec = .true.
 !
-         call pdneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,
-     &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol,
-     &        resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-     &        lworkl, info )
+         call pdneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,&
+              sigmar, sigmai, workev, bmat, nloc, which, nev, tol,&
+              resid, ncv, v, ldv, iparam, ipntr, workd, workl,&
+              lworkl, info )
 !
 !        %-----------------------------------------------%
 !        | The real part of the eigenvalue is returned   |
@@ -404,8 +399,8 @@
 !            | Display computed residuals. |
 !            %-----------------------------%
 !
-             call pdmout(comm, 6, nconv, 3, d, maxncv, -6,
-     &            'Ritz values (Real,Imag) and direct residuals')
+             call pdmout(comm, 6, nconv, 3, d, maxncv, -6,&
+                  'Ritz values (Real,Imag) and direct residuals')
           end if
 !
 !        %-------------------------------------------%
@@ -419,8 +414,8 @@
              print *, ' '
          else if ( info .eq. 3) then
              print *, ' '
-             print *, ' No shifts could be applied during implicit
-     &                  Arnoldi update, try increasing NCV.'
+             print *, ' No shifts could be applied during implicit'&
+                    , ' Arnoldi update, try increasing NCV.'
              print *, ' '
          end if
 !
@@ -431,13 +426,13 @@
          print *, ' Size of the matrix is ', n
          print *, ' The number of processors is ', nprocs
          print *, ' The number of Ritz values requested is ', nev
-         print *, ' The number of Arnoldi vectors generated',
-     &            ' (NCV) is ', ncv
+         print *, ' The number of Arnoldi vectors generated',&
+                  ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ',
-     &              nconv
-         print *, ' The number of Implicit Arnoldi update',
-     &            ' iterations taken is ', iparam(3)
+         print *, ' The number of converged Ritz values is ',&
+                    nconv
+         print *, ' The number of Implicit Arnoldi update',&
+                  ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
          print *, ' The convergence criterion is ', tol
          print *, ' '
@@ -504,8 +499,7 @@
       integer*4         nprocs, myid, ierr, next, prev
 !
       integer           nloc, np, j, lo, nx
-      Double precision
-     &                  v(nloc), w(nloc), mv_buf(nx), one
+      Double precision  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          daxpy, tv
 !
@@ -530,22 +524,22 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
-         call mpi_send( v((np-1)*nx+1), nx, MPI_DOUBLE_PRECISION,
-     &                  next, myid+1, comm, ierr )
+         call mpi_send( v((np-1)*nx+1), nx, MPI_DOUBLE_PRECISION,&
+                        next, myid+1, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, nx, MPI_DOUBLE_PRECISION, prev, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_DOUBLE_PRECISION, prev, myid,&
+                        comm, status, ierr )
          call daxpy( nx, -one, mv_buf, 1, w(1), 1 )
       endif
 !
       if ( myid .gt. 0 ) then
-         call mpi_send( v(1), nx, MPI_DOUBLE_PRECISION,
-     &                  prev, myid-1, comm, ierr )
+         call mpi_send( v(1), nx, MPI_DOUBLE_PRECISION,&
+                        prev, myid-1, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, nx, MPI_DOUBLE_PRECISION, next, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_DOUBLE_PRECISION, next, myid,&
+                        comm, status, ierr )
          call daxpy( nx, -one, mv_buf, 1, w(lo+1), 1 )
       endif
 !
@@ -555,13 +549,10 @@
       subroutine tv (nx, x, y)
 !
       integer           nx, j
-      Double precision
-     &                  x(nx), y(nx), h, dd, dl, du
+      Double precision  x(nx), y(nx), h, dd, dl, du
 !
-      Double precision
-     &                  one, zero, rho
-      parameter         (one = 1.0, zero = 0.0,
-     &                   rho = 0.0)
+      Double precision  one, zero, rho
+      parameter         (one = 1.0, zero = 0.0, rho = 0.0)
 !
 !     Compute the matrix vector multiplication y<---T*x
 !     where T is a nx by nx tridiagonal matrix with DD on the

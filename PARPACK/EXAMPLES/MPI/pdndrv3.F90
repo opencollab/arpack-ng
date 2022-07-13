@@ -94,8 +94,7 @@
 !     %-----------------------------%
 !
       integer           maxn, maxnev, maxncv, ldv
-      parameter         (maxn=256, maxnev=10, maxncv=25,
-     &                   ldv=maxn )
+      parameter         (maxn=256, maxnev=10, maxncv=25, ldv=maxn )
 !
 !     %--------------%
 !     | Local Arrays |
@@ -103,12 +102,11 @@
 !
       integer           iparam(11), ipntr(14)
       logical           select(maxncv)
-      Double precision
-     &                  ax(maxn), mx(maxn), d(maxncv, 3), resid(maxn),
-     &                  v(ldv,maxncv), workd(3*maxn),
-     &                  workev(3*maxncv),
-     &                  workl(3*maxncv*maxncv+6*maxncv),
-     &                  md(maxn), me(maxn-1), temp(maxn), temp_buf(maxn)
+      Double precision  ax(maxn), mx(maxn), d(maxncv, 3), resid(maxn),&
+                        v(ldv,maxncv), workd(3*maxn),&
+                        workev(3*maxncv),&
+                        workl(3*maxncv*maxncv+6*maxncv),&
+                        md(maxn), me(maxn-1), temp(maxn), temp_buf(maxn)
 !
 !     %------------------------------------%
 !     | Local Scalars                      |
@@ -118,25 +116,22 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, nloc, j,
-     &                  nconv, maxitr, ishfts, mode, blk
-      Double precision
-     &                  tol, sigmar, sigmai
+      integer           ido, n, nev, ncv, lworkl, info, nloc, j,&
+                        nconv, maxitr, ishfts, mode, blk
+      Double precision  tol, sigmar, sigmai
       logical           first, rvec
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
-     &                  zero, one
+      Double precision  zero, one
       parameter         (zero = 0.0, one = 1.0)
 !
 !     %-----------------------------%
 !     | BLAS & LAPACK routines used |
 !     %-----------------------------%
-      Double precision
-     &                  pdnorm2, dlapy2
+      Double precision  pdnorm2, dlapy2
       external          daxpy, pdnorm2, dpttrf, dpttrs, dlapy2
 !
 !     %-----------------------%
@@ -261,9 +256,9 @@
 !        | has been exceeded.                          |
 !        %---------------------------------------------%
 !
-         call pdnaupd( comm, ido, bmat, nloc, which, nev, tol, resid,
-     &                 ncv, v, ldv, iparam, ipntr, workd,
-     &                 workl, lworkl, info )
+         call pdnaupd( comm, ido, bmat, nloc, which, nev, tol, resid,&
+                       ncv, v, ldv, iparam, ipntr, workd,&
+                       workl, lworkl, info )
 !
          if (ido .eq. -1 .or. ido .eq. 1) then
 !
@@ -284,10 +279,10 @@
             do 15 j=1,nloc
                temp_buf(myid*blk + j) = workd(ipntr(2) + j - 1)
    15       continue
-            call MPI_ALLREDUCE( temp_buf, temp, n,
-     &            MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
-            call dpttrs(n, 1, md, me, temp, n,
-     &                  info)
+            call MPI_ALLREDUCE( temp_buf, temp, n,&
+                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+            call dpttrs(n, 1, md, me, temp, n,&
+                        info)
             if ( info .ne. 0 ) then
                print*, ' '
                print*, ' ERROR with _pttrs. '
@@ -357,10 +352,10 @@
 !        %-------------------------------------------%
 !
          rvec = .true.
-         call pdneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,
-     &        sigmar, sigmai, workev, bmat, nloc, which, nev, tol,
-     &        resid, ncv, v, ldv, iparam, ipntr, workd,
-     &        workl, lworkl, info )
+         call pdneupd ( comm, rvec, 'A', select, d, d(1,2), v, ldv,&
+              sigmar, sigmai, workev, bmat, nloc, which, nev, tol,&
+              resid, ncv, v, ldv, iparam, ipntr, workd,&
+              workl, lworkl, info )
 !
 !        %-----------------------------------------------%
 !        | The real part of the eigenvalue is returned   |
@@ -451,8 +446,8 @@
 !           | Display computed residuals. |
 !           %-----------------------------%
 !
-            call pdmout(comm, 6, nconv, 3, d, maxncv, -6,
-     &           'Ritz values (Real,Imag) and direct residuals')
+            call pdmout(comm, 6, nconv, 3, d, maxncv, -6,&
+                 'Ritz values (Real,Imag) and direct residuals')
 !
          end if
 !
@@ -467,8 +462,8 @@
             print *, ' '
          else if ( info .eq. 3) then
             print *, ' '
-            print *, ' No shifts could be applied during implicit
-     &                 Arnoldi update, try increasing NCV.'
+            print *, ' No shifts could be applied during implicit'&
+                   , ' Arnoldi update, try increasing NCV.'
             print *, ' '
          end if
 !
@@ -479,13 +474,13 @@
          print *, ' Size of the matrix is ', n
          print *, ' The number of processors is ', nprocs
          print *, ' The number of Ritz values requested is ', nev
-         print *, ' The number of Arnoldi vectors generated',
-     &            ' (NCV) is ', ncv
+         print *, ' The number of Arnoldi vectors generated',&
+                  ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ',
-     &              nconv
-         print *, ' The number of Implicit Arnoldi update',
-     &            ' iterations taken is ', iparam(3)
+         print *, ' The number of converged Ritz values is ',&
+                    nconv
+         print *, ' The number of Implicit Arnoldi update',&
+                  ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
          print *, ' The convergence criterion is ', tol
          print *, ' '
@@ -534,11 +529,9 @@
       integer*4         nprocs, myid, ierr, next, prev
 !
       integer           nloc, n, j
-      Double precision
-     &                  v(nloc), w(nloc), one, two, dd, dl, du,
-     &                  s, h, rho, mv_buf
-      parameter         ( rho = 10.0, one = 1.0,
-     &                    two = 2.0)
+      Double precision  v(nloc), w(nloc), one, two, dd, dl, du,&
+                        s, h, rho, mv_buf
+      parameter         ( rho = 10.0, one = 1.0, two = 2.0)
 !
       call MPI_COMM_RANK( comm, myid, ierr )
       call MPI_COMM_SIZE( comm, nprocs, ierr )
@@ -557,22 +550,22 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
-         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,
-     &                  next, myid+1, comm, ierr )
+         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
+                        next, myid+1, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
+                        comm, status, ierr )
          w(1) = w(1) + dl*mv_buf
       endif
 !
       if ( myid .gt. 0 ) then
-         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,
-     &                  prev, myid-1, comm, ierr )
+         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
+                        prev, myid-1, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
+                        comm, status, ierr )
          w(nloc) = w(nloc) + du*mv_buf
       endif
 !
@@ -601,8 +594,7 @@
       integer*4         nprocs, myid, ierr, next, prev
 !
       integer           nloc, j
-      Double precision
-     &                  v(nloc), w(nloc), one, four, mv_buf
+      Double precision  v(nloc), w(nloc), one, four, mv_buf
       parameter         ( one = 1.0, four = 4.0)
 !
       call MPI_COMM_RANK( comm, myid, ierr )
@@ -617,22 +609,22 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
-         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,
-     &                  next, myid+1, comm, ierr )
+         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
+                        next, myid+1, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
+                        comm, status, ierr )
          w(1) = w(1) + mv_buf
       endif
 !
       if ( myid .gt. 0 ) then
-         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,
-     &                  prev, myid-1, comm, ierr )
+         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
+                        prev, myid-1, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
+                        comm, status, ierr )
          w(nloc) = w(nloc) + mv_buf
       endif
 !
@@ -641,8 +633,7 @@
 !------------------------------------------------------------
       subroutine mv2 (comm, n, v, w)
       integer           n, j, comm
-      Double precision
-     &                  v(n), w(n)
+      Double precision  v(n), w(n)
       do 10 j=1,n
          w(j) = v(j)
  10   continue

@@ -92,17 +92,15 @@
 !     %-----------------------------%
 !
       integer          maxnloc, maxnev, maxncv, ldv
-      parameter       (maxnloc=256, maxnev=10, maxncv=25,
-     &                 ldv=maxnloc )
+      parameter       (maxnloc=256, maxnev=10, maxncv=25, ldv=maxnloc )
 !
 !     %--------------%
 !     | Local Arrays |
 !     %--------------%
 !
-      Real
-     &                 v(ldv,maxncv), workl(maxncv*(maxncv+8)),
-     &                 workd(3*maxnloc), d(maxncv,2), resid(maxnloc),
-     &                 ax(maxnloc)
+      Real             v(ldv,maxncv), workl(maxncv*(maxncv+8)),&
+                       workd(3*maxnloc), d(maxncv,2), resid(maxnloc),&
+                       ax(maxnloc)
       logical          select(maxncv)
       integer          iparam(11), ipntr(11)
 !
@@ -114,33 +112,29 @@
 !     %------------------------------------%
 !
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, nloc, j, nx
-     &                 nconv, maxitr, mode, ishfts
+      integer          ido, n, nev, ncv, lworkl, info, nloc, j, nx,&
+                       nconv, maxitr, mode, ishfts
       logical          rvec
-      Real
-     &                 tol, sigma
+      Real             tol, sigma
 !
 !     %----------------------------------------------%
 !     | Local Buffers needed for MPI communication |
 !     %----------------------------------------------%
 !
-      Real
-     &                  mv_buf(maxnloc)
+      Real             mv_buf(maxnloc)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
-     &                 zero
+      Real             zero
       parameter        (zero = 0.0)
 !
 !     %-----------------------------%
 !     | BLAS & LAPACK routines used |
 !     %-----------------------------%
 !
-      Real
-     &                 psnorm2
+      Real             psnorm2
       external         psnorm2, saxpy
 !
 !     %---------------------%
@@ -252,9 +246,9 @@
 !        | has been exceeded.                          |
 !        %---------------------------------------------%
 !
-         call pssaupd ( comm, ido, bmat, nloc, which, nev, tol, resid,
-     &                 ncv, v, ldv, iparam, ipntr, workd, workl,
-     &                 lworkl, info )
+         call pssaupd ( comm, ido, bmat, nloc, which, nev, tol, resid,&
+                       ncv, v, ldv, iparam, ipntr, workd, workl,&
+                       lworkl, info )
 !
          if (ido .eq. -1 .or. ido .eq. 1) then
 !
@@ -268,8 +262,8 @@
 !           | workd(ipntr(2)).                     |
 !           %--------------------------------------%
 !
-            call av ( comm, nloc, nx, mv_buf,
-     &               workd(ipntr(1)), workd(ipntr(2)))
+            call av ( comm, nloc, nx, mv_buf,&
+                     workd(ipntr(1)), workd(ipntr(2)))
 !
 !           %-----------------------------------------%
 !           | L O O P   B A C K to call PSSAUPD again.|
@@ -312,10 +306,10 @@
 !
          rvec = .true.
 !
-         call psseupd ( comm, rvec, 'All', select,
-     &        d, v, ldv, sigma,
-     &        bmat, nloc, which, nev, tol, resid, ncv, v, ldv,
-     &        iparam, ipntr, workd, workl, lworkl, info )
+         call psseupd ( comm, rvec, 'All', select,&
+              d, v, ldv, sigma,&
+              bmat, nloc, which, nev, tol, resid, ncv, v, ldv,&
+              iparam, ipntr, workd, workl, lworkl, info )
 !        %----------------------------------------------%
 !        | Eigenvalues are returned in the first column |
 !        | of the two dimensional array D and the       |
@@ -370,8 +364,8 @@
 !            | Display computed residuals    |
 !            %-------------------------------%
 !
-             call psmout(comm, 6, nconv, 2, d, maxncv, -6,
-     &            'Ritz values and direct residuals')
+             call psmout(comm, 6, nconv, 2, d, maxncv, -6,&
+                  'Ritz values and direct residuals')
          end if
 !
 !        %------------------------------------------%
@@ -385,8 +379,8 @@
             print *, ' '
          else if ( info .eq. 3) then
             print *, ' '
-            print *, ' No shifts could be applied during implicit
-     &                 Arnoldi update, try increasing NCV.'
+            print *, ' No shifts could be applied during implicit'&
+                   , ' Arnoldi update, try increasing NCV.'
             print *, ' '
          end if
 !
@@ -397,13 +391,13 @@
          print *, ' Size of the matrix is ', n
          print *, ' The number of processors is ', nprocs
          print *, ' The number of Ritz values requested is ', nev
-         print *, ' The number of Arnoldi vectors generated',
-     &            ' (NCV) is ', ncv
+         print *, ' The number of Arnoldi vectors generated',&
+                  ' (NCV) is ', ncv
          print *, ' What portion of the spectrum: ', which
-         print *, ' The number of converged Ritz values is ',
-     &              nconv
-         print *, ' The number of Implicit Arnoldi update',
-     &            ' iterations taken is ', iparam(3)
+         print *, ' The number of converged Ritz values is ',&
+                    nconv
+         print *, ' The number of Implicit Arnoldi update',&
+                  ' iterations taken is ', iparam(3)
          print *, ' The number of OP*x is ', iparam(9)
          print *, ' The convergence criterion is ', tol
          print *, ' '
@@ -455,8 +449,7 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev
       integer           nloc, np, j, lo, nx
-      Real
-     &                  v(nloc), w(nloc), mv_buf(nx), one
+      Real              v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          saxpy
 
@@ -485,22 +478,22 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
-         call mpi_send( v((np-1)*nx+1), nx, MPI_REAL,
-     &                  next, myid+1, comm, ierr )
+         call mpi_send( v((np-1)*nx+1), nx, MPI_REAL,&
+                        next, myid+1, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, nx, MPI_REAL, prev, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_REAL, prev, myid,&
+                        comm, status, ierr )
          call saxpy( nx, -one, mv_buf, 1, w(1), 1 )
       endif
 !
       if ( myid .gt. 0 ) then
-         call mpi_send( v(1), nx, MPI_REAL,
-     &                  prev, myid-1, comm, ierr )
+         call mpi_send( v(1), nx, MPI_REAL,&
+                        prev, myid-1, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, nx, MPI_REAL, next, myid,
-     &                  comm, status, ierr )
+         call mpi_recv( mv_buf, nx, MPI_REAL, next, myid,&
+                        comm, status, ierr )
          call saxpy( nx, -one, mv_buf, 1, w(lo+1), 1 )
       endif
 !
@@ -510,11 +503,9 @@
       subroutine tv (nx, x, y)
 !
       integer           nx, j
-      Real
-     &                  x(nx), y(nx), dd, dl, du
+      Real              x(nx), y(nx), dd, dl, du
 !
-      Real
-     &                 one
+      Real             one
       parameter        (one = 1.0 )
 !
 !     Compute the matrix vector multiplication y<---T*x
