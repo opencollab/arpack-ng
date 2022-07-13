@@ -172,7 +172,6 @@
       blk = nloc
       if ( mod(n, nprocs) .gt. 0 ) then
          if ( myid .eq. nprocs-1 ) nloc = nloc + mod(n, nprocs)
-*      if ( mod(n, nprocs) .gt. myid ) nloc = nloc + 1
       endif
 !
       if ( nloc .gt. maxn ) then
