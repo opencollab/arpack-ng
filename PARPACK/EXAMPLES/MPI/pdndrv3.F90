@@ -526,7 +526,7 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev
+      integer*4         nprocs, myid, ierr, next, prev, tag
 !
       integer*4         nloc, n, j
       Double precision  v(nloc), w(nloc), one, two, dd, dl, du,&
@@ -550,8 +550,9 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
+         tag = myid+1
          call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
-                        next, myid+1, comm, ierr )
+                        next, tag, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
          call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
@@ -560,8 +561,9 @@
       endif
 !
       if ( myid .gt. 0 ) then
+         tag = myid-1
          call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
-                        prev, myid-1, comm, ierr )
+                        prev, tag, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
          call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
@@ -591,7 +593,7 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev
+      integer*4         nprocs, myid, ierr, next, prev, tag
 !
       integer*4         nloc, j
       Double precision  v(nloc), w(nloc), one, four, mv_buf
@@ -609,8 +611,9 @@
       next = myid + 1
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
+         tag = myid+1
          call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
-                        next, myid+1, comm, ierr )
+                        next, tag, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
          call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
@@ -619,8 +622,9 @@
       endif
 !
       if ( myid .gt. 0 ) then
+         tag = myid-1
          call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
-                        prev, myid-1, comm, ierr )
+                        prev, tag, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
          call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
