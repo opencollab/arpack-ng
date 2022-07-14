@@ -449,7 +449,8 @@
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
       integer*4         nprocs, myid, ierr, next, prev
-      integer*4         nloc, nx, np, j, lo
+      integer*4         nloc, nx, np
+      integer           j, lo
       Real              v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          saxpy

@@ -453,7 +453,8 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev
 !
-      integer*4         nloc, nx, np, j, lo
+      integer*4         nloc, nx, np
+      integer           j, lo
       Complex           v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = (1.0, 0.0))
       external          caxpy, tv
