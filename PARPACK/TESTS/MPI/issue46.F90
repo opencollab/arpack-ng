@@ -308,10 +308,10 @@
 !
 !
             if ( myid .eq. 0 ) then
-             	print *, ' '
-             	print *, ' Error with _seupd, info = ', info
-             	print *, ' Check the documentation of _seupd. '
-             	print *, ' '
+               print *, ' '
+               print *, ' Error with _seupd, info = ', info
+               print *, ' Check the documentation of _seupd. '
+               print *, ' '
             endif
 !
          else
