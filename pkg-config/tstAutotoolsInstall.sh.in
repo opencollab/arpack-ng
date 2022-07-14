@@ -109,7 +109,7 @@ echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                        
 echo "dnbdr1_LDADD   = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                       " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
 echo "pdndrv1_SOURCES = pdndrv1.F90 dnband.f                                                               " >> Makefile.am
-echo "pdndrv1_FFLAGS  = \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                                               " >> Makefile.am
+echo "pdndrv1_FCFLAGS = \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                                               " >> Makefile.am
 echo "pdndrv1_LDADD   = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_Fortran_LIBS)" >> Makefile.am
 
 # 5. Build and test this new project with cmake: for this to be possible, PKG_CHECK_MODULES must work.
