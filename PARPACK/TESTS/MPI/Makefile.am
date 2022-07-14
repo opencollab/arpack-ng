@@ -5,11 +5,8 @@ LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la 
 LOG_COMPILER = mpirun
 LOG_FLAGS = -n 2
 
-SISS = issue46
-
-check_PROGRAMS = $(SISS)
 if ICB
-check_PROGRAMS += icb_parpack_c
+check_PROGRAMS = icb_parpack_c
 check_PROGRAMS += icb_parpack_cpp
 endif
 
