@@ -528,7 +528,7 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev, tag
 !
-      integer*4         nloc, n, j
+      integer*4         nloc, n, j, start
       Double precision  v(nloc), w(nloc), one, two, dd, dl, du,&
                         s, h, rho, mv_buf
       parameter         ( rho = 10.0, one = 1.0, two = 2.0)
@@ -540,6 +540,7 @@
       dd = two
       dl = -one - s
       du = -one + s
+      start = 1
 !
       w(1) =  dd*v(1) + du*v(2)
       do 10 j = 2,nloc-1
@@ -551,22 +552,22 @@
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
          tag = myid+1
-         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
+         call mpi_send( v(nloc), start, MPI_DOUBLE_PRECISION,&
                         next, tag, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
+         call mpi_recv( mv_buf, start, MPI_DOUBLE_PRECISION, prev, myid,&
                         comm, status, ierr )
          w(1) = w(1) + dl*mv_buf
       endif
 !
       if ( myid .gt. 0 ) then
          tag = myid-1
-         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
+         call mpi_send( v(1), start, MPI_DOUBLE_PRECISION,&
                         prev, tag, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
+         call mpi_recv( mv_buf, start, MPI_DOUBLE_PRECISION, next, myid,&
                         comm, status, ierr )
          w(nloc) = w(nloc) + du*mv_buf
       endif
@@ -595,12 +596,13 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev, tag
 !
-      integer*4         nloc, j
+      integer*4         nloc, j, start
       Double precision  v(nloc), w(nloc), one, four, mv_buf
       parameter         ( one = 1.0, four = 4.0)
 !
       call MPI_COMM_RANK( comm, myid, ierr )
       call MPI_COMM_SIZE( comm, nprocs, ierr )
+      start = 1
 !
       w(1) =  four*v(1) + one*v(2)
       do 10 j = 2,nloc-1
@@ -612,22 +614,22 @@
       prev = myid - 1
       if ( myid .lt. nprocs-1 ) then
          tag = myid+1
-         call mpi_send( v(nloc), 1, MPI_DOUBLE_PRECISION,&
+         call mpi_send( v(nloc), start, MPI_DOUBLE_PRECISION,&
                         next, tag, comm, ierr )
       endif
       if ( myid .gt. 0 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, prev, myid,&
+         call mpi_recv( mv_buf, start, MPI_DOUBLE_PRECISION, prev, myid,&
                         comm, status, ierr )
          w(1) = w(1) + mv_buf
       endif
 !
       if ( myid .gt. 0 ) then
          tag = myid-1
-         call mpi_send( v(1), 1, MPI_DOUBLE_PRECISION,&
+         call mpi_send( v(1), start, MPI_DOUBLE_PRECISION,&
                         prev, tag, comm, ierr )
       endif
       if ( myid .lt. nprocs-1 ) then
-         call mpi_recv( mv_buf, 1, MPI_DOUBLE_PRECISION, next, myid,&
+         call mpi_recv( mv_buf, start, MPI_DOUBLE_PRECISION, next, myid,&
                         comm, status, ierr )
          w(nloc) = w(nloc) + mv_buf
       endif
