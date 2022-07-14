@@ -116,9 +116,9 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, j,&
+      integer           ido, nev, ncv, lworkl, info, j,&
                         nconv, maxitr, ishfts, mode, blk
-      integer*4         nloc
+      integer*4         nloc, n
       Double precision  tol, sigmar, sigmai
       logical           first, rvec
 !
