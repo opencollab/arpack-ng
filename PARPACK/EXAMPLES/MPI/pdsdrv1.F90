@@ -448,8 +448,8 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev, nx
-      integer           nloc, np, j, lo
+      integer*4         nprocs, myid, ierr, next, prev, nx, np
+      integer           nloc, j, lo
       Double precision  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          daxpy
