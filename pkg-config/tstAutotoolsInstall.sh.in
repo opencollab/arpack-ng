@@ -62,13 +62,27 @@ echo "                                                                        " 
 echo "AC_LANG_PUSH([Fortran 77])                                              " >> configure.ac
 echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" >> configure.ac
 echo "F77=\$MPIF77                                                            " >> configure.ac
-echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
+echo "AC_SUBST([MPI_Fortran_LIBS], [\$MPILIBS])                               " >> configure.ac
+echo "AC_LANG_POP([Fortran 77])                                               " >> configure.ac
 echo "                                                                        " >> configure.ac
-echo "AC_LANG_PUSH([Fortran 77])"                                                                                                                       >> configure.ac
-echo "AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS=\"$FFLAGS -cpp\","                                                                                             >> configure.ac
-echo "                      AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS=\"$FFLAGS -fpp\","                                                                       >> configure.ac
-echo "                                            AC_MSG_WARN([configure does not know how to preprocess Fortran code: set it manually via FFLAGS.])))" >> configure.ac
-echo "AC_LANG_POP([Fortran 77])"                                                                                                                        >> configure.ac
+echo "AC_LANG_PUSH([Fortran])                                                 " >> configure.ac
+echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" >> configure.ac
+echo "FC=\$MPIFC                                                              " >> configure.ac
+echo "AC_FC_LIBRARY_LDFLAGS dnl set FCLIBS                                    " >> configure.ac
+echo "AC_SUBST([MPI_Fortran_LIBS], [\$MPILIBS \$FCLIBS])                      " >> configure.ac
+echo "AC_LANG_POP([Fortran])                                                  " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([Fortran 77])                                                                       " >> configure.ac
+echo "AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS=\"$FFLAGS -cpp\",                                             " >> configure.ac
+echo "                      AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS=\"$FFLAGS -fpp\",                       " >> configure.ac
+echo "                                            AC_MSG_WARN([use FFLAGS to set preprocess flags.]))) " >> configure.ac
+echo "AC_LANG_POP([Fortran 77])                                                                        " >> configure.ac
+echo "                                                                                                 " >> configure.ac
+echo "AC_LANG_PUSH([Fortran])                                                                          " >> configure.ac
+echo "AX_CHECK_COMPILE_FLAG(-cpp, FCFLAGS=\"$FCFLAGS -cpp\",                                           " >> configure.ac
+echo "                      AX_CHECK_COMPILE_FLAG(-fpp, FCFLAGS=\"$FCFLAGS -fpp\",                     " >> configure.ac
+echo "                                            AC_MSG_WARN([use FCFLAGS to set preprocess flags.])))" >> configure.ac
+echo "AC_LANG_POP([Fortran])                                                                           " >> configure.ac
 echo "                                                                        " >> configure.ac
 echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
