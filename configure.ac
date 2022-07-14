@@ -144,6 +144,14 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 	F77=$MPIF77
 	AC_LANG_POP([Fortran 77])
 
+  dnl Need mpif90 as MPI examples must have been moved from .f to .F90.
+  AC_LANG_PUSH([Fortran])
+  AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
+  FC=$MPIFC
+  AC_FC_LIBRARY_LDFLAGS dnl set FCLIBS
+  AC_SUBST([MPI_Fortran_LIBS], ["$MPILIBS $FCLIBS"])
+  AC_LANG_POP([Fortran])
+
 	FCFLAGS=$FCFLAGS_SAVE
 	FFLAGS=$FFLAGS_SAVE
 
