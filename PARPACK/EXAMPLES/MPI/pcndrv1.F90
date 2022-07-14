@@ -82,7 +82,7 @@
 #else
       integer*4         comm
 #endif
-      integer*4         myid, nprocs, rc, ierr
+      integer*4         myid, nprocs, rc, ierr, nx
 
 !     %-----------------------------%
 !     | Define maximum dimensions   |
@@ -116,7 +116,7 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, j, nx,&
+      integer           ido, n, nev, ncv, lworkl, info, j,&
                         nloc, nconv, maxitr, ishfts, mode
       Complex           sigma
       Real              tol
@@ -450,9 +450,9 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev
+      integer*4         nprocs, myid, ierr, next, prev, nx
 !
-      integer           nloc, np, j, lo, nx
+      integer           nloc, np, j, lo
       Complex           v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = (1.0, 0.0))
       external          caxpy, tv
@@ -502,7 +502,8 @@
 !=========================================================================
       subroutine tv (nx, x, y)
 !
-      integer           nx, j
+      integer*4         nx
+      integer           j
       Complex           x(nx), y(nx), h, dd, dl, du
 !
       Complex           one, rho

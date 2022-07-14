@@ -79,7 +79,7 @@
 #else
       integer*4         comm
 #endif
-      integer*4         myid, nprocs, rc, ierr
+      integer*4         myid, nprocs, rc, ierr, nx
 
 !
 !     %-----------------------------%
@@ -113,7 +113,7 @@
 !     %------------------------------------%
 !
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, nloc, j, nx,&
+      integer          ido, n, nev, ncv, lworkl, info, nloc, j,&
                        nconv, maxitr, mode, ishfts
       logical          rvec
       Double precision tol, sigma
@@ -448,8 +448,8 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev
-      integer           nloc, np, j, lo, nx
+      integer*4         nprocs, myid, ierr, next, prev, nx
+      integer           nloc, np, j, lo
       Double precision  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          daxpy
@@ -503,7 +503,8 @@
 !=========================================================================
       subroutine tv (nx, x, y)
 !
-      integer           nx, j
+      integer*4         nx
+      integer           j
       Double precision  x(nx), y(nx), dd, dl, du
 !
       Double precision one

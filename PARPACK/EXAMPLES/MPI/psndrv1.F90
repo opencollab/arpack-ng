@@ -82,7 +82,7 @@
 #else
       integer*4         comm
 #endif
-      integer*4         myid, nprocs, rc, ierr
+      integer*4         myid, nprocs, rc, ierr, nx
 
 !
 !     %-----------------------------%
@@ -117,7 +117,7 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, j, nx,&
+      integer           ido, n, nev, ncv, lworkl, info, j,&
                         nloc, nconv, maxitr, ishfts, mode
       Real              tol, sigmar, sigmai
       logical           first, rvec
@@ -496,9 +496,9 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev
+      integer*4         nprocs, myid, ierr, next, prev, nx
 !
-      integer           nloc, np, j, lo, nx
+      integer           nloc, np, j, lo
       Real              v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          saxpy, tv
@@ -548,7 +548,8 @@
 !=========================================================================
       subroutine tv (nx, x, y)
 !
-      integer           nx, j
+      integer*4         nx
+      integer           j
       Real              x(nx), y(nx), h, dd, dl, du
 !
       Real              one, zero, rho
