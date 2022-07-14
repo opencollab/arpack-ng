@@ -116,8 +116,9 @@
 !     %------------------------------------%
 !
       character         bmat*1, which*2
-      integer           ido, n, nev, ncv, lworkl, info, nloc, j,&
+      integer           ido, n, nev, ncv, lworkl, info, j,&
                         nconv, maxitr, ishfts, mode, blk
+      integer*4         nloc
       Real              tol, sigmar, sigmai
       logical           first, rvec
 !
@@ -527,7 +528,7 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev
 !
-      integer           nloc, n, j
+      integer*4         nloc, n, j
       Real              v(nloc), w(nloc), one, two, dd, dl, du,&
                         s, h, rho, mv_buf
       parameter         ( rho = 10.0, one = 1.0, two = 2.0)
@@ -592,7 +593,7 @@
 #endif
       integer*4         nprocs, myid, ierr, next, prev
 !
-      integer           nloc, j
+      integer*4         nloc, j
       Real              v(nloc), w(nloc), one, four, mv_buf
       parameter         ( one = 1.0, four = 4.0)
 !

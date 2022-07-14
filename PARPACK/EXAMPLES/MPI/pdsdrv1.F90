@@ -113,8 +113,9 @@
 !     %------------------------------------%
 !
       character        bmat*1, which*2
-      integer          ido, n, nev, ncv, lworkl, info, nloc, j,&
+      integer          ido, n, nev, ncv, lworkl, info, j,&
                        nconv, maxitr, mode, ishfts
+      integer*4        nloc
       logical          rvec
       Double precision tol, sigma
 !
@@ -448,8 +449,8 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev, nx, np
-      integer           nloc, j, lo
+      integer*4         nprocs, myid, ierr, next, prev
+      integer*4         nloc, nx, np, j, lo
       Double precision  v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = 1.0 )
       external          daxpy

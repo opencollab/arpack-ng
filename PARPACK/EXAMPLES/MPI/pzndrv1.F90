@@ -117,7 +117,8 @@
 !
       character         bmat*1, which*2
       integer           ido, n, nev, ncv, lworkl, info, j,&
-                        nloc, nconv, maxitr, ishfts, mode
+                        nconv, maxitr, ishfts, mode
+      integer*4         nloc
       Complex*16        sigma
       Double precision  tol
       logical           rvec
@@ -450,9 +451,9 @@
 #else
       integer*4         comm, status(MPI_STATUS_SIZE)
 #endif
-      integer*4         nprocs, myid, ierr, next, prev, nx, np
+      integer*4         nprocs, myid, ierr, next, prev
 !
-      integer           nloc, j, lo
+      integer*4         nloc, nx, np, j, lo
       Complex*16        v(nloc), w(nloc), mv_buf(nx), one
       parameter         (one = (1.0, 0.0))
       external          zaxpy, tv
