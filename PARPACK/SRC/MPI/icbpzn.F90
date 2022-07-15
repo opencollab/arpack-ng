@@ -4,9 +4,10 @@ subroutine pznaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, rwork, info)       &
                      bind(c, name="pznaupd_c")
   use :: iso_c_binding
+  use :: mpi_f08
   implicit none
 #include "arpackicb.h"
-  integer(kind=i_int),              value,              intent(in)    :: comm
+  type(MPI_Comm),                   value,              intent(in)    :: comm
   integer(kind=i_int),                                  intent(inout) :: ido
   character(kind=c_char),                               intent(in)    :: bmat
   integer(kind=i_int),              value,              intent(in)    :: n
@@ -41,9 +42,10 @@ subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
                      iparam, ipntr, workd, workl, lworkl, rwork, info)    &
                      bind(c, name="pzneupd_c")
   use :: iso_c_binding
+  use :: mpi_f08
   implicit none
 #include "arpackicb.h"
-  integer(kind=i_int),              value,              intent(in)    :: comm
+  type(MPI_Comm),                   value,              intent(in)    :: comm
   integer(kind=i_int),              value,              intent(in)    :: rvec
   character(kind=c_char),                               intent(in)    :: howmny
   integer(kind=i_int),              dimension(ncv),     intent(in)    :: select

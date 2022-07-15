@@ -4,9 +4,10 @@ subroutine pdnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, info)              &
                      bind(c, name="pdnaupd_c")
   use :: iso_c_binding
+  use :: mpi_f08
   implicit none
 #include "arpackicb.h"
-  integer(kind=i_int),    value,               intent(in)    :: comm
+  type(MPI_Comm),         value,               intent(in)    :: comm
   integer(kind=i_int),                         intent(inout) :: ido
   character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=i_int),    value,               intent(in)    :: n
@@ -41,9 +42,10 @@ subroutine pdneupd_c(comm, rvec, howmny, select,                  &
                      iparam, ipntr, workd, workl, lworkl, info)   &
                      bind(c, name="pdneupd_c")
   use :: iso_c_binding
+  use :: mpi_f08
   implicit none
 #include "arpackicb.h"
-  integer(kind=i_int),    value,               intent(in)    :: comm
+  type(MPI_Comm),         value,               intent(in)    :: comm
   integer(kind=i_int),    value,               intent(in)    :: rvec
   character(kind=c_char),                      intent(in)    :: howmny
   integer(kind=i_int),    dimension(ncv),      intent(in)    :: select
