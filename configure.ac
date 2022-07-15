@@ -146,7 +146,60 @@ AS_IF([test x"$enable_mpi" != x"no"], [
 
 	FCFLAGS=$FCFLAGS_SAVE
 	FFLAGS=$FFLAGS_SAVE
+
+  dnl Check if we can use ISO_C_BINDING provided by MPI.
+  AC_LANG_PUSH([Fortran 77])
+  AC_MSG_CHECKING([for MPI support for iso_c_binding])
+  AC_LINK_IFELSE(
+                 [
+                  AC_LANG_PROGRAM(
+                                  [],
+                                  [
+                                   USE :: mpi_f08
+                                   IMPLICIT NONE
+                                   type(MPI_Comm)    comm
+                                   type(MPI_Status)  status
+                                  ]
+                                 )
+                 ],
+                 [
+                  AC_MSG_RESULT([yes])
+                  FCFLAGS=$FCFLAGS" -DHAVE_MPI_ICB"
+                  FFLAGS=$FFLAGS" -DHAVE_MPI_ICB"
+                  AS_VAR_SET([enable_mpi_icb], [yes])
+                 ],
+                 [
+                  AC_MSG_RESULT([no])
+                  AC_MSG_WARN([MPI library does not support iso_c_binding])
+                  AS_VAR_SET([enable_mpi_icb], [no])
+                 ]
+                )
+  AC_LANG_POP([Fortran 77])
+
+  dnl As MPI can be used with or without ISO_C_BINDING (#ifdef), we need to preprocess code before compiling.
+  AC_LANG_PUSH([Fortran 77])
+  AX_CHECK_COMPILE_FLAG(-cpp, FFLAGS="$FFLAGS -cpp",
+                        AX_CHECK_COMPILE_FLAG(-fpp, FFLAGS="$FFLAGS -fpp",
+                                              AC_MSG_WARN([configure does not know how to preprocess Fortran code: set it manually via FFLAGS.])))
+  AC_LANG_POP([Fortran 77])
+
+  AC_LANG_PUSH([Fortran])
+  AX_CHECK_COMPILE_FLAG(-cpp, FCFLAGS="$FCFLAGS -cpp",
+                        AX_CHECK_COMPILE_FLAG(-fpp, FCFLAGS="$FCFLAGS -fpp",
+                                              AC_MSG_WARN([configure does not know how to preprocess Fortran code: set it manually via FCFLAGS.])))
+  AC_LANG_POP([Fortran])
 ])
+
+dnl Compiling with INTERFACE64 means you need to have control on integer type.
+dnl If MPI is also required, then MPI types must be consistent with ILP64:
+dnl to make sure of this, we must use the ISO_C_BINDING API provided by MPI.
+if test x"$INTERFACE64" == x"1"; then
+  if test x"$enable_mpi" != x"no"; then
+    if test x"$enable_mpi_icb" == x"no"; then
+      AC_MSG_ERROR([ILP64 support require use of MPI library which provides ISO_C_BINDING support])
+    fi
+  fi
+fi
 
 if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
@@ -348,7 +401,7 @@ AC_MSG_RESULT([
 Configuration summary for $PACKAGE_STRING
 --------------------------------------------------
 Installation prefix : $prefix
-MPI enabled         : $enable_mpi
+MPI enabled         : $enable_mpi (ICB provided $enable_mpi_icb)
 ICB enabled         : $enable_icb
 INTERFACE64         : $INTERFACE64
 F77                 : $F77
