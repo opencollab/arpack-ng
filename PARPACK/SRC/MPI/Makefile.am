@@ -4,7 +4,7 @@ F77 = $(MPIF77)
 FFLAGS_SAV = @FFLAGS@
 FFLAGS =
 
-PSRC = pcontext.f
+PSRC = pcontext.F90
 SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
        pssaitr.f pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
        psgetv0.f pslarnv.f psnorm2.f
@@ -25,8 +25,6 @@ DSRC += icbpds.F90 icbpdn.F90
 CSRC += icbpcn.F90
 ZSRC += icbpzn.F90
 endif
-
-EXTRA_DIST = debug.h stat.h pcontext.h
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt.la
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f
