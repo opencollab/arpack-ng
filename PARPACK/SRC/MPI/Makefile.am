@@ -34,7 +34,8 @@ lib_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@.la
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES = $(PSRC) $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/staini.f
-libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_FFLAGS = $(FFLAGS_SAV)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_FFLAGS = $(FFLAGS_SAV) -I$(top_builddir)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_FCFLAGS = $(FFLAGS_SAV) -I$(top_builddir)
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt.la \
 	$(top_builddir)/PARPACK/UTIL/MPI/libparpackutil.la \
 	$(top_builddir)/SRC/libarpack@LIBSUFFIX@@ITF64SUFFIX@.la \
