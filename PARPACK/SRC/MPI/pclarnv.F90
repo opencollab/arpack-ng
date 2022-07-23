@@ -50,7 +50,12 @@
 !
       subroutine pclarnv( comm, idist, iseed, n, x )
 !
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+#else
       integer   comm
+#endif
+
 !     ..
 !     .. Scalar Arguments ..
       integer			idist, n
