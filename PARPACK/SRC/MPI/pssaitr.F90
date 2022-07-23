@@ -210,8 +210,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pssaitr
-     &   (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,
+      subroutine pssaitr&
+     &   (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,&
      &    ipntr, workd, workl, info)
 !
 #include "pcontextF90.h"
@@ -241,7 +241,7 @@
 !
       character  bmat*1
       integer    ido, info, k, ldh, ldv, n, mode, np
-      Real
+      Real&
      &           rnorm
 !
 !     %-----------------%
@@ -249,15 +249,15 @@
 !     %-----------------%
 !
       integer    ipntr(3)
-      Real
-     &           h(ldh,2), resid(n), v(ldv,k+np), workd(3*n),
+      Real&
+     &           h(ldh,2), resid(n), v(ldv,k+np), workd(3*n),&
      &           workl(2*ldh)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -266,36 +266,36 @@
 !     %---------------%
 !
       logical    orth1, orth2, rstart, step3, step4
-      integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,
+      integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,&
      &           jj
-      Real
+      Real&
      &           rnorm1, wnorm(1), safmin, temp1, temp2(1)
-      save       orth1, orth2, rstart, step3, step4,
-     &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,
+      save       orth1, orth2, rstart, step3, step4,&
+     &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,&
      &           rnorm1, safmin, wnorm
 !
-      Real
+      Real&
      &           rnorm_buf
 !
 !     %-----------------------%
 !     | Local Array Arguments |
 !     %-----------------------%
 !
-      Real
+      Real&
      &           xtemp(2)
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   saxpy, scopy, sscal, sgemv, psgetv0, psvout, psmout,
+      external   saxpy, scopy, sscal, sgemv, psgetv0, psvout, psmout,&
      &           slascl, pivout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           sdot, psnorm2, pslamch10
       external   sdot, psnorm2, pslamch10
 !
@@ -397,9 +397,9 @@
  1000 continue
 !
          if (msglvl .gt. 2) then
-            call pivout (comm, logfil, 1, [j], ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,&
      &                  '_saitr: generating Arnoldi vector no.')
-            call psvout (comm, logfil, 1, [rnorm], ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,&
      &                  '_saitr: B-norm of the current residual =')
          end if
 !
@@ -417,7 +417,7 @@
 !           %---------------------------------------------------%
 !
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, [j], ndigit,
+               call pivout (comm, logfil, 1, [j], ndigit,&
      &                     '_saitr: ****** restart at step ******')
             end if
 !
@@ -439,7 +439,7 @@
 !           | RSTART = .true. flow returns here.   |
 !           %--------------------------------------%
 !
-            call psgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,
+            call psgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,&
      &                   resid, rnorm, ipntr, workd, workl, ierr)
             if (ido .ne. 99) go to 9000
             if (ierr .lt. 0) then
@@ -480,9 +480,9 @@
 !            | use LAPACK routine SLASCL               |
 !            %-----------------------------------------%
 !
-             call slascl ('General', i, i, rnorm, one, n, 1,
+             call slascl ('General', i, i, rnorm, one, n, 1,&
      &                    v(1,j), n, infol)
-             call slascl ('General', i, i, rnorm, one, n, 1,
+             call slascl ('General', i, i, rnorm, one, n, 1,&
      &                    workd(ipj), n, infol)
          end if
 !
@@ -577,12 +577,12 @@
 !           %----------------------------------%
 !
             rnorm_buf = sdot (n, resid, 1, workd(ivj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,&
      &           MPI_REAL, MPI_SUM, comm, ierr )
             wnorm(1) = sqrt(abs(wnorm(1)))
          else if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], wnorm, 1,&
      &           MPI_REAL, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(wnorm))
          else if (bmat .eq. 'I') then
@@ -604,14 +604,14 @@
 !        %------------------------------------------%
 !
          if (mode .ne. 2 ) then
-            call sgemv('T', n, j, one, v, ldv, workd(ipj), 1, zero,
+            call sgemv('T', n, j, one, v, ldv, workd(ipj), 1, zero,&
      &                  workl(j+1), 1)
-            call MPI_ALLREDUCE( workl(j+1), workl(1), j,
+            call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
      &                  MPI_REAL, MPI_SUM, comm, ierr)
          else if (mode .eq. 2) then
-            call sgemv('T', n, j, one, v, ldv, workd(ivj), 1, zero,
+            call sgemv('T', n, j, one, v, ldv, workd(ivj), 1, zero,&
      &                  workl(j+1), 1)
-            call MPI_ALLREDUCE( workl(j+1), workl(1), j,
+            call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
      &                  MPI_REAL, MPI_SUM, comm, ierr)
          end if
 !
@@ -620,7 +620,7 @@
 !        | RESID contains OP*v_{j}. See STEP 3. |
 !        %--------------------------------------%
 !
-         call sgemv('N', n, j, -one, v, ldv, workl(1), 1, one,
+         call sgemv('N', n, j, -one, v, ldv, workl(1), 1, one,&
      &               resid, 1)
 !
 !        %--------------------------------------%
@@ -674,7 +674,7 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,&
      &           MPI_REAL, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(temp2(1)))
          else if (bmat .eq. 'I') then
@@ -711,7 +711,7 @@
          if (msglvl .gt. 2) then
             xtemp(1) = wnorm(1)
             xtemp(2) = rnorm
-            call psvout (comm, logfil, 2, xtemp, ndigit,
+            call psvout (comm, logfil, 2, xtemp, ndigit,&
      &           '_naitr: re-orthonalization ; wnorm and rnorm are')
          end if
 !
@@ -720,9 +720,9 @@
 !        | WORKD(IRJ:IRJ+J-1) = v(:,1:J)'*WORKD(IPJ:IPJ+N-1). |
 !        %----------------------------------------------------%
 !
-         call sgemv ('T', n, j, one, v, ldv, workd(ipj), 1,
+         call sgemv ('T', n, j, one, v, ldv, workd(ipj), 1,&
      &               zero, workl(j+1), 1)
-         call MPI_ALLREDUCE( workl(j+1), workl(1), j,
+         call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
      &               MPI_REAL, MPI_SUM, comm, ierr)
 !
 !        %----------------------------------------------%
@@ -733,7 +733,7 @@
 !        | H(j,j) is updated.                           |
 !        %----------------------------------------------%
 !
-         call sgemv ('N', n, j, -one, v, ldv, workl(1), 1,
+         call sgemv ('N', n, j, -one, v, ldv, workl(1), 1,&
      &               one, resid, 1)
 !
          if (j .eq. 1  .or.  rstart) h(j,1) = zero
@@ -774,7 +774,7 @@
 !
          if (bmat .eq. 'G') then
            rnorm_buf = sdot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,
+           call MPI_ALLREDUCE( [rnorm_buf], temp2, 1,&
      &          MPI_REAL, MPI_SUM, comm, ierr )
            rnorm1 = sqrt(abs(temp2(1)))
          else if (bmat .eq. 'I') then
@@ -782,12 +782,12 @@
          end if
 !
          if (msglvl .gt. 0 .and. iter .gt. 0) then
-            call pivout (comm, logfil, 1, [j], ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,&
      &           '_naitr: Iterative refinement for Arnoldi residual')
             if (msglvl .gt. 2) then
                 xtemp(1) = rnorm
                 xtemp(2) = rnorm1
-                call psvout (comm, logfil, 2, xtemp, ndigit,
+                call psvout (comm, logfil, 2, xtemp, ndigit,&
      &           '_naitr: iterative refinement ; rnorm and rnorm1 are')
             end if
          end if
@@ -867,10 +867,10 @@
             ido = 99
 !
             if (msglvl .gt. 1) then
-               call psvout (comm, logfil, k+np, h(1,2), ndigit,
+               call psvout (comm, logfil, k+np, h(1,2), ndigit,&
      &         '_saitr: main diagonal of matrix H of step K+NP.')
                if (k+np .gt. 1) then
-               call psvout (comm, logfil, k+np-1, h(2,1), ndigit,
+               call psvout (comm, logfil, k+np-1, h(2,1), ndigit,&
      &         '_saitr: sub diagonal of matrix H of step K+NP.')
                end if
             end if
