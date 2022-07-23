@@ -93,7 +93,7 @@
 !-----------------------------------------------------------------------
 !
       subroutine pdseigt&
-     &   ( comm, rnorm, n, h, ldh, eig, bounds, workl, ierr )
+         ( comm, rnorm, n, h, ldh, eig, bounds, workl, ierr )
 !
 !     %--------------------%
 !     | MPI Communicator |
@@ -114,21 +114,21 @@
 !
       integer    ierr, ldh, n
       Double precision&
-     &           rnorm
+                 rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
       Double precision&
-     &           eig(n), bounds(n), h(ldh,2), workl(3*n)
+                 eig(n), bounds(n), h(ldh,2), workl(3*n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Double precision&
-     &           zero
+                 zero
       parameter (zero = 0.0)
 !
 !     %---------------%
@@ -163,10 +163,10 @@
 !
       if (msglvl .gt. 0) then
          call pdvout (comm, logfil, n, h(1,2), ndigit,&
-     &              '_seigt: main diagonal of matrix H')
+                    '_seigt: main diagonal of matrix H')
          if (n .gt. 1) then
          call pdvout (comm, logfil, n-1, h(2,1), ndigit,&
-     &              '_seigt: sub diagonal of matrix H')
+                    '_seigt: sub diagonal of matrix H')
          end if
       end if
 !
@@ -178,7 +178,7 @@
 !
       if (msglvl .gt. 1) then
          call pdvout (comm, logfil, n, bounds, ndigit,&
-     &              '_seigt: last row of the eigenvector matrix for H')
+                    '_seigt: last row of the eigenvector matrix for H')
       end if
 !
 !     %-----------------------------------------------%
