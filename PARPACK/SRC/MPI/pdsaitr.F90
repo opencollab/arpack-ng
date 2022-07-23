@@ -211,8 +211,8 @@
 !-----------------------------------------------------------------------
 !
       subroutine pdsaitr&
-     &   (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,&
-     &    ipntr, workd, workl, info)
+         (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,&
+          ipntr, workd, workl, info)
 !
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
@@ -242,7 +242,7 @@
       character  bmat*1
       integer    ido, info, k, ldh, ldv, n, mode, np
       Double precision&
-     &           rnorm
+                 rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
@@ -250,15 +250,15 @@
 !
       integer    ipntr(3)
       Double precision&
-     &           h(ldh,2), resid(n), v(ldv,k+np), workd(3*n),&
-     &           workl(2*ldh)
+                 h(ldh,2), resid(n), v(ldv,k+np), workd(3*n),&
+                 workl(2*ldh)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Double precision&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %---------------%
@@ -267,36 +267,36 @@
 !
       logical    orth1, orth2, rstart, step3, step4
       integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,&
-     &           jj
+                 jj
       Double precision&
-     &           rnorm1, wnorm, safmin, temp1, buf2(1)
+                 rnorm1, wnorm, safmin, temp1, buf2(1)
       save       orth1, orth2, rstart, step3, step4,&
-     &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,&
-     &           rnorm1, safmin, wnorm
+                 ierr, ipj, irj, ivj, iter, itry, j, msglvl,&
+                 rnorm1, safmin, wnorm
 !
       Double precision&
-     &           rnorm_buf
+                 rnorm_buf
 !
 !     %-----------------------%
 !     | Local Array Arguments |
 !     %-----------------------%
 !
       Double precision&
-     &           xtemp(2)
+                 xtemp(2)
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
       external   daxpy, dcopy, dscal, dgemv, pdgetv0, pdvout, pdmout,&
-     &           dlascl, pivout, arscnd
+                 dlascl, pivout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
       Double precision&
-     &           ddot, pdnorm2, pdlamch10
+                 ddot, pdnorm2, pdlamch10
       external   ddot, pdnorm2, pdlamch10
 !
 !     %-----------------%
@@ -398,9 +398,9 @@
 !
          if (msglvl .gt. 2) then
             call pivout (comm, logfil, 1, [j], ndigit,&
-     &                  '_saitr: generating Arnoldi vector no.')
+                        '_saitr: generating Arnoldi vector no.')
             call pdvout (comm, logfil, 1, [rnorm], ndigit,&
-     &                  '_saitr: B-norm of the current residual =')
+                        '_saitr: B-norm of the current residual =')
          end if
 !
 !        %---------------------------------------------------------%
@@ -418,7 +418,7 @@
 !
             if (msglvl .gt. 0) then
                call pivout (comm, logfil, 1, [j], ndigit,&
-     &                     '_saitr: ****** restart at step ******')
+                           '_saitr: ****** restart at step ******')
             end if
 !
 !           %---------------------------------------------%
@@ -440,7 +440,7 @@
 !           %--------------------------------------%
 !
             call pdgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,&
-     &                   resid, rnorm, ipntr, workd, workl, ierr)
+                         resid, rnorm, ipntr, workd, workl, ierr)
             if (ido .ne. 99) go to 9000
             if (ierr .lt. 0) then
                itry = itry + 1
@@ -481,9 +481,9 @@
 !            %-----------------------------------------%
 !
              call dlascl ('General', i, i, rnorm, one, n, 1,&
-     &                    v(1,j), n, infol)
+                          v(1,j), n, infol)
              call dlascl ('General', i, i, rnorm, one, n, 1,&
-     &                    workd(ipj), n, infol)
+                          workd(ipj), n, infol)
          end if
 !
 !        %------------------------------------------------------%
@@ -578,12 +578,12 @@
 !
             rnorm_buf = ddot (n, resid, 1, workd(ivj), 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
-     &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+                 MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
-     &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+                 MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             wnorm = pdnorm2( comm, n, resid, 1 )
@@ -605,14 +605,14 @@
 !
          if (mode .ne. 2 ) then
             call dgemv('T', n, j, one, v, ldv, workd(ipj), 1, zero,&
-     &                  workl(j+1), 1)
+                        workl(j+1), 1)
             call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
-     &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
+                        MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
          else if (mode .eq. 2) then
             call dgemv('T', n, j, one, v, ldv, workd(ivj), 1, zero,&
-     &                  workl(j+1), 1)
+                        workl(j+1), 1)
             call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
-     &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
+                        MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
          end if
 !
 !        %--------------------------------------%
@@ -621,7 +621,7 @@
 !        %--------------------------------------%
 !
          call dgemv('N', n, j, -one, v, ldv, workl(1), 1, one,&
-     &               resid, 1)
+                     resid, 1)
 !
 !        %--------------------------------------%
 !        | Extend H to have j rows and columns. |
@@ -675,7 +675,7 @@
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
-     &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+                 MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = pdnorm2( comm, n, resid, 1 )
@@ -712,7 +712,7 @@
             xtemp(1) = wnorm
             xtemp(2) = rnorm
             call pdvout (comm, logfil, 2, xtemp, ndigit,&
-     &           '_naitr: re-orthonalization ; wnorm and rnorm are')
+                 '_naitr: re-orthonalization ; wnorm and rnorm are')
          end if
 !
 !        %----------------------------------------------------%
@@ -721,9 +721,9 @@
 !        %----------------------------------------------------%
 !
          call dgemv ('T', n, j, one, v, ldv, workd(ipj), 1,&
-     &               zero, workl(j+1), 1)
+                     zero, workl(j+1), 1)
          call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
-     &               MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
+                     MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
 !
 !        %----------------------------------------------%
 !        | Compute the correction to the residual:      |
@@ -734,7 +734,7 @@
 !        %----------------------------------------------%
 !
          call dgemv ('N', n, j, -one, v, ldv, workl(1), 1,&
-     &               one, resid, 1)
+                     one, resid, 1)
 !
          if (j .eq. 1  .or.  rstart) h(j,1) = zero
          h(j,2) = h(j,2) + workl(j)
@@ -775,7 +775,7 @@
          if (bmat .eq. 'G') then
            rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
            call MPI_ALLREDUCE( [rnorm_buf], buf2(1), 1,&
-     &          MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+                MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
            rnorm1 = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
            rnorm1 = pdnorm2( comm, n, resid, 1 )
@@ -783,12 +783,12 @@
 !
          if (msglvl .gt. 0 .and. iter .gt. 0) then
             call pivout (comm, logfil, 1, [j], ndigit,&
-     &           '_naitr: Iterative refinement for Arnoldi residual')
+                 '_naitr: Iterative refinement for Arnoldi residual')
             if (msglvl .gt. 2) then
                 xtemp(1) = rnorm
                 xtemp(2) = rnorm1
                 call pdvout (comm, logfil, 2, xtemp, ndigit,&
-     &           '_naitr: iterative refinement ; rnorm and rnorm1 are')
+                 '_naitr: iterative refinement ; rnorm and rnorm1 are')
             end if
          end if
 !
@@ -868,10 +868,10 @@
 !
             if (msglvl .gt. 1) then
                call pdvout (comm, logfil, k+np, h(1,2), ndigit,&
-     &         '_saitr: main diagonal of matrix H of step K+NP.')
+               '_saitr: main diagonal of matrix H of step K+NP.')
                if (k+np .gt. 1) then
                call pdvout (comm, logfil, k+np-1, h(2,1), ndigit,&
-     &         '_saitr: sub diagonal of matrix H of step K+NP.')
+               '_saitr: sub diagonal of matrix H of step K+NP.')
                end if
             end if
 !
