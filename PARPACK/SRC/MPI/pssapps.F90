@@ -133,7 +133,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pssapps
+      subroutine pssapps&
      &  ( comm, n, kev, np, shift, v, ldv, h, ldh, resid, q, ldq, workd)
 !
 !     %--------------------%
@@ -160,15 +160,15 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Real
-     &           h(ldh,2), q(ldq,kev+np), resid(n), shift(np),
+      Real&
+     &           h(ldh,2), q(ldq,kev+np), resid(n), shift(np),&
      &           v(ldv,kev+np), workd(2*n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -177,7 +177,7 @@
 !     %---------------%
 !
       integer    i, iend, istart, itop, j, jj, kplusp, msglvl
-      Real
+      Real&
      &           a1, a2, a3, a4, big, c, epsmch, f, g, r, s
       save       epsmch
 !
@@ -186,14 +186,14 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   saxpy, scopy, sscal, slacpy, slartg, slaset, psvout,
+      external   saxpy, scopy, sscal, slacpy, slartg, slaset, psvout,&
      &           pivout, arscnd, sgemv
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           pslamch10
       external   pslamch10
 !
@@ -271,11 +271,11 @@
             big   = abs(h(i,2)) + abs(h(i+1,2))
             if (h(i+1,1) .le. epsmch*big) then
                if (msglvl .gt. 0) then
-                  call pivout (comm, logfil, 1, [i], ndigit,
+                  call pivout (comm, logfil, 1, [i], ndigit,&
      &                 '_sapps: deflation at row/column no.')
-                  call pivout (comm, logfil, 1, [jj], ndigit,
+                  call pivout (comm, logfil, 1, [jj], ndigit,&
      &                 '_sapps: occurred before shift number.')
-                  call psvout (comm, logfil, 1, h(i+1,1), ndigit,
+                  call psvout (comm, logfil, 1, h(i+1,1), ndigit,&
      &                 '_sapps: the corresponding off diagonal element')
                end if
                h(i+1,1) = zero
@@ -442,9 +442,9 @@
          big   = abs(h(i,2)) + abs(h(i+1,2))
          if (h(i+1,1) .le. epsmch*big) then
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, [i], ndigit,
+               call pivout (comm, logfil, 1, [i], ndigit,&
      &              '_sapps: deflation at row/column no.')
-               call psvout (comm, logfil, 1, h(i+1,1), ndigit,
+               call psvout (comm, logfil, 1, h(i+1,1), ndigit,&
      &              '_sapps: the corresponding off diagonal element')
             end if
             h(i+1,1) = zero
@@ -457,8 +457,8 @@
 !     | This is not necessary if h(kev+1,1) = 0.         |
 !     %-------------------------------------------------%
 !
-      if ( h(kev+1,1) .gt. zero )
-     &   call sgemv ('N', n, kplusp, one, v, ldv,
+      if ( h(kev+1,1) .gt. zero )&
+     &   call sgemv ('N', n, kplusp, one, v, ldv,&
      &                q(1,kev+1), 1, zero, workd(n+1), 1)
 !
 !     %-------------------------------------------------------%
@@ -469,7 +469,7 @@
 !     %-------------------------------------------------------%
 !
       do 130 i = 1, kev
-         call sgemv ('N', n, kplusp-i+1, one, v, ldv,
+         call sgemv ('N', n, kplusp-i+1, one, v, ldv,&
      &               q(1,kev-i+1), 1, zero, workd, 1)
          call scopy (n, workd, 1, v(1,kplusp-i+1), 1)
   130 continue
@@ -485,7 +485,7 @@
 !     | appropriate place if h(kev+1,1) .ne. zero. |
 !     %--------------------------------------------%
 !
-      if ( h(kev+1,1) .gt. zero )
+      if ( h(kev+1,1) .gt. zero )&
      &     call scopy (n, workd(n+1), 1, v(1,kev+1), 1)
 !
 !     %-------------------------------------%
@@ -497,18 +497,18 @@
 !     %-------------------------------------%
 !
       call sscal (n, q(kplusp,kev), resid, 1)
-      if (h(kev+1,1) .gt. zero)
+      if (h(kev+1,1) .gt. zero)&
      &   call saxpy (n, h(kev+1,1), v(1,kev+1), 1, resid, 1)
 !
       if (msglvl .gt. 1) then
-         call psvout (comm, logfil, 1, q(kplusp,kev), ndigit,
+         call psvout (comm, logfil, 1, q(kplusp,kev), ndigit,&
      &      '_sapps: sigmak of the updated residual vector')
-         call psvout (comm, logfil, 1, h(kev+1,1), ndigit,
+         call psvout (comm, logfil, 1, h(kev+1,1), ndigit,&
      &      '_sapps: betak of the updated residual vector')
-         call psvout (comm, logfil, kev, h(1,2), ndigit,
+         call psvout (comm, logfil, kev, h(1,2), ndigit,&
      &      '_sapps: updated main diagonal of H for next iteration')
          if (kev .gt. 1) then
-         call psvout (comm, logfil, kev-1, h(2,1), ndigit,
+         call psvout (comm, logfil, kev-1, h(2,1), ndigit,&
      &      '_sapps: updated sub diagonal of H for next iteration')
          end if
       end if
