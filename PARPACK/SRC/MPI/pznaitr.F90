@@ -223,7 +223,7 @@
      &   (comm, ido, bmat, n, k, np, nb, resid, rnorm, v, ldv, h, ldh,
      &    ipntr, workd, workl, info)
 !
-      include   'pcontext.h'
+#include "pcontextF90.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
