@@ -413,8 +413,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pssaupd
-     &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,
+      subroutine pssaupd&
+     &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
      &     iparam, ipntr, workd, workl, lworkl, info )
 !
 #ifdef HAVE_MPI_ICB
@@ -444,7 +444,7 @@
 !
       character  bmat*1, which*2
       integer    ido, info, ldv, lworkl, n, ncv, nev
-      Real
+      Real&
      &           tol
 !
 !     %-----------------%
@@ -452,14 +452,14 @@
 !     %-----------------%
 !
       integer    iparam(11), ipntr(11)
-      Real
+      Real&
      &           resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0 , zero = 0.0 )
 !
@@ -467,11 +467,11 @@
 !     | Local Scalars |
 !     %---------------%
 !
-      integer    bounds, ierr, ih, iq, ishift, iupd, iw,
-     &           ldh, ldq, msglvl, mxiter, mode, nb,
+      integer    bounds, ierr, ih, iq, ishift, iupd, iw,&
+     &           ldh, ldq, msglvl, mxiter, mode, nb,&
      &           nev0, next, np, ritz, j
-      save       bounds, ierr, ih, iq, ishift, iupd, iw,
-     &           ldh, ldq, msglvl, mxiter, mode, nb,
+      save       bounds, ierr, ih, iq, ishift, iupd, iw,&
+     &           ldh, ldq, msglvl, mxiter, mode, nb,&
      &           nev0, next, np, ritz
 !
 !     %----------------------%
@@ -484,7 +484,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           pslamch10
       external   pslamch10
 !
@@ -543,10 +543,10 @@
          np     = ncv - nev
 !
          if (mxiter .le. 0)                     ierr = -4
-         if (which .ne. 'LM' .and.
-     &       which .ne. 'SM' .and.
-     &       which .ne. 'LA' .and.
-     &       which .ne. 'SA' .and.
+         if (which .ne. 'LM' .and.&
+     &       which .ne. 'SM' .and.&
+     &       which .ne. 'LA' .and.&
+     &       which .ne. 'SA' .and.&
      &       which .ne. 'BE')                   ierr = -5
          if (bmat .ne. 'I' .and. bmat .ne. 'G') ierr = -6
 !
@@ -628,10 +628,10 @@
 !     | Carry out the Implicitly restarted Lanczos Iteration. |
 !     %-------------------------------------------------------%
 !
-      call pssaup2
-     &   ( comm, ido, bmat, n, which, nev0, np, tol, resid, mode, iupd,
-     &     ishift, mxiter, v, ldv, workl(ih), ldh, workl(ritz),
-     &     workl(bounds), workl(iq), ldq, workl(iw), ipntr, workd,
+      call pssaup2&
+     &   ( comm, ido, bmat, n, which, nev0, np, tol, resid, mode, iupd,&
+     &     ishift, mxiter, v, ldv, workl(ih), ldh, workl(ritz),&
+     &     workl(bounds), workl(iq), ldq, workl(iw), ipntr, workd,&
      &     info )
 !
 !     %--------------------------------------------------%
@@ -657,13 +657,13 @@
       if (info .eq. 2) info = 3
 !
       if (msglvl .gt. 0) then
-         call pivout (comm, logfil, 1, [mxiter], ndigit,
+         call pivout (comm, logfil, 1, [mxiter], ndigit,&
      &               '_saupd: number of update iterations taken')
-         call pivout (comm, logfil, 1, [np], ndigit,
+         call pivout (comm, logfil, 1, [np], ndigit,&
      &               '_saupd: number of "converged" Ritz values')
-         call psvout (comm, logfil, np, workl(Ritz), ndigit,
+         call psvout (comm, logfil, np, workl(Ritz), ndigit,&
      &               '_saupd: final Ritz values')
-         call psvout (comm, logfil, np, workl(Bounds), ndigit,
+         call psvout (comm, logfil, np, workl(Bounds), ndigit,&
      &               '_saupd: corresponding error bounds')
       end if
 !
@@ -679,34 +679,34 @@
 !        %--------------------------------------------------------%
 !
          write (6,1000)
-         write (6,1100) mxiter, nopx, nbx, nrorth, nitref, nrstrt,
-     &                  tmvopx, tmvbx, tsaupd, tsaup2, tsaitr, titref,
+         write (6,1100) mxiter, nopx, nbx, nrorth, nitref, nrstrt,&
+     &                  tmvopx, tmvbx, tsaupd, tsaup2, tsaitr, titref,&
      &                  tgetv0, tseigt, tsgets, tsapps, tsconv
- 1000    format (//,
-     &      5x, '==========================================',/
-     &      5x, '= Symmetric implicit Arnoldi update code =',/
-     &      5x, '= Version Number:', ' 2.1' , 19x, ' =',/
-     &      5x, '= Version Date:  ', ' 3/19/97' , 14x, ' =',/
-     &      5x, '==========================================',/
-     &      5x, '= Summary of timing statistics           =',/
+ 1000    format (//,&
+     &      5x, '==========================================',/&
+     &      5x, '= Symmetric implicit Arnoldi update code =',/&
+     &      5x, '= Version Number:', ' 2.1' , 19x, ' =',/&
+     &      5x, '= Version Date:  ', ' 3/19/97' , 14x, ' =',/&
+     &      5x, '==========================================',/&
+     &      5x, '= Summary of timing statistics           =',/&
      &      5x, '==========================================',//)
- 1100    format (
-     &      5x, 'Total number update iterations             = ', i5,/
-     &      5x, 'Total number of OP*x operations            = ', i5,/
-     &      5x, 'Total number of B*x operations             = ', i5,/
-     &      5x, 'Total number of reorthogonalization steps  = ', i5,/
-     &      5x, 'Total number of iterative refinement steps = ', i5,/
-     &      5x, 'Total number of restart steps              = ', i5,/
-     &      5x, 'Total time in user OP*x operation          = ', f12.6,/
-     &      5x, 'Total time in user B*x operation           = ', f12.6,/
-     &      5x, 'Total time in Arnoldi update routine       = ', f12.6,/
-     &      5x, 'Total time in p_saup2 routine              = ', f12.6,/
-     &      5x, 'Total time in basic Arnoldi iteration loop = ', f12.6,/
-     &      5x, 'Total time in reorthogonalization phase    = ', f12.6,/
-     &      5x, 'Total time in (re)start vector generation  = ', f12.6,/
-     &      5x, 'Total time in trid eigenvalue subproblem   = ', f12.6,/
-     &      5x, 'Total time in getting the shifts           = ', f12.6,/
-     &      5x, 'Total time in applying the shifts          = ', f12.6,/
+ 1100    format (&
+     &      5x, 'Total number update iterations             = ', i5,/&
+     &      5x, 'Total number of OP*x operations            = ', i5,/&
+     &      5x, 'Total number of B*x operations             = ', i5,/&
+     &      5x, 'Total number of reorthogonalization steps  = ', i5,/&
+     &      5x, 'Total number of iterative refinement steps = ', i5,/&
+     &      5x, 'Total number of restart steps              = ', i5,/&
+     &      5x, 'Total time in user OP*x operation          = ', f12.6,/&
+     &      5x, 'Total time in user B*x operation           = ', f12.6,/&
+     &      5x, 'Total time in Arnoldi update routine       = ', f12.6,/&
+     &      5x, 'Total time in p_saup2 routine              = ', f12.6,/&
+     &      5x, 'Total time in basic Arnoldi iteration loop = ', f12.6,/&
+     &      5x, 'Total time in reorthogonalization phase    = ', f12.6,/&
+     &      5x, 'Total time in (re)start vector generation  = ', f12.6,/&
+     &      5x, 'Total time in trid eigenvalue subproblem   = ', f12.6,/&
+     &      5x, 'Total time in getting the shifts           = ', f12.6,/&
+     &      5x, 'Total time in applying the shifts          = ', f12.6,/&
      &      5x, 'Total time in convergence testing          = ', f12.6)
          end if
       end if
