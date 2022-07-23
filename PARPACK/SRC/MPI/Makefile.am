@@ -9,7 +9,7 @@ SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
        pssaitr.f pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
        psgetv0.f pslarnv.f psnorm2.f
 
-DSRC = pdnaitr.F90 pdnapps.F90 pdnaup2.F90 pdnaupd.f pdneigh.f pdneupd.f pdngets.f \
+DSRC = pdnaitr.F90 pdnapps.F90 pdnaup2.F90 pdnaupd.F90 pdneigh.f pdneupd.f pdngets.f \
        pdsaitr.f pdsapps.f pdsaup2.f pdsaupd.f pdseigt.f pdseupd.f pdsgets.f \
        pdgetv0.F90 pdlarnv.F90 pdnorm2.f
 
