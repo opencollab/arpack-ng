@@ -98,7 +98,7 @@
 !-----------------------------------------------------------------------
 !
       subroutine pdsgets&
-     &      ( comm, ishift, which, kev, np, ritz, bounds, shifts )
+            ( comm, ishift, which, kev, np, ritz, bounds, shifts )
 !
 !     %--------------------%
 !     | MPI Communicator |
@@ -125,14 +125,14 @@
 !     %-----------------%
 !
       Double precision&
-     &           bounds(kev+np), ritz(kev+np), shifts(np)
+                 bounds(kev+np), ritz(kev+np), shifts(np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Double precision&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %---------------%
@@ -180,9 +180,9 @@
          kevd2 = kev / 2
          if ( kev .gt. 1 ) then
             call dswap ( min(kevd2,np), ritz, 1,&
-     &                   ritz( max(kevd2,np)+1 ), 1)
+                         ritz( max(kevd2,np)+1 ), 1)
             call dswap ( min(kevd2,np), bounds, 1,&
-     &                   bounds( max(kevd2,np)+1 ), 1)
+                         bounds( max(kevd2,np)+1 ), 1)
          end if
 !
       else
@@ -219,9 +219,9 @@
          call pivout (comm, logfil, 1, [kev], ndigit, '_sgets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_sgets: NP is')
          call pdvout (comm, logfil, kev+np, ritz, ndigit,&
-     &        '_sgets: Eigenvalues of current H matrix')
+              '_sgets: Eigenvalues of current H matrix')
          call pdvout (comm, logfil, kev+np, bounds, ndigit,&
-     &        '_sgets: Associated Ritz estimates')
+              '_sgets: Associated Ritz estimates')
       end if
 !
       return
