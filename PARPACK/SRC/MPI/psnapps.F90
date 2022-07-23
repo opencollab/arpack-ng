@@ -159,7 +159,7 @@
 !     %----------------------------------------------------%
 !
 #include "debugF90.h"
-      include   'stat.h'
+#include "statF90.h"
 !
 !     %------------------%
 !     | Scalar Arguments |
