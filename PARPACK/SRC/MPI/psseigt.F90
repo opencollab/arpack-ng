@@ -92,7 +92,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine psseigt
+      subroutine psseigt&
      &   ( comm, rnorm, n, h, ldh, eig, bounds, workl, ierr )
 !
 !     %--------------------%
@@ -113,21 +113,21 @@
 !     %------------------%
 !
       integer    ierr, ldh, n
-      Real
+      Real&
      &           rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
-      Real
+      Real&
      &           eig(n), bounds(n), h(ldh,2), workl(3*n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           zero
       parameter (zero = 0.0)
 !
@@ -162,10 +162,10 @@
       msglvl = mseigt
 !
       if (msglvl .gt. 0) then
-         call psvout (comm, logfil, n, h(1,2), ndigit,
+         call psvout (comm, logfil, n, h(1,2), ndigit,&
      &              '_seigt: main diagonal of matrix H')
          if (n .gt. 1) then
-         call psvout (comm, logfil, n-1, h(2,1), ndigit,
+         call psvout (comm, logfil, n-1, h(2,1), ndigit,&
      &              '_seigt: sub diagonal of matrix H')
          end if
       end if
@@ -177,7 +177,7 @@
       if (ierr .ne. 0) go to 9000
 !
       if (msglvl .gt. 1) then
-         call psvout (comm, logfil, n, bounds, ndigit,
+         call psvout (comm, logfil, n, bounds, ndigit,&
      &              '_seigt: last row of the eigenvector matrix for H')
       end if
 !
