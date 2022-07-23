@@ -128,8 +128,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pdgetv0
-     &   ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,
+      subroutine pdgetv0&
+     &   ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,&
      &     ipntr, workd, workl, ierr )
 !
 #ifdef HAVE_MPI_ICB
@@ -159,7 +159,7 @@
       character  bmat*1
       logical    initv
       integer    ido, ierr, itry, j, ldv, n
-      Double precision
+      Double precision&
      &           rnorm
 !
 !     %-----------------%
@@ -167,14 +167,14 @@
 !     %-----------------%
 !
       integer    ipntr(3)
-      Double precision
+      Double precision&
      &           resid(n), v(ldv,j), workd(2*n), workl(2*j)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
+      Double precision&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -184,11 +184,11 @@
 !
       logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj
-      Double precision
+      Double precision&
      &           rnorm0, buf2(1)
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 !
-      Double precision
+      Double precision&
      &           rnorm_buf
 !
 !     %----------------------%
@@ -201,7 +201,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &           ddot, pdnorm2
       external   ddot, pdnorm2
 !
@@ -323,7 +323,7 @@
       first = .FALSE.
       if (bmat .eq. 'G') then
           rnorm_buf = ddot (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
+          call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
      &          MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
           rnorm0 = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
@@ -352,11 +352,11 @@
       orth = .TRUE.
    30 continue
 !
-      call dgemv ('T', n, j-1, one, v, ldv, workd, 1,
+      call dgemv ('T', n, j-1, one, v, ldv, workd, 1,&
      &            zero, workl(j+1), 1)
-      call MPI_ALLREDUCE( workl(j+1), workl, j-1,
+      call MPI_ALLREDUCE( workl(j+1), workl, j-1,&
      &                    MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
-      call dgemv ('N', n, j-1, -one, v, ldv, workl, 1,
+      call dgemv ('N', n, j-1, -one, v, ldv, workl, 1,&
      &            one, resid, 1)
 !
 !     %----------------------------------------------------------%
@@ -384,7 +384,7 @@
 !
       if (bmat .eq. 'G') then
          rnorm_buf = ddot (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
+         call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
      &            MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
          rnorm = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
@@ -396,9 +396,9 @@
 !     %--------------------------------------%
 !
       if (msglvl .gt. 2) then
-          call pdvout (comm, logfil, 1, [rnorm0], ndigit,
+          call pdvout (comm, logfil, 1, [rnorm0], ndigit,&
      &                '_getv0: re-orthonalization ; rnorm0 is')
-          call pdvout (comm, logfil, 1, [rnorm], ndigit,
+          call pdvout (comm, logfil, 1, [rnorm], ndigit,&
      &                '_getv0: re-orthonalization ; rnorm is')
       end if
 !
@@ -429,11 +429,11 @@
    50 continue
 !
       if (msglvl .gt. 0) then
-         call pdvout (comm, logfil, 1, [rnorm], ndigit,
+         call pdvout (comm, logfil, 1, [rnorm], ndigit,&
      &        '_getv0: B-norm of initial / restarted starting vector')
       end if
       if (msglvl .gt. 2) then
-         call pdvout (comm, logfil, n, resid, ndigit,
+         call pdvout (comm, logfil, n, resid, ndigit,&
      &        '_getv0: initial / restarted starting vector')
       end if
       ido = 99
