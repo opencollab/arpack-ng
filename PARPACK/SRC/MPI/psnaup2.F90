@@ -176,9 +176,9 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine psnaup2
-     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,
-     &     ishift, mxiter, v, ldv, h, ldh, ritzr, ritzi, bounds,
+      subroutine psnaup2&
+     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,&
+     &     ishift, mxiter, v, ldv, h, ldh, ritzr, ritzi, bounds,&
      &     q, ldq, workl, ipntr, workd, info )
 !
 #ifdef HAVE_MPI_ICB
@@ -206,9 +206,9 @@
 !     %------------------%
 !
       character  bmat*1, which*2
-      integer    ido, info, ishift, iupd, mode, ldh, ldq, ldv, mxiter,
+      integer    ido, info, ishift, iupd, mode, ldh, ldq, ldv, mxiter,&
      &           n, nev, np
-      Real
+      Real&
      &           tol
 !
 !     %-----------------%
@@ -216,16 +216,16 @@
 !     %-----------------%
 !
       integer    ipntr(13)
-      Real
-     &           bounds(nev+np), h(ldh,nev+np), q(ldq,nev+np), resid(n),
-     &           ritzi(nev+np), ritzr(nev+np), v(ldv,nev+np),
+      Real&
+     &           bounds(nev+np), h(ldh,nev+np), q(ldq,nev+np), resid(n),&
+     &           ritzi(nev+np), ritzr(nev+np), v(ldv,nev+np),&
      &           workd(3*n), workl( (nev+np)*(nev+np+3) )
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0 , zero = 0.0 )
 !
@@ -235,17 +235,17 @@
 !
       character  wprime*2
       logical    cnorm , getv0, initv , update, ushift
-      integer    ierr  , iter , kplusp, msglvl, nconv,
-     &           nevbef, nev0 , np0   , nptemp, numcnv,
+      integer    ierr  , iter , kplusp, msglvl, nconv,&
+     &           nevbef, nev0 , np0   , nptemp, numcnv,&
      &           j
-      Real
+      Real&
      &           rnorm , temp , eps23
-      save       cnorm , getv0, initv , update, ushift,
-     &           rnorm , iter , kplusp, msglvl, nconv,
+      save       cnorm , getv0, initv , update, ushift,&
+     &           rnorm , iter , kplusp, msglvl, nconv,&
      &           nevbef, nev0 , np0   , eps23 , numcnv
 !
 
-      Real
+      Real&
      &           rnorm_buf, buf2(1)
 !
 !     %-----------------------%
@@ -258,15 +258,15 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   scopy, psgetv0, psnaitr, snconv,
-     &           psneigh, psngets, psnapps,
+      external   scopy, psgetv0, psnaitr, snconv,&
+     &           psneigh, psngets, psnapps,&
      &           psvout, pivout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           sdot, psnorm2, slapy2, pslamch10
       external   sdot, psnorm2, slapy2, pslamch10
 !
@@ -340,7 +340,7 @@
    10 continue
 !
       if (getv0) then
-         call psgetv0 (comm, ido, bmat, 1, initv, n, 1, v, ldv,
+         call psgetv0 (comm, ido, bmat, 1, initv, n, 1, v, ldv,&
      &                resid, rnorm, ipntr, workd, workl, info)
 !
          if (ido .ne. 99) go to 9000
@@ -382,8 +382,8 @@
 !     | Compute the first NEV steps of the Arnoldi factorization |
 !     %----------------------------------------------------------%
 !
-      call psnaitr (comm, ido, bmat, n, 0, nev, mode,
-     &             resid, rnorm, v, ldv, h, ldh, ipntr,
+      call psnaitr (comm, ido, bmat, n, 0, nev, mode,&
+     &             resid, rnorm, v, ldv, h, ldh, ipntr,&
      &             workd, workl, info)
 !
 !     %---------------------------------------------------%
@@ -413,7 +413,7 @@
          iter = iter + 1
 !
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, [iter], ndigit,
+            call pivout (comm, logfil, 1, [iter], ndigit,&
      &           '_naup2: **** Start of major iteration number ****')
          end if
 !
@@ -426,9 +426,9 @@
          np  = kplusp - nev
 !
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, [nev], ndigit,
+            call pivout (comm, logfil, 1, [nev], ndigit,&
      &     '_naup2: The length of the current Arnoldi factorization')
-            call pivout (comm, logfil, 1, [np], ndigit,
+            call pivout (comm, logfil, 1, [np], ndigit,&
      &           '_naup2: Extend the Arnoldi factorization by')
          end if
 !
@@ -440,8 +440,8 @@
    20    continue
          update = .true.
 !
-         call psnaitr (comm, ido, bmat, n, nev, np, mode,
-     &                resid, rnorm, v, ldv,
+         call psnaitr (comm, ido, bmat, n, nev, np, mode,&
+     &                resid, rnorm, v, ldv,&
      &                h, ldh, ipntr, workd, workl, info)
 !
 !        %---------------------------------------------------%
@@ -460,7 +460,7 @@
          update = .false.
 !
          if (msglvl .gt. 1) then
-            call psvout (comm, logfil, 1, [rnorm], ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,&
      &           '_naup2: Corresponding B-norm of the residual')
          end if
 !
@@ -469,7 +469,7 @@
 !        | of the current upper Hessenberg matrix.                |
 !        %--------------------------------------------------------%
 !
-         call psneigh ( comm, rnorm, kplusp, h, ldh, ritzr, ritzi,
+         call psneigh ( comm, rnorm, kplusp, h, ldh, ritzr, ritzi,&
      &                  bounds, q, ldq, workl, ierr)
 !
          if (ierr .ne. 0) then
@@ -502,7 +502,7 @@
          nev = nev0
          np = np0
          numcnv = nev
-         call psngets ( comm, ishift, which, nev, np, ritzr, ritzi,
+         call psngets ( comm, ishift, which, nev, np, ritzr, ritzi,&
      &                  bounds, workl, workl(np+1))
          if (nev .eq. nev0+1) numcnv = nev0+1
 !
@@ -511,7 +511,7 @@
 !        %-------------------%
 !
          call scopy (nev, bounds(np+1), 1, workl(2*np+1), 1)
-         call snconv (nev, ritzr(np+1), ritzi(np+1), workl(2*np+1),
+         call snconv (nev, ritzr(np+1), ritzi(np+1), workl(2*np+1),&
      &        tol, nconv)
 !
          if (msglvl .gt. 2) then
@@ -519,13 +519,13 @@
             kp(2) = np
             kp(3) = numcnv
             kp(4) = nconv
-            call pivout (comm, logfil, 4, kp, ndigit,
+            call pivout (comm, logfil, 4, kp, ndigit,&
      &                  '_naup2: NEV, NP, NUMCNV, NCONV are')
-            call psvout (comm, logfil, kplusp, ritzr, ndigit,
+            call psvout (comm, logfil, kplusp, ritzr, ndigit,&
      &           '_naup2: Real part of the eigenvalues of H')
-            call psvout (comm, logfil, kplusp, ritzi, ndigit,
+            call psvout (comm, logfil, kplusp, ritzi, ndigit,&
      &           '_naup2: Imaginary part of the eigenvalues of H')
-            call psvout (comm, logfil, kplusp, bounds, ndigit,
+            call psvout (comm, logfil, kplusp, bounds, ndigit,&
      &          '_naup2: Ritz estimates of the current NCV Ritz values')
          end if
 !
@@ -547,18 +547,18 @@
             end if
  30      continue
 !
-         if ( (nconv .ge. numcnv) .or.
-     &        (iter .gt. mxiter) .or.
+         if ( (nconv .ge. numcnv) .or.&
+     &        (iter .gt. mxiter) .or.&
      &        (np .eq. 0) ) then
 !
             if (msglvl .gt. 4) then
-               call svout(logfil, kplusp, workl(kplusp**2+1), ndigit,
+               call svout(logfil, kplusp, workl(kplusp**2+1), ndigit,&
      &             '_naup2: Real part of the eig computed by _neigh:')
-               call svout(logfil, kplusp, workl(kplusp**2+kplusp+1),
-     &                     ndigit,
+               call svout(logfil, kplusp, workl(kplusp**2+kplusp+1),&
+     &                     ndigit,&
      &             '_naup2: Imag part of the eig computed by _neigh:')
-               call svout(logfil, kplusp, workl(kplusp**2+kplusp*2+1),
-     &                     ndigit,
+               call svout(logfil, kplusp, workl(kplusp**2+kplusp*2+1),&
+     &                     ndigit,&
      &             '_naup2: Ritz estimates computed by _neigh:')
             end if
 !
@@ -616,7 +616,7 @@
 !           %--------------------------------------------------%
 !
             do 35 j = 1, numcnv
-                temp = max(eps23,slapy2(ritzr(j),
+                temp = max(eps23,slapy2(ritzr(j),&
      &                                   ritzi(j)))
                 bounds(j) = bounds(j)/temp
  35         continue
@@ -637,7 +637,7 @@
 !           %----------------------------------------------%
 !
             do 40 j = 1, numcnv
-                temp = max(eps23, slapy2(ritzr(j),
+                temp = max(eps23, slapy2(ritzr(j),&
      &                                   ritzi(j)))
                 bounds(j) = bounds(j)*temp
  40         continue
@@ -652,11 +652,11 @@
 !
 !
             if (msglvl .gt. 1) then
-               call svout (logfil, kplusp, ritzr, ndigit,
+               call svout (logfil, kplusp, ritzr, ndigit,&
      &            '_naup2: Sorted real part of the eigenvalues')
-               call svout (logfil, kplusp, ritzi, ndigit,
+               call svout (logfil, kplusp, ritzi, ndigit,&
      &            '_naup2: Sorted imaginary part of the eigenvalues')
-               call svout (logfil, kplusp, bounds, ndigit,
+               call svout (logfil, kplusp, bounds, ndigit,&
      &            '_naup2: Sorted ritz estimates.')
             end if
 !
@@ -697,25 +697,25 @@
 !           | resort the eigenvalues.               |
 !           %---------------------------------------%
 !
-            if (nevbef .lt. nev)
-     &         call psngets(comm, ishift, which, nev, np, ritzr, ritzi,
+            if (nevbef .lt. nev)&
+     &         call psngets(comm, ishift, which, nev, np, ritzr, ritzi,&
      &                      bounds, workl, workl(np+1))
 !
          end if
 !
          if (msglvl .gt. 0) then
-            call pivout (comm, logfil, 1, [nconv], ndigit,
+            call pivout (comm, logfil, 1, [nconv], ndigit,&
      &           '_naup2: no. of "converged" Ritz values at this iter.')
             if (msglvl .gt. 1) then
                kp(1) = nev
                kp(2) = np
-               call pivout (comm, logfil, 2, kp, ndigit,
+               call pivout (comm, logfil, 2, kp, ndigit,&
      &              '_naup2: NEV and NP are')
-               call psvout (comm, logfil, nev, ritzr(np+1), ndigit,
+               call psvout (comm, logfil, nev, ritzr(np+1), ndigit,&
      &              '_naup2: "wanted" Ritz values -- real part')
-               call psvout (comm, logfil, nev, ritzi(np+1), ndigit,
+               call psvout (comm, logfil, nev, ritzi(np+1), ndigit,&
      &              '_naup2: "wanted" Ritz values -- imag part')
-               call psvout (comm, logfil, nev, bounds(np+1), ndigit,
+               call psvout (comm, logfil, nev, bounds(np+1), ndigit,&
      &              '_naup2: Ritz estimates of the "wanted" values ')
             end if
          end if
@@ -756,14 +756,14 @@
          end if
 !
          if (msglvl .gt. 2) then
-            call pivout (comm, logfil, 1, [np], ndigit,
+            call pivout (comm, logfil, 1, [np], ndigit,&
      &                  '_naup2: The number of shifts to apply ')
-            call psvout (comm, logfil, np, ritzr, ndigit,
+            call psvout (comm, logfil, np, ritzr, ndigit,&
      &                  '_naup2: Real part of the shifts')
-            call psvout (comm, logfil, np, ritzi, ndigit,
+            call psvout (comm, logfil, np, ritzi, ndigit,&
      &                  '_naup2: Imaginary part of the shifts')
-            if ( ishift .eq. 1 )
-     &          call psvout (comm, logfil, np, bounds, ndigit,
+            if ( ishift .eq. 1 )&
+     &          call psvout (comm, logfil, np, bounds, ndigit,&
      &                  '_naup2: Ritz estimates of the shifts')
          end if
 !
@@ -774,7 +774,7 @@
 !        | The first 2*N locations of WORKD are used as workspace. |
 !        %---------------------------------------------------------%
 !
-         call psnapps (comm, n, nev, np, ritzr, ritzi, v, ldv,
+         call psnapps (comm, n, nev, np, ritzr, ritzi, v, ldv,&
      &                 h, ldh, resid, q, ldq, workl, workd)
 !
 !        %---------------------------------------------%
@@ -815,7 +815,7 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = sdot (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
      &                MPI_REAL, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
@@ -824,9 +824,9 @@
          cnorm = .false.
 !
          if (msglvl .gt. 2) then
-            call psvout (comm, logfil, 1, [rnorm], ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,&
      &      '_naup2: B-norm of residual for compressed factorization')
-            call psmout (comm, logfil, nev, nev, h, ldh, ndigit,
+            call psmout (comm, logfil, nev, nev, h, ldh, ndigit,&
      &        '_naup2: Compressed upper Hessenberg matrix H')
          end if
 !
