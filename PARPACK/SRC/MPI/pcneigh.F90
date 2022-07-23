@@ -107,7 +107,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pcneigh (comm, rnorm, n, h, ldh, ritz, bounds,
+      subroutine pcneigh (comm, rnorm, n, h, ldh, ritz, bounds,&
      &                   q, ldq, workl, rwork, ierr)
 !
 !     %--------------------%
@@ -128,28 +128,28 @@
 !     %------------------%
 !
       integer    ierr, n, ldh, ldq
-      Real
+      Real&
      &           rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex
-     &           bounds(n), h(ldh,n), q(ldq,n), ritz(n),
+      Complex&
+     &           bounds(n), h(ldh,n), q(ldq,n), ritz(n),&
      &           workl(n*(n+3))
-      Real
+      Real&
      &           rwork(n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex
+      Complex&
      &           one, zero
-      Real
+      Real&
      &           rone
-      parameter  (one = (1.0, 0.0), zero = (0.0, 0.0),
+      parameter  (one = (1.0, 0.0), zero = (0.0, 0.0),&
      &           rone = 1.0)
 !
 !     %------------------------%
@@ -158,23 +158,23 @@
 !
       logical    select(1)
       integer    j,  msglvl
-      Complex
+      Complex&
      &           vl(1)
-      Real
+      Real&
      &           temp
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   clacpy, clahqr, csscal, ctrevc, ccopy,
+      external   clacpy, clahqr, csscal, ctrevc, ccopy,&
      &           pcmout, pcvout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           scnrm2
       external   scnrm2
 !
@@ -192,7 +192,7 @@
       msglvl = mceigh
 !
       if (msglvl .gt. 2) then
-          call pcmout (comm, logfil, n, n, h, ldh, ndigit,
+          call pcmout (comm, logfil, n, n, h, ldh, ndigit,&
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
 !
@@ -206,13 +206,13 @@
 !
       call clacpy ('All', n, n, h, ldh, workl, n)
       call claset ('All', n, n, zero, one, q, ldq)
-      call clahqr (.true., .true., n, 1, n, workl, ldh, ritz,
+      call clahqr (.true., .true., n, 1, n, workl, ldh, ritz,&
      &             1, n, q, ldq, ierr)
       if (ierr .ne. 0) go to 9000
 !
       call ccopy (n, q(n-1,1), ldq, bounds, 1)
       if (msglvl .gt. 1) then
-         call pcvout (comm, logfil, n, bounds, ndigit,
+         call pcvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: last row of the Schur matrix for H')
       end if
 !
@@ -222,7 +222,7 @@
 !     |    eigenvectors.                                         |
 !     %----------------------------------------------------------%
 !
-      call ctrevc ('Right', 'Back', select, n, workl, n, vl, n, q,
+      call ctrevc ('Right', 'Back', select, n, workl, n, vl, n, q,&
      &             ldq, n, n, workl(n*n+1), rwork, ierr)
 !
       if (ierr .ne. 0) go to 9000
@@ -243,7 +243,7 @@
 !
       if (msglvl .gt. 1) then
          call ccopy(n, q(n,1), ldq, workl, 1)
-         call pcvout (comm, logfil, n, workl, ndigit,
+         call pcvout (comm, logfil, n, workl, ndigit,&
      &              '_neigh: Last row of the eigenvector matrix for H')
       end if
 !
@@ -255,9 +255,9 @@
       call csscal(n, rnorm, bounds, 1)
 !
       if (msglvl .gt. 2) then
-         call pcvout (comm, logfil, n, ritz, ndigit,
+         call pcvout (comm, logfil, n, ritz, ndigit,&
      &              '_neigh: The eigenvalues of H')
-         call pcvout (comm, logfil, n, bounds, ndigit,
+         call pcvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: Ritz estimates for the eigenvalues of H')
       end if
 !
