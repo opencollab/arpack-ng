@@ -146,7 +146,7 @@
 #include "mpif.h"
 #endif
 
-      include  'pcontext.h'
+#include "pcontextF90.h"
       integer   comm
 !
 !     %----------------------------------------------------%
