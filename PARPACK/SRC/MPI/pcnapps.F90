@@ -141,8 +141,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pcnapps
-     &   ( comm, n, kev, np, shift, v, ldv, h, ldh, resid, q, ldq,
+      subroutine pcnapps&
+     &   ( comm, n, kev, np, shift, v, ldv, h, ldh, resid, q, ldq,&
      &     workl, workd )
 !
 !     %--------------------%
@@ -169,19 +169,19 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex
-     &           h(ldh,kev+np), resid(n), shift(np),
+      Complex&
+     &           h(ldh,kev+np), resid(n), shift(np),&
      &           v(ldv,kev+np), q(ldq,kev+np), workd(2*n), workl(kev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex
+      Complex&
      &           one, zero
-      Real
+      Real&
      &           rzero
-      parameter (one = (1.0, 0.0), zero = (0.0, 0.0),
+      parameter (one = (1.0, 0.0), zero = (0.0, 0.0),&
      &           rzero = 0.0)
 !
 !     %------------------------%
@@ -189,9 +189,9 @@
 !     %------------------------%
 !
       integer    i, iend, istart, j, jj, kplusp, msglvl
-      Complex
+      Complex&
      &           cdum, f, g, h11, h21, r, s, sigma, t
-      Real
+      Real&
      &           c,  ovfl, smlnum, ulp, unfl, tst1
       save       ovfl, smlnum, ulp, unfl
 !
@@ -199,14 +199,14 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   caxpy, ccopy, cgemv, cscal, clacpy, clartg,
+      external   caxpy, ccopy, cgemv, cscal, clacpy, clartg,&
      &           pcvout, claset, slabad, pcmout, arscnd, pivout
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           clanhs, pslamch10, slapy2
       external   clanhs, pslamch10, slapy2
 !
@@ -220,7 +220,7 @@
 !     | Statement Functions |
 !     %---------------------%
 !
-      Real
+      Real&
      &           cabs1
       cabs1( cdum ) = abs( real( cdum ) ) + abs( aimag( cdum ) )
 !
@@ -283,9 +283,9 @@
          sigma = shift(jj)
 !
          if (msglvl .gt. 2 ) then
-            call pivout (comm, logfil, 1, [jj], ndigit,
+            call pivout (comm, logfil, 1, [jj], ndigit,&
      &               '_napps: shift number.')
-            call pcvout (comm, logfil, 1, [sigma], ndigit,
+            call pcvout (comm, logfil, 1, [sigma], ndigit,&
      &               '_napps: Value of the shift ')
          end if
 !
@@ -301,16 +301,16 @@
 !           %----------------------------------------%
 !
             tst1 = cabs1( h( i, i ) ) + cabs1( h( i+1, i+1 ) )
-            if( tst1.eq.rzero )
+            if( tst1.eq.rzero )&
      &         tst1 = clanhs( '1', kplusp-jj+1, h, ldh, workl )
-            if ( abs(real(h(i+1,i)))
+            if ( abs(real(h(i+1,i)))&
      &           .le. max(ulp*tst1, smlnum) )  then
                if (msglvl .gt. 0) then
-                  call pivout (comm, logfil, 1, [i], ndigit,
+                  call pivout (comm, logfil, 1, [i], ndigit,&
      &                 '_napps: matrix splitting at row/column no.')
-                  call pivout (comm, logfil, 1, [jj], ndigit,
+                  call pivout (comm, logfil, 1, [jj], ndigit,&
      &                 '_napps: matrix splitting with shift number.')
-                  call pcvout (comm, logfil, 1, h(i+1,i), ndigit,
+                  call pcvout (comm, logfil, 1, h(i+1,i), ndigit,&
      &                 '_napps: off diagonal element.')
                end if
                iend = i
@@ -322,9 +322,9 @@
    40    continue
 !
          if (msglvl .gt. 2) then
-             call pivout (comm, logfil, 1, [istart], ndigit,
+             call pivout (comm, logfil, 1, [istart], ndigit,&
      &                   '_napps: Start of current block ')
-             call pivout (comm, logfil, 1, [iend], ndigit,
+             call pivout (comm, logfil, 1, [iend], ndigit,&
      &                   '_napps: End of current block ')
          end if
 !
@@ -419,7 +419,7 @@
 !     %---------------------------------------------------%
 !
       do 120 j=1,kev
-         if ( real( h(j+1,j) ) .lt. rzero .or.
+         if ( real( h(j+1,j) ) .lt. rzero .or.&
      &        aimag( h(j+1,j) ) .ne. rzero ) then
             t = h(j+1,j) / slapy2(real(h(j+1,j)),aimag(h(j+1,j)))
             call cscal( kplusp-j+1, conjg(t), h(j+1,j), ldh )
@@ -441,9 +441,9 @@
 !        %--------------------------------------------%
 !
          tst1 = cabs1( h( i, i ) ) + cabs1( h( i+1, i+1 ) )
-         if( tst1 .eq. rzero )
+         if( tst1 .eq. rzero )&
      &       tst1 = clanhs( '1', kev, h, ldh, workl )
-         if( real( h( i+1,i ) ) .le. max( ulp*tst1, smlnum ) )
+         if( real( h( i+1,i ) ) .le. max( ulp*tst1, smlnum ) )&
      &       h(i+1,i) = zero
  130  continue
 !
@@ -455,8 +455,8 @@
 !     | of H would be zero as in exact arithmetic.      |
 !     %-------------------------------------------------%
 !
-      if ( real( h(kev+1,kev) ) .gt. rzero )
-     &   call cgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,
+      if ( real( h(kev+1,kev) ) .gt. rzero )&
+     &   call cgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,&
      &                workd(n+1), 1)
 !
 !     %----------------------------------------------------------%
@@ -465,7 +465,7 @@
 !     %----------------------------------------------------------%
 !
       do 140 i = 1, kev
-         call cgemv ('N', n, kplusp-i+1, one, v, ldv,
+         call cgemv ('N', n, kplusp-i+1, one, v, ldv,&
      &               q(1,kev-i+1), 1, zero, workd, 1)
          call ccopy (n, workd, 1, v(1,kplusp-i+1), 1)
   140 continue
@@ -480,7 +480,7 @@
 !     | Copy the (kev+1)-st column of (V*Q) in the appropriate place |
 !     %--------------------------------------------------------------%
 !
-      if ( real( h(kev+1,kev) ) .gt. rzero )
+      if ( real( h(kev+1,kev) ) .gt. rzero )&
      &   call ccopy (n, workd(n+1), 1, v(1,kev+1), 1)
 !
 !     %-------------------------------------%
@@ -492,18 +492,18 @@
 !     %-------------------------------------%
 !
       call cscal (n, q(kplusp,kev), resid, 1)
-      if ( real( h(kev+1,kev) ) .gt. rzero )
+      if ( real( h(kev+1,kev) ) .gt. rzero )&
      &   call caxpy (n, h(kev+1,kev), v(1,kev+1), 1, resid, 1)
 !
       if (msglvl .gt. 1) then
-         call pcvout (comm, logfil, 1, q(kplusp,kev), ndigit,
+         call pcvout (comm, logfil, 1, q(kplusp,kev), ndigit,&
      &        '_napps: sigmak = (e_{kev+p}^T*Q)*e_{kev}')
-         call pcvout (comm, logfil, 1, h(kev+1,kev), ndigit,
+         call pcvout (comm, logfil, 1, h(kev+1,kev), ndigit,&
      &        '_napps: betak = e_{kev+1}^T*H*e_{kev}')
-         call pivout (comm, logfil, 1, [kev], ndigit,
+         call pivout (comm, logfil, 1, [kev], ndigit,&
      &               '_napps: Order of the final Hessenberg matrix ')
          if (msglvl .gt. 2) then
-            call pcmout (comm, logfil, kev, kev, h, ldh, ndigit,
+            call pcmout (comm, logfil, kev, kev, h, ldh, ndigit,&
      &      '_napps: updated Hessenberg matrix H for next iteration')
          end if
 !
