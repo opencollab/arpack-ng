@@ -58,7 +58,7 @@
 !     .. Array Arguments ..
       integer			iseed( 4 )
       Complex&
-     &                          x( * )
+                                x( * )
 !     ..
 !     .. External Subroutines ..
       external			clarnv
