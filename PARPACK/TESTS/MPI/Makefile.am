@@ -1,5 +1,4 @@
 F77 = $(MPIF77)
-LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 # Run MPI tests with "mpirun -n 2"
 LOG_COMPILER = mpirun
@@ -17,6 +16,7 @@ EXTRA_DIST = debug.h stat.h
 
 issue46_SOURCES= issue46.F90
 issue46_CPPFLAGS = -I$(top_srcdir)
+issue46_LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack@LIBSUFFIX@@ITF64SUFFIX@.la $(LAPACK_LIBS) $(BLAS_LIBS)
 
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c
