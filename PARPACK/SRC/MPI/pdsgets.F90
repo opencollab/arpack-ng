@@ -1,181 +1,181 @@
-c-----------------------------------------------------------------------
-c\BeginDoc
-c
-c\Name: pdsgets
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c  Given the eigenvalues of the symmetric tridiagonal matrix H,
-c  computes the NP shifts AMU that are zeros of the polynomial of
-c  degree NP which filters out components of the unwanted eigenvectors
-c  corresponding to the AMU's based on some given criteria.
-c
-c  NOTE: This is called even in the case of user specified shifts in
-c  order to sort the eigenvalues, and error bounds of H for later use.
-c
-c\Usage:
-c  call pdsgets
-c     ( COMM, ISHIFT, WHICH, KEV, NP, RITZ, BOUNDS, SHIFTS )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c  ISHIFT  Integer.  (INPUT)
-c          Method for selecting the implicit shifts at each iteration.
-c          ISHIFT = 0: user specified shifts
-c          ISHIFT = 1: exact shift with respect to the matrix H.
-c
-c  WHICH   Character*2.  (INPUT)
-c          Shift selection criteria.
-c          'LM' -> KEV eigenvalues of largest magnitude are retained.
-c          'SM' -> KEV eigenvalues of smallest magnitude are retained.
-c          'LA' -> KEV eigenvalues of largest value are retained.
-c          'SA' -> KEV eigenvalues of smallest value are retained.
-c          'BE' -> KEV eigenvalues, half from each end of the spectrum.
-c                  If KEV is odd, compute one more from the high end.
-c
-c  KEV      Integer.  (INPUT)
-c          KEV+NP is the size of the matrix H.
-c
-c  NP      Integer.  (INPUT)
-c          Number of implicit shifts to be computed.
-c
-c  RITZ    Double precision array of length KEV+NP.  (INPUT/OUTPUT)
-c          On INPUT, RITZ contains the eigenvalues of H.
-c          On OUTPUT, RITZ are sorted so that the unwanted eigenvalues
-c          are in the first NP locations and the wanted part is in
-c          the last KEV locations.  When exact shifts are selected, the
-c          unwanted part corresponds to the shifts to be applied.
-c
-c  BOUNDS  Double precision array of length KEV+NP.  (INPUT/OUTPUT)
-c          Error bounds corresponding to the ordering in RITZ.
-c
-c  SHIFTS  Double precision array of length NP.  (INPUT/OUTPUT)
-c          On INPUT:  contains the user specified shifts if ISHIFT = 0.
-c          On OUTPUT: contains the shifts sorted into decreasing order
-c          of magnitude with respect to the Ritz estimates contained in
-c          BOUNDS. If ISHIFT = 0, SHIFTS is not modified on exit.
-c
-c\EndDoc
-c
-c-----------------------------------------------------------------------
-c
-c\BeginLib
-c
-c\Local variables:
-c     xxxxxx  real
-c
-c\Routines called:
-c     dsortr  ARPACK utility sorting routine.
-c     pivout  Parallel ARPACK utility routine that prints integers.
-c     arscnd  ARPACK utility routine for timing.
-c     pdvout  Parallel ARPACK utility routine that prints vectors.
-c     dcopy   Level 1 BLAS that copies one vector to another.
-c     dswap   Level 1 BLAS that swaps the contents of two vectors.
-c
-c\Author
-c     Danny Sorensen               Phuong Vu
-c     Richard Lehoucq              CRPC / Rice University
-c     Dept. of Computational &     Houston, Texas
-c     Applied Mathematics
-c     Rice University
-c     Houston, Texas
-c
-c\Parallel Modifications
-c     Kristi Maschhoff
-c
-c\Revision history:
-c     Starting Point: Serial Code FILE: sgets.F   SID: 2.3
-c
-c\SCCS Information:
-c FILE: sgets.F   SID: 1.2   DATE OF SID: 2/22/96
-c
-c\Remarks
-c
-c\EndLib
-c
-c-----------------------------------------------------------------------
-c
+!-----------------------------------------------------------------------
+!\BeginDoc
+!
+!\Name: pdsgets
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!  Given the eigenvalues of the symmetric tridiagonal matrix H,
+!  computes the NP shifts AMU that are zeros of the polynomial of
+!  degree NP which filters out components of the unwanted eigenvectors
+!  corresponding to the AMU's based on some given criteria.
+!
+!  NOTE: This is called even in the case of user specified shifts in
+!  order to sort the eigenvalues, and error bounds of H for later use.
+!
+!\Usage:
+!  call pdsgets
+!     ( COMM, ISHIFT, WHICH, KEV, NP, RITZ, BOUNDS, SHIFTS )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!  ISHIFT  Integer.  (INPUT)
+!          Method for selecting the implicit shifts at each iteration.
+!          ISHIFT = 0: user specified shifts
+!          ISHIFT = 1: exact shift with respect to the matrix H.
+!
+!  WHICH   Character*2.  (INPUT)
+!          Shift selection criteria.
+!          'LM' -> KEV eigenvalues of largest magnitude are retained.
+!          'SM' -> KEV eigenvalues of smallest magnitude are retained.
+!          'LA' -> KEV eigenvalues of largest value are retained.
+!          'SA' -> KEV eigenvalues of smallest value are retained.
+!          'BE' -> KEV eigenvalues, half from each end of the spectrum.
+!                  If KEV is odd, compute one more from the high end.
+!
+!  KEV      Integer.  (INPUT)
+!          KEV+NP is the size of the matrix H.
+!
+!  NP      Integer.  (INPUT)
+!          Number of implicit shifts to be computed.
+!
+!  RITZ    Double precision array of length KEV+NP.  (INPUT/OUTPUT)
+!          On INPUT, RITZ contains the eigenvalues of H.
+!          On OUTPUT, RITZ are sorted so that the unwanted eigenvalues
+!          are in the first NP locations and the wanted part is in
+!          the last KEV locations.  When exact shifts are selected, the
+!          unwanted part corresponds to the shifts to be applied.
+!
+!  BOUNDS  Double precision array of length KEV+NP.  (INPUT/OUTPUT)
+!          Error bounds corresponding to the ordering in RITZ.
+!
+!  SHIFTS  Double precision array of length NP.  (INPUT/OUTPUT)
+!          On INPUT:  contains the user specified shifts if ISHIFT = 0.
+!          On OUTPUT: contains the shifts sorted into decreasing order
+!          of magnitude with respect to the Ritz estimates contained in
+!          BOUNDS. If ISHIFT = 0, SHIFTS is not modified on exit.
+!
+!\EndDoc
+!
+!-----------------------------------------------------------------------
+!
+!\BeginLib
+!
+!\Local variables:
+!     xxxxxx  real
+!
+!\Routines called:
+!     dsortr  ARPACK utility sorting routine.
+!     pivout  Parallel ARPACK utility routine that prints integers.
+!     arscnd  ARPACK utility routine for timing.
+!     pdvout  Parallel ARPACK utility routine that prints vectors.
+!     dcopy   Level 1 BLAS that copies one vector to another.
+!     dswap   Level 1 BLAS that swaps the contents of two vectors.
+!
+!\Author
+!     Danny Sorensen               Phuong Vu
+!     Richard Lehoucq              CRPC / Rice University
+!     Dept. of Computational &     Houston, Texas
+!     Applied Mathematics
+!     Rice University
+!     Houston, Texas
+!
+!\Parallel Modifications
+!     Kristi Maschhoff
+!
+!\Revision history:
+!     Starting Point: Serial Code FILE: sgets.F   SID: 2.3
+!
+!\SCCS Information:
+! FILE: sgets.F   SID: 1.2   DATE OF SID: 2/22/96
+!
+!\Remarks
+!
+!\EndLib
+!
+!-----------------------------------------------------------------------
+!
       subroutine pdsgets
      &      ( comm, ishift, which, kev, np, ritz, bounds, shifts )
-c
-c     %--------------------%
-c     | MPI Communicator |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | MPI Communicator |
+!     %--------------------%
+!
       integer   comm
-c
-c     %----------------------------------------------------%
-c     | Include files for debugging and timing information |
-c     %----------------------------------------------------%
-c
+!
+!     %----------------------------------------------------%
+!     | Include files for debugging and timing information |
+!     %----------------------------------------------------%
+!
       include   'debug.h'
       include   'stat.h'
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       character*2 which
       integer    ishift, kev, np
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       Double precision
      &           bounds(kev+np), ritz(kev+np), shifts(np)
-c
-c     %------------%
-c     | Parameters |
-c     %------------%
-c
+!
+!     %------------%
+!     | Parameters |
+!     %------------%
+!
       Double precision
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
-c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | Local Scalars |
+!     %---------------%
+!
       integer    kevd2, msglvl
-c
-c     %----------------------%
-c     | External Subroutines |
-c     %----------------------%
-c
+!
+!     %----------------------%
+!     | External Subroutines |
+!     %----------------------%
+!
       external   dswap, dcopy, dsortr, arscnd
-c
-c     %---------------------%
-c     | Intrinsic Functions |
-c     %---------------------%
-c
+!
+!     %---------------------%
+!     | Intrinsic Functions |
+!     %---------------------%
+!
       intrinsic    max, min
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
-c     %-------------------------------%
-c     | Initialize timing statistics  |
-c     | & message level for debugging |
-c     %-------------------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
+!     %-------------------------------%
+!     | Initialize timing statistics  |
+!     | & message level for debugging |
+!     %-------------------------------%
+!
       call arscnd (t0)
       msglvl = msgets
-c
+!
       if (which .eq. 'BE') then
-c
-c        %-----------------------------------------------------%
-c        | Both ends of the spectrum are requested.            |
-c        | Sort the eigenvalues into algebraically increasing  |
-c        | order first then swap high end of the spectrum next |
-c        | to low end in appropriate locations.                |
-c        | NOTE: when np < floor(kev/2) be careful not to swap |
-c        | overlapping locations.                              |
-c        %-----------------------------------------------------%
-c
+!
+!        %-----------------------------------------------------%
+!        | Both ends of the spectrum are requested.            |
+!        | Sort the eigenvalues into algebraically increasing  |
+!        | order first then swap high end of the spectrum next |
+!        | to low end in appropriate locations.                |
+!        | NOTE: when np < floor(kev/2) be careful not to swap |
+!        | overlapping locations.                              |
+!        %-----------------------------------------------------%
+!
          call dsortr ('LA', .true., kev+np, ritz, bounds)
          kevd2 = kev / 2
          if ( kev .gt. 1 ) then
@@ -184,37 +184,37 @@ c
             call dswap ( min(kevd2,np), bounds, 1,
      &                   bounds( max(kevd2,np)+1 ), 1)
          end if
-c
+!
       else
-c
-c        %----------------------------------------------------%
-c        | LM, SM, LA, SA case.                               |
-c        | Sort the eigenvalues of H into the desired order   |
-c        | and apply the resulting order to BOUNDS.           |
-c        | The eigenvalues are sorted so that the wanted part |
-c        | are always in the last KEV locations.              |
-c        %----------------------------------------------------%
-c
+!
+!        %----------------------------------------------------%
+!        | LM, SM, LA, SA case.                               |
+!        | Sort the eigenvalues of H into the desired order   |
+!        | and apply the resulting order to BOUNDS.           |
+!        | The eigenvalues are sorted so that the wanted part |
+!        | are always in the last KEV locations.              |
+!        %----------------------------------------------------%
+!
          call dsortr (which, .true., kev+np, ritz, bounds)
       end if
-c
+!
       if (ishift .eq. 1 .and. np .gt. 0) then
-c
-c        %-------------------------------------------------------%
-c        | Sort the unwanted Ritz values used as shifts so that  |
-c        | the ones with largest Ritz estimates are first.       |
-c        | This will tend to minimize the effects of the         |
-c        | forward instability of the iteration when the shifts  |
-c        | are applied in subroutine pdsapps.                    |
-c        %-------------------------------------------------------%
-c
+!
+!        %-------------------------------------------------------%
+!        | Sort the unwanted Ritz values used as shifts so that  |
+!        | the ones with largest Ritz estimates are first.       |
+!        | This will tend to minimize the effects of the         |
+!        | forward instability of the iteration when the shifts  |
+!        | are applied in subroutine pdsapps.                    |
+!        %-------------------------------------------------------%
+!
          call dsortr ('SM', .true., np, bounds, ritz)
          call dcopy (np, ritz, 1, shifts, 1)
       end if
-c
+!
       call arscnd (t1)
       tsgets = tsgets + (t1 - t0)
-c
+!
       if (msglvl .gt. 0) then
          call pivout (comm, logfil, 1, [kev], ndigit, '_sgets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_sgets: NP is')
@@ -223,11 +223,11 @@ c
          call pdvout (comm, logfil, kev+np, bounds, ndigit,
      &        '_sgets: Associated Ritz estimates')
       end if
-c
+!
       return
-c
-c     %----------------%
-c     | End of pdsgets |
-c     %----------------%
-c
+!
+!     %----------------%
+!     | End of pdsgets |
+!     %----------------%
+!
       end
