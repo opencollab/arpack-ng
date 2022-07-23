@@ -1,265 +1,265 @@
-c-----------------------------------------------------------------------
-c\BeginDoc
-c
-c\Name: pdsaitr
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c  Reverse communication interface for applying NP additional steps to
-c  a K step symmetric Arnoldi factorization.
-c
-c  Input:  OP*V_{k}  -  V_{k}*H = r_{k}*e_{k}^T
-c
-c          with (V_{k}^T)*B*V_{k} = I, (V_{k}^T)*B*r_{k} = 0.
-c
-c  Output: OP*V_{k+p}  -  V_{k+p}*H = r_{k+p}*e_{k+p}^T
-c
-c          with (V_{k+p}^T)*B*V_{k+p} = I, (V_{k+p}^T)*B*r_{k+p} = 0.
-c
-c  where OP and B are as in pdsaupd.  The B-norm of r_{k+p} is also
-c  computed and returned.
-c
-c\Usage:
-c  call pdsaitr
-c     ( COMM, IDO, BMAT, N, K, NP, MODE, RESID, RNORM, V, LDV, H, LDH,
-c       IPNTR, WORKD, WORKL, INFO )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c  IDO     Integer.  (INPUT/OUTPUT)
-c          Reverse communication flag.
-c          -------------------------------------------------------------
-c          IDO =  0: first call to the reverse communication interface
-c          IDO = -1: compute  Y = OP * X  where
-c                    IPNTR(1) is the pointer into WORK for X,
-c                    IPNTR(2) is the pointer into WORK for Y.
-c                    This is for the restart phase to force the new
-c                    starting vector into the range of OP.
-c          IDO =  1: compute  Y = OP * X  where
-c                    IPNTR(1) is the pointer into WORK for X,
-c                    IPNTR(2) is the pointer into WORK for Y,
-c                    IPNTR(3) is the pointer into WORK for B * X.
-c          IDO =  2: compute  Y = B * X  where
-c                    IPNTR(1) is the pointer into WORK for X,
-c                    IPNTR(2) is the pointer into WORK for Y.
-c          IDO = 99: done
-c          -------------------------------------------------------------
-c          When the routine is used in the "shift-and-invert" mode, the
-c          vector B * Q is already available and does not need to be
-c          recomputed in forming OP * Q.
-c
-c  BMAT    Character*1.  (INPUT)
-c          BMAT specifies the type of matrix B that defines the
-c          semi-inner product for the operator OP.  See pdsaupd.
-c          B = 'I' -> standard eigenvalue problem A*x = lambda*x
-c          B = 'G' -> generalized eigenvalue problem A*x = lambda*M*x
-c
-c  N       Integer.  (INPUT)
-c          Dimension of the eigenproblem.
-c
-c  K       Integer.  (INPUT)
-c          Current order of H and the number of columns of V.
-c
-c  NP      Integer.  (INPUT)
-c          Number of additional Arnoldi steps to take.
-c
-c  MODE    Integer.  (INPUT)
-c          Signifies which form for "OP". If MODE=2 then
-c          a reduction in the number of B matrix vector multiplies
-c          is possible since the B-norm of OP*x is equivalent to
-c          the inv(B)-norm of A*x.
-c
-c  RESID   Double precision array of length N.  (INPUT/OUTPUT)
-c          On INPUT:  RESID contains the residual vector r_{k}.
-c          On OUTPUT: RESID contains the residual vector r_{k+p}.
-c
-c  RNORM   Double precision scalar.  (INPUT/OUTPUT)
-c          On INPUT the B-norm of r_{k}.
-c          On OUTPUT the B-norm of the updated residual r_{k+p}.
-c
-c  V       Double precision N by K+NP array.  (INPUT/OUTPUT)
-c          On INPUT:  V contains the Arnoldi vectors in the first K
-c          columns.
-c          On OUTPUT: V contains the new NP Arnoldi vectors in the next
-c          NP columns.  The first K columns are unchanged.
-c
-c  LDV     Integer.  (INPUT)
-c          Leading dimension of V exactly as declared in the calling
-c          program.
-c
-c  H       Double precision (K+NP) by 2 array.  (INPUT/OUTPUT)
-c          H is used to store the generated symmetric tridiagonal matrix
-c          with the subdiagonal in the first column starting at H(2,1)
-c          and the main diagonal in the second column.
-c
-c  LDH     Integer.  (INPUT)
-c          Leading dimension of H exactly as declared in the calling
-c          program.
-c
-c  IPNTR   Integer array of length 3.  (OUTPUT)
-c          Pointer to mark the starting locations in the WORK for
-c          vectors used by the Arnoldi iteration.
-c          -------------------------------------------------------------
-c          IPNTR(1): pointer to the current operand vector X.
-c          IPNTR(2): pointer to the current result vector Y.
-c          IPNTR(3): pointer to the vector B * X when used in the
-c                    shift-and-invert mode.  X is the current operand.
-c          -------------------------------------------------------------
-c
-c  WORKD   Double precision work array of length 3*N.  (REVERSE COMMUNICATION)
-c          Distributed array to be used in the basic Arnoldi iteration
-c          for reverse communication.  The calling program should not
-c          use WORKD as temporary workspace during the iteration !!!!!!
-c          On INPUT, WORKD(1:N) = B*RESID where RESID is associated
-c          with the K step Arnoldi factorization. Used to save some
-c          computation at the first step.
-c          On OUTPUT, WORKD(1:N) = B*RESID where RESID is associated
-c          with the K+NP step Arnoldi factorization.
-c
-c  WORKL   Double precision work space used for Gram Schmidt orthogonalization
-c
-c  INFO    Integer.  (OUTPUT)
-c          = 0: Normal exit.
-c          > 0: Size of an invariant subspace of OP is found that is
-c               less than K + NP.
-c
-c\EndDoc
-c
-c-----------------------------------------------------------------------
-c
-c\BeginLib
-c
-c\Local variables:
-c     xxxxxx  real
-c
-c\Routines called:
-c     pdgetv0  Parallel ARPACK routine to generate the initial vector.
-c     pivout   Parallel ARPACK utility routine that prints integers.
-c     pdmout   Parallel ARPACK utility routine that prints matrices.
-c     pdvout   Parallel ARPACK utility routine that prints vectors.
-c     pdlamch10  ScaLAPACK routine that determines machine constants.
-c     dlascl   LAPACK routine for careful scaling of a matrix.
-c     dgemv    Level 2 BLAS routine for matrix vector multiplication.
-c     daxpy    Level 1 BLAS that computes a vector triad.
-c     dscal    Level 1 BLAS that scales a vector.
-c     dcopy    Level 1 BLAS that copies one vector to another .
-c     ddot     Level 1 BLAS that computes the scalar product of two vectors.
-c     pdnorm2  Parallel version of Level 1 BLAS that computes the norm of a vector.
-c
-c\Author
-c     Danny Sorensen               Phuong Vu
-c     Richard Lehoucq              CRPC / Rice University
-c     Dept. of Computational &     Houston, Texas
-c     Applied Mathematics
-c     Rice University
-c     Houston, Texas
-c
-c\Parallel Modifications
-c     Kristi Maschhoff
-c
-c\Revision history:
-c     Starting Point: Serial Code FILE: saitr.F   SID: 2.3
-c
-c\SCCS Information:
-c FILE: saitr.F   SID: 1.3   DATE OF SID: 3/19/97
-c
-c\Remarks
-c  The algorithm implemented is:
-c
-c  restart = .false.
-c  Given V_{k} = [v_{1}, ..., v_{k}], r_{k};
-c  r_{k} contains the initial residual vector even for k = 0;
-c  Also assume that rnorm = || B*r_{k} || and B*r_{k} are already
-c  computed by the calling program.
-c
-c  betaj = rnorm ; p_{k+1} = B*r_{k} ;
-c  For  j = k+1, ..., k+np  Do
-c     1) if ( betaj < tol ) stop or restart depending on j.
-c        if ( restart ) generate a new starting vector.
-c     2) v_{j} = r(j-1)/betaj;  V_{j} = [V_{j-1}, v_{j}];
-c        p_{j} = p_{j}/betaj
-c     3) r_{j} = OP*v_{j} where OP is defined as in pdsaupd
-c        For shift-invert mode p_{j} = B*v_{j} is already available.
-c        wnorm = || OP*v_{j} ||
-c     4) Compute the j-th step residual vector.
-c        w_{j} =  V_{j}^T * B * OP * v_{j}
-c        r_{j} =  OP*v_{j} - V_{j} * w_{j}
-c        alphaj <- j-th component of w_{j}
-c        rnorm = || r_{j} ||
-c        betaj+1 = rnorm
-c        If (rnorm > 0.717*wnorm) accept step and go back to 1)
-c     5) Re-orthogonalization step:
-c        s = V_{j}'*B*r_{j}
-c        r_{j} = r_{j} - V_{j}*s;  rnorm1 = || r_{j} ||
-c        alphaj = alphaj + s_{j};
-c     6) Iterative refinement step:
-c        If (rnorm1 > 0.717*rnorm) then
-c           rnorm = rnorm1
-c           accept step and go back to 1)
-c        Else
-c           rnorm = rnorm1
-c           If this is the first time in step 6), go to 5)
-c           Else r_{j} lies in the span of V_{j} numerically.
-c              Set r_{j} = 0 and rnorm = 0; go to 1)
-c        EndIf
-c  End Do
-c
-c\EndLib
-c
-c-----------------------------------------------------------------------
-c
+!-----------------------------------------------------------------------
+!\BeginDoc
+!
+!\Name: pdsaitr
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!  Reverse communication interface for applying NP additional steps to
+!  a K step symmetric Arnoldi factorization.
+!
+!  Input:  OP*V_{k}  -  V_{k}*H = r_{k}*e_{k}^T
+!
+!          with (V_{k}^T)*B*V_{k} = I, (V_{k}^T)*B*r_{k} = 0.
+!
+!  Output: OP*V_{k+p}  -  V_{k+p}*H = r_{k+p}*e_{k+p}^T
+!
+!          with (V_{k+p}^T)*B*V_{k+p} = I, (V_{k+p}^T)*B*r_{k+p} = 0.
+!
+!  where OP and B are as in pdsaupd.  The B-norm of r_{k+p} is also
+!  computed and returned.
+!
+!\Usage:
+!  call pdsaitr
+!     ( COMM, IDO, BMAT, N, K, NP, MODE, RESID, RNORM, V, LDV, H, LDH,
+!       IPNTR, WORKD, WORKL, INFO )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!  IDO     Integer.  (INPUT/OUTPUT)
+!          Reverse communication flag.
+!          -------------------------------------------------------------
+!          IDO =  0: first call to the reverse communication interface
+!          IDO = -1: compute  Y = OP * X  where
+!                    IPNTR(1) is the pointer into WORK for X,
+!                    IPNTR(2) is the pointer into WORK for Y.
+!                    This is for the restart phase to force the new
+!                    starting vector into the range of OP.
+!          IDO =  1: compute  Y = OP * X  where
+!                    IPNTR(1) is the pointer into WORK for X,
+!                    IPNTR(2) is the pointer into WORK for Y,
+!                    IPNTR(3) is the pointer into WORK for B * X.
+!          IDO =  2: compute  Y = B * X  where
+!                    IPNTR(1) is the pointer into WORK for X,
+!                    IPNTR(2) is the pointer into WORK for Y.
+!          IDO = 99: done
+!          -------------------------------------------------------------
+!          When the routine is used in the "shift-and-invert" mode, the
+!          vector B * Q is already available and does not need to be
+!          recomputed in forming OP * Q.
+!
+!  BMAT    Character*1.  (INPUT)
+!          BMAT specifies the type of matrix B that defines the
+!          semi-inner product for the operator OP.  See pdsaupd.
+!          B = 'I' -> standard eigenvalue problem A*x = lambda*x
+!          B = 'G' -> generalized eigenvalue problem A*x = lambda*M*x
+!
+!  N       Integer.  (INPUT)
+!          Dimension of the eigenproblem.
+!
+!  K       Integer.  (INPUT)
+!          Current order of H and the number of columns of V.
+!
+!  NP      Integer.  (INPUT)
+!          Number of additional Arnoldi steps to take.
+!
+!  MODE    Integer.  (INPUT)
+!          Signifies which form for "OP". If MODE=2 then
+!          a reduction in the number of B matrix vector multiplies
+!          is possible since the B-norm of OP*x is equivalent to
+!          the inv(B)-norm of A*x.
+!
+!  RESID   Double precision array of length N.  (INPUT/OUTPUT)
+!          On INPUT:  RESID contains the residual vector r_{k}.
+!          On OUTPUT: RESID contains the residual vector r_{k+p}.
+!
+!  RNORM   Double precision scalar.  (INPUT/OUTPUT)
+!          On INPUT the B-norm of r_{k}.
+!          On OUTPUT the B-norm of the updated residual r_{k+p}.
+!
+!  V       Double precision N by K+NP array.  (INPUT/OUTPUT)
+!          On INPUT:  V contains the Arnoldi vectors in the first K
+!          columns.
+!          On OUTPUT: V contains the new NP Arnoldi vectors in the next
+!          NP columns.  The first K columns are unchanged.
+!
+!  LDV     Integer.  (INPUT)
+!          Leading dimension of V exactly as declared in the calling
+!          program.
+!
+!  H       Double precision (K+NP) by 2 array.  (INPUT/OUTPUT)
+!          H is used to store the generated symmetric tridiagonal matrix
+!          with the subdiagonal in the first column starting at H(2,1)
+!          and the main diagonal in the second column.
+!
+!  LDH     Integer.  (INPUT)
+!          Leading dimension of H exactly as declared in the calling
+!          program.
+!
+!  IPNTR   Integer array of length 3.  (OUTPUT)
+!          Pointer to mark the starting locations in the WORK for
+!          vectors used by the Arnoldi iteration.
+!          -------------------------------------------------------------
+!          IPNTR(1): pointer to the current operand vector X.
+!          IPNTR(2): pointer to the current result vector Y.
+!          IPNTR(3): pointer to the vector B * X when used in the
+!                    shift-and-invert mode.  X is the current operand.
+!          -------------------------------------------------------------
+!
+!  WORKD   Double precision work array of length 3*N.  (REVERSE COMMUNICATION)
+!          Distributed array to be used in the basic Arnoldi iteration
+!          for reverse communication.  The calling program should not
+!          use WORKD as temporary workspace during the iteration !!!!!!
+!          On INPUT, WORKD(1:N) = B*RESID where RESID is associated
+!          with the K step Arnoldi factorization. Used to save some
+!          computation at the first step.
+!          On OUTPUT, WORKD(1:N) = B*RESID where RESID is associated
+!          with the K+NP step Arnoldi factorization.
+!
+!  WORKL   Double precision work space used for Gram Schmidt orthogonalization
+!
+!  INFO    Integer.  (OUTPUT)
+!          = 0: Normal exit.
+!          > 0: Size of an invariant subspace of OP is found that is
+!               less than K + NP.
+!
+!\EndDoc
+!
+!-----------------------------------------------------------------------
+!
+!\BeginLib
+!
+!\Local variables:
+!     xxxxxx  real
+!
+!\Routines called:
+!     pdgetv0  Parallel ARPACK routine to generate the initial vector.
+!     pivout   Parallel ARPACK utility routine that prints integers.
+!     pdmout   Parallel ARPACK utility routine that prints matrices.
+!     pdvout   Parallel ARPACK utility routine that prints vectors.
+!     pdlamch10  ScaLAPACK routine that determines machine constants.
+!     dlascl   LAPACK routine for careful scaling of a matrix.
+!     dgemv    Level 2 BLAS routine for matrix vector multiplication.
+!     daxpy    Level 1 BLAS that computes a vector triad.
+!     dscal    Level 1 BLAS that scales a vector.
+!     dcopy    Level 1 BLAS that copies one vector to another .
+!     ddot     Level 1 BLAS that computes the scalar product of two vectors.
+!     pdnorm2  Parallel version of Level 1 BLAS that computes the norm of a vector.
+!
+!\Author
+!     Danny Sorensen               Phuong Vu
+!     Richard Lehoucq              CRPC / Rice University
+!     Dept. of Computational &     Houston, Texas
+!     Applied Mathematics
+!     Rice University
+!     Houston, Texas
+!
+!\Parallel Modifications
+!     Kristi Maschhoff
+!
+!\Revision history:
+!     Starting Point: Serial Code FILE: saitr.F   SID: 2.3
+!
+!\SCCS Information:
+! FILE: saitr.F   SID: 1.3   DATE OF SID: 3/19/97
+!
+!\Remarks
+!  The algorithm implemented is:
+!
+!  restart = .false.
+!  Given V_{k} = [v_{1}, ..., v_{k}], r_{k};
+!  r_{k} contains the initial residual vector even for k = 0;
+!  Also assume that rnorm = || B*r_{k} || and B*r_{k} are already
+!  computed by the calling program.
+!
+!  betaj = rnorm ; p_{k+1} = B*r_{k} ;
+!  For  j = k+1, ..., k+np  Do
+!     1) if ( betaj < tol ) stop or restart depending on j.
+!        if ( restart ) generate a new starting vector.
+!     2) v_{j} = r(j-1)/betaj;  V_{j} = [V_{j-1}, v_{j}];
+!        p_{j} = p_{j}/betaj
+!     3) r_{j} = OP*v_{j} where OP is defined as in pdsaupd
+!        For shift-invert mode p_{j} = B*v_{j} is already available.
+!        wnorm = || OP*v_{j} ||
+!     4) Compute the j-th step residual vector.
+!        w_{j} =  V_{j}^T * B * OP * v_{j}
+!        r_{j} =  OP*v_{j} - V_{j} * w_{j}
+!        alphaj <- j-th component of w_{j}
+!        rnorm = || r_{j} ||
+!        betaj+1 = rnorm
+!        If (rnorm > 0.717*wnorm) accept step and go back to 1)
+!     5) Re-orthogonalization step:
+!        s = V_{j}'*B*r_{j}
+!        r_{j} = r_{j} - V_{j}*s;  rnorm1 = || r_{j} ||
+!        alphaj = alphaj + s_{j};
+!     6) Iterative refinement step:
+!        If (rnorm1 > 0.717*rnorm) then
+!           rnorm = rnorm1
+!           accept step and go back to 1)
+!        Else
+!           rnorm = rnorm1
+!           If this is the first time in step 6), go to 5)
+!           Else r_{j} lies in the span of V_{j} numerically.
+!              Set r_{j} = 0 and rnorm = 0; go to 1)
+!        EndIf
+!  End Do
+!
+!\EndLib
+!
+!-----------------------------------------------------------------------
+!
       subroutine pdsaitr
      &   (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,
      &    ipntr, workd, workl, info)
-c
+!
       include   'mpif.h'
       include   'pcontext.h'
-c
-c     %---------------%
-c     | MPI Variables |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | MPI Variables |
+!     %---------------%
+!
       integer    comm
-c
-c     %----------------------------------------------------%
-c     | Include files for debugging and timing information |
-c     %----------------------------------------------------%
-c
+!
+!     %----------------------------------------------------%
+!     | Include files for debugging and timing information |
+!     %----------------------------------------------------%
+!
       include   'debug.h'
       include   'stat.h'
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       character  bmat*1
       integer    ido, info, k, ldh, ldv, n, mode, np
       Double precision
      &           rnorm
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       integer    ipntr(3)
       Double precision
      &           h(ldh,2), resid(n), v(ldv,k+np), workd(3*n),
      &           workl(2*ldh)
-c
-c     %------------%
-c     | Parameters |
-c     %------------%
-c
+!
+!     %------------%
+!     | Parameters |
+!     %------------%
+!
       Double precision
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
-c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | Local Scalars |
+!     %---------------%
+!
       logical    orth1, orth2, rstart, step3, step4
       integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,
      &           jj
@@ -268,224 +268,224 @@ c
       save       orth1, orth2, rstart, step3, step4,
      &           ierr, ipj, irj, ivj, iter, itry, j, msglvl,
      &           rnorm1, safmin, wnorm
-c
+!
       Double precision
      &           rnorm_buf
-c
-c     %-----------------------%
-c     | Local Array Arguments |
-c     %-----------------------%
-c
+!
+!     %-----------------------%
+!     | Local Array Arguments |
+!     %-----------------------%
+!
       Double precision
      &           xtemp(2)
-c
-c     %----------------------%
-c     | External Subroutines |
-c     %----------------------%
-c
+!
+!     %----------------------%
+!     | External Subroutines |
+!     %----------------------%
+!
       external   daxpy, dcopy, dscal, dgemv, pdgetv0, pdvout, pdmout,
      &           dlascl, pivout, arscnd
-c
-c     %--------------------%
-c     | External Functions |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | External Functions |
+!     %--------------------%
+!
       Double precision
      &           ddot, pdnorm2, pdlamch10
       external   ddot, pdnorm2, pdlamch10
-c
-c     %-----------------%
-c     | Data statements |
-c     %-----------------%
-c
-c
-c
-c     %---------------------%
-c     | Intrinsic Functions |
-c     %---------------------%
-c
+!
+!     %-----------------%
+!     | Data statements |
+!     %-----------------%
+!
+!
+!
+!     %---------------------%
+!     | Intrinsic Functions |
+!     %---------------------%
+!
       intrinsic    abs, sqrt
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
       if (aitr_first) then
          aitr_first = .false.
-c
-c        %--------------------------------%
-c        | safmin = safe minimum is such  |
-c        | that 1/sfmin does not overflow |
-c        %--------------------------------%
-c
+!
+!        %--------------------------------%
+!        | safmin = safe minimum is such  |
+!        | that 1/sfmin does not overflow |
+!        %--------------------------------%
+!
          safmin = pdlamch10(comm,'safmin')
       end if
-c
+!
       if (ido .eq. 0) then
-c
-c        %-------------------------------%
-c        | Initialize timing statistics  |
-c        | & message level for debugging |
-c        %-------------------------------%
-c
+!
+!        %-------------------------------%
+!        | Initialize timing statistics  |
+!        | & message level for debugging |
+!        %-------------------------------%
+!
          call arscnd (t0)
          msglvl = msaitr
-c
-c        %------------------------------%
-c        | Initial call to this routine |
-c        %------------------------------%
-c
+!
+!        %------------------------------%
+!        | Initial call to this routine |
+!        %------------------------------%
+!
          info   = 0
          step3  = .false.
          step4  = .false.
          rstart = .false.
          orth1  = .false.
          orth2  = .false.
-c
-c        %--------------------------------%
-c        | Pointer to the current step of |
-c        | the factorization to build     |
-c        %--------------------------------%
-c
+!
+!        %--------------------------------%
+!        | Pointer to the current step of |
+!        | the factorization to build     |
+!        %--------------------------------%
+!
          j      = k + 1
-c
-c        %------------------------------------------%
-c        | Pointers used for reverse communication  |
-c        | when using WORKD.                        |
-c        %------------------------------------------%
-c
+!
+!        %------------------------------------------%
+!        | Pointers used for reverse communication  |
+!        | when using WORKD.                        |
+!        %------------------------------------------%
+!
          ipj    = 1
          irj    = ipj   + n
          ivj    = irj   + n
       end if
-c
-c     %-------------------------------------------------%
-c     | When in reverse communication mode one of:      |
-c     | STEP3, STEP4, ORTH1, ORTH2, RSTART              |
-c     | will be .true.                                  |
-c     | STEP3: return from computing OP*v_{j}.          |
-c     | STEP4: return from computing B-norm of OP*v_{j} |
-c     | ORTH1: return from computing B-norm of r_{j+1}  |
-c     | ORTH2: return from computing B-norm of          |
-c     |        correction to the residual vector.       |
-c     | RSTART: return from OP computations needed by   |
-c     |         pdgetv0.                                |
-c     %-------------------------------------------------%
-c
+!
+!     %-------------------------------------------------%
+!     | When in reverse communication mode one of:      |
+!     | STEP3, STEP4, ORTH1, ORTH2, RSTART              |
+!     | will be .true.                                  |
+!     | STEP3: return from computing OP*v_{j}.          |
+!     | STEP4: return from computing B-norm of OP*v_{j} |
+!     | ORTH1: return from computing B-norm of r_{j+1}  |
+!     | ORTH2: return from computing B-norm of          |
+!     |        correction to the residual vector.       |
+!     | RSTART: return from OP computations needed by   |
+!     |         pdgetv0.                                |
+!     %-------------------------------------------------%
+!
       if (step3)  go to 50
       if (step4)  go to 60
       if (orth1)  go to 70
       if (orth2)  go to 90
       if (rstart) go to 30
-c
-c     %------------------------------%
-c     | Else this is the first step. |
-c     %------------------------------%
-c
-c     %--------------------------------------------------------------%
-c     |                                                              |
-c     |        A R N O L D I     I T E R A T I O N     L O O P       |
-c     |                                                              |
-c     | Note:  B*r_{j-1} is already in WORKD(1:N)=WORKD(IPJ:IPJ+N-1) |
-c     %--------------------------------------------------------------%
-c
+!
+!     %------------------------------%
+!     | Else this is the first step. |
+!     %------------------------------%
+!
+!     %--------------------------------------------------------------%
+!     |                                                              |
+!     |        A R N O L D I     I T E R A T I O N     L O O P       |
+!     |                                                              |
+!     | Note:  B*r_{j-1} is already in WORKD(1:N)=WORKD(IPJ:IPJ+N-1) |
+!     %--------------------------------------------------------------%
+!
  1000 continue
-c
+!
          if (msglvl .gt. 2) then
             call pivout (comm, logfil, 1, [j], ndigit,
      &                  '_saitr: generating Arnoldi vector no.')
             call pdvout (comm, logfil, 1, [rnorm], ndigit,
      &                  '_saitr: B-norm of the current residual =')
          end if
-c
-c        %---------------------------------------------------------%
-c        | Check for exact zero. Equivalent to determining whether |
-c        | a j-step Arnoldi factorization is present.              |
-c        %---------------------------------------------------------%
-c
+!
+!        %---------------------------------------------------------%
+!        | Check for exact zero. Equivalent to determining whether |
+!        | a j-step Arnoldi factorization is present.              |
+!        %---------------------------------------------------------%
+!
          if (rnorm .gt. zero) go to 40
-c
-c           %---------------------------------------------------%
-c           | Invariant subspace found, generate a new starting |
-c           | vector which is orthogonal to the current Arnoldi |
-c           | basis and continue the iteration.                 |
-c           %---------------------------------------------------%
-c
+!
+!           %---------------------------------------------------%
+!           | Invariant subspace found, generate a new starting |
+!           | vector which is orthogonal to the current Arnoldi |
+!           | basis and continue the iteration.                 |
+!           %---------------------------------------------------%
+!
             if (msglvl .gt. 0) then
                call pivout (comm, logfil, 1, [j], ndigit,
      &                     '_saitr: ****** restart at step ******')
             end if
-c
-c           %---------------------------------------------%
-c           | ITRY is the loop variable that controls the |
-c           | maximum amount of times that a restart is   |
-c           | attempted. NRSTRT is used by stat.h         |
-c           %---------------------------------------------%
-c
+!
+!           %---------------------------------------------%
+!           | ITRY is the loop variable that controls the |
+!           | maximum amount of times that a restart is   |
+!           | attempted. NRSTRT is used by stat.h         |
+!           %---------------------------------------------%
+!
             nrstrt = nrstrt + 1
             itry   = 1
    20       continue
             rstart = .true.
             ido    = 0
    30       continue
-c
-c           %--------------------------------------%
-c           | If in reverse communication mode and |
-c           | RSTART = .true. flow returns here.   |
-c           %--------------------------------------%
-c
+!
+!           %--------------------------------------%
+!           | If in reverse communication mode and |
+!           | RSTART = .true. flow returns here.   |
+!           %--------------------------------------%
+!
             call pdgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,
      &                   resid, rnorm, ipntr, workd, workl, ierr)
             if (ido .ne. 99) go to 9000
             if (ierr .lt. 0) then
                itry = itry + 1
                if (itry .le. 3) go to 20
-c
-c              %------------------------------------------------%
-c              | Give up after several restart attempts.        |
-c              | Set INFO to the size of the invariant subspace |
-c              | which spans OP and exit.                       |
-c              %------------------------------------------------%
-c
+!
+!              %------------------------------------------------%
+!              | Give up after several restart attempts.        |
+!              | Set INFO to the size of the invariant subspace |
+!              | which spans OP and exit.                       |
+!              %------------------------------------------------%
+!
                info = j - 1
                call arscnd (t1)
                tsaitr = tsaitr + (t1 - t0)
                ido = 99
                go to 9000
             end if
-c
+!
    40    continue
-c
-c        %---------------------------------------------------------%
-c        | STEP 2:  v_{j} = r_{j-1}/rnorm and p_{j} = p_{j}/rnorm  |
-c        | Note that p_{j} = B*r_{j-1}. In order to avoid overflow |
-c        | when reciprocating a small RNORM, test against lower    |
-c        | machine bound.                                          |
-c        %---------------------------------------------------------%
-c
+!
+!        %---------------------------------------------------------%
+!        | STEP 2:  v_{j} = r_{j-1}/rnorm and p_{j} = p_{j}/rnorm  |
+!        | Note that p_{j} = B*r_{j-1}. In order to avoid overflow |
+!        | when reciprocating a small RNORM, test against lower    |
+!        | machine bound.                                          |
+!        %---------------------------------------------------------%
+!
          call dcopy (n, resid, 1, v(1,j), 1)
          if (rnorm .ge. safmin) then
              temp1 = one / rnorm
              call dscal (n, temp1, v(1,j), 1)
              call dscal (n, temp1, workd(ipj), 1)
          else
-c
-c            %-----------------------------------------%
-c            | To scale both v_{j} and p_{j} carefully |
-c            | use LAPACK routine SLASCL               |
-c            %-----------------------------------------%
-c
+!
+!            %-----------------------------------------%
+!            | To scale both v_{j} and p_{j} carefully |
+!            | use LAPACK routine SLASCL               |
+!            %-----------------------------------------%
+!
              call dlascl ('General', i, i, rnorm, one, n, 1,
      &                    v(1,j), n, infol)
              call dlascl ('General', i, i, rnorm, one, n, 1,
      &                    workd(ipj), n, infol)
          end if
-c
-c        %------------------------------------------------------%
-c        | STEP 3:  r_{j} = OP*v_{j}; Note that p_{j} = B*v_{j} |
-c        | Note that this is not quite yet r_{j}. See STEP 4    |
-c        %------------------------------------------------------%
-c
+!
+!        %------------------------------------------------------%
+!        | STEP 3:  r_{j} = OP*v_{j}; Note that p_{j} = B*v_{j} |
+!        | Note that this is not quite yet r_{j}. See STEP 4    |
+!        %------------------------------------------------------%
+!
          step3 = .true.
          nopx  = nopx + 1
          call arscnd (t2)
@@ -494,39 +494,39 @@ c
          ipntr(2) = irj
          ipntr(3) = ipj
          ido = 1
-c
-c        %-----------------------------------%
-c        | Exit in order to compute OP*v_{j} |
-c        %-----------------------------------%
-c
+!
+!        %-----------------------------------%
+!        | Exit in order to compute OP*v_{j} |
+!        %-----------------------------------%
+!
          go to 9000
    50    continue
-c
-c        %-----------------------------------%
-c        | Back from reverse communication;  |
-c        | WORKD(IRJ:IRJ+N-1) := OP*v_{j}.   |
-c        %-----------------------------------%
-c
+!
+!        %-----------------------------------%
+!        | Back from reverse communication;  |
+!        | WORKD(IRJ:IRJ+N-1) := OP*v_{j}.   |
+!        %-----------------------------------%
+!
          call arscnd (t3)
          tmvopx = tmvopx + (t3 - t2)
-c
+!
          step3 = .false.
-c
-c        %------------------------------------------%
-c        | Put another copy of OP*v_{j} into RESID. |
-c        %------------------------------------------%
-c
+!
+!        %------------------------------------------%
+!        | Put another copy of OP*v_{j} into RESID. |
+!        %------------------------------------------%
+!
          call dcopy (n, workd(irj), 1, resid, 1)
-c
-c        %-------------------------------------------%
-c        | STEP 4:  Finish extending the symmetric   |
-c        |          Arnoldi to length j. If MODE = 2 |
-c        |          then B*OP = B*inv(B)*A = A and   |
-c        |          we don't need to compute B*OP.   |
-c        | NOTE: If MODE = 2 WORKD(IVJ:IVJ+N-1) is   |
-c        | assumed to have A*v_{j}.                  |
-c        %-------------------------------------------%
-c
+!
+!        %-------------------------------------------%
+!        | STEP 4:  Finish extending the symmetric   |
+!        |          Arnoldi to length j. If MODE = 2 |
+!        |          then B*OP = B*inv(B)*A = A and   |
+!        |          we don't need to compute B*OP.   |
+!        | NOTE: If MODE = 2 WORKD(IVJ:IVJ+N-1) is   |
+!        | assumed to have A*v_{j}.                  |
+!        %-------------------------------------------%
+!
          if (mode .eq. 2) go to 65
          call arscnd (t2)
          if (bmat .eq. 'G') then
@@ -535,42 +535,42 @@ c
             ipntr(1) = irj
             ipntr(2) = ipj
             ido = 2
-c
-c           %-------------------------------------%
-c           | Exit in order to compute B*OP*v_{j} |
-c           %-------------------------------------%
-c
+!
+!           %-------------------------------------%
+!           | Exit in order to compute B*OP*v_{j} |
+!           %-------------------------------------%
+!
             go to 9000
          else if (bmat .eq. 'I') then
               call dcopy(n, resid, 1 , workd(ipj), 1)
          end if
    60    continue
-c
-c        %-----------------------------------%
-c        | Back from reverse communication;  |
-c        | WORKD(IPJ:IPJ+N-1) := B*OP*v_{j}. |
-c        %-----------------------------------%
-c
+!
+!        %-----------------------------------%
+!        | Back from reverse communication;  |
+!        | WORKD(IPJ:IPJ+N-1) := B*OP*v_{j}. |
+!        %-----------------------------------%
+!
          if (bmat .eq. 'G') then
             call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
-c
+!
          step4 = .false.
-c
-c        %-------------------------------------%
-c        | The following is needed for STEP 5. |
-c        | Compute the B-norm of OP*v_{j}.     |
-c        %-------------------------------------%
-c
+!
+!        %-------------------------------------%
+!        | The following is needed for STEP 5. |
+!        | Compute the B-norm of OP*v_{j}.     |
+!        %-------------------------------------%
+!
    65    continue
          if (mode .eq. 2) then
-c
-c           %----------------------------------%
-c           | Note that the B-norm of OP*v_{j} |
-c           | is the inv(B)-norm of A*v_{j}.   |
-c           %----------------------------------%
-c
+!
+!           %----------------------------------%
+!           | Note that the B-norm of OP*v_{j} |
+!           | is the inv(B)-norm of A*v_{j}.   |
+!           %----------------------------------%
+!
             rnorm_buf = ddot (n, resid, 1, workd(ivj), 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
      &           MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
@@ -583,21 +583,21 @@ c
          else if (bmat .eq. 'I') then
             wnorm = pdnorm2( comm, n, resid, 1 )
          end if
-c
-c        %-----------------------------------------%
-c        | Compute the j-th residual corresponding |
-c        | to the j step factorization.            |
-c        | Use Classical Gram Schmidt and compute: |
-c        | w_{j} <-  V_{j}^T * B * OP * v_{j}      |
-c        | r_{j} <-  OP*v_{j} - V_{j} * w_{j}      |
-c        %-----------------------------------------%
-c
-c
-c        %------------------------------------------%
-c        | Compute the j Fourier coefficients w_{j} |
-c        | WORKD(IPJ:IPJ+N-1) contains B*OP*v_{j}.  |
-c        %------------------------------------------%
-c
+!
+!        %-----------------------------------------%
+!        | Compute the j-th residual corresponding |
+!        | to the j step factorization.            |
+!        | Use Classical Gram Schmidt and compute: |
+!        | w_{j} <-  V_{j}^T * B * OP * v_{j}      |
+!        | r_{j} <-  OP*v_{j} - V_{j} * w_{j}      |
+!        %-----------------------------------------%
+!
+!
+!        %------------------------------------------%
+!        | Compute the j Fourier coefficients w_{j} |
+!        | WORKD(IPJ:IPJ+N-1) contains B*OP*v_{j}.  |
+!        %------------------------------------------%
+!
          if (mode .ne. 2 ) then
             call dgemv('T', n, j, one, v, ldv, workd(ipj), 1, zero,
      &                  workl(j+1), 1)
@@ -609,19 +609,19 @@ c
             call MPI_ALLREDUCE( workl(j+1), workl(1), j,
      &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
          end if
-c
-c        %--------------------------------------%
-c        | Orthgonalize r_{j} against V_{j}.    |
-c        | RESID contains OP*v_{j}. See STEP 3. |
-c        %--------------------------------------%
-c
+!
+!        %--------------------------------------%
+!        | Orthgonalize r_{j} against V_{j}.    |
+!        | RESID contains OP*v_{j}. See STEP 3. |
+!        %--------------------------------------%
+!
          call dgemv('N', n, j, -one, v, ldv, workl(1), 1, one,
      &               resid, 1)
-c
-c        %--------------------------------------%
-c        | Extend H to have j rows and columns. |
-c        %--------------------------------------%
-c
+!
+!        %--------------------------------------%
+!        | Extend H to have j rows and columns. |
+!        %--------------------------------------%
+!
          h(j,2) = workl(j)
          if (j .eq. 1  .or.  rstart) then
             h(j,1) = zero
@@ -629,10 +629,10 @@ c
             h(j,1) = rnorm
          end if
          call arscnd (t4)
-c
+!
          orth1 = .true.
          iter  = 0
-c
+!
          call arscnd (t2)
          if (bmat .eq. 'G') then
             nbx = nbx + 1
@@ -640,33 +640,33 @@ c
             ipntr(1) = irj
             ipntr(2) = ipj
             ido = 2
-c
-c           %----------------------------------%
-c           | Exit in order to compute B*r_{j} |
-c           %----------------------------------%
-c
+!
+!           %----------------------------------%
+!           | Exit in order to compute B*r_{j} |
+!           %----------------------------------%
+!
             go to 9000
          else if (bmat .eq. 'I') then
             call dcopy (n, resid, 1, workd(ipj), 1)
          end if
    70    continue
-c
-c        %---------------------------------------------------%
-c        | Back from reverse communication if ORTH1 = .true. |
-c        | WORKD(IPJ:IPJ+N-1) := B*r_{j}.                    |
-c        %---------------------------------------------------%
-c
+!
+!        %---------------------------------------------------%
+!        | Back from reverse communication if ORTH1 = .true. |
+!        | WORKD(IPJ:IPJ+N-1) := B*r_{j}.                    |
+!        %---------------------------------------------------%
+!
          if (bmat .eq. 'G') then
             call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
-c
+!
          orth1 = .false.
-c
-c        %------------------------------%
-c        | Compute the B-norm of r_{j}. |
-c        %------------------------------%
-c
+!
+!        %------------------------------%
+!        | Compute the B-norm of r_{j}. |
+!        %------------------------------%
+!
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,
@@ -675,65 +675,65 @@ c
          else if (bmat .eq. 'I') then
             rnorm = pdnorm2( comm, n, resid, 1 )
          end if
-c
-c        %-----------------------------------------------------------%
-c        | STEP 5: Re-orthogonalization / Iterative refinement phase |
-c        | Maximum NITER_ITREF tries.                                |
-c        |                                                           |
-c        |          s      = V_{j}^T * B * r_{j}                     |
-c        |          r_{j}  = r_{j} - V_{j}*s                         |
-c        |          alphaj = alphaj + s_{j}                          |
-c        |                                                           |
-c        | The stopping criteria used for iterative refinement is    |
-c        | discussed in Parlett's book SEP, page 107 and in Gragg &  |
-c        | Reichel ACM TOMS paper; Algorithm 686, Dec. 1990.         |
-c        | Determine if we need to correct the residual. The goal is |
-c        | to enforce ||v(:,1:j)^T * r_{j}|| .le. eps * || r_{j} ||  |
-c        %-----------------------------------------------------------%
-c
+!
+!        %-----------------------------------------------------------%
+!        | STEP 5: Re-orthogonalization / Iterative refinement phase |
+!        | Maximum NITER_ITREF tries.                                |
+!        |                                                           |
+!        |          s      = V_{j}^T * B * r_{j}                     |
+!        |          r_{j}  = r_{j} - V_{j}*s                         |
+!        |          alphaj = alphaj + s_{j}                          |
+!        |                                                           |
+!        | The stopping criteria used for iterative refinement is    |
+!        | discussed in Parlett's book SEP, page 107 and in Gragg &  |
+!        | Reichel ACM TOMS paper; Algorithm 686, Dec. 1990.         |
+!        | Determine if we need to correct the residual. The goal is |
+!        | to enforce ||v(:,1:j)^T * r_{j}|| .le. eps * || r_{j} ||  |
+!        %-----------------------------------------------------------%
+!
          if (rnorm .gt. 0.717*wnorm) go to 100
          nrorth = nrorth + 1
-c
-c        %---------------------------------------------------%
-c        | Enter the Iterative refinement phase. If further  |
-c        | refinement is necessary, loop back here. The loop |
-c        | variable is ITER. Perform a step of Classical     |
-c        | Gram-Schmidt using all the Arnoldi vectors V_{j}  |
-c        %---------------------------------------------------%
-c
+!
+!        %---------------------------------------------------%
+!        | Enter the Iterative refinement phase. If further  |
+!        | refinement is necessary, loop back here. The loop |
+!        | variable is ITER. Perform a step of Classical     |
+!        | Gram-Schmidt using all the Arnoldi vectors V_{j}  |
+!        %---------------------------------------------------%
+!
    80    continue
-c
+!
          if (msglvl .gt. 2) then
             xtemp(1) = wnorm
             xtemp(2) = rnorm
             call pdvout (comm, logfil, 2, xtemp, ndigit,
      &           '_naitr: re-orthonalization ; wnorm and rnorm are')
          end if
-c
-c        %----------------------------------------------------%
-c        | Compute V_{j}^T * B * r_{j}.                       |
-c        | WORKD(IRJ:IRJ+J-1) = v(:,1:J)'*WORKD(IPJ:IPJ+N-1). |
-c        %----------------------------------------------------%
-c
+!
+!        %----------------------------------------------------%
+!        | Compute V_{j}^T * B * r_{j}.                       |
+!        | WORKD(IRJ:IRJ+J-1) = v(:,1:J)'*WORKD(IPJ:IPJ+N-1). |
+!        %----------------------------------------------------%
+!
          call dgemv ('T', n, j, one, v, ldv, workd(ipj), 1,
      &               zero, workl(j+1), 1)
          call MPI_ALLREDUCE( workl(j+1), workl(1), j,
      &               MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
-c
-c        %----------------------------------------------%
-c        | Compute the correction to the residual:      |
-c        | r_{j} = r_{j} - V_{j} * WORKD(IRJ:IRJ+J-1).  |
-c        | The correction to H is v(:,1:J)*H(1:J,1:J) + |
-c        | v(:,1:J)*WORKD(IRJ:IRJ+J-1)*e'_j, but only   |
-c        | H(j,j) is updated.                           |
-c        %----------------------------------------------%
-c
+!
+!        %----------------------------------------------%
+!        | Compute the correction to the residual:      |
+!        | r_{j} = r_{j} - V_{j} * WORKD(IRJ:IRJ+J-1).  |
+!        | The correction to H is v(:,1:J)*H(1:J,1:J) + |
+!        | v(:,1:J)*WORKD(IRJ:IRJ+J-1)*e'_j, but only   |
+!        | H(j,j) is updated.                           |
+!        %----------------------------------------------%
+!
          call dgemv ('N', n, j, -one, v, ldv, workl(1), 1,
      &               one, resid, 1)
-c
+!
          if (j .eq. 1  .or.  rstart) h(j,1) = zero
          h(j,2) = h(j,2) + workl(j)
-c
+!
          orth2 = .true.
          call arscnd (t2)
          if (bmat .eq. 'G') then
@@ -742,31 +742,31 @@ c
             ipntr(1) = irj
             ipntr(2) = ipj
             ido = 2
-c
-c           %-----------------------------------%
-c           | Exit in order to compute B*r_{j}. |
-c           | r_{j} is the corrected residual.  |
-c           %-----------------------------------%
-c
+!
+!           %-----------------------------------%
+!           | Exit in order to compute B*r_{j}. |
+!           | r_{j} is the corrected residual.  |
+!           %-----------------------------------%
+!
             go to 9000
          else if (bmat .eq. 'I') then
             call dcopy (n, resid, 1, workd(ipj), 1)
          end if
    90    continue
-c
-c        %---------------------------------------------------%
-c        | Back from reverse communication if ORTH2 = .true. |
-c        %---------------------------------------------------%
-c
+!
+!        %---------------------------------------------------%
+!        | Back from reverse communication if ORTH2 = .true. |
+!        %---------------------------------------------------%
+!
          if (bmat .eq. 'G') then
             call arscnd (t3)
             tmvbx = tmvbx + (t3 - t2)
          end if
-c
-c        %-----------------------------------------------------%
-c        | Compute the B-norm of the corrected residual r_{j}. |
-c        %-----------------------------------------------------%
-c
+!
+!        %-----------------------------------------------------%
+!        | Compute the B-norm of the corrected residual r_{j}. |
+!        %-----------------------------------------------------%
+!
          if (bmat .eq. 'G') then
            rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
            call MPI_ALLREDUCE( [rnorm_buf], buf2(1), 1,
@@ -775,7 +775,7 @@ c
          else if (bmat .eq. 'I') then
            rnorm1 = pdnorm2( comm, n, resid, 1 )
          end if
-c
+!
          if (msglvl .gt. 0 .and. iter .gt. 0) then
             call pivout (comm, logfil, 1, [j], ndigit,
      &           '_naitr: Iterative refinement for Arnoldi residual')
@@ -786,62 +786,62 @@ c
      &           '_naitr: iterative refinement ; rnorm and rnorm1 are')
             end if
          end if
-c
-c        %-----------------------------------------%
-c        | Determine if we need to perform another |
-c        | step of re-orthogonalization.           |
-c        %-----------------------------------------%
-c
+!
+!        %-----------------------------------------%
+!        | Determine if we need to perform another |
+!        | step of re-orthogonalization.           |
+!        %-----------------------------------------%
+!
          if (rnorm1 .gt. 0.717*rnorm) then
-c
-c           %--------------------------------%
-c           | No need for further refinement |
-c           %--------------------------------%
-c
+!
+!           %--------------------------------%
+!           | No need for further refinement |
+!           %--------------------------------%
+!
             rnorm = rnorm1
-c
+!
          else
-c
-c           %-------------------------------------------%
-c           | Another step of iterative refinement step |
-c           | is required. NITREF is used by stat.h     |
-c           %-------------------------------------------%
-c
+!
+!           %-------------------------------------------%
+!           | Another step of iterative refinement step |
+!           | is required. NITREF is used by stat.h     |
+!           %-------------------------------------------%
+!
             nitref = nitref + 1
             rnorm  = rnorm1
             iter   = iter + 1
             if (iter .le. 1) go to 80
-c
-c           %-------------------------------------------------%
-c           | Otherwise RESID is numerically in the span of V |
-c           %-------------------------------------------------%
-c
+!
+!           %-------------------------------------------------%
+!           | Otherwise RESID is numerically in the span of V |
+!           %-------------------------------------------------%
+!
             do 95 jj = 1, n
                resid(jj) = zero
   95        continue
             rnorm = zero
          end if
-c
-c        %----------------------------------------------%
-c        | Branch here directly if iterative refinement |
-c        | wasn't necessary or after at most NITER_REF  |
-c        | steps of iterative refinement.               |
-c        %----------------------------------------------%
-c
+!
+!        %----------------------------------------------%
+!        | Branch here directly if iterative refinement |
+!        | wasn't necessary or after at most NITER_REF  |
+!        | steps of iterative refinement.               |
+!        %----------------------------------------------%
+!
   100    continue
-c
+!
          rstart = .false.
          orth2  = .false.
-c
+!
          call arscnd (t5)
          titref = titref + (t5 - t4)
-c
-c        %----------------------------------------------------------%
-c        | Make sure the last off-diagonal element is non negative  |
-c        | If not perform a similarity transformation on H(1:j,1:j) |
-c        | and scale v(:,j) by -1.                                  |
-c        %----------------------------------------------------------%
-c
+!
+!        %----------------------------------------------------------%
+!        | Make sure the last off-diagonal element is non negative  |
+!        | If not perform a similarity transformation on H(1:j,1:j) |
+!        | and scale v(:,j) by -1.                                  |
+!        %----------------------------------------------------------%
+!
          if (h(j,1) .lt. zero) then
             h(j,1) = -h(j,1)
             if ( j .lt. k+np) then
@@ -850,17 +850,17 @@ c
                call dscal(n, -one, resid, 1)
             end if
          end if
-c
-c        %------------------------------------%
-c        | STEP 6: Update  j = j+1;  Continue |
-c        %------------------------------------%
-c
+!
+!        %------------------------------------%
+!        | STEP 6: Update  j = j+1;  Continue |
+!        %------------------------------------%
+!
          j = j + 1
          if (j .gt. k+np) then
             call arscnd (t1)
             tsaitr = tsaitr + (t1 - t0)
             ido = 99
-c
+!
             if (msglvl .gt. 1) then
                call pdvout (comm, logfil, k+np, h(1,2), ndigit,
      &         '_saitr: main diagonal of matrix H of step K+NP.')
@@ -869,27 +869,27 @@ c
      &         '_saitr: sub diagonal of matrix H of step K+NP.')
                end if
             end if
-c
+!
             go to 9000
          end if
-c
-c        %--------------------------------------------------------%
-c        | Loop back to extend the factorization by another step. |
-c        %--------------------------------------------------------%
-c
+!
+!        %--------------------------------------------------------%
+!        | Loop back to extend the factorization by another step. |
+!        %--------------------------------------------------------%
+!
       go to 1000
-c
-c     %---------------------------------------------------------------%
-c     |                                                               |
-c     |  E N D     O F     M A I N     I T E R A T I O N     L O O P  |
-c     |                                                               |
-c     %---------------------------------------------------------------%
-c
+!
+!     %---------------------------------------------------------------%
+!     |                                                               |
+!     |  E N D     O F     M A I N     I T E R A T I O N     L O O P  |
+!     |                                                               |
+!     %---------------------------------------------------------------%
+!
  9000 continue
       return
-c
-c     %----------------%
-c     | End of pdsaitr |
-c     %----------------%
-c
+!
+!     %----------------%
+!     | End of pdsaitr |
+!     %----------------%
+!
       end
