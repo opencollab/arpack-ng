@@ -133,7 +133,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pdsapps
+      subroutine pdsapps&
      &  ( comm, n, kev, np, shift, v, ldv, h, ldh, resid, q, ldq, workd)
 !
 !     %--------------------%
@@ -166,15 +166,15 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Double precision
-     &           h(ldh,2), q(ldq,kev+np), resid(n), shift(np),
+      Double precision&
+     &           h(ldh,2), q(ldq,kev+np), resid(n), shift(np),&
      &           v(ldv,kev+np), workd(2*n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
+      Double precision&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -183,7 +183,7 @@
 !     %---------------%
 !
       integer    i, iend, istart, itop, j, jj, kplusp, msglvl
-      Double precision
+      Double precision&
      &           a1, a2, a3, a4, big, c, epsmch, f, g, r, s
       save       epsmch, first
 !
@@ -192,14 +192,14 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   daxpy, dcopy, dscal, dlacpy, dlartg, dlaset, pdvout,
+      external   daxpy, dcopy, dscal, dlacpy, dlartg, dlaset, pdvout,&
      &           pivout, arscnd, dgemv
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &           pdlamch10
       external   pdlamch10
 !
@@ -277,11 +277,11 @@
             big   = abs(h(i,2)) + abs(h(i+1,2))
             if (h(i+1,1) .le. epsmch*big) then
                if (msglvl .gt. 0) then
-                  call pivout (comm, logfil, 1, [i], ndigit,
+                  call pivout (comm, logfil, 1, [i], ndigit,&
      &                 '_sapps: deflation at row/column no.')
-                  call pivout (comm, logfil, 1, [jj], ndigit,
+                  call pivout (comm, logfil, 1, [jj], ndigit,&
      &                 '_sapps: occurred before shift number.')
-                  call pdvout (comm, logfil, 1, h(i+1,1), ndigit,
+                  call pdvout (comm, logfil, 1, h(i+1,1), ndigit,&
      &                 '_sapps: the corresponding off diagonal element')
                end if
                h(i+1,1) = zero
@@ -448,9 +448,9 @@
          big   = abs(h(i,2)) + abs(h(i+1,2))
          if (h(i+1,1) .le. epsmch*big) then
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, [i], ndigit,
+               call pivout (comm, logfil, 1, [i], ndigit,&
      &              '_sapps: deflation at row/column no.')
-               call pdvout (comm, logfil, 1, h(i+1,1), ndigit,
+               call pdvout (comm, logfil, 1, h(i+1,1), ndigit,&
      &              '_sapps: the corresponding off diagonal element')
             end if
             h(i+1,1) = zero
@@ -463,8 +463,8 @@
 !     | This is not necessary if h(kev+1,1) = 0.         |
 !     %-------------------------------------------------%
 !
-      if ( h(kev+1,1) .gt. zero )
-     &   call dgemv ('N', n, kplusp, one, v, ldv,
+      if ( h(kev+1,1) .gt. zero )&
+     &   call dgemv ('N', n, kplusp, one, v, ldv,&
      &                q(1,kev+1), 1, zero, workd(n+1), 1)
 !
 !     %-------------------------------------------------------%
@@ -475,7 +475,7 @@
 !     %-------------------------------------------------------%
 !
       do 130 i = 1, kev
-         call dgemv ('N', n, kplusp-i+1, one, v, ldv,
+         call dgemv ('N', n, kplusp-i+1, one, v, ldv,&
      &               q(1,kev-i+1), 1, zero, workd, 1)
          call dcopy (n, workd, 1, v(1,kplusp-i+1), 1)
   130 continue
@@ -491,7 +491,7 @@
 !     | appropriate place if h(kev+1,1) .ne. zero. |
 !     %--------------------------------------------%
 !
-      if ( h(kev+1,1) .gt. zero )
+      if ( h(kev+1,1) .gt. zero )&
      &     call dcopy (n, workd(n+1), 1, v(1,kev+1), 1)
 !
 !     %-------------------------------------%
@@ -503,18 +503,18 @@
 !     %-------------------------------------%
 !
       call dscal (n, q(kplusp,kev), resid, 1)
-      if (h(kev+1,1) .gt. zero)
+      if (h(kev+1,1) .gt. zero)&
      &   call daxpy (n, h(kev+1,1), v(1,kev+1), 1, resid, 1)
 !
       if (msglvl .gt. 1) then
-         call pdvout (comm, logfil, 1, q(kplusp,kev), ndigit,
+         call pdvout (comm, logfil, 1, q(kplusp,kev), ndigit,&
      &      '_sapps: sigmak of the updated residual vector')
-         call pdvout (comm, logfil, 1, h(kev+1,1), ndigit,
+         call pdvout (comm, logfil, 1, h(kev+1,1), ndigit,&
      &      '_sapps: betak of the updated residual vector')
-         call pdvout (comm, logfil, kev, h(1,2), ndigit,
+         call pdvout (comm, logfil, kev, h(1,2), ndigit,&
      &      '_sapps: updated main diagonal of H for next iteration')
          if (kev .gt. 1) then
-         call pdvout (comm, logfil, kev-1, h(2,1), ndigit,
+         call pdvout (comm, logfil, kev-1, h(2,1), ndigit,&
      &      '_sapps: updated sub diagonal of H for next iteration')
          end if
       end if
