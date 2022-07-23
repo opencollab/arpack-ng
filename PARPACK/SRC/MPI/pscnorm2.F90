@@ -42,14 +42,14 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex
+      Complex&
      &             x(n)
 !
 !     %---------------%
 !     | Local Scalars |
 !     %---------------%
 !
-      Real
+      Real&
      &             max(1), buf, zero
       parameter    ( zero = 0.0 )
 !
@@ -63,7 +63,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &             scnrm2
       External     scnrm2
       Real         buf2(1)
@@ -75,13 +75,13 @@
       pscnorm2 = scnrm2( n, x, inc)
 !
       buf = pscnorm2
-      call MPI_ALLREDUCE( [buf], max, 1, MPI_REAL,
+      call MPI_ALLREDUCE( [buf], max, 1, MPI_REAL,&
      &                    MPI_MAX, comm, ierr )
       if ( max(1) .eq. zero ) then
          pscnorm2 = zero
       else
          buf = (pscnorm2/max(1))**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,&
      &                       MPI_SUM, comm, ierr )
          pscnorm2 = max(1) * sqrt(abs(buf2(1)))
       endif
