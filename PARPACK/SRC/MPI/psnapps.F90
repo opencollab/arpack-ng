@@ -144,8 +144,8 @@
 !-----------------------------------------------------------------------
 !
       subroutine psnapps&
-     &   ( comm, n, kev, np, shiftr, shifti, v, ldv, h, ldh, resid,&
-     &     q, ldq, workl, workd )
+         ( comm, n, kev, np, shiftr, shifti, v, ldv, h, ldh, resid,&
+           q, ldq, workl, workd )
 !
 !     %--------------------%
 !     | MPI Communicator |
@@ -172,15 +172,15 @@
 !     %-----------------%
 !
       Real&
-     &           h(ldh,kev+np), resid(n), shifti(np), shiftr(np),&
-     &           v(ldv,kev+np), q(ldq,kev+np), workd(2*n), workl(kev+np)
+                 h(ldh,kev+np), resid(n), shifti(np), shiftr(np),&
+                 v(ldv,kev+np), q(ldq,kev+np), workd(2*n), workl(kev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Real&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %------------------------%
@@ -190,8 +190,8 @@
       integer    i, iend, ir, istart, j, jj, kplusp, msglvl, nr
       logical    cconj
       Real&
-     &           c, f, g, h11, h12, h21, h22, h32, ovfl, r, s, sigmai,&
-     &           sigmar, smlnum, ulp, unfl, u(3), t, tau, tst1
+                 c, f, g, h11, h12, h21, h22, h32, ovfl, r, s, sigmai,&
+                 sigmar, smlnum, ulp, unfl, u(3), t, tau, tst1
       save       ovfl, smlnum, ulp, unfl
 !
 !     %----------------------%
@@ -199,14 +199,14 @@
 !     %----------------------%
 !
       external   saxpy, scopy, sscal, slacpy, slarf, slarfg, slartg,&
-     &           slaset, slabad, arscnd, pivout, psvout, psmout
+                 slaset, slabad, arscnd, pivout, psvout, psmout
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
       Real&
-     &           pslamch10, slanhs, slapy2
+                 pslamch10, slanhs, slapy2
       external   pslamch10, slanhs, slapy2
 !
 !     %----------------------%
@@ -277,11 +277,11 @@
 !
          if (msglvl .gt. 2 ) then
             call pivout (comm, logfil, 1, [jj], ndigit,&
-     &               '_napps: shift number.')
+                     '_napps: shift number.')
             call psvout (comm, logfil, 1, [sigmar], ndigit,&
-     &               '_napps: The real part of the shift ')
+                     '_napps: The real part of the shift ')
             call psvout (comm, logfil, 1, [sigmai], ndigit,&
-     &               '_napps: The imaginary part of the shift ')
+                     '_napps: The imaginary part of the shift ')
          end if
 !
 !        %-------------------------------------------------%
@@ -342,15 +342,15 @@
 !
             tst1 = abs( h( i, i ) ) + abs( h( i+1, i+1 ) )
             if( tst1.eq.zero )&
-     &         tst1 = slanhs( '1', kplusp-jj+1, h, ldh, workl )
+               tst1 = slanhs( '1', kplusp-jj+1, h, ldh, workl )
             if( abs( h( i+1,i ) ).le.max( ulp*tst1, smlnum ) ) then
                if (msglvl .gt. 0) then
                   call pivout (comm, logfil, 1, [i], ndigit,&
-     &                 '_napps: matrix splitting at row/column no.')
+                       '_napps: matrix splitting at row/column no.')
                   call pivout (comm, logfil, 1, [jj], ndigit,&
-     &                 '_napps: matrix splitting with shift number.')
+                       '_napps: matrix splitting with shift number.')
                   call psvout (comm, logfil, 1, h(i+1,i), ndigit,&
-     &                 '_napps: off diagonal element.')
+                       '_napps: off diagonal element.')
                end if
                iend = i
                h(i+1,i) = zero
@@ -362,9 +362,9 @@
 !
          if (msglvl .gt. 2) then
              call pivout (comm, logfil, 1, [istart], ndigit,&
-     &                   '_napps: Start of current block ')
+                         '_napps: Start of current block ')
              call pivout (comm, logfil, 1, [iend], ndigit,&
-     &                   '_napps: End of current block ')
+                         '_napps: End of current block ')
          end if
 !
 !        %------------------------------------------------%
@@ -379,7 +379,7 @@
 !        %------------------------------------------------------%
 !
          if ( istart + 1 .eq. iend .and. abs( sigmai ) .gt. zero )&
-     &      go to 100
+            go to 100
 !
          h11 = h(istart,istart)
          h21 = h(istart+1,istart)
@@ -503,7 +503,7 @@
 !              %--------------------------------------%
 !
                call slarf ('Left', nr, kplusp-i+1, u, 1, tau,&
-     &                     h(i,i), ldh, workl)
+                           h(i,i), ldh, workl)
 !
 !              %---------------------------------------%
 !              | Apply the reflector to the right of H |
@@ -511,14 +511,14 @@
 !
                ir = min ( i+3, iend )
                call slarf ('Right', ir, nr, u, 1, tau,&
-     &                     h(1,i), ldh, workl)
+                           h(1,i), ldh, workl)
 !
 !              %-----------------------------------------------------%
 !              | Accumulate the reflector in the matrix Q;  Q <- Q*G |
 !              %-----------------------------------------------------%
 !
                call slarf ('Right', kplusp, nr, u, 1, tau,&
-     &                     q(1,i), ldq, workl)
+                           q(1,i), ldq, workl)
 !
 !              %----------------------------%
 !              | Prepare for next reflector |
@@ -577,9 +577,9 @@
 !
          tst1 = abs( h( i, i ) ) + abs( h( i+1, i+1 ) )
          if( tst1.eq.zero )&
-     &       tst1 = slanhs( '1', kev, h, ldh, workl )
+             tst1 = slanhs( '1', kev, h, ldh, workl )
          if( h( i+1,i ) .le. max( ulp*tst1, smlnum ) )&
-     &       h(i+1,i) = zero
+             h(i+1,i) = zero
  130  continue
 !
 !     %-------------------------------------------------%
@@ -591,8 +591,8 @@
 !     %-------------------------------------------------%
 !
       if (h(kev+1,kev) .gt. zero)&
-     &    call sgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,&
-     &                workd(n+1), 1)
+          call sgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,&
+                      workd(n+1), 1)
 !
 !     %----------------------------------------------------------%
 !     | Compute column 1 to kev of (V*Q) in backward order       |
@@ -601,7 +601,7 @@
 !
       do 140 i = 1, kev
          call sgemv ('N', n, kplusp-i+1, one, v, ldv,&
-     &               q(1,kev-i+1), 1, zero, workd, 1)
+                     q(1,kev-i+1), 1, zero, workd, 1)
          call scopy (n, workd, 1, v(1,kplusp-i+1), 1)
   140 continue
 !
@@ -616,7 +616,7 @@
 !     %--------------------------------------------------------------%
 !
       if (h(kev+1,kev) .gt. zero)&
-     &   call scopy (n, workd(n+1), 1, v(1,kev+1), 1)
+         call scopy (n, workd(n+1), 1, v(1,kev+1), 1)
 !
 !     %---------------------------------------%
 !     | Update the residual vector:           |
@@ -628,18 +628,18 @@
 !
       call sscal (n, q(kplusp,kev), resid, 1)
       if (h(kev+1,kev) .gt. zero)&
-     &   call saxpy (n, h(kev+1,kev), v(1,kev+1), 1, resid, 1)
+         call saxpy (n, h(kev+1,kev), v(1,kev+1), 1, resid, 1)
 !
       if (msglvl .gt. 1) then
          call psvout (comm, logfil, 1, q(kplusp,kev), ndigit,&
-     &        '_napps: sigmak = (e_{kev+p}^T*Q)*e_{kev}')
+              '_napps: sigmak = (e_{kev+p}^T*Q)*e_{kev}')
          call psvout (comm, logfil, 1, h(kev+1,kev), ndigit,&
-     &        '_napps: betak = e_{kev+1}^T*H*e_{kev}')
+              '_napps: betak = e_{kev+1}^T*H*e_{kev}')
          call pivout (comm, logfil, 1, [kev], ndigit,&
-     &               '_napps: Order of the final Hessenberg matrix ')
+                     '_napps: Order of the final Hessenberg matrix ')
          if (msglvl .gt. 2) then
             call psmout (comm, logfil, kev, kev, h, ldh, ndigit,&
-     &      '_napps: updated Hessenberg matrix H for next iteration')
+            '_napps: updated Hessenberg matrix H for next iteration')
          end if
 !
       end if
