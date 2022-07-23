@@ -66,7 +66,7 @@
 !     .. Array Arguments ..
       integer			iseed( 4 )
       Double precision&
-     &                  x( * )
+                        x( * )
 !     ..
 !     .. External Subroutines ..
       external			dlarnv
