@@ -65,7 +65,7 @@
 !     ..
 !     .. Array Arguments ..
       integer			iseed( 4 )
-      Double precision
+      Double precision&
      &                  x( * )
 !     ..
 !     .. External Subroutines ..
