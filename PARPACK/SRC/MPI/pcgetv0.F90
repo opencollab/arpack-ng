@@ -125,8 +125,8 @@
 !-----------------------------------------------------------------------
 !
       subroutine pcgetv0&
-     &   ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,&
-     &     ipntr, workd, workl, ierr )
+         ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,&
+           ipntr, workd, workl, ierr )
 !
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
@@ -156,7 +156,7 @@
       logical    initv
       integer    ido, ierr, itry, j, ldv, n
       Real&
-     &           rnorm
+                 rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
@@ -164,18 +164,18 @@
 !
       integer    ipntr(3)
       Complex&
-     &           resid(n), v(ldv,j), workd(2*n), workl(2*j)
+                 resid(n), v(ldv,j), workd(2*n), workl(2*j)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Complex&
-     &           one, zero
+                 one, zero
       Real&
-     &           rzero
+                 rzero
       parameter  (one = (1.0, 0.0) , zero = (0.0, 0.0) ,&
-     &            rzero = 0.0 )
+                  rzero = 0.0 )
 !
 !     %------------------------%
 !     | Local Scalars & Arrays |
@@ -184,13 +184,13 @@
       logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj, myid, igen
       Real&
-     &           rnorm0
+                 rnorm0
       Complex&
-     &           cnorm, cnorm2
+                 cnorm, cnorm2
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 !
       Complex&
-     &           cnorm_buf, buf2(1)
+                 cnorm_buf, buf2(1)
 !
 !     %----------------------%
 !     | External Subroutines |
@@ -203,9 +203,9 @@
 !     %--------------------%
 !
       Real&
-     &           pscnorm2, slapy2
+                 pscnorm2, slapy2
       Complex&
-     &           ccdotc
+                 ccdotc
       external   ccdotc, pscnorm2, slapy2
 !
 !     %-----------------%
@@ -338,7 +338,7 @@
       if (bmat .eq. 'G') then
           cnorm_buf = ccdotc (n, resid, 1, workd, 1)
           call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
-     &          MPI_COMPLEX, MPI_SUM, comm, ierr )
+                MPI_COMPLEX, MPI_SUM, comm, ierr )
           cnorm = buf2(1)
           rnorm0 = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
@@ -368,11 +368,11 @@
    30 continue
 !
       call cgemv ('C', n, j-1, one, v, ldv, workd, 1,&
-     &            zero, workl(j+1), 1)
+                  zero, workl(j+1), 1)
       call MPI_ALLREDUCE( workl(j+1), workl, j-1,&
-     &                    MPI_COMPLEX, MPI_SUM, comm, ierr)
+                          MPI_COMPLEX, MPI_SUM, comm, ierr)
       call cgemv ('N', n, j-1, -one, v, ldv, workl, 1,&
-     &            one, resid, 1)
+                  one, resid, 1)
 !
 !     %----------------------------------------------------------%
 !     | Compute the B-norm of the orthogonalized starting vector |
@@ -400,7 +400,7 @@
       if (bmat .eq. 'G') then
          cnorm_buf = ccdotc (n, resid, 1, workd, 1)
          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
-     &            MPI_COMPLEX, MPI_SUM, comm, ierr )
+                  MPI_COMPLEX, MPI_SUM, comm, ierr )
          cnorm = buf2(1)
          rnorm = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
@@ -413,9 +413,9 @@
 !
       if (msglvl .gt. 2) then
           call psvout (comm, logfil, 1, [rnorm0], ndigit,&
-     &                '_getv0: re-orthonalization ; rnorm0 is')
+                      '_getv0: re-orthonalization ; rnorm0 is')
           call psvout (comm, logfil, 1, [rnorm], ndigit,&
-     &                '_getv0: re-orthonalization ; rnorm is')
+                      '_getv0: re-orthonalization ; rnorm is')
       end if
 !
       if (rnorm .gt. 0.717*rnorm0) go to 50
@@ -447,11 +447,11 @@
       if (msglvl .gt. 0) then
          cnorm2 = cmplx(rnorm,rzero)
          call pcvout (comm, logfil, 1, [cnorm2], ndigit,&
-     &        '_getv0: B-norm of initial / restarted starting vector')
+              '_getv0: B-norm of initial / restarted starting vector')
       end if
       if (msglvl .gt. 2) then
          call pcvout (comm, logfil, n, resid, ndigit,&
-     &        '_getv0: initial / restarted starting vector')
+              '_getv0: initial / restarted starting vector')
       end if
       ido = 99
 !
