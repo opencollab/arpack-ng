@@ -105,7 +105,7 @@
 !     | Include files for debugging and timing information |
 !     %----------------------------------------------------%
 !
-      include   'debug.h'
+#include "debugF90.h"
       include   'stat.h'
 !
 !     %------------------%
