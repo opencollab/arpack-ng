@@ -5,7 +5,7 @@ FFLAGS_SAV = @FFLAGS@
 FFLAGS =
 
 PSRC = pcontext.F90
-SSRC = psnaitr.F90 psnapps.F90 psnaup2.F90 psnaupd.f psneigh.f psneupd.f psngets.f \
+SSRC = psnaitr.F90 psnapps.F90 psnaup2.F90 psnaupd.F90 psneigh.f psneupd.f psngets.f \
        pssaitr.f pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
        psgetv0.F90 pslarnv.F90 psnorm2.f
 
