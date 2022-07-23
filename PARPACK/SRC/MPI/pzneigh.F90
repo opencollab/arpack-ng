@@ -107,7 +107,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pzneigh (comm, rnorm, n, h, ldh, ritz, bounds,
+      subroutine pzneigh (comm, rnorm, n, h, ldh, ritz, bounds,&
      &                   q, ldq, workl, rwork, ierr)
 !
 !     %--------------------%
@@ -128,28 +128,28 @@
 !     %------------------%
 !
       integer    ierr, n, ldh, ldq
-      Double precision
+      Double precision&
      &           rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex*16
-     &           bounds(n), h(ldh,n), q(ldq,n), ritz(n),
+      Complex*16&
+     &           bounds(n), h(ldh,n), q(ldq,n), ritz(n),&
      &           workl(n*(n+3))
-      Double precision
+      Double precision&
      &           rwork(n)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex*16
+      Complex*16&
      &           one, zero
-      Double precision
+      Double precision&
      &           rone
-      parameter  (one = (1.0, 0.0), zero = (0.0, 0.0),
+      parameter  (one = (1.0, 0.0), zero = (0.0, 0.0),&
      &           rone = 1.0)
 !
 !     %------------------------%
@@ -158,23 +158,23 @@
 !
       logical    select(1)
       integer    j,  msglvl
-      Complex*16
+      Complex*16&
      &           vl(1)
-      Double precision
+      Double precision&
      &           temp
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   zlacpy, zlahqr, zdscal, ztrevc, zcopy,
+      external   zlacpy, zlahqr, zdscal, ztrevc, zcopy,&
      &           pzmout, pzvout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &           dznrm2
       external   dznrm2
 !
@@ -192,7 +192,7 @@
       msglvl = mceigh
 !
       if (msglvl .gt. 2) then
-          call pzmout (comm, logfil, n, n, h, ldh, ndigit,
+          call pzmout (comm, logfil, n, n, h, ldh, ndigit,&
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
 !
@@ -206,13 +206,13 @@
 !
       call zlacpy ('All', n, n, h, ldh, workl, n)
       call zlaset ('All', n, n, zero, one, q, ldq)
-      call zlahqr (.true., .true., n, 1, n, workl, ldh, ritz,
+      call zlahqr (.true., .true., n, 1, n, workl, ldh, ritz,&
      &             1, n, q, ldq, ierr)
       if (ierr .ne. 0) go to 9000
 !
       call zcopy (n, q(n-1,1), ldq, bounds, 1)
       if (msglvl .gt. 1) then
-         call pzvout (comm, logfil, n, bounds, ndigit,
+         call pzvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: last row of the Schur matrix for H')
       end if
 !
@@ -222,7 +222,7 @@
 !     |    eigenvectors.                                         |
 !     %----------------------------------------------------------%
 !
-      call ztrevc ('Right', 'Back', select, n, workl, n, vl, n, q,
+      call ztrevc ('Right', 'Back', select, n, workl, n, vl, n, q,&
      &             ldq, n, n, workl(n*n+1), rwork, ierr)
 !
       if (ierr .ne. 0) go to 9000
@@ -243,7 +243,7 @@
 !
       if (msglvl .gt. 1) then
          call zcopy(n, q(n,1), ldq, workl, 1)
-         call pzvout (comm, logfil, n, workl, ndigit,
+         call pzvout (comm, logfil, n, workl, ndigit,&
      &              '_neigh: Last row of the eigenvector matrix for H')
       end if
 !
@@ -255,9 +255,9 @@
       call zdscal(n, rnorm, bounds, 1)
 !
       if (msglvl .gt. 2) then
-         call pzvout (comm, logfil, n, ritz, ndigit,
+         call pzvout (comm, logfil, n, ritz, ndigit,&
      &              '_neigh: The eigenvalues of H')
-         call pzvout (comm, logfil, n, bounds, ndigit,
+         call pzvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: Ritz estimates for the eigenvalues of H')
       end if
 !
