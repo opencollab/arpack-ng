@@ -429,7 +429,13 @@
 !     | MPI Variables    |
 !     %------------------%
 !
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+      integer*4 myid
+#else
       integer    comm, myid
+#endif
+
 !
 !     %----------------------------------------------------%
 !     | Include files for debugging and timing information |
