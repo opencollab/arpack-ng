@@ -222,11 +222,11 @@
 !
 !-----------------------------------------------------------------------
       subroutine psseupd&
-     &    (comm  , rvec  , howmny, select, d    ,&
-     &     z     , ldz   , sigma , bmat  , n    ,&
-     &     which , nev   , tol   , resid , ncv  ,&
-     &     v     , ldv   , iparam, ipntr , workd,&
-     &     workl , lworkl, info )
+          (comm  , rvec  , howmny, select, d    ,&
+           z     , ldz   , sigma , bmat  , n    ,&
+           which , nev   , tol   , resid , ncv  ,&
+           v     , ldv   , iparam, ipntr , workd,&
+           workl , lworkl, info )
 !
 !     %--------------------%
 !     | MPI Communicator |
@@ -249,7 +249,7 @@
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
       Real&
-     &           sigma, tol
+                 sigma, tol
 !
 !     %-----------------%
 !     | Array Arguments |
@@ -258,15 +258,15 @@
       integer    iparam(7), ipntr(11)
       logical    select(ncv)
       Real&
-     &           d(nev), resid(n), v(ldv,ncv), z(ldz, nev),&
-     &           workd(2*n), workl(lworkl)
+                 d(nev), resid(n), v(ldv,ncv), z(ldz, nev),&
+                 workd(2*n), workl(lworkl)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Real&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %---------------%
@@ -275,12 +275,12 @@
 !
       character  type*6
       integer    bounds , ierr   , ih    , ihb   , ihd   ,&
-     &           iq     , iw     , j     , k     , ldh   ,&
-     &           ldq    , mode   , msglvl, nconv , next  ,&
-     &           ritz   , irz    , ibd   , np    , ishift,&
-     &           leftptr, rghtptr, numcnv, jj
+                 iq     , iw     , j     , k     , ldh   ,&
+                 ldq    , mode   , msglvl, nconv , next  ,&
+                 ritz   , irz    , ibd   , np    , ishift,&
+                 leftptr, rghtptr, numcnv, jj
       Real&
-     &           bnorm2, rnorm, temp, temp1, eps23
+                 bnorm2, rnorm, temp, temp1, eps23
       logical    reord
 !
 !     %----------------------%
@@ -288,14 +288,14 @@
 !     %----------------------%
 !
       external   scopy , sger  , sgeqr2, slacpy, sorm2r, sscal,&
-     &           ssesrt, ssteqr, sswap , psvout, pivout, ssortr
+                 ssesrt, ssteqr, sswap , psvout, pivout, ssortr
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
       Real&
-     &           psnorm2, pslamch10
+                 psnorm2, pslamch10
       external   psnorm2, pslamch10
 !
 !     %---------------------%
@@ -329,15 +329,15 @@
       if (nev .le. 0)                          ierr = -2
       if (ncv .le. nev)                        ierr = -3
       if (which .ne. 'LM' .and.&
-     &    which .ne. 'SM' .and.&
-     &    which .ne. 'LA' .and.&
-     &    which .ne. 'SA' .and.&
-     &    which .ne. 'BE')                     ierr = -5
+          which .ne. 'SM' .and.&
+          which .ne. 'LA' .and.&
+          which .ne. 'SA' .and.&
+          which .ne. 'BE')                     ierr = -5
       if (bmat .ne. 'I' .and. bmat .ne. 'G')   ierr = -6
       if ( (howmny .ne. 'A' .and.&
-     &           howmny .ne. 'P' .and.&
-     &           howmny .ne. 'S') .and. rvec )&
-     &                                         ierr = -15
+                 howmny .ne. 'P' .and.&
+                 howmny .ne. 'S') .and. rvec )&
+                                               ierr = -15
       if (rvec .and. howmny .eq. 'S')           ierr = -16
 !
       if (rvec .and. lworkl .lt. ncv**2+8*ncv) ierr = -7
@@ -458,9 +458,9 @@
 !
       if (msglvl .gt. 2) then
          call psvout(comm, logfil, ncv, workl(irz), ndigit,&
-     &   '_seupd: Ritz values passed in from _SAUPD.')
+         '_seupd: Ritz values passed in from _SAUPD.')
          call psvout(comm, logfil, ncv, workl(ibd), ndigit,&
-     &   '_seupd: Ritz estimates passed in from _SAUPD.')
+         '_seupd: Ritz estimates passed in from _SAUPD.')
       end if
       if (rvec) then
 !
@@ -488,14 +488,14 @@
          np     = ncv - nev
          ishift = 0
          call pssgets(comm         , ishift, which     ,&
-     &                nev          , np    , workl(irz),&
-     &                workl(bounds), workl)
+                      nev          , np    , workl(irz),&
+                      workl(bounds), workl)
 !
          if (msglvl .gt. 2) then
             call psvout(comm, logfil, ncv, workl(irz), ndigit,&
-     &      '_seupd: Ritz values after calling _SGETS.')
+            '_seupd: Ritz values after calling _SGETS.')
             call psvout(comm, logfil, ncv, workl(bounds), ndigit,&
-     &      '_seupd: Ritz value indices after calling _SGETS.')
+            '_seupd: Ritz value indices after calling _SGETS.')
          end if
 !
 !        %-----------------------------------------------------%
@@ -508,7 +508,7 @@
             temp1 = max(eps23, abs(workl(irz+ncv-j)) )
             jj = workl(bounds + ncv - j)
             if (numcnv .lt. nconv .and.&
-     &          workl(ibd+jj-1) .le. tol*temp1) then
+                workl(ibd+jj-1) .le. tol*temp1) then
                select(jj) = .true.
                numcnv = numcnv + 1
                if (jj .gt. nev) reord = .true.
@@ -524,9 +524,9 @@
 !
          if (msglvl .gt. 2) then
              call pivout(comm, logfil, 1, [numcnv], ndigit,&
-     &            '_neupd: Number of specified eigenvalues')
+                  '_neupd: Number of specified eigenvalues')
              call pivout(comm, logfil, 1, [nconv], ndigit,&
-     &            '_neupd: Number of "converged" eigenvalues')
+                  '_neupd: Number of "converged" eigenvalues')
          end if
 !
          if (numcnv .ne. nconv) then
@@ -544,8 +544,8 @@
          call scopy (ncv  , workl(ih+ldh), 1, workl(ihd), 1)
 !
          call ssteqr('Identity', ncv      , workl(ihd),&
-     &               workl(ihb), workl(iq), ldq       ,&
-     &               workl(iw) , ierr)
+                     workl(ihb), workl(iq), ldq       ,&
+                     workl(iw) , ierr)
 !
          if (ierr .ne. 0) then
             info = -8
@@ -555,9 +555,9 @@
          if (msglvl .gt. 1) then
             call scopy (ncv, workl(iq+ncv-1), ldq, workl(iw), 1)
             call psvout (comm, logfil, ncv, workl(ihd), ndigit,&
-     &          '_seupd: NCV Ritz values of the final H matrix')
+                '_seupd: NCV Ritz values of the final H matrix')
             call psvout (comm, logfil, ncv, workl(iw), ndigit,&
-     &           '_seupd: last row of the eigenvector matrix for H')
+                 '_seupd: last row of the eigenvector matrix for H')
          end if
 !
          if (reord) then
@@ -608,11 +608,11 @@
                workl(ihd+leftptr-1) = workl(ihd+rghtptr-1)
                workl(ihd+rghtptr-1) = temp
                call scopy(ncv, workl(iq+ncv*(leftptr-1)), 1,&
-     &                    workl(iw), 1)
+                          workl(iw), 1)
                call scopy(ncv, workl(iq+ncv*(rghtptr-1)), 1,&
-     &                    workl(iq+ncv*(leftptr-1)), 1)
+                          workl(iq+ncv*(leftptr-1)), 1)
                call scopy(ncv, workl(iw), 1,&
-     &                    workl(iq+ncv*(rghtptr-1)), 1)
+                          workl(iq+ncv*(rghtptr-1)), 1)
                leftptr = leftptr + 1
                rghtptr = rghtptr - 1
 !
@@ -624,7 +624,7 @@
 !
          if (msglvl .gt. 2) then
              call psvout (comm, logfil, ncv, workl(ihd), ndigit,&
-     &       '_seupd: The eigenvalues of H--reordered')
+             '_seupd: The eigenvalues of H--reordered')
          end if
 !
 !        %----------------------------------------%
@@ -688,12 +688,12 @@
          else if (type .eq. 'BUCKLE') then
             do 50 k=1, ncv
                workl(ihd+k-1) = sigma * workl(ihd+k-1) /&
-     &                          (workl(ihd+k-1) - one)
+                                (workl(ihd+k-1) - one)
   50        continue
          else if (type .eq. 'CAYLEY') then
             do 60 k=1, ncv
                workl(ihd+k-1) = sigma * (workl(ihd+k-1) + one) /&
-     &                          (workl(ihd+k-1) - one)
+                                (workl(ihd+k-1) - one)
   60        continue
          end if
 !
@@ -739,8 +739,8 @@
 !        %----------------------------------------------------------%
 !
          call sgeqr2(ncv, nconv        , workl(iq) ,&
-     &               ldq, workl(iw+ncv), workl(ihb),&
-     &               ierr)
+                     ldq, workl(iw+ncv), workl(ihb),&
+                     ierr)
 !
 !        %--------------------------------------------------------%
 !        | * Postmultiply V by Q.                                 |
@@ -751,9 +751,9 @@
 !        %--------------------------------------------------------%
 !
          call sorm2r('Right'      , 'Notranspose', n        ,&
-     &                ncv          , nconv        , workl(iq),&
-     &                ldq          , workl(iw+ncv), v        ,&
-     &                ldv          , workd(n+1)   , ierr     )
+                      ncv          , nconv        , workl(iq),&
+                      ldq          , workl(iw+ncv), v        ,&
+                      ldv          , workd(n+1)   , ierr     )
          call slacpy('All', n, nconv, v, ldv, z, ldz)
 !
 !        %-----------------------------------------------------%
@@ -767,9 +767,9 @@
   65     continue
          workl(ihb+ncv-1) = one
          call sorm2r('Left', 'Transpose'  , ncv       ,&
-     &                1     , nconv        , workl(iq) ,&
-     &                ldq   , workl(iw+ncv), workl(ihb),&
-     &                ncv   , temp         , ierr      )
+                      1     , nconv        , workl(iq) ,&
+                      ldq   , workl(iw+ncv), workl(ihb),&
+                      ncv   , temp         , ierr      )
 !
       else if (rvec .and. howmny .eq. 'S') then
 !
@@ -799,21 +799,21 @@
 !
             do 80 k=1, ncv
                workl(ihb+k-1) = abs( workl(ihb+k-1) )&
-     &                        / workl(iw+k-1)**2
+                              / workl(iw+k-1)**2
  80         continue
 !
          else if (type .eq. 'BUCKLE') then
 !
             do 90 k=1, ncv
                workl(ihb+k-1) = sigma * abs( workl(ihb+k-1) )&
-     &                        / ( workl(iw+k-1)-one )**2
+                              / ( workl(iw+k-1)-one )**2
  90         continue
 !
          else if (type .eq. 'CAYLEY') then
 !
             do 100 k=1, ncv
                workl(ihb+k-1) = abs( workl(ihb+k-1)&
-     &                        / workl(iw+k-1)*(workl(iw+k-1)-one) )
+                              / workl(iw+k-1)*(workl(iw+k-1)-one) )
  100        continue
 !
          end if
@@ -822,14 +822,14 @@
 !
       if (type .ne. 'REGULR' .and. msglvl .gt. 1) then
          call psvout (comm, logfil, nconv, d, ndigit,&
-     &          '_seupd: Untransformed converged Ritz values')
+                '_seupd: Untransformed converged Ritz values')
          call psvout (comm, logfil, nconv, workl(ihb), ndigit,&
-     &     '_seupd: Ritz estimates of the untransformed Ritz values')
+           '_seupd: Ritz estimates of the untransformed Ritz values')
       else if (msglvl .gt. 1) then
          call psvout (comm, logfil, nconv, d, ndigit,&
-     &          '_seupd: Converged Ritz values')
+                '_seupd: Converged Ritz values')
          call psvout (comm, logfil, nconv, workl(ihb), ndigit,&
-     &     '_seupd: Associated Ritz estimates')
+           '_seupd: Associated Ritz estimates')
       end if
 !
 !     %-------------------------------------------------%
@@ -842,20 +842,20 @@
 !
          do 110 k=0, nconv-1
             workl(iw+k) = workl(iq+k*ldq+ncv-1)&
-     &                  / workl(iw+k)
+                        / workl(iw+k)
  110     continue
 !
       else if (rvec .and. type .eq. 'BUCKLE') then
 !
          do 120 k=0, nconv-1
             workl(iw+k) = workl(iq+k*ldq+ncv-1)&
-     &                  / (workl(iw+k)-one)
+                        / (workl(iw+k)-one)
  120     continue
 !
       end if
 !
       if (type .ne. 'REGULR')&
-     &   call sger(n, nconv, one, resid, 1, workl(iw), 1, z, ldz)
+         call sger(n, nconv, one, resid, 1, workl(iw), 1, z, ldz)
 !
  9000 continue
 !
