@@ -1,181 +1,181 @@
-c\BeginDoc
-c
-c\Name: pzngets
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c  Given the eigenvalues of the upper Hessenberg matrix H,
-c  computes the NP shifts AMU that are zeros of the polynomial of
-c  degree NP which filters out components of the unwanted eigenvectors
-c  corresponding to the AMU's based on some given criteria.
-c
-c  NOTE: call this even in the case of user specified shifts in order
-c  to sort the eigenvalues, and error bounds of H for later use.
-c
-c\Usage:
-c  call pzngets
-c      ( COMM, ISHIFT, WHICH, KEV, NP, RITZ, BOUNDS )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c  ISHIFT  Integer.  (INPUT)
-c          Method for selecting the implicit shifts at each iteration.
-c          ISHIFT = 0: user specified shifts
-c          ISHIFT = 1: exact shift with respect to the matrix H.
-c
-c  WHICH   Character*2.  (INPUT)
-c          Shift selection criteria.
-c          'LM' -> want the KEV eigenvalues of largest magnitude.
-c          'SM' -> want the KEV eigenvalues of smallest magnitude.
-c          'LR' -> want the KEV eigenvalues of largest REAL part.
-c          'SR' -> want the KEV eigenvalues of smallest REAL part.
-c          'LI' -> want the KEV eigenvalues of largest imaginary part.
-c          'SI' -> want the KEV eigenvalues of smallest imaginary part.
-c
-c  KEV     Integer.  (INPUT)
-c          The number of desired eigenvalues.
-c
-c  NP      Integer.  (INPUT)
-c          The number of shifts to compute.
-c
-c  RITZ    Complex*16 array of length KEV+NP.  (INPUT/OUTPUT)
-c          On INPUT, RITZ contains the the eigenvalues of H.
-c          On OUTPUT, RITZ are sorted so that the unwanted
-c          eigenvalues are in the first NP locations and the wanted
-c          portion is in the last KEV locations.  When exact shifts are
-c          selected, the unwanted part corresponds to the shifts to
-c          be applied. Also, if ISHIFT .eq. 1, the unwanted eigenvalues
-c          are further sorted so that the ones with largest Ritz values
-c          are first.
-c
-c  BOUNDS  Complex*16 array of length KEV+NP.  (INPUT/OUTPUT)
-c          Error bounds corresponding to the ordering in RITZ.
-c
-c
-c
-c\EndDoc
-c
-c-----------------------------------------------------------------------
-c
-c\BeginLib
-c
-c\Local variables:
-c     xxxxxx  Complex*16
-c
-c\Routines called:
-c     zsortc  ARPACK sorting routine.
-c     pivout  Parallel ARPACK utility routine that prints integers.
-c     arscnd  ARPACK utility routine for timing.
-c     pzvout  Parallel ARPACK utility routine that prints vectors.
-c
-c\Author
-c     Danny Sorensen               Phuong Vu
-c     Richard Lehoucq              CRPC / Rice University
-c     Dept. of Computational &     Houston, Texas
-c     Applied Mathematics
-c     Rice University
-c     Houston, Texas
-c
-c\Parallel Modifications
-c     Kristi Maschhoff
-c
-c\Revision history:
-c     Starting Point: Serial Complex Code FILE: ngets.F   SID: 2.1
-c
-c\SCCS Information:
-c FILE: ngets.F   SID: 1.2   DATE OF SID: 4/19/96
-c
-c\Remarks
-c     1. This routine does not keep complex conjugate pairs of
-c        eigenvalues together.
-c
-c\EndLib
-c
-c-----------------------------------------------------------------------
-c
+!\BeginDoc
+!
+!\Name: pzngets
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!  Given the eigenvalues of the upper Hessenberg matrix H,
+!  computes the NP shifts AMU that are zeros of the polynomial of
+!  degree NP which filters out components of the unwanted eigenvectors
+!  corresponding to the AMU's based on some given criteria.
+!
+!  NOTE: call this even in the case of user specified shifts in order
+!  to sort the eigenvalues, and error bounds of H for later use.
+!
+!\Usage:
+!  call pzngets
+!      ( COMM, ISHIFT, WHICH, KEV, NP, RITZ, BOUNDS )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!  ISHIFT  Integer.  (INPUT)
+!          Method for selecting the implicit shifts at each iteration.
+!          ISHIFT = 0: user specified shifts
+!          ISHIFT = 1: exact shift with respect to the matrix H.
+!
+!  WHICH   Character*2.  (INPUT)
+!          Shift selection criteria.
+!          'LM' -> want the KEV eigenvalues of largest magnitude.
+!          'SM' -> want the KEV eigenvalues of smallest magnitude.
+!          'LR' -> want the KEV eigenvalues of largest REAL part.
+!          'SR' -> want the KEV eigenvalues of smallest REAL part.
+!          'LI' -> want the KEV eigenvalues of largest imaginary part.
+!          'SI' -> want the KEV eigenvalues of smallest imaginary part.
+!
+!  KEV     Integer.  (INPUT)
+!          The number of desired eigenvalues.
+!
+!  NP      Integer.  (INPUT)
+!          The number of shifts to compute.
+!
+!  RITZ    Complex*16 array of length KEV+NP.  (INPUT/OUTPUT)
+!          On INPUT, RITZ contains the the eigenvalues of H.
+!          On OUTPUT, RITZ are sorted so that the unwanted
+!          eigenvalues are in the first NP locations and the wanted
+!          portion is in the last KEV locations.  When exact shifts are
+!          selected, the unwanted part corresponds to the shifts to
+!          be applied. Also, if ISHIFT .eq. 1, the unwanted eigenvalues
+!          are further sorted so that the ones with largest Ritz values
+!          are first.
+!
+!  BOUNDS  Complex*16 array of length KEV+NP.  (INPUT/OUTPUT)
+!          Error bounds corresponding to the ordering in RITZ.
+!
+!
+!
+!\EndDoc
+!
+!-----------------------------------------------------------------------
+!
+!\BeginLib
+!
+!\Local variables:
+!     xxxxxx  Complex*16
+!
+!\Routines called:
+!     zsortc  ARPACK sorting routine.
+!     pivout  Parallel ARPACK utility routine that prints integers.
+!     arscnd  ARPACK utility routine for timing.
+!     pzvout  Parallel ARPACK utility routine that prints vectors.
+!
+!\Author
+!     Danny Sorensen               Phuong Vu
+!     Richard Lehoucq              CRPC / Rice University
+!     Dept. of Computational &     Houston, Texas
+!     Applied Mathematics
+!     Rice University
+!     Houston, Texas
+!
+!\Parallel Modifications
+!     Kristi Maschhoff
+!
+!\Revision history:
+!     Starting Point: Serial Complex Code FILE: ngets.F   SID: 2.1
+!
+!\SCCS Information:
+! FILE: ngets.F   SID: 1.2   DATE OF SID: 4/19/96
+!
+!\Remarks
+!     1. This routine does not keep complex conjugate pairs of
+!        eigenvalues together.
+!
+!\EndLib
+!
+!-----------------------------------------------------------------------
+!
       subroutine pzngets ( comm, ishift, which, kev, np, ritz, bounds)
-c
-c     %--------------------%
-c     | MPI Communicator |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | MPI Communicator |
+!     %--------------------%
+!
       integer   comm
-c
-c     %----------------------------------------------------%
-c     | Include files for debugging and timing information |
-c     %----------------------------------------------------%
-c
+!
+!     %----------------------------------------------------%
+!     | Include files for debugging and timing information |
+!     %----------------------------------------------------%
+!
       include   'debug.h'
       include   'stat.h'
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       character*2 which
       integer    ishift, kev, np
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       Complex*16
      &           bounds(kev+np), ritz(kev+np)
-c
-c     %------------%
-c     | Parameters |
-c     %------------%
-c
+!
+!     %------------%
+!     | Parameters |
+!     %------------%
+!
       Complex*16
      &           one, zero
       parameter (one = (1.0, 0.0), zero = (0.0, 0.0))
-c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | Local Scalars |
+!     %---------------%
+!
       integer    msglvl
-c
-c     %----------------------%
-c     | External Subroutines |
-c     %----------------------%
-c
+!
+!     %----------------------%
+!     | External Subroutines |
+!     %----------------------%
+!
       external   pzvout,  zsortc, arscnd
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
-c     %-------------------------------%
-c     | Initialize timing statistics  |
-c     | & message level for debugging |
-c     %-------------------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
+!     %-------------------------------%
+!     | Initialize timing statistics  |
+!     | & message level for debugging |
+!     %-------------------------------%
+!
       call arscnd (t0)
       msglvl = mcgets
-c
+!
       call zsortc (which, .true., kev+np, ritz, bounds)
-c
+!
       if ( ishift .eq. 1 ) then
-c
-c        %-------------------------------------------------------%
-c        | Sort the unwanted Ritz values used as shifts so that  |
-c        | the ones with largest Ritz estimates are first        |
-c        | This will tend to minimize the effects of the         |
-c        | forward instability of the iteration when the shifts  |
-c        | are applied in subroutine pznapps.                    |
-c        | Be careful and use 'SM' since we want to sort BOUNDS! |
-c        %-------------------------------------------------------%
-c
+!
+!        %-------------------------------------------------------%
+!        | Sort the unwanted Ritz values used as shifts so that  |
+!        | the ones with largest Ritz estimates are first        |
+!        | This will tend to minimize the effects of the         |
+!        | forward instability of the iteration when the shifts  |
+!        | are applied in subroutine pznapps.                    |
+!        | Be careful and use 'SM' since we want to sort BOUNDS! |
+!        %-------------------------------------------------------%
+!
          call zsortc ( 'SM', .true., np, bounds, ritz )
-c
+!
       end if
-c
+!
       call arscnd (t1)
       tcgets = tcgets + (t1 - t0)
-c
+!
       if (msglvl .gt. 0) then
          call pivout (comm, logfil, 1, [kev], ndigit, '_ngets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_ngets: NP is')
@@ -184,11 +184,11 @@ c
          call pzvout (comm, logfil, kev+np, bounds, ndigit,
      &      '_ngets: Ritz estimates of the current KEV+NP Ritz values')
       end if
-c
+!
       return
-c
-c     %----------------%
-c     | End of pzngets |
-c     %----------------%
-c
+!
+!     %----------------%
+!     | End of pzngets |
+!     %----------------%
+!
       end
