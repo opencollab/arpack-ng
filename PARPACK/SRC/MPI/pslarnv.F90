@@ -65,7 +65,7 @@
 !     ..
 !     .. Array Arguments ..
       integer			iseed( 4 )
-      Real
+      Real&
      &                  x( * )
 !     ..
 !     .. External Subroutines ..
