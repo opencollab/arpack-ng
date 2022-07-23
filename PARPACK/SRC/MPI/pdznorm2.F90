@@ -1,73 +1,73 @@
-c\BeginDoc
-c
-c\Name: pdznorm2
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c
-c\Usage:
-c  call pdznorm2 ( COMM, N, X, INC )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c\SCCS Information:
-c FILE: norm2.F   SID: 1.2   DATE OF SID: 3/6/96
-c
-c-----------------------------------------------------------------------
-c
+!\BeginDoc
+!
+!\Name: pdznorm2
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!
+!\Usage:
+!  call pdznorm2 ( COMM, N, X, INC )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!\SCCS Information:
+! FILE: norm2.F   SID: 1.2   DATE OF SID: 3/6/96
+!
+!-----------------------------------------------------------------------
+!
       Double precision function pdznorm2 ( comm, n, x, inc )
-c
+!
       include   'mpif.h'
-c
-c     %---------------%
-c     | MPI Variables |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | MPI Variables |
+!     %---------------%
+!
       integer    comm, ierr
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       integer      n, inc
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       Complex*16
      &             x(n)
-c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | Local Scalars |
+!     %---------------%
+!
       Double precision
      &             max(1), buf, zero
       parameter    ( zero = 0.0 )
-c
-c     %---------------------%
-c     | Intrinsic Functions |
-c     %---------------------%
-c
+!
+!     %---------------------%
+!     | Intrinsic Functions |
+!     %---------------------%
+!
       intrinsic    abs, sqrt
-c
-c     %--------------------%
-c     | External Functions |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | External Functions |
+!     %--------------------%
+!
       Double precision
      &             dznrm2, buf2(1)
       External     dznrm2
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
       pdznorm2 = dznrm2( n, x, inc)
-c
+!
       buf = pdznorm2
       call MPI_ALLREDUCE( [buf], max, 1, MPI_DOUBLE_PRECISION,
      &                    MPI_MAX, comm, ierr )
@@ -79,10 +79,10 @@ c
      &                       MPI_SUM, comm, ierr )
          pdznorm2 = max(1) * sqrt(abs(buf2(1)))
       endif
-c
-c     %-----------------%
-c     | End of pdznorm2 |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | End of pdznorm2 |
+!     %-----------------%
+!
       return
       end
