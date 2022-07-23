@@ -42,14 +42,14 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Real
+      Real&
      &             x(n)
 !
 !     %---------------%
 !     | Local Scalars |
 !     %---------------%
 !
-      Real
+      Real&
      &             max, buf, zero, buf2(1)
       parameter    ( zero = 0.0 )
 !
@@ -63,7 +63,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &             snrm2
       External     snrm2
 !
@@ -74,14 +74,14 @@
       psnorm2 = snrm2( n, x, inc)
 !
       buf = psnorm2
-      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,
+      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,&
      &                    MPI_MAX, comm, ierr )
       max = buf2(1)
       if ( max .eq. zero ) then
          psnorm2 = zero
       else
          buf = (psnorm2/max)**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,&
      &                       MPI_SUM, comm, ierr )
          psnorm2 = max * sqrt(abs(buf2(1)))
       endif
