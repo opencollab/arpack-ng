@@ -14,7 +14,7 @@ DSRC = pdnaitr.f pdnapps.f pdnaup2.f pdnaupd.f pdneigh.f pdneupd.f pdngets.f \
        pdgetv0.f pdlarnv.f pdnorm2.f
 
 CSRC = pcnaitr.f pcnapps.f pcnaup2.f pcnaupd.f pcneigh.f pcneupd.f pcngets.f \
-       pcgetv0.f pclarnv.f pscnorm2.f
+       pcgetv0.F90 pclarnv.f pscnorm2.f
 
 ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.f pzlarnv.f pdznorm2.f
