@@ -30,7 +30,13 @@
 !     | MPI Variables |
 !     %---------------%
 !
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+      integer*4 ierr
+#else
       integer    comm, ierr
+#endif
+
 !
 !     %------------------%
 !     | Scalar Arguments |
