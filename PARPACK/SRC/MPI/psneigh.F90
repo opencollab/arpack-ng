@@ -104,7 +104,7 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine psneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds,
+      subroutine psneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds,&
      &                    q, ldq, workl, ierr)
 !
 !     %--------------------%
@@ -125,22 +125,22 @@
 !     %------------------%
 !
       integer    ierr, n, ldh, ldq
-      Real
+      Real&
      &           rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
-      Real
-     &           bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),
+      Real&
+     &           bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),&
      &           workl(n*(n+3))
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -150,7 +150,7 @@
 !
       logical    select(1)
       integer    i, iconj, msglvl
-      Real
+      Real&
      &           temp, vl(1)
 !
 !     %----------------------%
@@ -163,7 +163,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           slapy2, snrm2
       external   slapy2, snrm2
 !
@@ -187,7 +187,7 @@
       msglvl = mneigh
 !
       if (msglvl .gt. 2) then
-          call psmout (comm, logfil, n, n, h, ldh, ndigit,
+          call psmout (comm, logfil, n, n, h, ldh, ndigit,&
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
 !
@@ -204,12 +204,12 @@
           bounds(j) = zero
    5  continue
       bounds(n) = one
-      call slahqr(.true., .true., n, 1, n, workl, n, ritzr, ritzi, 1, 1,
+      call slahqr(.true., .true., n, 1, n, workl, n, ritzr, ritzi, 1, 1,&
      &            bounds, 1, ierr)
       if (ierr .ne. 0) go to 9000
 !
       if (msglvl .gt. 1) then
-         call psvout (comm, logfil, n, bounds, ndigit,
+         call psvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: last row of the Schur matrix for H')
       end if
 !
@@ -223,7 +223,7 @@
 !     | columns of Q.                                             |
 !     %-----------------------------------------------------------%
 !
-      call strevc ('R', 'A', select, n, workl, n, vl, n, q, ldq,
+      call strevc ('R', 'A', select, n, workl, n, vl, n, q, ldq,&
      &             n, n, workl(n*n+1), ierr)
 !
       if (ierr .ne. 0) go to 9000
@@ -258,7 +258,7 @@
 !           %-------------------------------------------%
 !
             if (iconj .eq. 0) then
-               temp = slapy2( snrm2( n, q(1,i), 1 ),
+               temp = slapy2( snrm2( n, q(1,i), 1 ),&
      &                        snrm2( n, q(1,i+1), 1 ) )
                call sscal ( n, one / temp, q(1,i), 1 )
                call sscal ( n, one / temp, q(1,i+1), 1 )
@@ -272,7 +272,7 @@
       call sgemv ('T', n, n, one, q, ldq, bounds, 1, zero, workl, 1)
 !
       if (msglvl .gt. 1) then
-         call psvout (comm, logfil, n, workl, ndigit,
+         call psvout (comm, logfil, n, workl, ndigit,&
      &              '_neigh: Last row of the eigenvector matrix for H')
       end if
 !
@@ -310,11 +310,11 @@
    20 continue
 !
       if (msglvl .gt. 2) then
-         call psvout (comm, logfil, n, ritzr, ndigit,
+         call psvout (comm, logfil, n, ritzr, ndigit,&
      &              '_neigh: Real part of the eigenvalues of H')
-         call psvout (comm, logfil, n, ritzi, ndigit,
+         call psvout (comm, logfil, n, ritzi, ndigit,&
      &              '_neigh: Imaginary part of the eigenvalues of H')
-         call psvout (comm, logfil, n, bounds, ndigit,
+         call psvout (comm, logfil, n, bounds, ndigit,&
      &              '_neigh: Ritz estimates for the eigenvalues of H')
       end if
 !
