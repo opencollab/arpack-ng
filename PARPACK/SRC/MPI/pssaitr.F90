@@ -214,12 +214,12 @@
          (comm, ido, bmat, n, k, np, mode, resid, rnorm, v, ldv, h, ldh,&
           ipntr, workd, workl, info)
 !
-#include "pcontextF90.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
 #include "mpif.h"
 #endif
+#include "pcontextF90.h"
 
 !
 !     %---------------%

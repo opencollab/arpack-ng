@@ -233,6 +233,7 @@
 !     %--------------------%
 !
 #ifdef HAVE_MPI_ICB
+      use :: mpi_f08
       type(MPI_Comm) comm
 #else
       integer   comm

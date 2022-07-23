@@ -389,12 +389,12 @@
          ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
            iparam, ipntr, workd, workl, lworkl, rwork, info )
 !
-#include "pcontextF90.h"
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
 #else
 #include "mpif.h"
 #endif
+#include "pcontextF90.h"
 
 !
 !     %------------------%
