@@ -307,11 +307,11 @@
 !\EndLib
 !
 !-----------------------------------------------------------------------
-      subroutine psneupd
-     &         (comm , rvec , howmny, select, dr    , di  ,
-     &          z    , ldz  , sigmar, sigmai, workev, bmat,
-     &          n    , which, nev   , tol   , resid ,
-     &          ncv  , v    , ldv   , iparam, ipntr ,
+      subroutine psneupd&
+     &         (comm , rvec , howmny, select, dr    , di  ,&
+     &          z    , ldz  , sigmar, sigmai, workev, bmat,&
+     &          n    , which, nev   , tol   , resid ,&
+     &          ncv  , v    , ldv   , iparam, ipntr ,&
      &          workd, workl, lworkl, info  )
 !
 !     %--------------------%
@@ -334,7 +334,7 @@
       character  bmat, howmny, which*2
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
-      Real
+      Real&
      &           sigmar, sigmai, tol
 !
 !     %-----------------%
@@ -343,16 +343,16 @@
 !
       integer    iparam(11), ipntr(14)
       logical    select(ncv)
-      Real
-     &           dr(nev+1)    , di(nev+1)    , resid(n)  ,
-     &           v(ldv,ncv)   , z(ldz,*)     , workd(3*n),
+      Real&
+     &           dr(nev+1)    , di(nev+1)    , resid(n)  ,&
+     &           v(ldv,ncv)   , z(ldz,*)     , workd(3*n),&
      &           workl(lworkl), workev(3*ncv)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Real
+      Real&
      &           one, zero
       parameter (one = 1.0 , zero = 0.0 )
 !
@@ -361,33 +361,33 @@
 !     %---------------%
 !
       character  type*6
-      integer    bounds, ierr, ih, ihbds,
-     &           iheigr, iheigi, iconj , nconv   ,
-     &           invsub, iuptri, iwev  , iwork(1),
-     &           j     , k     , ldh   , ldq     ,
-     &           mode  , msglvl, outncv, ritzr   ,
-     &           ritzi , wri   , wrr   , irr     ,
-     &           iri   , ibd   , ishift, numcnv  ,
+      integer    bounds, ierr, ih, ihbds,&
+     &           iheigr, iheigi, iconj , nconv   ,&
+     &           invsub, iuptri, iwev  , iwork(1),&
+     &           j     , k     , ldh   , ldq     ,&
+     &           mode  , msglvl, outncv, ritzr   ,&
+     &           ritzi , wri   , wrr   , irr     ,&
+     &           iri   , ibd   , ishift, numcnv  ,&
      &           np    , jj
       logical    reord
-      Real
-     &           conds  , rnorm, sep  , temp,
+      Real&
+     &           conds  , rnorm, sep  , temp,&
      &           vl(1,1), temp1, eps23
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   scopy , sger  , sgeqr2, slacpy,
-     &           slahqr, slaset, psmout, sorm2r,
-     &           strevc, strmm , strsen, sscal ,
+      external   scopy , sger  , sgeqr2, slacpy,&
+     &           slahqr, slaset, psmout, sorm2r,&
+     &           strevc, strmm , strsen, sscal ,&
      &           psvout, pivout
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           slapy2, snrm2, pslamch10
       external   slapy2, snrm2, pslamch10
 !
@@ -431,19 +431,19 @@
          ierr = -2
       else if (ncv .le. nev+1) then
          ierr = -3
-      else if (which .ne. 'LM' .and.
-     &        which .ne. 'SM' .and.
-     &        which .ne. 'LR' .and.
-     &        which .ne. 'SR' .and.
-     &        which .ne. 'LI' .and.
+      else if (which .ne. 'LM' .and.&
+     &        which .ne. 'SM' .and.&
+     &        which .ne. 'LR' .and.&
+     &        which .ne. 'SR' .and.&
+     &        which .ne. 'LI' .and.&
      &        which .ne. 'SI') then
          ierr = -5
       else if (bmat .ne. 'I' .and. bmat .ne. 'G') then
          ierr = -6
       else if (lworkl .lt. 3*ncv**2 + 6*ncv) then
          ierr = -7
-      else if ( (howmny .ne. 'A' .and.
-     &           howmny .ne. 'P' .and.
+      else if ( (howmny .ne. 'A' .and.&
+     &           howmny .ne. 'P' .and.&
      &           howmny .ne. 'S') .and. rvec ) then
          ierr = -13
       else if (howmny .eq. 'S' ) then
@@ -543,11 +543,11 @@
       workl(ih+2) = zero
 !
       if (msglvl .gt. 2) then
-         call psvout (comm, logfil, ncv, workl(irr), ndigit,
+         call psvout (comm, logfil, ncv, workl(irr), ndigit,&
      &   '_neupd: Real part of Ritz values passed in from _NAUPD.')
-         call psvout (comm, logfil, ncv, workl(iri), ndigit,
+         call psvout (comm, logfil, ncv, workl(iri), ndigit,&
      &   '_neupd: Imag part of Ritz values passed in from _NAUPD.')
-         call psvout (comm, logfil, ncv, workl(ibd), ndigit,
+         call psvout (comm, logfil, ncv, workl(ibd), ndigit,&
      &   '_neupd: Ritz estimates passed in from _NAUPD.')
       end if
 !
@@ -577,17 +577,17 @@
 !
          np     = ncv - nev
          ishift = 0
-         call psngets(comm      , ishift       , which     ,
-     &                 nev       , np           , workl(irr),
-     &                 workl(iri), workl(bounds),
+         call psngets(comm      , ishift       , which     ,&
+     &                 nev       , np           , workl(irr),&
+     &                 workl(iri), workl(bounds),&
      &                 workl     , workl(np+1))
 !
          if (msglvl .gt. 2) then
-            call psvout (comm, logfil, ncv, workl(irr), ndigit,
+            call psvout (comm, logfil, ncv, workl(irr), ndigit,&
      &      '_neupd: Real part of Ritz values after calling _NGETS.')
-            call psvout (comm, logfil, ncv, workl(iri), ndigit,
+            call psvout (comm, logfil, ncv, workl(iri), ndigit,&
      &      '_neupd: Imag part of Ritz values after calling _NGETS.')
-            call psvout (comm, logfil, ncv, workl(bounds), ndigit,
+            call psvout (comm, logfil, ncv, workl(bounds), ndigit,&
      &      '_neupd: Ritz value indices after calling _NGETS.')
          end if
 !
@@ -598,10 +598,10 @@
 !
          numcnv = 0
          do 11 j = 1,ncv
-            temp1 = max(eps23,
+            temp1 = max(eps23,&
      &                 slapy2 ( workl(irr+ncv-j), workl(iri+ncv-j) ))
             jj = workl(bounds + ncv - j)
-            if (numcnv .lt. nconv .and.
+            if (numcnv .lt. nconv .and.&
      &          workl(ibd+jj-1) .le. tol*temp1) then
                select(jj) = .true.
                numcnv = numcnv + 1
@@ -617,9 +617,9 @@
 !        %-----------------------------------------------------------%
 !
          if (msglvl .gt. 2) then
-             call pivout(comm, logfil, 1, [numcnv], ndigit,
+             call pivout(comm, logfil, 1, [numcnv], ndigit,&
      &            '_neupd: Number of specified eigenvalues')
-             call pivout(comm, logfil, 1, [nconv], ndigit,
+             call pivout(comm, logfil, 1, [nconv], ndigit,&
      &            '_neupd: Number of "converged" eigenvalues')
          end if
 !
@@ -637,9 +637,9 @@
 !
          call scopy(ldh*ncv, workl(ih), 1, workl(iuptri), 1)
          call slaset('All', ncv, ncv, zero, one, workl(invsub), ldq)
-         call slahqr(.true.       , .true.       , ncv, 1            ,
-     &               ncv          , workl(iuptri), ldh, workl(iheigr),
-     &               workl(iheigi), 1            , ncv, workl(invsub),
+         call slahqr(.true.       , .true.       , ncv, 1            ,&
+     &               ncv          , workl(iuptri), ldh, workl(iheigr),&
+     &               workl(iheigi), 1            , ncv, workl(invsub),&
      &               ldq          , ierr)
          call scopy (ncv, workl(invsub+ncv-1), ldq, workl(ihbds), 1)
 !
@@ -649,15 +649,15 @@
          end if
 !
          if (msglvl .gt. 1) then
-            call psvout (comm, logfil, ncv, workl(iheigr), ndigit,
+            call psvout (comm, logfil, ncv, workl(iheigr), ndigit,&
      &           '_neupd: Real part of the eigenvalues of H')
-            call psvout (comm, logfil, ncv, workl(iheigi), ndigit,
+            call psvout (comm, logfil, ncv, workl(iheigi), ndigit,&
      &           '_neupd: Imaginary part of the Eigenvalues of H')
-            call psvout (comm, logfil, ncv, workl(ihbds), ndigit,
+            call psvout (comm, logfil, ncv, workl(ihbds), ndigit,&
      &           '_neupd: Last row of the Schur vector matrix')
             if (msglvl .gt. 3) then
-               call psmout (comm, logfil, ncv, ncv,
-     &              workl(iuptri), ldh, ndigit,
+               call psmout (comm, logfil, ncv, ncv,&
+     &              workl(iuptri), ldh, ndigit,&
      &              '_neupd: The upper quasi-triangular matrix ')
             end if
          end if
@@ -668,11 +668,11 @@
 !           | Reorder the computed upper quasi-triangular matrix. |
 !           %-----------------------------------------------------%
 !
-            call strsen('None'       , 'V'          , select       ,
-     &                   ncv          , workl(iuptri), ldh          ,
-     &                   workl(invsub), ldq          , workl(iheigr),
-     &                   workl(iheigi), nconv        , conds        ,
-     &                   sep          , workl(ihbds) , ncv          ,
+            call strsen('None'       , 'V'          , select       ,&
+     &                   ncv          , workl(iuptri), ldh          ,&
+     &                   workl(invsub), ldq          , workl(iheigr),&
+     &                   workl(iheigi), nconv        , conds        ,&
+     &                   sep          , workl(ihbds) , ncv          ,&
      &                   iwork        , 1            , ierr         )
 !
             if (ierr .eq. 1) then
@@ -681,13 +681,13 @@
             end if
 !
             if (msglvl .gt. 2) then
-                call psvout(comm, logfil, ncv, workl(iheigr), ndigit,
+                call psvout(comm, logfil, ncv, workl(iheigr), ndigit,&
      &           '_neupd: Real part of the eigenvalues of H--reordered')
-                call psvout(comm, logfil, ncv, workl(iheigi), ndigit,
+                call psvout(comm, logfil, ncv, workl(iheigi), ndigit,&
      &           '_neupd: Imag part of the eigenvalues of H--reordered')
                 if (msglvl .gt. 3) then
-                   call psmout(comm, logfil, ncv, ncv,
-     &             workl(iuptri), ldq, ndigit,
+                   call psmout(comm, logfil, ncv, ncv,&
+     &             workl(iuptri), ldq, ndigit,&
      &             '_neupd: Quasi-triangular matrix after re-ordering')
                 end if
             end if
@@ -718,8 +718,8 @@
 !        | columns of workl(invsub,ldq).                            |
 !        %----------------------------------------------------------%
 !
-         call sgeqr2(ncv, nconv , workl(invsub),
-     &               ldq, workev, workev(ncv+1),
+         call sgeqr2(ncv, nconv , workl(invsub),&
+     &               ldq, workev, workev(ncv+1),&
      &               ierr)
 !
 !        %---------------------------------------------------------%
@@ -734,9 +734,9 @@
 !        | matrix of order NCONV in workl(iuptri)                  |
 !        %---------------------------------------------------------%
 !
-         call sorm2r('Right', 'Notranspose', n            ,
-     &                ncv    , nconv        , workl(invsub),
-     &                ldq    , workev       , v            ,
+         call sorm2r('Right', 'Notranspose', n            ,&
+     &                ncv    , nconv        , workl(invsub),&
+     &                ldq    , workev       , v            ,&
      &                ldv    , workd(n+1)   , ierr         )
          call slacpy('All', n, nconv, v, ldv, z, ldz)
 !
@@ -773,10 +773,10 @@
                end if
  30         continue
 !
-            call strevc('Right', 'Select'     , select       ,
-     &                   ncv    , workl(iuptri), ldq          ,
-     &                   vl     , 1            , workl(invsub),
-     &                   ldq    , ncv          , outncv       ,
+            call strevc('Right', 'Select'     , select       ,&
+     &                   ncv    , workl(iuptri), ldq          ,&
+     &                   vl     , 1            , workl(invsub),&
+     &                   ldq    , ncv          , outncv       ,&
      &                   workev , ierr)
 !
             if (ierr .ne. 0) then
@@ -802,7 +802,7 @@
 !                 %----------------------%
 !
                   temp = snrm2( ncv, workl(invsub+(j-1)*ldq), 1 )
-                  call sscal ( ncv, one / temp,
+                  call sscal ( ncv, one / temp,&
      &                 workl(invsub+(j-1)*ldq), 1 )
                else
 !
@@ -815,16 +815,16 @@
 !                 %-------------------------------------------%
 !
                   if (iconj .eq. 0) then
-                     temp = slapy2(snrm2(ncv,
-     &                                   workl(invsub+(j-1)*ldq),
-     &                                   1 ),
-     &                             snrm2(ncv,
-     &                                   workl(invsub+j*ldq),
-     &                                   1)
+                     temp = slapy2(snrm2(ncv,&
+     &                                   workl(invsub+(j-1)*ldq),&
+     &                                   1 ),&
+     &                             snrm2(ncv,&
+     &                                   workl(invsub+j*ldq),&
+     &                                   1)&
      &                             )
-                     call sscal(ncv, one/temp,
+                     call sscal(ncv, one/temp,&
      &                          workl(invsub+(j-1)*ldq), 1)
-                     call sscal(ncv, one/temp,
+                     call sscal(ncv, one/temp,&
      &                          workl(invsub+j*ldq), 1)
                      iconj = 1
                   else
@@ -835,9 +835,9 @@
 !
  40         continue
 !
-            call sgemv('T'         , ncv          , nconv,
-     &                 one         , workl(invsub), ldq  ,
-     &                 workl(ihbds), 1            , zero ,
+            call sgemv('T'         , ncv          , nconv,&
+     &                 one         , workl(invsub), ldq  ,&
+     &                 workl(ihbds), 1            , zero ,&
      &                 workev      , 1)
 !
             iconj = 0
@@ -861,11 +861,11 @@
  45         continue
 !
             if (msglvl .gt. 2) then
-               call psvout(comm, logfil, ncv, workl(ihbds), ndigit,
+               call psvout(comm, logfil, ncv, workl(ihbds), ndigit,&
      &              '_neupd: Last row of the eigenvector matrix for T')
                if (msglvl .gt. 3) then
-                  call psmout(comm, logfil, ncv, ncv,
-     &               workl(invsub), ldq, ndigit,
+                  call psmout(comm, logfil, ncv, ncv,&
+     &               workl(invsub), ldq, ndigit,&
      &               '_neupd: The eigenvector matrix for T')
                end if
             end if
@@ -883,8 +883,8 @@
 !           | columns of workl(invsub,ldq).                           |
 !           %---------------------------------------------------------%
 !
-            call sgeqr2(ncv, nconv , workl(invsub),
-     &                   ldq, workev, workev(ncv+1),
+            call sgeqr2(ncv, nconv , workl(invsub),&
+     &                   ldq, workev, workev(ncv+1),&
      &                   ierr)
 !
 !           %----------------------------------------------%
@@ -895,14 +895,14 @@
 !           | in workl(iheigr) and workl(iheigi).          |
 !           %----------------------------------------------%
 !
-            call sorm2r('Right', 'Notranspose', n            ,
-     &                   ncv    , nconv        , workl(invsub),
-     &                   ldq    , workev       , z            ,
+            call sorm2r('Right', 'Notranspose', n            ,&
+     &                   ncv    , nconv        , workl(invsub),&
+     &                   ldq    , workev       , z            ,&
      &                   ldz    , workd(n+1)   , ierr)
 !
-            call strmm('Right'   , 'Upper'      , 'No transpose',
-     &                  'Non-unit', n            , nconv         ,
-     &                  one       , workl(invsub), ldq           ,
+            call strmm('Right'   , 'Upper'      , 'No transpose',&
+     &                  'Non-unit', n            , nconv         ,&
+     &                  one       , workl(invsub), ldq           ,&
      &                  z         , ldz)
 !
          end if
@@ -929,7 +929,7 @@
 !
       if (type .eq. 'REGULR') then
 !
-         if (rvec)
+         if (rvec)&
      &      call sscal(ncv, rnorm, workl(ihbds), 1)
 !
       else
@@ -942,12 +942,12 @@
 !
          if (type .eq. 'SHIFTI') then
 !
-            if (rvec)
+            if (rvec)&
      &         call sscal(ncv, rnorm, workl(ihbds), 1)
             do 50 k=1, ncv
-               temp = slapy2(workl(iheigr+k-1),
+               temp = slapy2(workl(iheigr+k-1),&
      &                       workl(iheigi+k-1) )
-               workl(ihbds+k-1) = abs( workl(ihbds+k-1) )
+               workl(ihbds+k-1) = abs( workl(ihbds+k-1) )&
      &                          / temp / temp
  50         continue
 !
@@ -976,11 +976,11 @@
          if (type .eq. 'SHIFTI') then
 !
             do 80 k=1, ncv
-               temp = slapy2(workl(iheigr+k-1),
+               temp = slapy2(workl(iheigr+k-1),&
      &                       workl(iheigi+k-1) )
-               workl(iheigr+k-1) = workl(iheigr+k-1) / temp / temp
+               workl(iheigr+k-1) = workl(iheigr+k-1) / temp / temp&
      &                           + sigmar
-               workl(iheigi+k-1) = -workl(iheigi+k-1) / temp / temp
+               workl(iheigi+k-1) = -workl(iheigi+k-1) / temp / temp&
      &                           + sigmai
  80         continue
 !
@@ -995,18 +995,18 @@
          end if
 !
       if (type .eq. 'SHIFTI' .and. msglvl .gt. 1) then
-         call psvout (comm, logfil, nconv, dr, ndigit,
+         call psvout (comm, logfil, nconv, dr, ndigit,&
      &   '_neupd: Untransformed real part of the Ritz valuess.')
-         call psvout (comm, logfil, nconv, di, ndigit,
+         call psvout (comm, logfil, nconv, di, ndigit,&
      &   '_neupd: Untransformed imag part of the Ritz valuess.')
-         call psvout (comm, logfil, nconv, workl(ihbds), ndigit,
+         call psvout (comm, logfil, nconv, workl(ihbds), ndigit,&
      &   '_neupd: Ritz estimates of untransformed Ritz values.')
       else if (type .eq. 'REGULR' .and. msglvl .gt. 1) then
-         call psvout (comm, logfil, nconv, dr, ndigit,
+         call psvout (comm, logfil, nconv, dr, ndigit,&
      &   '_neupd: Real parts of converged Ritz values.')
-         call psvout (comm, logfil, nconv, di, ndigit,
+         call psvout (comm, logfil, nconv, di, ndigit,&
      &   '_neupd: Imag parts of converged Ritz values.')
-         call psvout (comm, logfil, nconv, workl(ihbds), ndigit,
+         call psvout (comm, logfil, nconv, workl(ihbds), ndigit,&
      &   '_neupd: Associated Ritz estimates.')
       end if
 !
@@ -1034,17 +1034,17 @@
          iconj = 0
          do 110 j=1, nconv
             if (workl(iheigi+j-1) .eq. zero) then
-               workev(j) =  workl(invsub+(j-1)*ldq+ncv-1)
+               workev(j) =  workl(invsub+(j-1)*ldq+ncv-1)&
      &                   /  workl(iheigr+j-1)
             else if (iconj .eq. 0) then
                temp = slapy2( workl(iheigr+j-1), workl(iheigi+j-1) )
-               workev(j) = ( workl(invsub+(j-1)*ldq+ncv-1) *
-     &                       workl(iheigr+j-1) +
-     &                       workl(invsub+j*ldq+ncv-1) *
+               workev(j) = ( workl(invsub+(j-1)*ldq+ncv-1) *&
+     &                       workl(iheigr+j-1) +&
+     &                       workl(invsub+j*ldq+ncv-1) *&
      &                       workl(iheigi+j-1) ) / temp / temp
-               workev(j+1) = ( workl(invsub+j*ldq+ncv-1) *
-     &                         workl(iheigr+j-1) -
-     &                         workl(invsub+(j-1)*ldq+ncv-1) *
+               workev(j+1) = ( workl(invsub+j*ldq+ncv-1) *&
+     &                         workl(iheigr+j-1) -&
+     &                         workl(invsub+(j-1)*ldq+ncv-1) *&
      &                         workl(iheigi+j-1) ) / temp / temp
                iconj = 1
             else
