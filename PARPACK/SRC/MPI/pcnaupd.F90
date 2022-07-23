@@ -390,7 +390,12 @@
      &     iparam, ipntr, workd, workl, lworkl, rwork, info )
 !
       include   'pcontext.h'
-      include  'mpif.h'
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
+#include "mpif.h"
+#endif
+
 !
 !     %------------------%
 !     | MPI Variables    |
