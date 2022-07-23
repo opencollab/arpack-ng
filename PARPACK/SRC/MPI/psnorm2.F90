@@ -1,73 +1,73 @@
-c\BeginDoc
-c
-c\Name: psnorm2
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c
-c\Usage:
-c  call psnorm2 ( COMM, N, X, INC )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c\SCCS Information:
-c FILE: norm2.F   SID: 1.2   DATE OF SID: 2/22/96
-c
-c-----------------------------------------------------------------------
-c
+!\BeginDoc
+!
+!\Name: psnorm2
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!
+!\Usage:
+!  call psnorm2 ( COMM, N, X, INC )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!\SCCS Information:
+! FILE: norm2.F   SID: 1.2   DATE OF SID: 2/22/96
+!
+!-----------------------------------------------------------------------
+!
       Real function psnorm2 ( comm, n, x, inc )
-c
+!
       include   'mpif.h'
-c
-c     %---------------%
-c     | MPI Variables |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | MPI Variables |
+!     %---------------%
+!
       integer    comm, ierr
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       integer      n, inc
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       Real
      &             x(n)
-c
-c     %---------------%
-c     | Local Scalars |
-c     %---------------%
-c
+!
+!     %---------------%
+!     | Local Scalars |
+!     %---------------%
+!
       Real
      &             max, buf, zero, buf2(1)
       parameter    ( zero = 0.0 )
-c
-c     %---------------------%
-c     | Intrinsic Functions |
-c     %---------------------%
-c
+!
+!     %---------------------%
+!     | Intrinsic Functions |
+!     %---------------------%
+!
       intrinsic    abs, sqrt
-c
-c     %--------------------%
-c     | External Functions |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | External Functions |
+!     %--------------------%
+!
       Real
      &             snrm2
       External     snrm2
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
       psnorm2 = snrm2( n, x, inc)
-c
+!
       buf = psnorm2
       call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,
      &                    MPI_MAX, comm, ierr )
@@ -80,10 +80,10 @@ c
      &                       MPI_SUM, comm, ierr )
          psnorm2 = max * sqrt(abs(buf2(1)))
       endif
-c
-c     %----------------%
-c     | End of psnorm2 |
-c     %----------------%
-c
+!
+!     %----------------%
+!     | End of psnorm2 |
+!     %----------------%
+!
       return
       end
