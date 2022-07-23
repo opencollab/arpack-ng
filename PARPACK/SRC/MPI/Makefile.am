@@ -17,7 +17,7 @@ CSRC = pcnaitr.F90 pcnapps.F90 pcnaup2.F90 pcnaupd.F90 pcneigh.F90 pcneupd.F90 p
        pcgetv0.F90 pclarnv.F90 pscnorm2.F90
 
 ZSRC = pznaitr.f pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
-       pzgetv0.f pzlarnv.f pdznorm2.F90
+       pzgetv0.F90 pzlarnv.f pdznorm2.F90
 
 if ICB
 SSRC += icbpss.F90 icbpsn.F90
