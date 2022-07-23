@@ -166,9 +166,9 @@
 !-----------------------------------------------------------------------
 !
       subroutine pznaup2&
-     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,&
-     &     ishift, mxiter, v, ldv, h, ldh, ritz, bounds,&
-     &     q, ldq, workl, ipntr, workd, rwork, info )
+         ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,&
+           ishift, mxiter, v, ldv, h, ldh, ritz, bounds,&
+           q, ldq, workl, ipntr, workd, rwork, info )
 !
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
@@ -196,9 +196,9 @@
 !
       character  bmat*1, which*2
       integer    ido, info, ishift, iupd, mode, ldh, ldq, ldv, mxiter,&
-     &           n, nev, np
+                 n, nev, np
       Double precision&
-     &           tol
+                 tol
 !
 !     %-----------------%
 !     | Array Arguments |
@@ -206,22 +206,22 @@
 !
       integer    ipntr(13)
       Complex*16&
-     &           bounds(nev+np), h(ldh,nev+np), q(ldq,nev+np),&
-     &           resid(n), ritz(nev+np),  v(ldv,nev+np),&
-     &           workd(3*n), workl( (nev+np)*(nev+np+3) )
+                 bounds(nev+np), h(ldh,nev+np), q(ldq,nev+np),&
+                 resid(n), ritz(nev+np),  v(ldv,nev+np),&
+                 workd(3*n), workl( (nev+np)*(nev+np+3) )
        Double precision&
-     &           rwork(nev+np)
+                 rwork(nev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Complex*16&
-     &           one, zero
+                 one, zero
       Double precision&
-     &           rzero
+                 rzero
       parameter (one = (1.0, 0.0), zero = (0.0, 0.0),&
-     &           rzero = 0.0)
+                 rzero = 0.0)
 !
 !     %---------------%
 !     | Local Scalars |
@@ -229,20 +229,20 @@
 !
       logical    cnorm,  getv0, initv , update, ushift
       integer    ierr ,  iter , kplusp, msglvl, nconv,&
-     &           nevbef, nev0 , np0   , nptemp, i    ,&
-     &           j
+                 nevbef, nev0 , np0   , nptemp, i    ,&
+                 j
       Complex*16&
-     &           cmpnorm
+                 cmpnorm
       Double precision&
-     &           rnorm,  eps23, rtemp
+                 rnorm,  eps23, rtemp
       character  wprime*2
 !
       save       cnorm,  getv0, initv , update, ushift,&
-     &           rnorm,  iter , kplusp, msglvl, nconv,&
-     &           nevbef, nev0 , np0,    eps23
+                 rnorm,  iter , kplusp, msglvl, nconv,&
+                 nevbef, nev0 , np0,    eps23
 !
       Double precision&
-     &           cmpnorm_buf, buf2(1)
+                 cmpnorm_buf, buf2(1)
 !
 !     %-----------------------%
 !     | Local array arguments |
@@ -255,16 +255,16 @@
 !     %----------------------%
 !
       external   zcopy, pzgetv0, pznaitr, pzneigh, pzngets, pznapps,&
-     &           zsortc, zswap, pzmout, pzvout, pivout, arscnd
+                 zsortc, zswap, pzmout, pzvout, pivout, arscnd
 !
 !     %--------------------%
 !     | External functions |
 !     %--------------------%
 !
       Complex*16&
-     &           zzdotc
+                 zzdotc
       Double precision&
-     &           pdznorm2, pdlamch10, dlapy2
+                 pdznorm2, pdlamch10, dlapy2
       external   zzdotc, pdznorm2, pdlamch10, dlapy2
 !
 !     %---------------------%
@@ -338,7 +338,7 @@
 !
       if (getv0) then
          call pzgetv0 (comm, ido, bmat, 1, initv, n, 1, v, ldv,&
-     &                 resid, rnorm, ipntr, workd, workl, info)
+                       resid, rnorm, ipntr, workd, workl, info)
 !
          if (ido .ne. 99) go to 9000
 !
@@ -380,8 +380,8 @@
 !     %----------------------------------------------------------%
 !
       call pznaitr (comm, ido, bmat, n, 0, nev, mode,&
-     &             resid, rnorm, v, ldv,&
-     &             h, ldh, ipntr, workd, workl, info)
+                   resid, rnorm, v, ldv,&
+                   h, ldh, ipntr, workd, workl, info)
 !
 !
       if (ido .ne. 99) go to 9000
@@ -407,7 +407,7 @@
 !
          if (msglvl .gt. 0) then
             call pivout (comm, logfil, 1, [iter], ndigit,&
-     &           '_naup2: **** Start of major iteration number ****')
+                 '_naup2: **** Start of major iteration number ****')
          end if
 !
 !        %-----------------------------------------------------------%
@@ -420,9 +420,9 @@
 !
          if (msglvl .gt. 1) then
             call pivout (comm, logfil, 1, [nev], ndigit,&
-     &     '_naup2: The length of the current Arnoldi factorization')
+           '_naup2: The length of the current Arnoldi factorization')
             call pivout (comm, logfil, 1, [np], ndigit,&
-     &           '_naup2: Extend the Arnoldi factorization by')
+                 '_naup2: Extend the Arnoldi factorization by')
          end if
 !
 !        %-----------------------------------------------------------%
@@ -434,8 +434,8 @@
          update = .true.
 !
          call pznaitr (comm, ido, bmat, n, nev, np, mode,&
-     &                resid, rnorm, v, ldv,&
-     &                h, ldh, ipntr, workd, workl, info)
+                      resid, rnorm, v, ldv,&
+                      h, ldh, ipntr, workd, workl, info)
 !
          if (ido .ne. 99) go to 9000
 !
@@ -449,7 +449,7 @@
 !
          if (msglvl .gt. 1) then
             call pdvout (comm, logfil, 1, [rnorm], ndigit,&
-     &           '_naup2: Corresponding B-norm of the residual')
+                 '_naup2: Corresponding B-norm of the residual')
          end if
 !
 !        %--------------------------------------------------------%
@@ -458,7 +458,7 @@
 !        %--------------------------------------------------------%
 !
          call pzneigh ( comm, rnorm, kplusp, h, ldh, ritz, bounds,&
-     &                  q, ldq, workl, rwork,  ierr)
+                        q, ldq, workl, rwork,  ierr)
 !
          if (ierr .ne. 0) then
             info = -8
@@ -493,7 +493,7 @@
 !        %---------------------------------------------------%
 !
          call pzngets ( comm, ishift, which, nev, np, ritz,&
-     &                  bounds)
+                        bounds)
 !
 !        %------------------------------------------------------------%
 !        | Convergence test: currently we use the following criteria. |
@@ -508,9 +508,9 @@
 !
          do 25 i = 1, nev
             rtemp = max( eps23, dlapy2( dble(ritz(np+i)),&
-     &                                  dimag(ritz(np+i)) ) )
+                                        dimag(ritz(np+i)) ) )
             if ( dlapy2(dble(bounds(np+i)),dimag(bounds(np+i)))&
-     &                 .le. tol*rtemp ) then
+                       .le. tol*rtemp ) then
                nconv = nconv + 1
             end if
    25    continue
@@ -520,11 +520,11 @@
             kp(2) = np
             kp(3) = nconv
             call pivout (comm, logfil, 3, kp, ndigit,&
-     &                  '_naup2: NEV, NP, NCONV are')
+                        '_naup2: NEV, NP, NCONV are')
             call pzvout (comm, logfil, kplusp, ritz, ndigit,&
-     &           '_naup2: The eigenvalues of H')
+                 '_naup2: The eigenvalues of H')
             call pzvout (comm, logfil, kplusp, bounds, ndigit,&
-     &          '_naup2: Ritz estimates of the current NCV Ritz values')
+                '_naup2: Ritz estimates of the current NCV Ritz values')
          end if
 !
 !        %---------------------------------------------------------%
@@ -546,16 +546,16 @@
  30      continue
 !
          if ( (nconv .ge. nev0) .or.&
-     &        (iter .gt. mxiter) .or.&
-     &        (np .eq. 0) ) then
+              (iter .gt. mxiter) .or.&
+              (np .eq. 0) ) then
 !
             if (msglvl .gt. 4) then
                call pzvout(comm, logfil, kplusp,&
-     &             workl(kplusp**2+1), ndigit,&
-     &             '_naup2: Eigenvalues computed by _neigh:')
+                   workl(kplusp**2+1), ndigit,&
+                   '_naup2: Eigenvalues computed by _neigh:')
                call pzvout(comm, logfil, kplusp,&
-     &             workl(kplusp**2+kplusp+1), ndigit,&
-     &             '_naup2: Ritz eistmates computed by _neigh:')
+                   workl(kplusp**2+kplusp+1), ndigit,&
+                   '_naup2: Ritz eistmates computed by _neigh:')
             end if
 !
 !           %------------------------------------------------%
@@ -595,7 +595,7 @@
 !
             do 35 j = 1, nev0
                 rtemp = max( eps23, dlapy2( dble(ritz(j)),&
-     &                                       dimag(ritz(j)) ) )
+                                             dimag(ritz(j)) ) )
                 bounds(j) = bounds(j)/rtemp
  35         continue
 !
@@ -616,7 +616,7 @@
 !
             do 40 j = 1, nev0
                 rtemp = max( eps23, dlapy2( dble(ritz(j)),&
-     &                                       dimag(ritz(j)) ) )
+                                             dimag(ritz(j)) ) )
                 bounds(j) = bounds(j)*rtemp
  40         continue
 !
@@ -630,9 +630,9 @@
 !
             if (msglvl .gt. 1) then
                call pzvout (comm, logfil, kplusp, ritz, ndigit,&
-     &            '_naup2: Sorted eigenvalues')
+                  '_naup2: Sorted eigenvalues')
                call pzvout (comm, logfil, kplusp, bounds, ndigit,&
-     &            '_naup2: Sorted ritz estimates.')
+                  '_naup2: Sorted ritz estimates.')
             end if
 !
 !           %------------------------------------%
@@ -673,23 +673,23 @@
 !           %---------------------------------------%
 !
             if (nevbef .lt. nev)&
-     &         call pzngets (comm, ishift, which, nev, np, ritz,&
-     &                       bounds)
+               call pzngets (comm, ishift, which, nev, np, ritz,&
+                             bounds)
 !
          end if
 !
          if (msglvl .gt. 0) then
             call pivout (comm, logfil, 1, [nconv], ndigit,&
-     &           '_naup2: no. of "converged" Ritz values at this iter.')
+                 '_naup2: no. of "converged" Ritz values at this iter.')
             if (msglvl .gt. 1) then
                kp(1) = nev
                kp(2) = np
                call pivout (comm, logfil, 2, kp, ndigit,&
-     &              '_naup2: NEV and NP are')
+                    '_naup2: NEV and NP are')
                call pzvout (comm, logfil, nev, ritz(np+1), ndigit,&
-     &              '_naup2: "wanted" Ritz values ')
+                    '_naup2: "wanted" Ritz values ')
                call pzvout (comm, logfil, nev, bounds(np+1), ndigit,&
-     &              '_naup2: Ritz estimates of the "wanted" values ')
+                    '_naup2: Ritz estimates of the "wanted" values ')
             end if
          end if
 !
@@ -720,12 +720,12 @@
 !
          if (msglvl .gt. 2) then
             call pivout (comm, logfil, 1, [np], ndigit,&
-     &                  '_naup2: The number of shifts to apply ')
+                        '_naup2: The number of shifts to apply ')
             call pzvout (comm, logfil, np, ritz, ndigit,&
-     &                  '_naup2: values of the shifts')
+                        '_naup2: values of the shifts')
             if ( ishift .eq. 1 )&
-     &          call pzvout (comm, logfil, np, bounds, ndigit,&
-     &                  '_naup2: Ritz estimates of the shifts')
+                call pzvout (comm, logfil, np, bounds, ndigit,&
+                        '_naup2: Ritz estimates of the shifts')
          end if
 !
 !        %---------------------------------------------------------%
@@ -736,7 +736,7 @@
 !        %---------------------------------------------------------%
 !
          call pznapps(comm, n, nev, np, ritz, v, ldv,&
-     &                h, ldh, resid, q, ldq, workl, workd)
+                      h, ldh, resid, q, ldq, workl, workd)
 !
 !        %---------------------------------------------%
 !        | Compute the B-norm of the updated residual. |
@@ -777,7 +777,7 @@
          if (bmat .eq. 'G') then
             cmpnorm_buf = zzdotc (n, resid, 1, workd, 1)
             call MPI_ALLREDUCE( [cmpnorm_buf], buf2, 1,&
-     &               MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
+                     MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cmpnorm = buf2(1)
             rnorm = sqrt(dlapy2(dble(cmpnorm),dimag(cmpnorm)))
          else if (bmat .eq. 'I') then
@@ -787,9 +787,9 @@
 !
          if (msglvl .gt. 2) then
             call pdvout (comm, logfil, 1, [rnorm], ndigit,&
-     &      '_naup2: B-norm of residual for compressed factorization')
+            '_naup2: B-norm of residual for compressed factorization')
             call pzmout (comm, logfil, nev, nev, h, ldh, ndigit,&
-     &        '_naup2: Compressed upper Hessenberg matrix H')
+              '_naup2: Compressed upper Hessenberg matrix H')
          end if
 !
       go to 1000
