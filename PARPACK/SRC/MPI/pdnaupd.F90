@@ -409,8 +409,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pdnaupd
-     &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,
+      subroutine pdnaupd&
+     &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
      &     iparam, ipntr, workd, workl, lworkl, info )
 !
 #ifdef HAVE_MPI_ICB
@@ -440,7 +440,7 @@
 !
       character  bmat*1, which*2
       integer    ido, info, ldv, lworkl, n, ncv, nev
-      Double precision
+      Double precision&
      &           tol
 !
 !     %-----------------%
@@ -448,14 +448,14 @@
 !     %-----------------%
 !
       integer    iparam(11), ipntr(14)
-      Double precision
+      Double precision&
      &           resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
+      Double precision&
      &           one, zero
       parameter (one = 1.0 , zero = 0.0 )
 !
@@ -463,11 +463,11 @@
 !     | Local Scalars |
 !     %---------------%
 !
-      integer    bounds, ierr, ih, iq, ishift, iupd, iw,
-     &           ldh, ldq, levec, mode, msglvl, mxiter, nb,
+      integer    bounds, ierr, ih, iq, ishift, iupd, iw,&
+     &           ldh, ldq, levec, mode, msglvl, mxiter, nb,&
      &           nev0, next, np, ritzi, ritzr, j
-      save       bounds, ih, iq, ishift, iupd, iw, ldh, ldq,
-     &           levec, mode, msglvl, mxiter, nb, nev0, next,
+      save       bounds, ih, iq, ishift, iupd, iw, ldh, ldq,&
+     &           levec, mode, msglvl, mxiter, nb, nev0, next,&
      &           np, ritzi, ritzr
 !
 !     %----------------------%
@@ -480,7 +480,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &           pdlamch10
       external   pdlamch10
 !
@@ -532,11 +532,11 @@
              ierr = -3
          else if (mxiter .le. 0) then
              ierr = -4
-         else if (which .ne. 'LM' .and.
-     &       which .ne. 'SM' .and.
-     &       which .ne. 'LR' .and.
-     &       which .ne. 'SR' .and.
-     &       which .ne. 'LI' .and.
+         else if (which .ne. 'LM' .and.&
+     &       which .ne. 'SM' .and.&
+     &       which .ne. 'LR' .and.&
+     &       which .ne. 'SR' .and.&
+     &       which .ne. 'LI' .and.&
      &       which .ne. 'SI') then
             ierr = -5
          else if (bmat .ne. 'I' .and. bmat .ne. 'G') then
@@ -626,10 +626,10 @@
 !     | Carry out the Implicitly restarted Arnoldi Iteration. |
 !     %-------------------------------------------------------%
 !
-      call pdnaup2
-     &   ( comm, ido, bmat, n, which, nev0, np, tol, resid, mode, iupd,
-     &     ishift, mxiter, v, ldv, workl(ih), ldh, workl(ritzr),
-     &     workl(ritzi), workl(bounds), workl(iq), ldq, workl(iw),
+      call pdnaup2&
+     &   ( comm, ido, bmat, n, which, nev0, np, tol, resid, mode, iupd,&
+     &     ishift, mxiter, v, ldv, workl(ih), ldh, workl(ritzr),&
+     &     workl(ritzi), workl(bounds), workl(iq), ldq, workl(iw),&
      &     ipntr, workd, info )
 !
 !     %--------------------------------------------------%
@@ -655,15 +655,15 @@
       if (info .eq. 2) info = 3
 !
       if (msglvl .gt. 0) then
-         call pivout (comm, logfil, 1, [mxiter], ndigit,
+         call pivout (comm, logfil, 1, [mxiter], ndigit,&
      &               '_naupd: Number of update iterations taken')
-         call pivout (comm, logfil, 1, [np], ndigit,
+         call pivout (comm, logfil, 1, [np], ndigit,&
      &               '_naupd: Number of wanted "converged" Ritz values')
-         call pdvout  (comm, logfil, np, workl(ritzr), ndigit,
+         call pdvout  (comm, logfil, np, workl(ritzr), ndigit,&
      &               '_naupd: Real part of the final Ritz values')
-         call pdvout  (comm, logfil, np, workl(ritzi), ndigit,
+         call pdvout  (comm, logfil, np, workl(ritzi), ndigit,&
      &               '_naupd: Imaginary part of the final Ritz values')
-         call pdvout  (comm, logfil, np, workl(bounds), ndigit,
+         call pdvout  (comm, logfil, np, workl(bounds), ndigit,&
      &               '_naupd: Associated Ritz estimates')
       end if
 !
@@ -679,35 +679,35 @@
 !        %--------------------------------------------------------%
 !
          write (6,1000)
-         write (6,1100) mxiter, nopx, nbx, nrorth, nitref, nrstrt,
-     &                  tmvopx, tmvbx, tnaupd, tnaup2, tnaitr, titref,
+         write (6,1100) mxiter, nopx, nbx, nrorth, nitref, nrstrt,&
+     &                  tmvopx, tmvbx, tnaupd, tnaup2, tnaitr, titref,&
      &                  tgetv0, tneigh, tngets, tnapps, tnconv, trvec
- 1000    format (//,
-     &      5x, '=============================================',/
-     &      5x, '= Nonsymmetric implicit Arnoldi update code =',/
-     &      5x, '= Version Number: ', ' 2.1' , 21x, ' =',/
-     &      5x, '= Version Date:   ', ' 3/19/97' , 16x,   ' =',/
-     &      5x, '=============================================',/
-     &      5x, '= Summary of timing statistics              =',/
+ 1000    format (//,&
+     &      5x, '=============================================',/&
+     &      5x, '= Nonsymmetric implicit Arnoldi update code =',/&
+     &      5x, '= Version Number: ', ' 2.1' , 21x, ' =',/&
+     &      5x, '= Version Date:   ', ' 3/19/97' , 16x,   ' =',/&
+     &      5x, '=============================================',/&
+     &      5x, '= Summary of timing statistics              =',/&
      &      5x, '=============================================',//)
- 1100    format (
-     &      5x, 'Total number update iterations             = ', i5,/
-     &      5x, 'Total number of OP*x operations            = ', i5,/
-     &      5x, 'Total number of B*x operations             = ', i5,/
-     &      5x, 'Total number of reorthogonalization steps  = ', i5,/
-     &      5x, 'Total number of iterative refinement steps = ', i5,/
-     &      5x, 'Total number of restart steps              = ', i5,/
-     &      5x, 'Total time in user OP*x operation          = ', f12.6,/
-     &      5x, 'Total time in user B*x operation           = ', f12.6,/
-     &      5x, 'Total time in Arnoldi update routine       = ', f12.6,/
-     &      5x, 'Total time in p_naup2 routine              = ', f12.6,/
-     &      5x, 'Total time in basic Arnoldi iteration loop = ', f12.6,/
-     &      5x, 'Total time in reorthogonalization phase    = ', f12.6,/
-     &      5x, 'Total time in (re)start vector generation  = ', f12.6,/
-     &      5x, 'Total time in Hessenberg eig. subproblem   = ', f12.6,/
-     &      5x, 'Total time in getting the shifts           = ', f12.6,/
-     &      5x, 'Total time in applying the shifts          = ', f12.6,/
-     &      5x, 'Total time in convergence testing          = ', f12.6,/
+ 1100    format (&
+     &      5x, 'Total number update iterations             = ', i5,/&
+     &      5x, 'Total number of OP*x operations            = ', i5,/&
+     &      5x, 'Total number of B*x operations             = ', i5,/&
+     &      5x, 'Total number of reorthogonalization steps  = ', i5,/&
+     &      5x, 'Total number of iterative refinement steps = ', i5,/&
+     &      5x, 'Total number of restart steps              = ', i5,/&
+     &      5x, 'Total time in user OP*x operation          = ', f12.6,/&
+     &      5x, 'Total time in user B*x operation           = ', f12.6,/&
+     &      5x, 'Total time in Arnoldi update routine       = ', f12.6,/&
+     &      5x, 'Total time in p_naup2 routine              = ', f12.6,/&
+     &      5x, 'Total time in basic Arnoldi iteration loop = ', f12.6,/&
+     &      5x, 'Total time in reorthogonalization phase    = ', f12.6,/&
+     &      5x, 'Total time in (re)start vector generation  = ', f12.6,/&
+     &      5x, 'Total time in Hessenberg eig. subproblem   = ', f12.6,/&
+     &      5x, 'Total time in getting the shifts           = ', f12.6,/&
+     &      5x, 'Total time in applying the shifts          = ', f12.6,/&
+     &      5x, 'Total time in convergence testing          = ', f12.6,/&
      &      5x, 'Total time in computing final Ritz vectors = ', f12.6/)
          end if
       end if
