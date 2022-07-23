@@ -1,5 +1,5 @@
       DOUBLE PRECISION   FUNCTION PDLAMCH10( ICTXT, CMACH )
-      include "mpif.h"
+#include "mpif.h"
 !
 !  -- ScaLAPACK auxiliary routine (version 1.0) --
 !     University of Tennessee, Knoxville, Oak Ridge National Laboratory,
