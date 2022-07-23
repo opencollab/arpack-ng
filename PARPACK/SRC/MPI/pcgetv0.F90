@@ -124,8 +124,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pcgetv0
-     &   ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,
+      subroutine pcgetv0&
+     &   ( comm, ido, bmat, itry, initv, n, j, v, ldv, resid, rnorm,&
      &     ipntr, workd, workl, ierr )
 !
 #ifdef HAVE_MPI_ICB
@@ -155,7 +155,7 @@
       character  bmat*1
       logical    initv
       integer    ido, ierr, itry, j, ldv, n
-      Real
+      Real&
      &           rnorm
 !
 !     %-----------------%
@@ -163,18 +163,18 @@
 !     %-----------------%
 !
       integer    ipntr(3)
-      Complex
+      Complex&
      &           resid(n), v(ldv,j), workd(2*n), workl(2*j)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex
+      Complex&
      &           one, zero
-      Real
+      Real&
      &           rzero
-      parameter  (one = (1.0, 0.0) , zero = (0.0, 0.0) ,
+      parameter  (one = (1.0, 0.0) , zero = (0.0, 0.0) ,&
      &            rzero = 0.0 )
 !
 !     %------------------------%
@@ -183,13 +183,13 @@
 !
       logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj, myid, igen
-      Real
+      Real&
      &           rnorm0
-      Complex
+      Complex&
      &           cnorm, cnorm2
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
 !
-      Complex
+      Complex&
      &           cnorm_buf, buf2(1)
 !
 !     %----------------------%
@@ -202,9 +202,9 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           pscnorm2, slapy2
-      Complex
+      Complex&
      &           ccdotc
       external   ccdotc, pscnorm2, slapy2
 !
@@ -337,7 +337,7 @@
       first = .FALSE.
       if (bmat .eq. 'G') then
           cnorm_buf = ccdotc (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
+          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
      &          MPI_COMPLEX, MPI_SUM, comm, ierr )
           cnorm = buf2(1)
           rnorm0 = sqrt(slapy2(real (cnorm),aimag(cnorm)))
@@ -367,11 +367,11 @@
       orth = .TRUE.
    30 continue
 !
-      call cgemv ('C', n, j-1, one, v, ldv, workd, 1,
+      call cgemv ('C', n, j-1, one, v, ldv, workd, 1,&
      &            zero, workl(j+1), 1)
-      call MPI_ALLREDUCE( workl(j+1), workl, j-1,
+      call MPI_ALLREDUCE( workl(j+1), workl, j-1,&
      &                    MPI_COMPLEX, MPI_SUM, comm, ierr)
-      call cgemv ('N', n, j-1, -one, v, ldv, workl, 1,
+      call cgemv ('N', n, j-1, -one, v, ldv, workl, 1,&
      &            one, resid, 1)
 !
 !     %----------------------------------------------------------%
@@ -399,7 +399,7 @@
 !
       if (bmat .eq. 'G') then
          cnorm_buf = ccdotc (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
+         call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
      &            MPI_COMPLEX, MPI_SUM, comm, ierr )
          cnorm = buf2(1)
          rnorm = sqrt(slapy2(real (cnorm),aimag(cnorm)))
@@ -412,9 +412,9 @@
 !     %--------------------------------------%
 !
       if (msglvl .gt. 2) then
-          call psvout (comm, logfil, 1, [rnorm0], ndigit,
+          call psvout (comm, logfil, 1, [rnorm0], ndigit,&
      &                '_getv0: re-orthonalization ; rnorm0 is')
-          call psvout (comm, logfil, 1, [rnorm], ndigit,
+          call psvout (comm, logfil, 1, [rnorm], ndigit,&
      &                '_getv0: re-orthonalization ; rnorm is')
       end if
 !
@@ -446,11 +446,11 @@
 !
       if (msglvl .gt. 0) then
          cnorm2 = cmplx(rnorm,rzero)
-         call pcvout (comm, logfil, 1, [cnorm2], ndigit,
+         call pcvout (comm, logfil, 1, [cnorm2], ndigit,&
      &        '_getv0: B-norm of initial / restarted starting vector')
       end if
       if (msglvl .gt. 2) then
-         call pcvout (comm, logfil, n, resid, ndigit,
+         call pcvout (comm, logfil, n, resid, ndigit,&
      &        '_getv0: initial / restarted starting vector')
       end if
       ido = 99
