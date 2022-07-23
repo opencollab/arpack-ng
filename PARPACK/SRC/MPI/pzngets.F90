@@ -122,14 +122,14 @@
 !     %-----------------%
 !
       Complex*16&
-     &           bounds(kev+np), ritz(kev+np)
+                 bounds(kev+np), ritz(kev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Complex*16&
-     &           one, zero
+                 one, zero
       parameter (one = (1.0, 0.0), zero = (0.0, 0.0))
 !
 !     %---------------%
@@ -180,9 +180,9 @@
          call pivout (comm, logfil, 1, [kev], ndigit, '_ngets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_ngets: NP is')
          call pzvout (comm, logfil, kev+np, ritz, ndigit,&
-     &        '_ngets: Eigenvalues of current H matrix ')
+              '_ngets: Eigenvalues of current H matrix ')
          call pzvout (comm, logfil, kev+np, bounds, ndigit,&
-     &      '_ngets: Ritz estimates of the current KEV+NP Ritz values')
+            '_ngets: Ritz estimates of the current KEV+NP Ritz values')
       end if
 !
       return
