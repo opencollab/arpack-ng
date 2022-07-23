@@ -43,5 +43,5 @@ libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = libparpack@LIBSUFFIX@@ITF64SUFFIX
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
 if ICB
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/PARPACK/SRC/MPI
 endif
