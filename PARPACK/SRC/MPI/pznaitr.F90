@@ -219,8 +219,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pznaitr
-     &   (comm, ido, bmat, n, k, np, nb, resid, rnorm, v, ldv, h, ldh,
+      subroutine pznaitr&
+     &   (comm, ido, bmat, n, k, np, nb, resid, rnorm, v, ldv, h, ldh,&
      &    ipntr, workd, workl, info)
 !
 #include "pcontextF90.h"
@@ -250,7 +250,7 @@
 !
       character  bmat*1
       integer    ido, info, k, ldh, ldv, n, nb, np
-      Double precision
+      Double precision&
      &           rnorm
 !
 !     %-----------------%
@@ -258,26 +258,26 @@
 !     %-----------------%
 !
       integer    ipntr(3)
-      Complex*16
-     &           h(ldh,k+np), resid(n), v(ldv,k+np), workd(3*n),
+      Complex*16&
+     &           h(ldh,k+np), resid(n), v(ldv,k+np), workd(3*n),&
      &           workl(2*ldh)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex*16
+      Complex*16&
      &           one, zero
-      Double precision
+      Double precision&
      &           rone, rzero
-      parameter (one = (1.0, 0.0), zero = (0.0, 0.0),
+      parameter (one = (1.0, 0.0), zero = (0.0, 0.0),&
      &           rone = 1.0, rzero = 0.0)
 !
 !     %--------------%
 !     | Local Arrays |
 !     %--------------%
 !
-      Double precision
+      Double precision&
      &           rtemp(2)
 !
 !     %---------------%
@@ -285,35 +285,35 @@
 !     %---------------%
 !
       logical    orth1, orth2, rstart, step3, step4
-      integer    ierr, i, infol, ipj, irj, ivj, iter, itry, j, msglvl,
+      integer    ierr, i, infol, ipj, irj, ivj, iter, itry, j, msglvl,&
      &           jj
-      Double precision
-     &           ovfl, smlnum, tst1, ulp, unfl, betaj,
+      Double precision&
+     &           ovfl, smlnum, tst1, ulp, unfl, betaj,&
      &           temp1, rnorm1, wnorm
-      Complex*16
+      Complex*16&
      &           cnorm
 !
-      save       orth1, orth2, rstart, step3, step4,
-     &           ierr, ipj, irj, ivj, iter, itry, j, msglvl, ovfl,
+      save       orth1, orth2, rstart, step3, step4,&
+     &           ierr, ipj, irj, ivj, iter, itry, j, msglvl, ovfl,&
      &           betaj, rnorm1, smlnum, ulp, unfl, wnorm
 !
-      Complex*16
+      Complex*16&
      &           cnorm_buf, buf2(1)
 !
 !     %----------------------%
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   zaxpy, zcopy, zscal, zgemv, pzgetv0, dlabad,
+      external   zaxpy, zcopy, zscal, zgemv, pzgetv0, dlabad,&
      &           zdscal, pzvout, pzmout, pivout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Complex*16
+      Complex*16&
      &           zzdotc
-      Double precision
+      Double precision&
      &           pdlamch10, pdznorm2, zlanhs, dlapy2
       external   zzdotc, pdznorm2, zlanhs, pdlamch10, dlapy2
 !
@@ -409,9 +409,9 @@
  1000 continue
 !
          if (msglvl .gt. 1) then
-            call pivout (comm, logfil, 1, [j], ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,&
      &                  '_naitr: generating Arnoldi vector number')
-            call pdvout (comm, logfil, 1, [rnorm], ndigit,
+            call pdvout (comm, logfil, 1, [rnorm], ndigit,&
      &                  '_naitr: B-norm of the current residual is')
          end if
 !
@@ -431,7 +431,7 @@
 !           %---------------------------------------------------%
 !
             if (msglvl .gt. 0) then
-               call pivout (comm, logfil, 1, [j], ndigit,
+               call pivout (comm, logfil, 1, [j], ndigit,&
      &                     '_naitr: ****** RESTART AT STEP ******')
             end if
 !
@@ -454,7 +454,7 @@
 !           | RSTART = .true. flow returns here.   |
 !           %--------------------------------------%
 !
-            call pzgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,
+            call pzgetv0 (comm, ido, bmat, itry, .false., n, j, v, ldv,&
      &                   resid, rnorm, ipntr, workd, workl, ierr)
             if (ido .ne. 99) go to 9000
             if (ierr .lt. 0) then
@@ -495,9 +495,9 @@
 !            | use LAPACK routine zlascl               |
 !            %-----------------------------------------%
 !
-             call zlascl ('General', i, i, rnorm, rone,
+             call zlascl ('General', i, i, rnorm, rone,&
      &                    n, 1, v(1,j), n, infol)
-             call zlascl ('General', i, i, rnorm, rone,
+             call zlascl ('General', i, i, rnorm, rone,&
      &                    n, 1, workd(ipj), n, infol)
          end if
 !
@@ -582,7 +582,7 @@
 !
          if (bmat .eq. 'G') then
              cnorm_buf = zzdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
      &           MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cnorm = buf2(1)
             wnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
@@ -604,9 +604,9 @@
 !        | WORKD(IPJ:IPJ+N-1) contains B*OP*v_{j}.  |
 !        %------------------------------------------%
 !
-         call zgemv ('C', n, j, one, v, ldv, workd(ipj), 1,
+         call zgemv ('C', n, j, one, v, ldv, workd(ipj), 1,&
      &               zero, workl, 1)
-         call MPI_ALLREDUCE( workl, h(1,j), j,
+         call MPI_ALLREDUCE( workl, h(1,j), j,&
      &               MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
 !
 !        %--------------------------------------%
@@ -614,7 +614,7 @@
 !        | RESID contains OP*v_{j}. See STEP 3. |
 !        %--------------------------------------%
 !
-         call zgemv ('N', n, j, -one, v, ldv, h(1,j), 1,
+         call zgemv ('N', n, j, -one, v, ldv, h(1,j), 1,&
      &               one, resid, 1)
 !
          if (j .gt. 1) h(j,j-1) = dcmplx(betaj, rzero)
@@ -659,7 +659,7 @@
 !
          if (bmat .eq. 'G') then
             cnorm_buf = zzdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
      &           MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cnorm = buf2(1)
             rnorm = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
@@ -702,9 +702,9 @@
          if (msglvl .gt. 2) then
             rtemp(1) = wnorm
             rtemp(2) = rnorm
-            call pdvout (comm, logfil, 2, rtemp, ndigit,
+            call pdvout (comm, logfil, 2, rtemp, ndigit,&
      &      '_naitr: re-orthogonalization; wnorm and rnorm are')
-            call pzvout (comm, logfil, j, h(1,j), ndigit,
+            call pzvout (comm, logfil, j, h(1,j), ndigit,&
      &                  '_naitr: j-th column of H')
          end if
 !
@@ -713,9 +713,9 @@
 !        | WORKD(IRJ:IRJ+J-1) = v(:,1:J)'*WORKD(IPJ:IPJ+N-1). |
 !        %----------------------------------------------------%
 !
-         call zgemv ('C', n, j, one, v, ldv, workd(ipj), 1,
+         call zgemv ('C', n, j, one, v, ldv, workd(ipj), 1,&
      &               zero, workl(j+1), 1)
-         call MPI_ALLREDUCE( workl(j+1), workl(1), j,
+         call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
      &               MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
 !
 !        %---------------------------------------------%
@@ -725,7 +725,7 @@
 !        | + v(:,1:J)*WORKD(IRJ:IRJ+J-1)*e'_j.         |
 !        %---------------------------------------------%
 !
-         call zgemv ('N', n, j, -one, v, ldv, workl(1), 1,
+         call zgemv ('N', n, j, -one, v, ldv, workl(1), 1,&
      &               one, resid, 1)
          call zaxpy (j, one, workl(1), 1, h(1,j), 1)
 !
@@ -764,7 +764,7 @@
 !
          if (bmat .eq. 'G') then
              cnorm_buf = zzdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
      &           MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cnorm = buf2(1)
             rnorm1 = sqrt( dlapy2(dble(cnorm),dimag(cnorm)) )
@@ -773,12 +773,12 @@
          end if
 !
          if (msglvl .gt. 0 .and. iter .gt. 0 ) then
-            call pivout (comm, logfil, 1, [j], ndigit,
+            call pivout (comm, logfil, 1, [j], ndigit,&
      &           '_naitr: Iterative refinement for Arnoldi residual')
             if (msglvl .gt. 2) then
                 rtemp(1) = rnorm
                 rtemp(2) = rnorm1
-                call pdvout (comm, logfil, 2, rtemp, ndigit,
+                call pdvout (comm, logfil, 2, rtemp, ndigit,&
      &           '_naitr: iterative refinement ; rnorm and rnorm1 are')
             end if
          end if
@@ -855,17 +855,17 @@
 !              | REFERENCE: LAPACK subroutine zlahqr        |
 !              %--------------------------------------------%
 !
-               tst1 = dlapy2(dble(h(i,i)),dimag(h(i,i)))
+               tst1 = dlapy2(dble(h(i,i)),dimag(h(i,i)))&
      &              + dlapy2(dble(h(i+1,i+1)), dimag(h(i+1,i+1)))
-               if( tst1.eq.dble(zero) )
+               if( tst1.eq.dble(zero) )&
      &              tst1 = zlanhs( '1', k+np, h, ldh, workd(n+1) )
-               if( dlapy2(dble(h(i+1,i)),dimag(h(i+1,i))) .le.
-     &                    max( ulp*tst1, smlnum ) )
+               if( dlapy2(dble(h(i+1,i)),dimag(h(i+1,i))) .le.&
+     &                    max( ulp*tst1, smlnum ) )&
      &             h(i+1,i) = zero
  110        continue
 !
             if (msglvl .gt. 2) then
-               call pzmout (comm, logfil, k+np, k+np, h, ldh, ndigit,
+               call pzmout (comm, logfil, k+np, k+np, h, ldh, ndigit,&
      &          '_naitr: Final upper Hessenberg matrix H of order K+NP')
             end if
 !
