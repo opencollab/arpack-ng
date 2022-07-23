@@ -58,7 +58,7 @@
 !     .. Array Arguments ..
       integer			iseed( 4 )
       Complex*16&
-     &                          x( * )
+                                x( * )
 !     ..
 !     .. External Subroutines ..
       external			zlarnv
