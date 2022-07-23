@@ -99,8 +99,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pdngets
-     &                 ( comm, ishift, which, kev, np, ritzr, ritzi,
+      subroutine pdngets&
+     &                 ( comm, ishift, which, kev, np, ritzr, ritzi,&
      &                   bounds, shiftr, shifti )
 !
 !     %--------------------%
@@ -127,15 +127,15 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Double precision
-     &           bounds(kev+np), ritzr(kev+np), ritzi(kev+np),
+      Double precision&
+     &           bounds(kev+np), ritzr(kev+np), ritzi(kev+np),&
      &           shiftr(1), shifti(1)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
+      Double precision&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -202,7 +202,7 @@
 !     | complex conjugate pairs together.                     |
 !     %-------------------------------------------------------%
 !
-      if (       ( ritzr(np+1) - ritzr(np) ) .eq. zero
+      if (       ( ritzr(np+1) - ritzr(np) ) .eq. zero&
      &     .and. ( ritzi(np+1) + ritzi(np) ) .eq. zero ) then
          np = np - 1
          kev = kev + 1
@@ -228,11 +228,11 @@
       if (msglvl .gt. 0) then
          call pivout (comm, logfil, 1, [kev], ndigit, '_ngets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_ngets: NP is')
-         call pdvout (comm, logfil, kev+np, ritzr, ndigit,
+         call pdvout (comm, logfil, kev+np, ritzr, ndigit,&
      &        '_ngets: Eigenvalues of current H matrix -- real part')
-         call pdvout (comm, logfil, kev+np, ritzi, ndigit,
+         call pdvout (comm, logfil, kev+np, ritzi, ndigit,&
      &        '_ngets: Eigenvalues of current H matrix -- imag part')
-         call pdvout (comm, logfil, kev+np, bounds, ndigit,
+         call pdvout (comm, logfil, kev+np, bounds, ndigit,&
      &      '_ngets: Ritz estimates of the current KEV+NP Ritz values')
       end if
 !
