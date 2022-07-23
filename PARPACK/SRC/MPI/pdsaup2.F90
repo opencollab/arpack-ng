@@ -184,9 +184,9 @@
 !-----------------------------------------------------------------------
 !
       subroutine pdsaup2&
-     &   ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,&
-     &     ishift, mxiter, v, ldv, h, ldh, ritz, bounds,&
-     &     q, ldq, workl, ipntr, workd, info )
+         ( comm, ido, bmat, n, which, nev, np, tol, resid, mode, iupd,&
+           ishift, mxiter, v, ldv, h, ldh, ritz, bounds,&
+           q, ldq, workl, ipntr, workd, info )
 !
 #ifdef HAVE_MPI_ICB
       use :: mpi_f08
@@ -215,9 +215,9 @@
 !
       character  bmat*1, which*2
       integer    ido, info, ishift, iupd, ldh, ldq, ldv, mxiter,&
-     &           n, mode, nev, np
+                 n, mode, nev, np
       Double precision&
-     &           tol, buf2(1)
+                 tol, buf2(1)
 !
 !     %-----------------%
 !     | Array Arguments |
@@ -225,16 +225,16 @@
 !
       integer    ipntr(3)
       Double precision&
-     &           bounds(nev+np), h(ldh,2), q(ldq,nev+np), resid(n),&
-     &           ritz(nev+np), v(ldv,nev+np), workd(3*n),&
-     &           workl(3*(nev+np))
+                 bounds(nev+np), h(ldh,2), q(ldq,nev+np), resid(n),&
+                 ritz(nev+np), v(ldv,nev+np), workd(3*n),&
+                 workl(3*(nev+np))
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Double precision&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %---------------%
@@ -244,15 +244,15 @@
       character  wprime*2
       logical    cnorm, getv0, initv, update, ushift
       integer    ierr, iter, j, kplusp, msglvl, nconv, nevbef, nev0,&
-     &           np0, nptemp, nevd2, nevm2, kp(3)
+                 np0, nptemp, nevd2, nevm2, kp(3)
       Double precision&
-     &           rnorm, temp, eps23
+                 rnorm, temp, eps23
       save       cnorm, getv0, initv, update, ushift,&
-     &           iter, kplusp, msglvl, nconv, nev0, np0,&
-     &           rnorm, eps23
+                 iter, kplusp, msglvl, nconv, nev0, np0,&
+                 rnorm, eps23
 !
       Double precision&
-     &           rnorm_buf
+                 rnorm_buf
 !
 !
 !     %----------------------%
@@ -260,15 +260,15 @@
 !     %----------------------%
 !
       external   dcopy, pdgetv0, pdsaitr, dscal, dsconv,&
-     &           pdseigt, pdsgets, pdsapps,&
-     &           dsortr, pdvout, pivout, arscnd
+                 pdseigt, pdsgets, pdsapps,&
+                 dsortr, pdvout, pivout, arscnd
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
       Double precision&
-     &           ddot, pdnorm2, pdlamch10
+                 ddot, pdnorm2, pdlamch10
       external   ddot, pdnorm2, pdlamch10
 !
 !     %---------------------%
@@ -351,7 +351,7 @@
 !
       if (getv0) then
          call pdgetv0 ( comm, ido, bmat, 1, initv, n, 1, v, ldv,&
-     &                  resid, rnorm, ipntr, workd, workl, info)
+                        resid, rnorm, ipntr, workd, workl, info)
 !
          if (ido .ne. 99) go to 9000
 !
@@ -392,8 +392,8 @@
 !     %----------------------------------------------------------%
 !
       call pdsaitr (comm, ido, bmat, n, 0, nev0, mode,&
-     &              resid, rnorm, v, ldv, h, ldh, ipntr,&
-     &              workd, workl, info)
+                    resid, rnorm, v, ldv, h, ldh, ipntr,&
+                    workd, workl, info)
 !
 !     %---------------------------------------------------%
 !     | ido .ne. 99 implies use of reverse communication  |
@@ -430,13 +430,13 @@
 !
          if (msglvl .gt. 0) then
             call pivout (comm, logfil, 1, [iter], ndigit,&
-     &           '_saup2: **** Start of major iteration number ****')
+                 '_saup2: **** Start of major iteration number ****')
          end if
          if (msglvl .gt. 1) then
             call pivout (comm, logfil, 1, [nev], ndigit,&
-     &     '_saup2: The length of the current Lanczos factorization')
+           '_saup2: The length of the current Lanczos factorization')
             call pivout (comm, logfil, 1, [np], ndigit,&
-     &           '_saup2: Extend the Lanczos factorization by')
+                 '_saup2: Extend the Lanczos factorization by')
          end if
 !
 !        %------------------------------------------------------------%
@@ -448,8 +448,8 @@
          update = .true.
 !
          call pdsaitr (comm, ido, bmat, n, nev, np, mode,&
-     &                 resid, rnorm, v, ldv, h, ldh, ipntr,&
-     &                 workd, workl, info)
+                       resid, rnorm, v, ldv, h, ldh, ipntr,&
+                       workd, workl, info)
 !
 !        %---------------------------------------------------%
 !        | ido .ne. 99 implies use of reverse communication  |
@@ -475,7 +475,7 @@
 !
          if (msglvl .gt. 1) then
             call pdvout (comm, logfil, 1, [rnorm], ndigit,&
-     &           '_saup2: Current B-norm of residual for factorization')
+                 '_saup2: Current B-norm of residual for factorization')
          end if
 !
 !        %--------------------------------------------------------%
@@ -484,7 +484,7 @@
 !        %--------------------------------------------------------%
 !
          call pdseigt ( comm, rnorm, kplusp, h, ldh, ritz, bounds,&
-     &                  workl, ierr)
+                        workl, ierr)
 !
          if (ierr .ne. 0) then
             info = -8
@@ -512,7 +512,7 @@
          nev = nev0
          np = np0
          call pdsgets ( comm, ishift, which, nev, np, ritz,&
-     &                  bounds, workl)
+                        bounds, workl)
 !
 !        %-------------------%
 !        | Convergence test. |
@@ -526,11 +526,11 @@
             kp(2) = np
             kp(3) = nconv
             call pivout (comm, logfil, 3, kp, ndigit,&
-     &                  '_saup2: NEV, NP, NCONV are')
+                        '_saup2: NEV, NP, NCONV are')
             call pdvout (comm, logfil, kplusp, ritz, ndigit,&
-     &           '_saup2: The eigenvalues of H')
+                 '_saup2: The eigenvalues of H')
             call pdvout (comm, logfil, kplusp, bounds, ndigit,&
-     &          '_saup2: Ritz estimates of the current NCV Ritz values')
+                '_saup2: Ritz estimates of the current NCV Ritz values')
          end if
 !
 !        %---------------------------------------------------------%
@@ -552,8 +552,8 @@
  30      continue
 !
          if ( (nconv .ge. nev0) .or.&
-     &        (iter .gt. mxiter) .or.&
-     &        (np .eq. 0) ) then
+              (iter .gt. mxiter) .or.&
+              (np .eq. 0) ) then
 !
 !           %------------------------------------------------%
 !           | Prepare to exit. Put the converged Ritz values |
@@ -580,9 +580,9 @@
                nevm2 = nev0 - nevd2
                if ( nev .gt. 1 ) then
                   call dswap ( min(nevd2,np), ritz(nevm2+1), 1,&
-     &                 ritz( max(kplusp-nevd2+1,kplusp-np+1) ), 1)
+                       ritz( max(kplusp-nevd2+1,kplusp-np+1) ), 1)
                   call dswap ( min(nevd2,np), bounds(nevm2+1), 1,&
-     &                 bounds( max(kplusp-nevd2+1,kplusp-np+1)), 1)
+                       bounds( max(kplusp-nevd2+1,kplusp-np+1)), 1)
                end if
 !
             else
@@ -675,9 +675,9 @@
 !
             if (msglvl .gt. 1) then
                call pdvout (comm, logfil, kplusp, ritz, ndigit,&
-     &            '_saup2: Sorted Ritz values.')
+                  '_saup2: Sorted Ritz values.')
                call pdvout (comm, logfil, kplusp, bounds, ndigit,&
-     &            '_saup2: Sorted ritz estimates.')
+                  '_saup2: Sorted ritz estimates.')
             end if
 !
 !           %------------------------------------%
@@ -718,23 +718,23 @@
 !           %---------------------------------------%
 !
             if (nevbef .lt. nev)&
-     &         call pdsgets ( comm, ishift, which, nev, np,&
-     &                        ritz, bounds, workl)
+               call pdsgets ( comm, ishift, which, nev, np,&
+                              ritz, bounds, workl)
 !
          end if
 !
          if (msglvl .gt. 0) then
             call pivout (comm, logfil, 1, [nconv], ndigit,&
-     &           '_saup2: no. of "converged" Ritz values at this iter.')
+                 '_saup2: no. of "converged" Ritz values at this iter.')
             if (msglvl .gt. 1) then
                kp(1) = nev
                kp(2) = np
                call pivout (comm, logfil, 2, kp, ndigit,&
-     &              '_saup2: NEV and NP .')
+                    '_saup2: NEV and NP .')
                call pdvout (comm, logfil, nev, ritz(np+1), ndigit,&
-     &              '_saup2: "wanted" Ritz values.')
+                    '_saup2: "wanted" Ritz values.')
                call pdvout (comm, logfil, nev, bounds(np+1), ndigit,&
-     &              '_saup2: Ritz estimates of the "wanted" values ')
+                    '_saup2: Ritz estimates of the "wanted" values ')
             end if
          end if
 !
@@ -772,12 +772,12 @@
 !
          if (msglvl .gt. 2) then
             call pivout (comm, logfil, 1, [np], ndigit,&
-     &                  '_saup2: The number of shifts to apply ')
+                        '_saup2: The number of shifts to apply ')
             call pdvout (comm, logfil, np, workl, ndigit,&
-     &                  '_saup2: shifts selected')
+                        '_saup2: shifts selected')
             if (ishift .eq. 1) then
                call pdvout (comm, logfil, np, bounds, ndigit,&
-     &                  '_saup2: corresponding Ritz estimates')
+                        '_saup2: corresponding Ritz estimates')
              end if
          end if
 !
@@ -790,7 +790,7 @@
 !        %---------------------------------------------------------%
 !
          call pdsapps ( comm, n, nev, np, ritz, v, ldv, h, ldh, resid,&
-     &                  q, ldq, workd)
+                        q, ldq, workd)
 !
 !        %---------------------------------------------%
 !        | Compute the B-norm of the updated residual. |
@@ -831,7 +831,7 @@
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd, 1)
             call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
-     &                MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
+                      MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
             rnorm = pdnorm2( comm, n, resid, 1 )
@@ -841,11 +841,11 @@
 !
          if (msglvl .gt. 2) then
             call pdvout (comm, logfil, 1, [rnorm], ndigit,&
-     &      '_saup2: B-norm of residual for NEV factorization')
+            '_saup2: B-norm of residual for NEV factorization')
             call pdvout (comm, logfil, nev, h(1,2), ndigit,&
-     &           '_saup2: main diagonal of compressed H matrix')
+                 '_saup2: main diagonal of compressed H matrix')
             call pdvout (comm, logfil, nev-1, h(2,1), ndigit,&
-     &           '_saup2: subdiagonal of compressed H matrix')
+                 '_saup2: subdiagonal of compressed H matrix')
          end if
 !
       go to 1000
