@@ -16,7 +16,7 @@ DSRC = pdnaitr.F90 pdnapps.F90 pdnaup2.F90 pdnaupd.F90 pdneigh.F90 pdneupd.F90 p
 CSRC = pcnaitr.F90 pcnapps.F90 pcnaup2.F90 pcnaupd.F90 pcneigh.F90 pcneupd.F90 pcngets.F90 \
        pcgetv0.F90 pclarnv.F90 pscnorm2.F90
 
-ZSRC = pznaitr.F90 pznapps.f pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
+ZSRC = pznaitr.F90 pznapps.F90 pznaup2.f pznaupd.f pzneigh.f pzneupd.f pzngets.f \
        pzgetv0.F90 pzlarnv.F90 pdznorm2.F90
 
 if ICB
