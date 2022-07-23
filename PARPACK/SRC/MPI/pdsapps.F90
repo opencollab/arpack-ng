@@ -140,7 +140,12 @@
 !     | MPI Communicator |
 !     %--------------------%
 !
-      include  'mpif.h'
+#ifdef HAVE_MPI_ICB
+      use :: mpi_f08
+#else
+#include "mpif.h"
+#endif
+
       include  'pcontext.h'
       integer   comm
 !
