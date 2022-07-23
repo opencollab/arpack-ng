@@ -147,7 +147,12 @@
 #endif
 
 #include "pcontextF90.h"
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+#else
       integer   comm
+#endif
+
 !
 !     %----------------------------------------------------%
 !     | Include files for debugging and timing information |
