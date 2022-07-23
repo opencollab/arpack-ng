@@ -57,7 +57,7 @@
 !     ..
 !     .. Array Arguments ..
       integer			iseed( 4 )
-      Complex
+      Complex&
      &                          x( * )
 !     ..
 !     .. External Subroutines ..
