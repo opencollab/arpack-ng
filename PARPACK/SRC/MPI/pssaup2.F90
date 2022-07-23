@@ -199,7 +199,12 @@
 !     | MPI Variables |
 !     %---------------%
 !
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) comm
+#else
       integer    comm
+#endif
+
 !
 !
 !     %----------------------------------------------------%
