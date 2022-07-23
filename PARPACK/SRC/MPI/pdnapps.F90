@@ -143,8 +143,8 @@
 !
 !-----------------------------------------------------------------------
 !
-      subroutine pdnapps
-     &   ( comm, n, kev, np, shiftr, shifti, v, ldv, h, ldh, resid,
+      subroutine pdnapps&
+     &   ( comm, n, kev, np, shiftr, shifti, v, ldv, h, ldh, resid,&
      &     q, ldq, workl, workd )
 !
 !     %--------------------%
@@ -171,15 +171,15 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Double precision
-     &           h(ldh,kev+np), resid(n), shifti(np), shiftr(np),
+      Double precision&
+     &           h(ldh,kev+np), resid(n), shifti(np), shiftr(np),&
      &           v(ldv,kev+np), q(ldq,kev+np), workd(2*n), workl(kev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Double precision
+      Double precision&
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
 !
@@ -189,8 +189,8 @@
 !
       integer    i, iend, ir, istart, j, jj, kplusp, msglvl, nr
       logical    cconj
-      Double precision
-     &           c, f, g, h11, h12, h21, h22, h32, ovfl, r, s, sigmai,
+      Double precision&
+     &           c, f, g, h11, h12, h21, h22, h32, ovfl, r, s, sigmai,&
      &           sigmar, smlnum, ulp, unfl, u(3), t, tau, tst1
       save       ovfl, smlnum, ulp, unfl
 !
@@ -198,14 +198,14 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   daxpy, dcopy, dscal, dlacpy, dlarf, dlarfg, dlartg,
+      external   daxpy, dcopy, dscal, dlacpy, dlarf, dlarfg, dlartg,&
      &           dlaset, dlabad, arscnd, pivout, pdvout, pdmout
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &           pdlamch10, dlanhs, dlapy2
       external   pdlamch10, dlanhs, dlapy2
 !
@@ -276,11 +276,11 @@
          sigmai = shifti(jj)
 !
          if (msglvl .gt. 2 ) then
-            call pivout (comm, logfil, 1, [jj], ndigit,
+            call pivout (comm, logfil, 1, [jj], ndigit,&
      &               '_napps: shift number.')
-            call pdvout (comm, logfil, 1, [sigmar], ndigit,
+            call pdvout (comm, logfil, 1, [sigmar], ndigit,&
      &               '_napps: The real part of the shift ')
-            call pdvout (comm, logfil, 1, [sigmai], ndigit,
+            call pdvout (comm, logfil, 1, [sigmai], ndigit,&
      &               '_napps: The imaginary part of the shift ')
          end if
 !
@@ -341,15 +341,15 @@
 !           %----------------------------------------%
 !
             tst1 = abs( h( i, i ) ) + abs( h( i+1, i+1 ) )
-            if( tst1.eq.zero )
+            if( tst1.eq.zero )&
      &         tst1 = dlanhs( '1', kplusp-jj+1, h, ldh, workl )
             if( abs( h( i+1,i ) ).le.max( ulp*tst1, smlnum ) ) then
                if (msglvl .gt. 0) then
-                  call pivout (comm, logfil, 1, [i], ndigit,
+                  call pivout (comm, logfil, 1, [i], ndigit,&
      &                 '_napps: matrix splitting at row/column no.')
-                  call pivout (comm, logfil, 1, [jj], ndigit,
+                  call pivout (comm, logfil, 1, [jj], ndigit,&
      &                 '_napps: matrix splitting with shift number.')
-                  call pdvout (comm, logfil, 1, h(i+1,i), ndigit,
+                  call pdvout (comm, logfil, 1, h(i+1,i), ndigit,&
      &                 '_napps: off diagonal element.')
                end if
                iend = i
@@ -361,9 +361,9 @@
    40    continue
 !
          if (msglvl .gt. 2) then
-             call pivout (comm, logfil, 1, [istart], ndigit,
+             call pivout (comm, logfil, 1, [istart], ndigit,&
      &                   '_napps: Start of current block ')
-             call pivout (comm, logfil, 1, [iend], ndigit,
+             call pivout (comm, logfil, 1, [iend], ndigit,&
      &                   '_napps: End of current block ')
          end if
 !
@@ -378,7 +378,7 @@
 !        | complex conjugate pair of shifts on a 2 by 2 matrix. |
 !        %------------------------------------------------------%
 !
-         if ( istart + 1 .eq. iend .and. abs( sigmai ) .gt. zero )
+         if ( istart + 1 .eq. iend .and. abs( sigmai ) .gt. zero )&
      &      go to 100
 !
          h11 = h(istart,istart)
@@ -502,7 +502,7 @@
 !              | Apply the reflector to the left of H |
 !              %--------------------------------------%
 !
-               call dlarf ('Left', nr, kplusp-i+1, u, 1, tau,
+               call dlarf ('Left', nr, kplusp-i+1, u, 1, tau,&
      &                     h(i,i), ldh, workl)
 !
 !              %---------------------------------------%
@@ -510,14 +510,14 @@
 !              %---------------------------------------%
 !
                ir = min ( i+3, iend )
-               call dlarf ('Right', ir, nr, u, 1, tau,
+               call dlarf ('Right', ir, nr, u, 1, tau,&
      &                     h(1,i), ldh, workl)
 !
 !              %-----------------------------------------------------%
 !              | Accumulate the reflector in the matrix Q;  Q <- Q*G |
 !              %-----------------------------------------------------%
 !
-               call dlarf ('Right', kplusp, nr, u, 1, tau,
+               call dlarf ('Right', kplusp, nr, u, 1, tau,&
      &                     q(1,i), ldq, workl)
 !
 !              %----------------------------%
@@ -576,9 +576,9 @@
 !        %--------------------------------------------%
 !
          tst1 = abs( h( i, i ) ) + abs( h( i+1, i+1 ) )
-         if( tst1.eq.zero )
+         if( tst1.eq.zero )&
      &       tst1 = dlanhs( '1', kev, h, ldh, workl )
-         if( h( i+1,i ) .le. max( ulp*tst1, smlnum ) )
+         if( h( i+1,i ) .le. max( ulp*tst1, smlnum ) )&
      &       h(i+1,i) = zero
  130  continue
 !
@@ -590,8 +590,8 @@
 !     | of H would be zero as in exact arithmetic.      |
 !     %-------------------------------------------------%
 !
-      if (h(kev+1,kev) .gt. zero)
-     &    call dgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,
+      if (h(kev+1,kev) .gt. zero)&
+     &    call dgemv ('N', n, kplusp, one, v, ldv, q(1,kev+1), 1, zero,&
      &                workd(n+1), 1)
 !
 !     %----------------------------------------------------------%
@@ -600,7 +600,7 @@
 !     %----------------------------------------------------------%
 !
       do 140 i = 1, kev
-         call dgemv ('N', n, kplusp-i+1, one, v, ldv,
+         call dgemv ('N', n, kplusp-i+1, one, v, ldv,&
      &               q(1,kev-i+1), 1, zero, workd, 1)
          call dcopy (n, workd, 1, v(1,kplusp-i+1), 1)
   140 continue
@@ -615,7 +615,7 @@
 !     | Copy the (kev+1)-st column of (V*Q) in the appropriate place |
 !     %--------------------------------------------------------------%
 !
-      if (h(kev+1,kev) .gt. zero)
+      if (h(kev+1,kev) .gt. zero)&
      &   call dcopy (n, workd(n+1), 1, v(1,kev+1), 1)
 !
 !     %---------------------------------------%
@@ -627,18 +627,18 @@
 !     %---------------------------------------%
 !
       call dscal (n, q(kplusp,kev), resid, 1)
-      if (h(kev+1,kev) .gt. zero)
+      if (h(kev+1,kev) .gt. zero)&
      &   call daxpy (n, h(kev+1,kev), v(1,kev+1), 1, resid, 1)
 !
       if (msglvl .gt. 1) then
-         call pdvout (comm, logfil, 1, q(kplusp,kev), ndigit,
+         call pdvout (comm, logfil, 1, q(kplusp,kev), ndigit,&
      &        '_napps: sigmak = (e_{kev+p}^T*Q)*e_{kev}')
-         call pdvout (comm, logfil, 1, h(kev+1,kev), ndigit,
+         call pdvout (comm, logfil, 1, h(kev+1,kev), ndigit,&
      &        '_napps: betak = e_{kev+1}^T*H*e_{kev}')
-         call pivout (comm, logfil, 1, [kev], ndigit,
+         call pivout (comm, logfil, 1, [kev], ndigit,&
      &               '_napps: Order of the final Hessenberg matrix ')
          if (msglvl .gt. 2) then
-            call pdmout (comm, logfil, kev, kev, h, ldh, ndigit,
+            call pdmout (comm, logfil, kev, kev, h, ldh, ndigit,&
      &      '_napps: updated Hessenberg matrix H for next iteration')
          end if
 !
