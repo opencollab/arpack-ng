@@ -373,7 +373,7 @@ set(arpackutil_STAT_SRCS
 
 if (MPI)
     file(GLOB parpackutil_STAT_SRCS ${arpack_SOURCE_DIR}/PARPACK/UTIL/MPI/*.f)
-    file(GLOB parpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/*.f)
+    file(GLOB parpacksrc_STAT_SRCS ${arpack_SOURCE_DIR}/dbgini.f ${arpack_SOURCE_DIR}/staini.f ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/*.F90)
 endif()
 
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
@@ -421,6 +421,9 @@ else ()
 endif ()
 
 include_directories("${PROJECT_BINARY_DIR}") # Find arpackdef.h and arpackicb.h
+if (MPI)
+  include_directories("${PROJECT_SOURCE_DIR}/PARPACK/SRC/MPI") # Find pcontextF90.h
+endif ()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ############################
