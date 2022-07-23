@@ -27,7 +27,7 @@ ZSRC += icbpzn.F90
 endif
 
 noinst_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt.la
-libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.f
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_SOURCES = pslamch10.f pdlamch10.F90
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_noopt_la_FFLAGS = -O0
 
 lib_LTLIBRARIES = libparpack@LIBSUFFIX@@ITF64SUFFIX@.la
