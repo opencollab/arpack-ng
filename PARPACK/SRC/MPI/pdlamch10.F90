@@ -71,17 +71,17 @@
 !
       TEMP1 = DLAMCH( CMACH )
 !
-      IF( LSAME( CMACH, 'E' ).OR.LSAME( CMACH, 'S' ).OR.
-     $    LSAME( CMACH, 'M' ).OR.LSAME( CMACH, 'U' ) ) THEN
-          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,
-     $                        MPI_MAX, ICTXT, IDUMM )
-!         CALL DGAMX2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,
-!     $                 IDUMM, 1, -1, IDUMM )
+      IF( LSAME( CMACH, 'E' ).OR.LSAME( CMACH, 'S' ).OR.&
+          LSAME( CMACH, 'M' ).OR.LSAME( CMACH, 'U' ) ) THEN
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,&
+                              MPI_MAX, ICTXT, IDUMM )
+!         CALL DGAMX2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,&
+!                       IDUMM, 1, -1, IDUMM )
       ELSE IF( LSAME( CMACH, 'L' ).OR.LSAME( CMACH, 'O' ) ) THEN
-          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,
-     $                        MPI_MIN, ICTXT, IDUMM )
-!         CALL DGAMN2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,
-!     $                 IDUMM, 1, -1, IDUMM )
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_DOUBLE_PRECISION,&
+                              MPI_MIN, ICTXT, IDUMM )
+!         CALL DGAMN2D( ICTXT, 'All', ' ', 1, 1, buf2(1), 1, IDUMM,&
+!                       IDUMM, 1, -1, IDUMM )
       ELSE
           buf2(1) = TEMP1
       END IF

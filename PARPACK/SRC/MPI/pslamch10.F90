@@ -67,19 +67,19 @@
 !
       TEMP1 = SLAMCH( CMACH )
 !
-      IF( LSAME( CMACH, 'E' ).OR.LSAME( CMACH, 'S' ).OR.
-     $    LSAME( CMACH, 'M' ).OR.LSAME( CMACH, 'U' ) ) THEN
-          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_REAL,
-     $                        MPI_MAX, ICTXT, IDUMM )
+      IF( LSAME( CMACH, 'E' ).OR.LSAME( CMACH, 'S' ).OR.&
+          LSAME( CMACH, 'M' ).OR.LSAME( CMACH, 'U' ) ) THEN
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_REAL,&
+                              MPI_MAX, ICTXT, IDUMM )
           TEMP = buf2(1)
-!     CALL SGAMX2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,
-!     $                 IDUMM, 1, -1, IDUMM )
+!     CALL SGAMX2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,&
+!                       IDUMM, 1, -1, IDUMM )
       ELSE IF( LSAME( CMACH, 'L' ).OR.LSAME( CMACH, 'O' ) ) THEN
-          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_REAL,
-     $                        MPI_MIN, ICTXT, IDUMM )
+          CALL MPI_ALLREDUCE( [TEMP1], buf2, 1, MPI_REAL,&
+                              MPI_MIN, ICTXT, IDUMM )
           TEMP = buf2(1)
-!     CALL SGAMN2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,
-!     $                 IDUMM, 1, -1, IDUMM )
+!     CALL SGAMN2D( ICTXT, 'All', ' ', 1, 1, TEMP, 1, IDUMM,&
+!                       IDUMM, 1, -1, IDUMM )
       ELSE
           TEMP = TEMP1
       END IF
