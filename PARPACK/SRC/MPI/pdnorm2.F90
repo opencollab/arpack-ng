@@ -42,14 +42,14 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Double precision
+      Double precision&
      &             x(n)
 !
 !     %---------------%
 !     | Local Scalars |
 !     %---------------%
 !
-      Double precision
+      Double precision&
      &             max, buf, zero, buf2(1)
       parameter    ( zero = 0.0 )
 !
@@ -63,7 +63,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &             dnrm2
       External     dnrm2
 !
@@ -74,14 +74,14 @@
       pdnorm2 = dnrm2( n, x, inc)
 !
       buf = pdnorm2
-      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,
+      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,&
      &                    MPI_MAX, comm, ierr )
       max = buf2(1)
       if ( max .eq. zero ) then
          pdnorm2 = zero
       else
          buf = (pdnorm2/max)**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,&
      &                       MPI_SUM, comm, ierr )
          pdnorm2 = max * sqrt(abs(buf2(1)))
       endif
