@@ -11,7 +11,7 @@ SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
 
 DSRC = pdnaitr.f pdnapps.f pdnaup2.f pdnaupd.f pdneigh.f pdneupd.f pdngets.f \
        pdsaitr.f pdsapps.f pdsaup2.f pdsaupd.f pdseigt.f pdseupd.f pdsgets.f \
-       pdgetv0.F90 pdlarnv.f pdnorm2.f
+       pdgetv0.F90 pdlarnv.F90 pdnorm2.f
 
 CSRC = pcnaitr.F90 pcnapps.F90 pcnaup2.F90 pcnaupd.F90 pcneigh.F90 pcneupd.F90 pcngets.F90 \
        pcgetv0.F90 pclarnv.F90 pscnorm2.f
