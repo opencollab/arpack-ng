@@ -1,204 +1,204 @@
-c-----------------------------------------------------------------------
-c\BeginDoc
-c
-c\Name: psneigh
-c
-c Message Passing Layer: MPI
-c
-c\Description:
-c  Compute the eigenvalues of the current upper Hessenberg matrix
-c  and the corresponding Ritz estimates given the current residual norm.
-c
-c\Usage:
-c  call psneigh
-c     ( COMM, RNORM, N, H, LDH, RITZR, RITZI, BOUNDS, Q, LDQ, WORKL, IERR )
-c
-c\Arguments
-c  COMM    MPI Communicator for the processor grid.  (INPUT)
-c
-c  RNORM   Real scalar.  (INPUT)
-c          Residual norm corresponding to the current upper Hessenberg
-c          matrix H.
-c
-c  N       Integer.  (INPUT)
-c          Size of the matrix H.
-c
-c  H       Real N by N array.  (INPUT)
-c          H contains the current upper Hessenberg matrix.
-c
-c  LDH     Integer.  (INPUT)
-c          Leading dimension of H exactly as declared in the calling
-c          program.
-c
-c  RITZR,  Real arrays of length N.  (OUTPUT)
-c  RITZI   On output, RITZR(1:N) (resp. RITZI(1:N)) contains the real
-c          (respectively imaginary) parts of the eigenvalues of H.
-c
-c  BOUNDS  Real array of length N.  (OUTPUT)
-c          On output, BOUNDS contains the Ritz estimates associated with
-c          the eigenvalues RITZR and RITZI.  This is equal to RNORM
-c          times the last components of the eigenvectors corresponding
-c          to the eigenvalues in RITZR and RITZI.
-c
-c  Q       Real N by N array.  (WORKSPACE)
-c          Workspace needed to store the eigenvectors of H.
-c
-c  LDQ     Integer.  (INPUT)
-c          Leading dimension of Q exactly as declared in the calling
-c          program.
-c
-c  WORKL   Real work array of length N**2 + 3*N.  (WORKSPACE)
-c          Private (replicated) array on each PE or array allocated on
-c          the front end.  This is needed to keep the full Schur form
-c          of H and also in the calculation of the eigenvectors of H.
-c
-c  IERR    Integer.  (OUTPUT)
-c          Error exit flag from slahqr or strevc.
-c
-c\EndDoc
-c
-c-----------------------------------------------------------------------
-c
-c\BeginLib
-c
-c\Local variables:
-c     xxxxxx  real
-c
-c\Routines called:
-c     slahqr  ARPACK routine to compute the real Schur form of an
-c             upper Hessenberg matrix and last row of the Schur vectors.
-c     arscnd  ARPACK utility routine for timing.
-c     smout   ARPACK utility routine that prints matrices
-c     svout   ARPACK utility routine that prints vectors.
-c     slacpy  LAPACK matrix copy routine.
-c     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
-c     strevc  LAPACK routine to compute the eigenvectors of a matrix
-c             in upper quasi-triangular form
-c     sgemv   Level 2 BLAS routine for matrix vector multiplication.
-c     scopy   Level 1 BLAS that copies one vector to another .
-c     snrm2   Level 1 BLAS that computes the norm of a vector.
-c     sscal   Level 1 BLAS that scales a vector.
-c
-c
-c\Author
-c     Danny Sorensen               Phuong Vu
-c     Richard Lehoucq              Cray Research, Inc. &
-c     Dept. of Computational &     CRPC / Rice University
-c     Applied Mathematics          Houston, Texas
-c     Rice University
-c     Houston, Texas
-c
-c\Parallel Modifications
-c     Kristi Maschhoff
-c
-c\Revision history:
-c     Starting Point: Serial Code FILE: neigh.F   SID: 2.2
-c
-c\SCCS Information:
-c FILE: neigh.F   SID: 1.2   DATE OF SID: 2/22/96
-c
-c\Remarks
-c     None
-c
-c\EndLib
-c
-c-----------------------------------------------------------------------
-c
+!-----------------------------------------------------------------------
+!\BeginDoc
+!
+!\Name: psneigh
+!
+! Message Passing Layer: MPI
+!
+!\Description:
+!  Compute the eigenvalues of the current upper Hessenberg matrix
+!  and the corresponding Ritz estimates given the current residual norm.
+!
+!\Usage:
+!  call psneigh
+!     ( COMM, RNORM, N, H, LDH, RITZR, RITZI, BOUNDS, Q, LDQ, WORKL, IERR )
+!
+!\Arguments
+!  COMM    MPI Communicator for the processor grid.  (INPUT)
+!
+!  RNORM   Real scalar.  (INPUT)
+!          Residual norm corresponding to the current upper Hessenberg
+!          matrix H.
+!
+!  N       Integer.  (INPUT)
+!          Size of the matrix H.
+!
+!  H       Real N by N array.  (INPUT)
+!          H contains the current upper Hessenberg matrix.
+!
+!  LDH     Integer.  (INPUT)
+!          Leading dimension of H exactly as declared in the calling
+!          program.
+!
+!  RITZR,  Real arrays of length N.  (OUTPUT)
+!  RITZI   On output, RITZR(1:N) (resp. RITZI(1:N)) contains the real
+!          (respectively imaginary) parts of the eigenvalues of H.
+!
+!  BOUNDS  Real array of length N.  (OUTPUT)
+!          On output, BOUNDS contains the Ritz estimates associated with
+!          the eigenvalues RITZR and RITZI.  This is equal to RNORM
+!          times the last components of the eigenvectors corresponding
+!          to the eigenvalues in RITZR and RITZI.
+!
+!  Q       Real N by N array.  (WORKSPACE)
+!          Workspace needed to store the eigenvectors of H.
+!
+!  LDQ     Integer.  (INPUT)
+!          Leading dimension of Q exactly as declared in the calling
+!          program.
+!
+!  WORKL   Real work array of length N**2 + 3*N.  (WORKSPACE)
+!          Private (replicated) array on each PE or array allocated on
+!          the front end.  This is needed to keep the full Schur form
+!          of H and also in the calculation of the eigenvectors of H.
+!
+!  IERR    Integer.  (OUTPUT)
+!          Error exit flag from slahqr or strevc.
+!
+!\EndDoc
+!
+!-----------------------------------------------------------------------
+!
+!\BeginLib
+!
+!\Local variables:
+!     xxxxxx  real
+!
+!\Routines called:
+!     slahqr  ARPACK routine to compute the real Schur form of an
+!             upper Hessenberg matrix and last row of the Schur vectors.
+!     arscnd  ARPACK utility routine for timing.
+!     smout   ARPACK utility routine that prints matrices
+!     svout   ARPACK utility routine that prints vectors.
+!     slacpy  LAPACK matrix copy routine.
+!     slapy2  LAPACK routine to compute sqrt(x**2+y**2) carefully.
+!     strevc  LAPACK routine to compute the eigenvectors of a matrix
+!             in upper quasi-triangular form
+!     sgemv   Level 2 BLAS routine for matrix vector multiplication.
+!     scopy   Level 1 BLAS that copies one vector to another .
+!     snrm2   Level 1 BLAS that computes the norm of a vector.
+!     sscal   Level 1 BLAS that scales a vector.
+!
+!
+!\Author
+!     Danny Sorensen               Phuong Vu
+!     Richard Lehoucq              Cray Research, Inc. &
+!     Dept. of Computational &     CRPC / Rice University
+!     Applied Mathematics          Houston, Texas
+!     Rice University
+!     Houston, Texas
+!
+!\Parallel Modifications
+!     Kristi Maschhoff
+!
+!\Revision history:
+!     Starting Point: Serial Code FILE: neigh.F   SID: 2.2
+!
+!\SCCS Information:
+! FILE: neigh.F   SID: 1.2   DATE OF SID: 2/22/96
+!
+!\Remarks
+!     None
+!
+!\EndLib
+!
+!-----------------------------------------------------------------------
+!
       subroutine psneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds,
      &                    q, ldq, workl, ierr)
-c
-c     %--------------------%
-c     | MPI Communicator |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | MPI Communicator |
+!     %--------------------%
+!
       integer   comm
-c
-c     %----------------------------------------------------%
-c     | Include files for debugging and timing information |
-c     %----------------------------------------------------%
-c
+!
+!     %----------------------------------------------------%
+!     | Include files for debugging and timing information |
+!     %----------------------------------------------------%
+!
       include   'debug.h'
       include   'stat.h'
-c
-c     %------------------%
-c     | Scalar Arguments |
-c     %------------------%
-c
+!
+!     %------------------%
+!     | Scalar Arguments |
+!     %------------------%
+!
       integer    ierr, n, ldh, ldq
       Real
      &           rnorm
-c
-c     %-----------------%
-c     | Array Arguments |
-c     %-----------------%
-c
+!
+!     %-----------------%
+!     | Array Arguments |
+!     %-----------------%
+!
       Real
      &           bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),
      &           workl(n*(n+3))
-c
-c     %------------%
-c     | Parameters |
-c     %------------%
-c
+!
+!     %------------%
+!     | Parameters |
+!     %------------%
+!
       Real
      &           one, zero
       parameter (one = 1.0, zero = 0.0)
-c
-c     %------------------------%
-c     | Local Scalars & Arrays |
-c     %------------------------%
-c
+!
+!     %------------------------%
+!     | Local Scalars & Arrays |
+!     %------------------------%
+!
       logical    select(1)
       integer    i, iconj, msglvl
       Real
      &           temp, vl(1)
-c
-c     %----------------------%
-c     | External Subroutines |
-c     %----------------------%
-c
+!
+!     %----------------------%
+!     | External Subroutines |
+!     %----------------------%
+!
       external   scopy, slacpy, slahqr, strevc, svout, arscnd
-c
-c     %--------------------%
-c     | External Functions |
-c     %--------------------%
-c
+!
+!     %--------------------%
+!     | External Functions |
+!     %--------------------%
+!
       Real
      &           slapy2, snrm2
       external   slapy2, snrm2
-c
-c     %---------------------%
-c     | Intrinsic Functions |
-c     %---------------------%
-c
+!
+!     %---------------------%
+!     | Intrinsic Functions |
+!     %---------------------%
+!
       intrinsic  abs
-c
-c     %-----------------------%
-c     | Executable Statements |
-c     %-----------------------%
-c
-c
-c     %-------------------------------%
-c     | Initialize timing statistics  |
-c     | & message level for debugging |
-c     %-------------------------------%
-c
+!
+!     %-----------------------%
+!     | Executable Statements |
+!     %-----------------------%
+!
+!
+!     %-------------------------------%
+!     | Initialize timing statistics  |
+!     | & message level for debugging |
+!     %-------------------------------%
+!
       call arscnd (t0)
       msglvl = mneigh
-c
+!
       if (msglvl .gt. 2) then
           call psmout (comm, logfil, n, n, h, ldh, ndigit,
      &         '_neigh: Entering upper Hessenberg matrix H ')
       end if
-c
-c     %-----------------------------------------------------------%
-c     | 1. Compute the eigenvalues, the last components of the    |
-c     |    corresponding Schur vectors and the full Schur form T  |
-c     |    of the current upper Hessenberg matrix H.              |
-c     | slahqr returns the full Schur form of H in WORKL(1:N**2)  |
-c     | and the last components of the Schur vectors in BOUNDS.   |
-c     %-----------------------------------------------------------%
-c
+!
+!     %-----------------------------------------------------------%
+!     | 1. Compute the eigenvalues, the last components of the    |
+!     |    corresponding Schur vectors and the full Schur form T  |
+!     |    of the current upper Hessenberg matrix H.              |
+!     | slahqr returns the full Schur form of H in WORKL(1:N**2)  |
+!     | and the last components of the Schur vectors in BOUNDS.   |
+!     %-----------------------------------------------------------%
+!
       call slacpy ('All', n, n, h, ldh, workl, n)
       do 5 j = 1, n-1
           bounds(j) = zero
@@ -207,56 +207,56 @@ c
       call slahqr(.true., .true., n, 1, n, workl, n, ritzr, ritzi, 1, 1,
      &            bounds, 1, ierr)
       if (ierr .ne. 0) go to 9000
-c
+!
       if (msglvl .gt. 1) then
          call psvout (comm, logfil, n, bounds, ndigit,
      &              '_neigh: last row of the Schur matrix for H')
       end if
-c
-c     %-----------------------------------------------------------%
-c     | 2. Compute the eigenvectors of the full Schur form T and  |
-c     |    apply the last components of the Schur vectors to get  |
-c     |    the last components of the corresponding eigenvectors. |
-c     | Remember that if the i-th and (i+1)-st eigenvalues are    |
-c     | complex conjugate pairs, then the real & imaginary part   |
-c     | of the eigenvector components are split across adjacent   |
-c     | columns of Q.                                             |
-c     %-----------------------------------------------------------%
-c
+!
+!     %-----------------------------------------------------------%
+!     | 2. Compute the eigenvectors of the full Schur form T and  |
+!     |    apply the last components of the Schur vectors to get  |
+!     |    the last components of the corresponding eigenvectors. |
+!     | Remember that if the i-th and (i+1)-st eigenvalues are    |
+!     | complex conjugate pairs, then the real & imaginary part   |
+!     | of the eigenvector components are split across adjacent   |
+!     | columns of Q.                                             |
+!     %-----------------------------------------------------------%
+!
       call strevc ('R', 'A', select, n, workl, n, vl, n, q, ldq,
      &             n, n, workl(n*n+1), ierr)
-c
+!
       if (ierr .ne. 0) go to 9000
-c
-c     %------------------------------------------------%
-c     | Scale the returning eigenvectors so that their |
-c     | euclidean norms are all one. LAPACK subroutine |
-c     | strevc returns each eigenvector normalized so  |
-c     | that the element of largest magnitude has      |
-c     | magnitude 1; here the magnitude of a complex   |
-c     | number (x,y) is taken to be |x| + |y|.         |
-c     %------------------------------------------------%
-c
+!
+!     %------------------------------------------------%
+!     | Scale the returning eigenvectors so that their |
+!     | euclidean norms are all one. LAPACK subroutine |
+!     | strevc returns each eigenvector normalized so  |
+!     | that the element of largest magnitude has      |
+!     | magnitude 1; here the magnitude of a complex   |
+!     | number (x,y) is taken to be |x| + |y|.         |
+!     %------------------------------------------------%
+!
       iconj = 0
       do 10 i=1, n
          if ( abs( ritzi(i) ) .le. zero ) then
-c
-c           %----------------------%
-c           | Real eigenvalue case |
-c           %----------------------%
-c
+!
+!           %----------------------%
+!           | Real eigenvalue case |
+!           %----------------------%
+!
             temp = snrm2( n, q(1,i), 1 )
             call sscal ( n, one / temp, q(1,i), 1 )
          else
-c
-c           %-------------------------------------------%
-c           | Complex conjugate pair case. Note that    |
-c           | since the real and imaginary part of      |
-c           | the eigenvector are stored in consecutive |
-c           | columns, we further normalize by the      |
-c           | square root of two.                       |
-c           %-------------------------------------------%
-c
+!
+!           %-------------------------------------------%
+!           | Complex conjugate pair case. Note that    |
+!           | since the real and imaginary part of      |
+!           | the eigenvector are stored in consecutive |
+!           | columns, we further normalize by the      |
+!           | square root of two.                       |
+!           %-------------------------------------------%
+!
             if (iconj .eq. 0) then
                temp = slapy2( snrm2( n, q(1,i), 1 ),
      &                        snrm2( n, q(1,i+1), 1 ) )
@@ -268,37 +268,37 @@ c
             end if
          end if
    10 continue
-c
+!
       call sgemv ('T', n, n, one, q, ldq, bounds, 1, zero, workl, 1)
-c
+!
       if (msglvl .gt. 1) then
          call psvout (comm, logfil, n, workl, ndigit,
      &              '_neigh: Last row of the eigenvector matrix for H')
       end if
-c
-c     %----------------------------%
-c     | Compute the Ritz estimates |
-c     %----------------------------%
-c
+!
+!     %----------------------------%
+!     | Compute the Ritz estimates |
+!     %----------------------------%
+!
       iconj = 0
       do 20 i = 1, n
          if ( abs( ritzi(i) ) .le. zero ) then
-c
-c           %----------------------%
-c           | Real eigenvalue case |
-c           %----------------------%
-c
+!
+!           %----------------------%
+!           | Real eigenvalue case |
+!           %----------------------%
+!
             bounds(i) = rnorm * abs( workl(i) )
          else
-c
-c           %-------------------------------------------%
-c           | Complex conjugate pair case. Note that    |
-c           | since the real and imaginary part of      |
-c           | the eigenvector are stored in consecutive |
-c           | columns, we need to take the magnitude    |
-c           | of the last components of the two vectors |
-c           %-------------------------------------------%
-c
+!
+!           %-------------------------------------------%
+!           | Complex conjugate pair case. Note that    |
+!           | since the real and imaginary part of      |
+!           | the eigenvector are stored in consecutive |
+!           | columns, we need to take the magnitude    |
+!           | of the last components of the two vectors |
+!           %-------------------------------------------%
+!
             if (iconj .eq. 0) then
                bounds(i) = rnorm * slapy2( workl(i), workl(i+1) )
                bounds(i+1) = bounds(i)
@@ -308,7 +308,7 @@ c
             end if
          end if
    20 continue
-c
+!
       if (msglvl .gt. 2) then
          call psvout (comm, logfil, n, ritzr, ndigit,
      &              '_neigh: Real part of the eigenvalues of H')
@@ -317,15 +317,15 @@ c
          call psvout (comm, logfil, n, bounds, ndigit,
      &              '_neigh: Ritz estimates for the eigenvalues of H')
       end if
-c
+!
       call arscnd (t1)
       tneigh = tneigh + (t1 - t0)
-c
+!
  9000 continue
       return
-c
-c     %----------------%
-c     | End of psneigh |
-c     %----------------%
-c
+!
+!     %----------------%
+!     | End of psneigh |
+!     %----------------%
+!
       end
