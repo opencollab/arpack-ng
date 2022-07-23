@@ -891,7 +891,7 @@ endfunction(cprsummary)
 
 message("-- Configuration summary for arpack-ng-${arpack_ng_VERSION}:")
 message("   -- prefix: ${CMAKE_INSTALL_PREFIX}")
-message("   -- MPI: ${MPI}")
+message("   -- MPI: ${MPI} (ICB provided ${HAVE_MPI_ICB})")
 message("   -- ICB: ${ICB}")
 message("   -- INTERFACE64: ${INTERFACE64}")
 cprsummary("FC" "${CMAKE_Fortran_COMPILER}"

@@ -409,7 +409,7 @@ AC_MSG_RESULT([
 Configuration summary for $PACKAGE_STRING
 --------------------------------------------------
 Installation prefix : $prefix
-MPI enabled         : $enable_mpi
+MPI enabled         : $enable_mpi (ICB provided $enable_mpi_icb)
 ICB enabled         : $enable_icb
 INTERFACE64         : $INTERFACE64
 F77                 : $F77
