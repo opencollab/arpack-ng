@@ -149,7 +149,7 @@
 !     | MPI Communicator |
 !     %--------------------%
 !
-      include   'pcontext.h'
+#include "pcontextF90.h"
       integer   comm
 !
 !     %----------------------------------------------------%
