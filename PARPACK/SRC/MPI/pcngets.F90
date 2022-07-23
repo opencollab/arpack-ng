@@ -121,14 +121,14 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex
+      Complex&
      &           bounds(kev+np), ritz(kev+np)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex
+      Complex&
      &           one, zero
       parameter (one = (1.0, 0.0), zero = (0.0, 0.0))
 !
@@ -179,9 +179,9 @@
       if (msglvl .gt. 0) then
          call pivout (comm, logfil, 1, [kev], ndigit, '_ngets: KEV is')
          call pivout (comm, logfil, 1, [np], ndigit, '_ngets: NP is')
-         call pcvout (comm, logfil, kev+np, ritz, ndigit,
+         call pcvout (comm, logfil, kev+np, ritz, ndigit,&
      &        '_ngets: Eigenvalues of current H matrix ')
-         call pcvout (comm, logfil, kev+np, bounds, ndigit,
+         call pcvout (comm, logfil, kev+np, bounds, ndigit,&
      &      '_ngets: Ritz estimates of the current KEV+NP Ritz values')
       end if
 !
