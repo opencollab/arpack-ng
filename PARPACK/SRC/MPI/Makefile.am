@@ -6,7 +6,7 @@ FFLAGS =
 
 PSRC = pcontext.F90
 SSRC = psnaitr.F90 psnapps.F90 psnaup2.F90 psnaupd.F90 psneigh.F90 psneupd.F90 psngets.F90 \
-       pssaitr.F90 pssapps.f pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
+       pssaitr.F90 pssapps.F90 pssaup2.f pssaupd.f psseigt.f psseupd.f pssgets.f \
        psgetv0.F90 pslarnv.F90 psnorm2.F90
 
 DSRC = pdnaitr.F90 pdnapps.F90 pdnaup2.F90 pdnaupd.F90 pdneigh.F90 pdneupd.F90 pdngets.F90 \
