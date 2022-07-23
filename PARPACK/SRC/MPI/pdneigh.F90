@@ -105,7 +105,7 @@
 !-----------------------------------------------------------------------
 !
       subroutine pdneigh ( comm, rnorm, n, h, ldh, ritzr, ritzi, bounds,&
-     &                    q, ldq, workl, ierr)
+                          q, ldq, workl, ierr)
 !
 !     %--------------------%
 !     | MPI Communicator |
@@ -126,22 +126,22 @@
 !
       integer    ierr, n, ldh, ldq
       Double precision&
-     &           rnorm
+                 rnorm
 !
 !     %-----------------%
 !     | Array Arguments |
 !     %-----------------%
 !
       Double precision&
-     &           bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),&
-     &           workl(n*(n+3))
+                 bounds(n), h(ldh,n), q(ldq,n), ritzi(n), ritzr(n),&
+                 workl(n*(n+3))
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
       Double precision&
-     &           one, zero
+                 one, zero
       parameter (one = 1.0, zero = 0.0)
 !
 !     %------------------------%
@@ -151,7 +151,7 @@
       logical    select(1)
       integer    i, iconj, msglvl
       Double precision&
-     &           temp, vl(1)
+                 temp, vl(1)
 !
 !     %----------------------%
 !     | External Subroutines |
@@ -164,7 +164,7 @@
 !     %--------------------%
 !
       Double precision&
-     &           dlapy2, dnrm2
+                 dlapy2, dnrm2
       external   dlapy2, dnrm2
 !
 !     %---------------------%
@@ -188,7 +188,7 @@
 !
       if (msglvl .gt. 2) then
           call pdmout (comm, logfil, n, n, h, ldh, ndigit,&
-     &         '_neigh: Entering upper Hessenberg matrix H ')
+               '_neigh: Entering upper Hessenberg matrix H ')
       end if
 !
 !     %-----------------------------------------------------------%
@@ -205,12 +205,12 @@
    5  continue
       bounds(n) = 1
       call dlahqr(.true., .true., n, 1, n, workl, n, ritzr, ritzi, 1, 1,&
-     &            bounds, 1, ierr)
+                  bounds, 1, ierr)
       if (ierr .ne. 0) go to 9000
 !
       if (msglvl .gt. 1) then
          call pdvout (comm, logfil, n, bounds, ndigit,&
-     &              '_neigh: last row of the Schur matrix for H')
+                    '_neigh: last row of the Schur matrix for H')
       end if
 !
 !     %-----------------------------------------------------------%
@@ -224,7 +224,7 @@
 !     %-----------------------------------------------------------%
 !
       call dtrevc ('R', 'A', select, n, workl, n, vl, n, q, ldq,&
-     &             n, n, workl(n*n+1), ierr)
+                   n, n, workl(n*n+1), ierr)
 !
       if (ierr .ne. 0) go to 9000
 !
@@ -259,7 +259,7 @@
 !
             if (iconj .eq. 0) then
                temp = dlapy2( dnrm2( n, q(1,i), 1 ),&
-     &                        dnrm2( n, q(1,i+1), 1 ) )
+                              dnrm2( n, q(1,i+1), 1 ) )
                call dscal ( n, one / temp, q(1,i), 1 )
                call dscal ( n, one / temp, q(1,i+1), 1 )
                iconj = 1
@@ -273,7 +273,7 @@
 !
       if (msglvl .gt. 1) then
          call pdvout (comm, logfil, n, workl, ndigit,&
-     &              '_neigh: Last row of the eigenvector matrix for H')
+                    '_neigh: Last row of the eigenvector matrix for H')
       end if
 !
 !     %----------------------------%
@@ -311,11 +311,11 @@
 !
       if (msglvl .gt. 2) then
          call pdvout (comm, logfil, n, ritzr, ndigit,&
-     &              '_neigh: Real part of the eigenvalues of H')
+                    '_neigh: Real part of the eigenvalues of H')
          call pdvout (comm, logfil, n, ritzi, ndigit,&
-     &              '_neigh: Imaginary part of the eigenvalues of H')
+                    '_neigh: Imaginary part of the eigenvalues of H')
          call pdvout (comm, logfil, n, bounds, ndigit,&
-     &              '_neigh: Ritz estimates for the eigenvalues of H')
+                    '_neigh: Ritz estimates for the eigenvalues of H')
       end if
 !
       call arscnd (t1)
