@@ -42,14 +42,14 @@
 !     | Array Arguments |
 !     %-----------------%
 !
-      Complex*16
+      Complex*16&
      &             x(n)
 !
 !     %---------------%
 !     | Local Scalars |
 !     %---------------%
 !
-      Double precision
+      Double precision&
      &             max(1), buf, zero
       parameter    ( zero = 0.0 )
 !
@@ -63,7 +63,7 @@
 !     | External Functions |
 !     %--------------------%
 !
-      Double precision
+      Double precision&
      &             dznrm2, buf2(1)
       External     dznrm2
 !
@@ -74,13 +74,13 @@
       pdznorm2 = dznrm2( n, x, inc)
 !
       buf = pdznorm2
-      call MPI_ALLREDUCE( [buf], max, 1, MPI_DOUBLE_PRECISION,
+      call MPI_ALLREDUCE( [buf], max, 1, MPI_DOUBLE_PRECISION,&
      &                    MPI_MAX, comm, ierr )
       if ( max(1) .eq. zero ) then
          pdznorm2 = zero
       else
          buf = (pdznorm2/max(1))**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,
+         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,&
      &                       MPI_SUM, comm, ierr )
          pdznorm2 = max(1) * sqrt(abs(buf2(1)))
       endif
