@@ -254,11 +254,11 @@
 !\EndLib
 !
 !-----------------------------------------------------------------------
-      subroutine pcneupd
-     &         ( comm , rvec  , howmny, select, d    ,
-     &           z    , ldz   , sigma , workev, bmat ,
-     &           n    , which , nev   , tol   , resid,
-     &           ncv  , v     , ldv   , iparam, ipntr,
+      subroutine pcneupd&
+     &         ( comm , rvec  , howmny, select, d    ,&
+     &           z    , ldz   , sigma , workev, bmat ,&
+     &           n    , which , nev   , tol   , resid,&
+     &           ncv  , v     , ldv   , iparam, ipntr,&
      &           workd, workl , lworkl, rwork , info )
 !
 !     %--------------------%
@@ -281,9 +281,9 @@
       character  bmat, howmny, which*2
       logical    rvec
       integer    info, ldz, ldv, lworkl, n, ncv, nev
-      Complex
+      Complex&
      &           sigma
-      Real
+      Real&
      &           tol
 !
 !     %-----------------%
@@ -292,18 +292,18 @@
 !
       integer    iparam(11), ipntr(14)
       logical    select(ncv)
-      Real
+      Real&
      &           rwork(ncv)
-      Complex
-     &           d(nev)     , resid(n)  , v(ldv,ncv)   ,
-     &           z(ldz, nev), workd(3*n), workl(lworkl),
+      Complex&
+     &           d(nev)     , resid(n)  , v(ldv,ncv)   ,&
+     &           z(ldz, nev), workd(3*n), workl(lworkl),&
      &           workev(2*ncv)
 !
 !     %------------%
 !     | Parameters |
 !     %------------%
 !
-      Complex
+      Complex&
      &           one, zero
       parameter  (one = (1.0, 0.0), zero = (0.0, 0.0))
 !
@@ -312,14 +312,14 @@
 !     %---------------%
 !
       character  type*6
-      integer    bounds, ierr  , ih    , ihbds, iheig , nconv ,
-     &           invsub, iuptri, iwev  , j    , ldh   , ldq   ,
-     &           mode  , msglvl, ritz  , wr   , k     , irz   ,
-     &           ibd   , outncv, iq    , np   , numcnv, jj    ,
+      integer    bounds, ierr  , ih    , ihbds, iheig , nconv ,&
+     &           invsub, iuptri, iwev  , j    , ldh   , ldq   ,&
+     &           mode  , msglvl, ritz  , wr   , k     , irz   ,&
+     &           ibd   , outncv, iq    , np   , numcnv, jj    ,&
      &           ishift
-      Complex
+      Complex&
      &           rnorm, temp, vl(1)
-      Real
+      Real&
      &           conds, sep, rtemp, eps23
       logical    reord
 !
@@ -327,19 +327,19 @@
 !     | External Subroutines |
 !     %----------------------%
 !
-      external   ccopy ,cgeru,cgeqr2,clacpy,pcmout,
-     &           cunm2r,ctrmm,pcvout,pivout,
+      external   ccopy ,cgeru,cgeqr2,clacpy,pcmout,&
+     &           cunm2r,ctrmm,pcvout,pivout,&
      &           clahqr
 !
 !     %--------------------%
 !     | External Functions |
 !     %--------------------%
 !
-      Real
+      Real&
      &           scnrm2,pslamch10,slapy2
       external   scnrm2,pslamch10,slapy2
 !
-      Complex
+      Complex&
      &           ccdotc
       external   ccdotc
 !
@@ -385,19 +385,19 @@
          ierr = -2
       else if (ncv .le. nev+1 .or.  ncv .gt. n) then
          ierr = -3
-      else if (which .ne. 'LM' .and.
-     &        which .ne. 'SM' .and.
-     &        which .ne. 'LR' .and.
-     &        which .ne. 'SR' .and.
-     &        which .ne. 'LI' .and.
+      else if (which .ne. 'LM' .and.&
+     &        which .ne. 'SM' .and.&
+     &        which .ne. 'LR' .and.&
+     &        which .ne. 'SR' .and.&
+     &        which .ne. 'LI' .and.&
      &        which .ne. 'SI') then
          ierr = -5
       else if (bmat .ne. 'I' .and. bmat .ne. 'G') then
          ierr = -6
       else if (lworkl .lt. 3*ncv**2 + 4*ncv) then
          ierr = -7
-      else if ( (howmny .ne. 'A' .and.
-     &           howmny .ne. 'P' .and.
+      else if ( (howmny .ne. 'A' .and.&
+     &           howmny .ne. 'P' .and.&
      &           howmny .ne. 'S') .and. rvec ) then
          ierr = -13
       else if (howmny .eq. 'S' ) then
@@ -486,9 +486,9 @@
       workl(ih+2) = zero
 !
       if (msglvl .gt. 2) then
-         call pcvout(comm, logfil, ncv, workl(irz), ndigit,
+         call pcvout(comm, logfil, ncv, workl(irz), ndigit,&
      &   '_neupd: Ritz values passed in from _NAUPD.')
-         call pcvout(comm, logfil, ncv, workl(ibd), ndigit,
+         call pcvout(comm, logfil, ncv, workl(ibd), ndigit,&
      &   '_neupd: Ritz estimates passed in from _NAUPD.')
       end if
 !
@@ -518,14 +518,14 @@
 !
          np     = ncv - nev
          ishift = 0
-         call pcngets(comm, ishift, which     ,
-     &                nev , np    , workl(irz),
+         call pcngets(comm, ishift, which     ,&
+     &                nev , np    , workl(irz),&
      &                workl(bounds))
 !
          if (msglvl .gt. 2) then
-            call pcvout(comm,logfil, ncv, workl(irz), ndigit,
+            call pcvout(comm,logfil, ncv, workl(irz), ndigit,&
      &      '_neupd: Ritz values after calling _NGETS.')
-            call pcvout(comm,logfil, ncv, workl(bounds), ndigit,
+            call pcvout(comm,logfil, ncv, workl(bounds), ndigit,&
      &      '_neupd: Ritz value indices after calling _NGETS.')
          end if
 !
@@ -536,13 +536,13 @@
 !
          numcnv = 0
          do 11 j = 1,ncv
-            rtemp = max(eps23,
-     &                 slapy2 ( real (workl(irz+ncv-j)),
+            rtemp = max(eps23,&
+     &                 slapy2 ( real (workl(irz+ncv-j)),&
      &                          aimag(workl(irz+ncv-j)) ))
             jj = workl(bounds + ncv - j)
-            if (numcnv .lt. nconv .and.
-     &          slapy2( real (workl(ibd+jj-1)),
-     &          aimag(workl(ibd+jj-1)) )
+            if (numcnv .lt. nconv .and.&
+     &          slapy2( real (workl(ibd+jj-1)),&
+     &          aimag(workl(ibd+jj-1)) )&
      &          .le. tol*rtemp) then
                select(jj) = .true.
                numcnv = numcnv + 1
@@ -558,9 +558,9 @@
 !        %-----------------------------------------------------------%
 !
          if (msglvl .gt. 2) then
-             call pivout(comm, logfil, 1, [numcnv], ndigit,
+             call pivout(comm, logfil, 1, [numcnv], ndigit,&
      &            '_neupd: Number of specified eigenvalues')
-             call pivout(comm, logfil, 1, [nconv], ndigit,
+             call pivout(comm, logfil, 1, [nconv], ndigit,&
      &            '_neupd: Number of "converged" eigenvalues')
          end if
 !
@@ -578,10 +578,10 @@
 !
          call ccopy(ldh*ncv, workl(ih), 1, workl(iuptri), 1)
          call claset('All', ncv, ncv, zero, one, workl(invsub), ldq)
-         call clahqr(.true.       , .true.       , ncv          ,
-     &                1            , ncv          , workl(iuptri),
-     &                ldh          , workl(iheig) , 1            ,
-     &                ncv          , workl(invsub), ldq          ,
+         call clahqr(.true.       , .true.       , ncv          ,&
+     &                1            , ncv          , workl(iuptri),&
+     &                ldh          , workl(iheig) , 1            ,&
+     &                ncv          , workl(invsub), ldq          ,&
      &                ierr         )
          call ccopy(ncv, workl(invsub+ncv-1), ldq, workl(ihbds), 1)
 !
@@ -591,13 +591,13 @@
          end if
 !
          if (msglvl .gt. 1) then
-            call pcvout(comm, logfil, ncv, workl(iheig), ndigit,
+            call pcvout(comm, logfil, ncv, workl(iheig), ndigit,&
      &           '_neupd: Eigenvalues of H')
-            call pcvout(comm, logfil, ncv, workl(ihbds), ndigit,
+            call pcvout(comm, logfil, ncv, workl(ihbds), ndigit,&
      &           '_neupd: Last row of the Schur vector matrix')
             if (msglvl .gt. 3) then
-               call pcmout(comm, logfil, ncv, ncv,
-     &              workl(iuptri), ldh, ndigit,
+               call pcmout(comm, logfil, ncv, ncv,&
+     &              workl(iuptri), ldh, ndigit,&
      &              '_neupd: The upper triangular matrix ')
             end if
          end if
@@ -607,10 +607,10 @@
 !           | Reorder the computed upper triangular matrix. |
 !           %-----------------------------------------------%
 !
-            call ctrsen('None'       , 'V'          , select      ,
-     &                   ncv          , workl(iuptri), ldh         ,
-     &                   workl(invsub), ldq          , workl(iheig),
-     &                   nconv        , conds        , sep         ,
+            call ctrsen('None'       , 'V'          , select      ,&
+     &                   ncv          , workl(iuptri), ldh         ,&
+     &                   workl(invsub), ldq          , workl(iheig),&
+     &                   nconv        , conds        , sep         ,&
      &                   workev, ncv, ierr)
 !
             if (ierr .eq. 1) then
@@ -619,11 +619,11 @@
             end if
 !
             if (msglvl .gt. 2) then
-                call pcvout (comm, logfil, ncv, workl(iheig), ndigit,
+                call pcvout (comm, logfil, ncv, workl(iheig), ndigit,&
      &           '_neupd: Eigenvalues of H--reordered')
                 if (msglvl .gt. 3) then
-                   call pcmout (comm, logfil, ncv, ncv,
-     &                  workl(iuptri), ldq, ndigit,
+                   call pcmout (comm, logfil, ncv, ncv,&
+     &                  workl(iuptri), ldq, ndigit,&
      &              '_neupd: Triangular matrix after re-ordering')
                 end if
             end if
@@ -653,8 +653,8 @@
 !        | columns of workl(invsub,ldq).                            |
 !        %----------------------------------------------------------%
 !
-         call cgeqr2(ncv, nconv , workl(invsub),
-     &               ldq, workev, workev(ncv+1),
+         call cgeqr2(ncv, nconv , workl(invsub),&
+     &               ldq, workev, workev(ncv+1),&
      &               ierr)
 !
 !        %--------------------------------------------------------%
@@ -669,9 +669,9 @@
 !        | NCONV in workl(iuptri).                                |
 !        %--------------------------------------------------------%
 !
-         call cunm2r('Right', 'Notranspose', n            ,
-     &                ncv    , nconv        , workl(invsub),
-     &                ldq    , workev       , v            ,
+         call cunm2r('Right', 'Notranspose', n            ,&
+     &                ncv    , nconv        , workl(invsub),&
+     &                ldq    , workev       , v            ,&
      &                ldv    , workd(n+1)   , ierr         )
          call clacpy('All', n, nconv, v, ldv, z, ldz)
 !
@@ -686,7 +686,7 @@
 !           | matrix consisting of plus or minus ones.          |
 !           %---------------------------------------------------%
 !
-            if ( real( workl(invsub+(j-1)*ldq+j-1) ) .lt.
+            if ( real( workl(invsub+(j-1)*ldq+j-1) ) .lt.&
      &                  real(zero) ) then
                call cscal(nconv, -one, workl(iuptri+j-1), ldq)
                call cscal(nconv, -one, workl(iuptri+(j-1)*ldq), 1)
@@ -709,10 +709,10 @@
                end if
  30         continue
 !
-            call ctrevc('Right', 'Select'     , select       ,
-     &                   ncv    , workl(iuptri), ldq          ,
-     &                   vl     , 1            , workl(invsub),
-     &                   ldq    , ncv          , outncv       ,
+            call ctrevc('Right', 'Select'     , select       ,&
+     &                   ncv    , workl(iuptri), ldq          ,&
+     &                   vl     , 1            , workl(invsub),&
+     &                   ldq    , ncv          , outncv       ,&
      &                   workev , rwork        , ierr         )
 !
             if (ierr .ne. 0) then
@@ -731,7 +731,7 @@
             do 40 j=1, nconv
                   rtemp = scnrm2(ncv, workl(invsub+(j-1)*ldq), 1)
                   rtemp = real(one) / rtemp
-                  call csscal ( ncv, rtemp,
+                  call csscal ( ncv, rtemp,&
      &                 workl(invsub+(j-1)*ldq), 1 )
 !
 !                 %------------------------------------------%
@@ -743,18 +743,18 @@
 !                 | inner product can be set to j.           |
 !                 %------------------------------------------%
 !
-                  workev(j) = ccdotc(j, workl(ihbds), 1,
+                  workev(j) = ccdotc(j, workl(ihbds), 1,&
      &                        workl(invsub+(j-1)*ldq), 1)
  40         continue
 !
             if (msglvl .gt. 2) then
-               call ccopy(nconv, workl(invsub+ncv-1), ldq,
+               call ccopy(nconv, workl(invsub+ncv-1), ldq,&
      &                    workl(ihbds), 1)
-               call pcvout(comm, logfil, nconv, workl(ihbds), ndigit,
+               call pcvout(comm, logfil, nconv, workl(ihbds), ndigit,&
      &              '_neupd: Last row of the eigenvector matrix for T')
                if (msglvl .gt. 3) then
-                  call pcmout(comm, logfil, nconv, ncv,
-     &                 workl(invsub), ldq, ndigit,
+                  call pcmout(comm, logfil, nconv, ncv,&
+     &                 workl(invsub), ldq, ndigit,&
      &                 '_neupd: The eigenvector matrix for T')
                end if
             end if
@@ -770,9 +770,9 @@
 !           | Form Z*Q.                                    |
 !           %----------------------------------------------%
 !
-            call ctrmm('Right'   , 'Upper'      , 'No transpose',
-     &                  'Non-unit', n            , nconv         ,
-     &                  one       , workl(invsub), ldq           ,
+            call ctrmm('Right'   , 'Upper'      , 'No transpose',&
+     &                  'Non-unit', n            , nconv         ,&
+     &                  one       , workl(invsub), ldq           ,&
      &                  z         , ldz)
 !
          end if
@@ -798,7 +798,7 @@
 !
       if (type .eq. 'REGULR') then
 !
-         if (rvec)
+         if (rvec)&
      &      call cscal(ncv, rnorm, workl(ihbds), 1)
 !
       else
@@ -809,7 +809,7 @@
 !        |   Ritz values in the original system. |
 !        %---------------------------------------%
 !
-         if (rvec)
+         if (rvec)&
      &      call cscal(ncv, rnorm, workl(ihbds), 1)
 !
          do 50 k=1, ncv
@@ -834,14 +834,14 @@
       end if
 !
       if (type .ne. 'REGULR' .and. msglvl .gt. 1) then
-         call pcvout (comm, logfil, nconv, d, ndigit,
+         call pcvout (comm, logfil, nconv, d, ndigit,&
      &     '_neupd: Untransformed Ritz values.')
-         call pcvout (comm, logfil, nconv, workl(ihbds), ndigit,
+         call pcvout (comm, logfil, nconv, workl(ihbds), ndigit,&
      &     '_neupd: Ritz estimates of the untransformed Ritz values.')
       else if ( msglvl .gt. 1) then
-         call pcvout (comm, logfil, nconv, d, ndigit,
+         call pcvout (comm, logfil, nconv, d, ndigit,&
      &     '_neupd: Converged Ritz values.')
-         call pcvout (comm, logfil, nconv, workl(ihbds), ndigit,
+         call pcvout (comm, logfil, nconv, workl(ihbds), ndigit,&
      &     '_neupd: Associated Ritz estimates.')
       end if
 !
@@ -864,7 +864,7 @@
 !
          do 100 j=1, nconv
             if (workl(iheig+j-1) .ne. zero) then
-               workev(j) =  workl(invsub+(j-1)*ldq+ncv-1)
+               workev(j) =  workl(invsub+(j-1)*ldq+ncv-1)&
      &                   /  workl(iheig+j-1)
             endif
  100     continue
