@@ -10,7 +10,7 @@ SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
        psgetv0.f pslarnv.f psnorm2.f
 
 DSRC = pdnaitr.F90 pdnapps.F90 pdnaup2.F90 pdnaupd.F90 pdneigh.F90 pdneupd.F90 pdngets.F90 \
-       pdsaitr.F90 pdsapps.F90 pdsaup2.F90 pdsaupd.F90 pdseigt.F90 pdseupd.F90 pdsgets.f \
+       pdsaitr.F90 pdsapps.F90 pdsaup2.F90 pdsaupd.F90 pdseigt.F90 pdseupd.F90 pdsgets.F90 \
        pdgetv0.F90 pdlarnv.F90 pdnorm2.F90
 
 CSRC = pcnaitr.F90 pcnapps.F90 pcnaup2.F90 pcnaupd.F90 pcneigh.F90 pcneupd.F90 pcngets.F90 \
