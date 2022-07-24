@@ -1,5 +1,7 @@
 AUTOMAKE_OPTIONS = subdir-objects # Needed as debug/stat* are not in current directory.
 
+EXTRA_DIST = pcontextF90.h debugF90.h statF90.h
+
 F77 = $(MPIF77)
 FFLAGS_SAV = @FFLAGS@
 FFLAGS =
