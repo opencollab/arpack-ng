@@ -176,4 +176,9 @@ Custom installation examples:
     $ LIBSUFFIX="64" INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure; make all install
     $ cmake -DLIBSUFFIX="64" -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..; make all install
 
+How to use arpack-ng with Intel MKL:
+
+* Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel`).
+* Refers to the Intel Link Advisor: https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html.
+
  Good luck and enjoy.
