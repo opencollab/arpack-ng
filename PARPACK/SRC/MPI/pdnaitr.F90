@@ -236,6 +236,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !     %----------------------------------------------------%
@@ -276,7 +277,7 @@
 !     %---------------%
 !
       logical    first, orth1, orth2, rstart, step3, step4
-      integer    ierr, i, infol, ipj, irj, ivj, iter, itry, j, msglvl,&
+      integer    i, infol, ipj, irj, ivj, iter, itry, j, msglvl,&
                  jj
       Double precision&
                  betaj, ovfl, temp1, rnorm1, smlnum, tst1, ulp, unfl,&
@@ -576,7 +577,8 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
@@ -599,7 +601,8 @@
 !
          call dgemv ('T', n, j, one, v, ldv, workd(ipj), 1,&
                      zero, workl, 1)
-         call MPI_ALLREDUCE( workl, h(1,j), j,&
+         cnt = j
+         call MPI_ALLREDUCE( workl, h(1,j), cnt,&
                      MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
 !
 !        %--------------------------------------%
@@ -652,7 +655,8 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
@@ -706,7 +710,8 @@
 !
          call dgemv ('T', n, j, one, v, ldv, workd(ipj), 1,&
                      zero, workl(j+1), 1)
-         call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
+         cnt = j
+         call MPI_ALLREDUCE( workl(j+1), workl(1), cnt,&
                      MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
 !
 !        %---------------------------------------------%
@@ -755,7 +760,8 @@
 !
          if (bmat .eq. 'G') then
            rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+           cnt = 1
+           call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                 MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
            rnorm1 = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
