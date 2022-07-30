@@ -144,6 +144,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr, myid
 
 !
 !     %----------------------------------------------------%
@@ -159,7 +160,7 @@
 !
       character  bmat*1
       logical    initv
-      integer    ido, ierr, itry, j, ldv, n
+      integer    ido, itry, j, ldv, n
       Double precision&
                  rnorm
 !
@@ -187,7 +188,7 @@
 !     %------------------------%
 !
       logical    first, inits, orth
-      integer    idist, iseed(4), iter, msglvl, jj, myid, igen
+      integer    idist, iseed(4), iter, msglvl, jj, igen
       Double precision&
                  rnorm0
       Complex*16&
@@ -342,7 +343,8 @@
       first = .FALSE.
       if (bmat .eq. 'G') then
           cnorm_buf = zzdotc  (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
+          cnt = 1
+          call MPI_ALLREDUCE( [cnorm_buf], buf2, cnt,&
                 MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
           cnorm = buf2(1)
           rnorm0 = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
@@ -374,7 +376,8 @@
 !
       call zgemv  ('C', n, j-1, one, v, ldv, workd, 1,&
                   zero, workl(j+1), 1)
-      call MPI_ALLREDUCE( workl(j+1), workl, j-1,&
+      cnt = j-1
+      call MPI_ALLREDUCE( workl(j+1), workl, cnt,&
                           MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr)
       call zgemv  ('N', n, j-1, -one, v, ldv, workl, 1,&
                   one, resid, 1)
@@ -404,7 +407,8 @@
 !
       if (bmat .eq. 'G') then
          cnorm_buf = zzdotc  (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
+         cnt = 1
+         call MPI_ALLREDUCE( [cnorm_buf], buf2, cnt,&
                   MPI_DOUBLE_COMPLEX , MPI_SUM, comm, ierr )
          cnorm = buf2(1)
          rnorm = sqrt(dlapy2 (dble (cnorm),dimag (cnorm)))
