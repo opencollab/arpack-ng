@@ -231,6 +231,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !     %----------------------------------------------------%
@@ -271,7 +272,7 @@
 !     %---------------%
 !
       logical    orth1, orth2, rstart, step3, step4
-      integer    i, ierr, ipj, irj, ivj, iter, itry, j, msglvl, infol,&
+      integer    i, ipj, irj, ivj, iter, itry, j, msglvl, infol,&
                  jj
       Double precision&
                  rnorm1, wnorm, safmin, temp1, buf2(1)
@@ -582,12 +583,14 @@
 !           %----------------------------------%
 !
             rnorm_buf = ddot (n, resid, 1, workd(ivj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             wnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
@@ -611,12 +614,14 @@
          if (mode .ne. 2 ) then
             call dgemv('T', n, j, one, v, ldv, workd(ipj), 1, zero,&
                         workl(j+1), 1)
-            call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
+            cnt = j
+            call MPI_ALLREDUCE( workl(j+1), workl(1), cnt,&
                         MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
          else if (mode .eq. 2) then
             call dgemv('T', n, j, one, v, ldv, workd(ivj), 1, zero,&
                         workl(j+1), 1)
-            call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
+            cnt = j
+            call MPI_ALLREDUCE( workl(j+1), workl(1), cnt,&
                         MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
          end if
 !
@@ -679,7 +684,8 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
@@ -727,7 +733,8 @@
 !
          call dgemv ('T', n, j, one, v, ldv, workd(ipj), 1,&
                      zero, workl(j+1), 1)
-         call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
+         cnt = j
+         call MPI_ALLREDUCE( workl(j+1), workl(1), cnt,&
                      MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
 !
 !        %----------------------------------------------%
@@ -779,7 +786,8 @@
 !
          if (bmat .eq. 'G') then
            rnorm_buf = ddot (n, resid, 1, workd(ipj), 1)
-           call MPI_ALLREDUCE( [rnorm_buf], buf2(1), 1,&
+           cnt = 1
+           call MPI_ALLREDUCE( [rnorm_buf], buf2(1), cnt,&
                 MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
            rnorm1 = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
