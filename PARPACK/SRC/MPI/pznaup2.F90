@@ -186,6 +186,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !     %----------------------------------------------------%
@@ -233,7 +234,7 @@
 !     %---------------%
 !
       logical    cnorm,  getv0, initv , update, ushift
-      integer    ierr ,  iter , kplusp, msglvl, nconv,&
+      integer    iter , kplusp, msglvl, nconv,&
                  nevbef, nev0 , np0   , nptemp, i    ,&
                  j
       Complex*16&
@@ -781,7 +782,8 @@
 !
          if (bmat .eq. 'G') then
             cmpnorm_buf = zzdotc (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( [cmpnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [cmpnorm_buf], buf2, cnt,&
                      MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cmpnorm = buf2(1)
             rnorm = sqrt(dlapy2(dble(cmpnorm),dimag(cmpnorm)))
