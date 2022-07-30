@@ -240,6 +240,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !     %----------------------------------------------------%
@@ -290,7 +291,7 @@
 !     %---------------%
 !
       logical    orth1, orth2, rstart, step3, step4
-      integer    ierr, i, infol, ipj, irj, ivj, iter, itry, j, msglvl,&
+      integer    i, infol, ipj, irj, ivj, iter, itry, j, msglvl,&
                  jj
       Real&
                  ovfl, smlnum, tst1, ulp, unfl, betaj,&
@@ -587,7 +588,8 @@
 !
          if (bmat .eq. 'G') then
              cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
+             cnt = 1
+             call MPI_ALLREDUCE( [cnorm_buf], buf2, cnt,&
                  MPI_COMPLEX, MPI_SUM, comm, ierr )
              cnorm = buf2(1)
              wnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
@@ -611,7 +613,8 @@
 !
          call cgemv ('C', n, j, one, v, ldv, workd(ipj), 1,&
                      zero, workl, 1)
-         call MPI_ALLREDUCE( workl, h(1,j), j,&
+         cnt = j
+         call MPI_ALLREDUCE( workl, h(1,j), cnt,&
                      MPI_COMPLEX, MPI_SUM, comm, ierr)
 !
 !        %--------------------------------------%
@@ -664,7 +667,8 @@
 !
          if (bmat .eq. 'G') then
             cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [cnorm_buf], buf2, cnt,&
                  MPI_COMPLEX, MPI_SUM, comm, ierr )
             cnorm = buf2(1)
             rnorm = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
@@ -720,7 +724,8 @@
 !
          call cgemv ('C', n, j, one, v, ldv, workd(ipj), 1,&
                      zero, workl(j+1), 1)
-         call MPI_ALLREDUCE( workl(j+1), workl(1), j,&
+         cnt = j
+         call MPI_ALLREDUCE( workl(j+1), workl(1), cnt,&
                      MPI_COMPLEX, MPI_SUM, comm, ierr)
 !
 !        %---------------------------------------------%
@@ -769,7 +774,8 @@
 !
          if (bmat .eq. 'G') then
              cnorm_buf = ccdotc (n, resid, 1, workd(ipj), 1)
-            call MPI_ALLREDUCE( [cnorm_buf], buf2, 1,&
+             cnt = 1
+             call MPI_ALLREDUCE( [cnorm_buf], buf2, cnt,&
                  MPI_COMPLEX, MPI_SUM, comm, ierr )
              cnorm = buf2(1)
              rnorm1 = sqrt( slapy2(real(cnorm),aimag(cnorm)) )
