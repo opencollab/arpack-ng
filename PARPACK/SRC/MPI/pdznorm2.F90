@@ -36,6 +36,7 @@
 #else
       integer    comm, ierr
 #endif
+      integer*4  cnt
 
 !
 !     %------------------%
@@ -80,13 +81,15 @@
       pdznorm2 = dznrm2( n, x, inc)
 !
       buf = pdznorm2
-      call MPI_ALLREDUCE( [buf], max, 1, MPI_DOUBLE_PRECISION,&
+      cnt = 1
+      call MPI_ALLREDUCE( [buf], max, cnt, MPI_DOUBLE_PRECISION,&
                           MPI_MAX, comm, ierr )
       if ( max(1) .eq. zero ) then
          pdznorm2 = zero
       else
          buf = (pdznorm2/max(1))**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_DOUBLE_PRECISION,&
+         cnt = 1
+         call MPI_ALLREDUCE( [buf], buf2, cnt, MPI_DOUBLE_PRECISION,&
                              MPI_SUM, comm, ierr )
          pdznorm2 = max(1) * sqrt(abs(buf2(1)))
       endif
