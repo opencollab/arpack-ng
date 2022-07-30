@@ -407,6 +407,7 @@
 #else
       integer    comm, myid
 #endif
+      integer*4  ierr
 
 !
 !     %----------------------------------------------------%
@@ -447,7 +448,7 @@
 !     | Local Scalars |
 !     %---------------%
 !
-      integer    bounds, ierr, ih, iq, ishift, iupd, iw,&
+      integer    bounds, ih, iq, ishift, iupd, iw,&
                  ldh, ldq, levec, mode, msglvl, mxiter, nb,&
                  nev0, next, np, ritz, j
       save       bounds, ih, iq, ishift, iupd, iw,&
