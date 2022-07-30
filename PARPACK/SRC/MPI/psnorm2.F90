@@ -36,6 +36,7 @@
 #else
       integer    comm, ierr
 #endif
+      integer*4  cnt
 
 !
 !     %------------------%
@@ -80,14 +81,16 @@
       psnorm2 = snrm2( n, x, inc)
 !
       buf = psnorm2
-      call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,&
+      cnt = 1
+      call MPI_ALLREDUCE( [buf], buf2, cnt, MPI_REAL,&
                           MPI_MAX, comm, ierr )
       max = buf2(1)
       if ( max .eq. zero ) then
          psnorm2 = zero
       else
          buf = (psnorm2/max)**2.0
-         call MPI_ALLREDUCE( [buf], buf2, 1, MPI_REAL,&
+         cnt = 1
+         call MPI_ALLREDUCE( [buf], buf2, cnt, MPI_REAL,&
                              MPI_SUM, comm, ierr )
          psnorm2 = max * sqrt(abs(buf2(1)))
       endif
