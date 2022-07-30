@@ -148,6 +148,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !     %----------------------------------------------------%
@@ -163,7 +164,7 @@
 !
       character  bmat*1
       logical    initv
-      integer    ido, ierr, itry, j, ldv, n
+      integer    ido, itry, j, ldv, n
       Real&
                  rnorm
 !
@@ -328,7 +329,8 @@
       first = .FALSE.
       if (bmat .eq. 'G') then
           rnorm_buf = sdot (n, resid, 1, workd, 1)
-          call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+          cnt = 1
+          call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                 MPI_REAL, MPI_SUM, comm, ierr )
           rnorm0 = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
@@ -359,7 +361,8 @@
 !
       call sgemv ('T', n, j-1, one, v, ldv, workd, 1,&
                   zero, workl(j+1), 1)
-      call MPI_ALLREDUCE( workl(j+1), workl, j-1,&
+      cnt = j-1
+      call MPI_ALLREDUCE( workl(j+1), workl, cnt,&
                           MPI_REAL, MPI_SUM, comm, ierr)
       call sgemv ('N', n, j-1, -one, v, ldv, workl, 1,&
                   one, resid, 1)
@@ -389,7 +392,8 @@
 !
       if (bmat .eq. 'G') then
          rnorm_buf = sdot (n, resid, 1, workd, 1)
-         call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+         cnt = 1
+         call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                   MPI_REAL, MPI_SUM, comm, ierr )
          rnorm = sqrt(abs(buf2(1)))
       else if (bmat .eq. 'I') then
