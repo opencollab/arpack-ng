@@ -204,6 +204,7 @@
 #else
       integer    comm
 #endif
+      integer*4  cnt, ierr
 
 !
 !
@@ -248,7 +249,7 @@
 !
       character  wprime*2
       logical    cnorm, getv0, initv, update, ushift
-      integer    ierr, iter, j, kplusp, msglvl, nconv, nevbef, nev0,&
+      integer    iter, j, kplusp, msglvl, nconv, nevbef, nev0,&
                  np0, nptemp, nevd2, nevm2, kp(3)
       Double precision&
                  rnorm, temp, eps23
@@ -835,7 +836,8 @@
 !
          if (bmat .eq. 'G') then
             rnorm_buf = ddot (n, resid, 1, workd, 1)
-            call MPI_ALLREDUCE( [rnorm_buf], buf2, 1,&
+            cnt = 1
+            call MPI_ALLREDUCE( [rnorm_buf], buf2, cnt,&
                       MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr )
             rnorm = sqrt(abs(buf2(1)))
          else if (bmat .eq. 'I') then
