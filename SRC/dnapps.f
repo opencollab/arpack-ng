@@ -13,7 +13,7 @@ c
 c     A*(V_{k}*Q) - (V_{k}*Q)*(Q^T* H_{k}*Q) = r_{k+p}*e_{k+p}^T * Q
 c
 c  where Q is an orthogonal matrix which is the product of rotations
-c  and reflections resulting from the NP bulge chage sweeps.
+c  and reflections resulting from the NP bulge change sweeps.
 c  The updated Arnoldi factorization becomes:
 c
 c     A*VNEW_{k} - VNEW_{k}*HNEW_{k} = rnew_{k}*e_{k}^T.

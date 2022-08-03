@@ -587,7 +587,7 @@ c
 c
 c           %----------------------------------------------------%
 c           | Sort the Ritz values according to the scaled Ritz  |
-c           | esitmates.  This will push all the converged ones  |
+c           | estimates.  This will push all the converged ones  |
 c           | towards the front of ritzr, ritzi, bounds          |
 c           | (in the case when NCONV < NEV.)                    |
 c           %----------------------------------------------------%
