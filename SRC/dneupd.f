@@ -994,9 +994,9 @@ c
 c
       if (type .eq. 'SHIFTI' .and. msglvl .gt. 1) then
          call dvout (logfil, nconv, dr, ndigit,
-     &   '_neupd: Untransformed real part of the Ritz valuess.')
+     &   '_neupd: Untransformed real part of the Ritz values.')
          call dvout  (logfil, nconv, di, ndigit,
-     &   '_neupd: Untransformed imag part of the Ritz valuess.')
+     &   '_neupd: Untransformed imag part of the Ritz values.')
          call dvout (logfil, nconv, workl(ihbds), ndigit,
      &   '_neupd: Ritz estimates of untransformed Ritz values.')
       else if (type .eq. 'REGULR' .and. msglvl .gt. 1) then

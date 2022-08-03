@@ -298,7 +298,7 @@ c     eigenvector z of the original problem is recovered by solving
 c     L`z = x  where x is a Ritz vector of OP.
 c
 c  4. At present there is no a-priori analysis to guide the selection
-c     of NCV relative to NEV.  The only formal requrement is that NCV > NEV + 2.
+c     of NCV relative to NEV.  The only formal requirement is that NCV > NEV + 2.
 c     However, it is recommended that NCV .ge. 2*NEV+1.  If many problems of
 c     the same type are to be solved, one should experiment with increasing
 c     NCV while keeping NEV fixed for a given test problem.  This will

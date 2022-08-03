@@ -93,7 +93,7 @@ c
 c\Remarks
 c     1. Starting with version 2.5, this routine is a modified version
 c        of LAPACK version 2.0 subroutine SSTEQR. No lines are deleted,
-c        only commeted out and new lines inserted.
+c        only commented out and new lines inserted.
 c        All lines commented out have "c$$$" at the beginning.
 c        Note that the LAPACK version 1.0 subroutine SSTEQR contained
 c        bugs.
