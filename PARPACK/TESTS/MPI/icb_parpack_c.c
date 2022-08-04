@@ -13,149 +13,151 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "debug_c.h"  // debug parpack.
-#include "mpi.h"
 #include "parpack.h"
-#include "stat_c.h"  // arpack statistics.
+#include "debug_c.h"  // debug parpack.
+#include "stat_c.h"   // arpack statistics.
 
 /* test program to solve for the 9 largest eigenvalues of
  * A*x = lambda*x where A is the diagonal matrix
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
  * */
 
-void dMatVec(double* x, double* y) {
+void dMatVec(const double* x, double* y) {
   int i;
   for (i = 0; i < 1000; ++i) y[i] = ((double)(i + 1)) * x[i];
 };
 
 int ds() {
-  a_int ido = 0;
-  char bmat[] = "I";
-  a_int N = 1000;
-  char which[] = "LM";
-  a_int nev = 3;
-  double tol = 0.000001; // small tol => more stable checks after EV computation.
+  const a_int N      = 1000;
+  const a_int nev    = 9;
+  const a_int ncv    = 2 * nev + 1;
+  const a_int ldv    = N;
+  const a_int ldz    = N;
+  const a_int lworkl = ncv * (ncv + 8);
+  const a_int rvec   = 1;        // need eigenvectors
+
+  const double tol   = 0.000001; // small tol => more stable checks after EV computation.
+  const double sigma = 0;        // not referenced in this mode
+
   double resid[N];
-  a_int ncv = 2 * nev + 1;
-  double V[ncv * N];
-  a_int ldv = N;
-  a_int iparam[11];
-  a_int ipntr[14];
+  double V[ldv * ncv];
+  double z[ldz * nev];
+  double d[nev];
   double workd[3 * N];
-  a_int rvec = 1;
-  char howmny[] = "A";
-  double* d = (double*)malloc((nev + 1) * sizeof(double));
+  double workl[lworkl];
   a_int select[ncv];
-  int i; // C99 compliant.
-  for (i = 0; i < ncv; i++) select[i] = 1;
-  double z[(N + 1) * (nev + 1)];
-  a_int ldz = N + 1;
-  double sigma = 0;
-  int k;
-  for (k = 0; k < 3 * N; ++k) workd[k] = 0;
-  double workl[3 * (ncv * ncv) + 6 * ncv];
-  for (k = 0; k < 3 * (ncv * ncv) + 6 * ncv; ++k) workl[k] = 0;
-  a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
-  a_int info = 0;
+
+  a_int iparam[11], ipntr[11];
+  iparam[0] = 1;       // ishift
+  iparam[2] = 10 * N;  // on input: maxit; on output: actual iteration
+  iparam[3] = 1;       // NB, only 1 allowed
+  iparam[6] = 1;       // mode
+
+  char bmat[]   = "I";
+  char which[]  = "LM";
+  char howmny[] = "A";
+  
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-  iparam[0] = 1;
-  iparam[2] = 10 * N;
-  iparam[3] = 1;
-  iparam[4] = 0;  // number of ev found by arpack.
-  iparam[6] = 1;
-
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
-  while (ido != 99) {
-    /* call arpack like you would have, but, use dsaupd_c instead of dsaupd_ */
+  
+  a_int info = 0, ido = 0;
+  do {
     pdsaupd_c(MCW, &ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam,
               ipntr, workd, workl, lworkl, &info);
 
     dMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
-  }
-  if (iparam[4] != nev) {printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); return 1;} // check number of ev found by arpack.
+  } while (ido == 1 || ido == -1);
 
-  /* call arpack like you would have, but, use dseupd_c instead of dseupd_ */
+  // check info and number of ev found by arpack.
+  if (info < 0 || iparam[4] < nev) {
+    printf("Error in saupd: iparam[4] %d, nev %d, info %d\n", iparam[4], nev, info);
+    return 1;
+  }
+
   pdseupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, bmat, N, which, nev,
-            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl,
-            &info);
+            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, &info);
+  if (info < 0) {
+    printf("Error in seupd: info %d\n", info);
+    return 1;
+  }
+
+  int i; // C99 compliant.
   for (i = 0; i < nev; ++i) {
     double val = d[i];
     double ref = (N-(nev-1)+i);
     double eps = fabs(val - ref);
     printf("rank %d : %f - %f - %f\n", rank, val, ref, eps);
 
-    /*eigen value order: smallest -> biggest*/
-    if(eps>1.e-05){
-      free(d);
-      return 1;
-    }
+    if (eps > 1.e-05) return 1;
   }
-  free(d);
   return 0;
 }
 
-void zMatVec(a_dcomplex* x, a_dcomplex* y) {
+void zMatVec(const a_dcomplex* x, a_dcomplex* y) {
   int i;
   for (i = 0; i < 1000; ++i) y[i] = x[i] * CMPLXF(i + 1.0, i + 1.0);
 };
 
 int zn() {
-  a_int ido = 0;
-  char bmat[] = "I";
-  a_int N = 1000;
-  char which[] = "LM";
-  a_int nev = 3;
-  double tol = 0.000001; // small tol => more stable checks after EV computation.
+  const a_int N      = 1000;
+  const a_int nev    = 9;
+  const a_int ncv    = 2 * nev + 1;
+  const a_int ldv    = N;
+  const a_int ldz    = N;
+  const a_int lworkl = ncv * (3 * ncv + 5);
+  const a_int rvec   = 0;                 // eigenvectors omitted
+
+  const double tol = 0.000001;            // small tol => more stable checks after EV computation.
+  const a_dcomplex sigma = CMPLX(0., 0.); // not referenced in this mode
+
   a_dcomplex resid[N];
-  a_int ncv = 2 * nev + 1;
-  a_dcomplex V[ncv * N];
-  a_int ldv = N;
-  a_int iparam[11];
-  a_int ipntr[14];
+  a_dcomplex V[ldv * ncv];
+  a_dcomplex z[ldz * nev];
+  a_dcomplex d[nev];
   a_dcomplex workd[3 * N];
-  a_int rvec = 0;
-  char howmny[] = "A";
-  a_dcomplex* d =
-      (a_dcomplex*)malloc((nev + 1) * sizeof(a_dcomplex));
-  a_int select[ncv];
-  int i; // C99 compliant.
-  for (i = 0; i < ncv; i++) select[i] = 1;
-  a_dcomplex z[(N + 1) * (nev + 1)];
-  a_int ldz = N + 1;
-  a_dcomplex sigma = CMPLX(0., 0.);
-  int k;
-  for (k = 0; k < 3 * N; ++k) workd[k] = CMPLX(0., 0.);
-  a_dcomplex workl[3 * (ncv * ncv) + 6 * ncv];
-  for (k = 0; k < 3 * (ncv * ncv) + 6 * ncv; ++k) workl[k] = CMPLX(0., 0.);
-  a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
-  double rwork[ncv];
+  a_dcomplex workl[lworkl];
   a_dcomplex workev[2 * ncv];
-  a_int info = 0;
+  double rwork[ncv];
+  a_int select[ncv];
+
+  a_int iparam[11], ipntr[14];
+  iparam[0] = 1;       // ishift
+  iparam[2] = 10 * N;  // on input: maxit; on output: actual iteration
+  iparam[3] = 1;       // NB, only 1 allowed
+  iparam[6] = 1;       // mode
+  
+  char bmat[]   = "I";
+  char which[]  = "LM";
+  char howmny[] = "A";
+  
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-  iparam[0] = 1;
-  iparam[2] = 10 * N;
-  iparam[3] = 1;
-  iparam[4] = 0;  // number of ev found by arpack.
-  iparam[6] = 1;
-
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
-  while (ido != 99) {
-    /* call arpack like you would have, but, use znaupd_c instead of znaupd_ */
+
+  a_int info = 0, ido = 0;
+  do {
     pznaupd_c(MCW, &ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam,
               ipntr, workd, workl, lworkl, rwork, &info);
 
     zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
+  } while (ido == 1 || ido == -1);
+  
+  // check info and number of ev found by arpack.
+  if (info < 0 || iparam[4] < nev) {
+    printf("Error in naupd: iparam[4] %d, nev %d, info %d\n", iparam[4], nev, info);
+    return 1;
   }
-  if (iparam[4] != nev) {printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); return 1;} // check number of ev found by arpack.
 
-  /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   pzneupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which,
             nev, tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl,
             rwork, &info);
+  if (info < 0) {
+    printf("Error in neupd: info %d\n", info);
+    return 1;
+  }
+            
+  int i; // C99 compliant.
   for (i = 0; i < nev; ++i) {
     double rval = creal(d[i]);
     double rref = (N-(nev-1)+i);
@@ -165,13 +167,8 @@ int zn() {
     double ieps = fabs(ival - iref);
     printf("rank %d : %f %f - %f %f - %f %f\n", rank, rval, ival, rref, iref, reps, ieps);
 
-    /*eigen value order: smallest -> biggest*/
-    if(reps>1.e-05 || ieps>1.e-05){
-      free(d);
-      return 1;
-    }
+    if (reps > 1.e-05 || ieps > 1.e-05) return 1;
   }
-  free(d);
   return 0;
 }
 
