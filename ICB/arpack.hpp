@@ -16,6 +16,14 @@ enum class which : int {
   largest_magnitude,
   /// 'SM' - compute the NEV smallest (in magnitude) eigenvalues.
   smallest_magnitude,
+  /// 'LR' - compute the NEV largest (real part) eigenvalues.
+  largest_real,
+  /// 'SR' - compute the NEV smallest (real part) eigenvalues.
+  smallest_real,
+  /// 'LI' - compute the NEV largest (imaginary part) eigenvalues.
+  largest_imaginary,
+  /// 'SI' - compute the NEV smallest (imaginary part) eigenvalues.
+  smallest_imaginary,
   /// 'BE' - compute NEV eigenvalues, half from each end of the
   /// spectrum.  When NEV is odd, compute one more from the
   /// high end than from the low end.
@@ -58,6 +66,22 @@ inline char const* convert_to_char(which const option) {
     }
     case which::smallest_magnitude: {
       return "SM";
+      break;
+    }
+    case which::largest_real: {
+      return "LR";
+      break;
+    }
+    case which::smallest_real: {
+      return "SR";
+      break;
+    }
+    case which::largest_imaginary: {
+      return "LI";
+      break;
+    }
+    case which::smallest_imaginary: {
+      return "SI";
       break;
     }
     case which::both_ends: {

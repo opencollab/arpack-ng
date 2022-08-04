@@ -2,6 +2,7 @@ arpack-ng - 3.9.0
 
 [ Zhentao Wang ]
 * [BUG FIX] parpack.h and parpack.hpp: type of rwork should be real instead of complex.
+* Allow ritz_option {"LR", "SR", "LI", "SI"} for complex eigenvalue problems in ICB.
 
 [ Jose E. Roman ]
 * Avoid using isnan() in tests, since is GNU-specific
