@@ -33,7 +33,7 @@
 !     ... SPECIFICATIONS FOR ARGUMENTS
       INTEGER            N, IDIGIT, LOUT
       Complex&
-     &                   CX( * )
+                         CX( * )
       CHARACTER          IFMT*( * )
 !     ...
 !     ... SPECIFICATIONS FOR LOCAL VARIABLES
