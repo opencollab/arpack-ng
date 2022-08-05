@@ -56,7 +56,7 @@
       INTRINSIC          LEN, MIN, MIN0
 !     ..
 !     .. Data statements ..
-      DATA               ICOL( 1 ), ICOL( 2 ), ICOL( 3 ) / 'C', 'o',
+      DATA               ICOL( 1 ), ICOL( 2 ), ICOL( 3 ) / 'C', 'o',&
      $                   'l' /
 !     ..
 !     .. Executable Statements ..
@@ -83,10 +83,10 @@
       WRITE( LOUT, FMT = 9999 )IFMT, LINE( 1: LLL )
  9999 FORMAT( / 1X, A, / 1X, A )
 !
-      IF( M.LE.0 .OR. N.LE.0 .OR. LDA.LE.0 )
+      IF( M.LE.0 .OR. N.LE.0 .OR. LDA.LE.0 )&
      $   RETURN
       NDIGIT = IDIGIT
-      IF( IDIGIT.EQ.0 )
+      IF( IDIGIT.EQ.0 )&
      $   NDIGIT = 4
 !
 !=======================================================================
