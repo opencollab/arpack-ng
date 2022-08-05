@@ -3,7 +3,7 @@ F77 = $(MPIF77)
 SRCS = pivout.f
 
 SSRC = psmout.f psvout.f
-DSRC = pdmout.f pdvout.f
+DSRC = pdmout.F90 pdvout.f
 CSRC = pcmout.F90 pcvout.F90
 ZSRC = pzmout.f pzvout.f
 
