@@ -1,73 +1,73 @@
-*  Routine:    PCVOUT - Parallel Version of ARPACK utility routine CVOUT
-*
-*  Purpose:    Complex vector output routine.
-*
-*  Usage:      CALL PCVOUT (COMM, LOUT, N, CX, IDIGIT, IFMT)
-*
-*  Arguments
-*     COMM   - MPI Communicator for the processor grid
-*     N      - Length of array CX.  (Input)
-*     CX     - Complex array to be printed.  (Input)
-*     IFMT   - Format to be used in printing array CX.  (Input)
-*     IDIGIT - Print up to IABS(IDIGIT) decimal digits per number.  (In)
-*              If IDIGIT .LT. 0, printing is done with 72 columns.
-*              If IDIGIT .GT. 0, printing is done with 132 columns.
-*
-* FILE: vout.F   SID: 1.1   DATE OF SID: 3/19/97   RELEASE: 1
-*
-*-----------------------------------------------------------------------
-*
+!  Routine:    PCVOUT - Parallel Version of ARPACK utility routine CVOUT
+!
+!  Purpose:    Complex vector output routine.
+!
+!  Usage:      CALL PCVOUT (COMM, LOUT, N, CX, IDIGIT, IFMT)
+!
+!  Arguments
+!     COMM   - MPI Communicator for the processor grid
+!     N      - Length of array CX.  (Input)
+!     CX     - Complex array to be printed.  (Input)
+!     IFMT   - Format to be used in printing array CX.  (Input)
+!     IDIGIT - Print up to IABS(IDIGIT) decimal digits per number.  (In)
+!              If IDIGIT .LT. 0, printing is done with 72 columns.
+!              If IDIGIT .GT. 0, printing is done with 132 columns.
+!
+! FILE: vout.F   SID: 1.1   DATE OF SID: 3/19/97   RELEASE: 1
+!
+!-----------------------------------------------------------------------
+!
       SUBROUTINE PCVOUT( COMM, LOUT, N, CX, IDIGIT, IFMT )
-*     ...
+!     ...
       include  'mpif.h'
-*
-*     .. MPI VARIABLES AND FUNCTIONS ..
-*     .. Variable Declaration ..
+!
+!     .. MPI VARIABLES AND FUNCTIONS ..
+!     .. Variable Declaration ..
       integer    COMM, MYID, IERR
-*
-*     ... SPECIFICATIONS FOR ARGUMENTS
+!
+!     ... SPECIFICATIONS FOR ARGUMENTS
       INTEGER            N, IDIGIT, LOUT
       Complex
      &                   CX( * )
       CHARACTER          IFMT*( * )
-*     ...
-*     ... SPECIFICATIONS FOR LOCAL VARIABLES
+!     ...
+!     ... SPECIFICATIONS FOR LOCAL VARIABLES
       INTEGER            I, NDIGIT, K1, K2, LLL
       CHARACTER*80       LINE
-*     ...
-*     ... FIRST EXECUTABLE STATEMENT
-*
-*
-*     Determine processor configuration
-*
+!     ...
+!     ... FIRST EXECUTABLE STATEMENT
+!
+!
+!     Determine processor configuration
+!
       call MPI_COMM_RANK( comm, myid, ierr )
-*
-*     .. Only Processor 0 will write to file LOUT ..
-*
+!
+!     .. Only Processor 0 will write to file LOUT ..
+!
       IF ( MYID .EQ. 0 ) THEN
-*
+!
       LLL = MIN( LEN( IFMT ), 80 )
       DO 10 I = 1, LLL
          LINE( I: I ) = '-'
    10 CONTINUE
-*
+!
       DO 20 I = LLL + 1, 80
          LINE( I: I ) = ' '
    20 CONTINUE
-*
+!
       WRITE( LOUT, 9999 )IFMT, LINE( 1: LLL )
  9999 FORMAT( / 1X, A / 1X, A )
-*
+!
       IF( N.LE.0 )
      $   RETURN
       NDIGIT = IDIGIT
       IF( IDIGIT.EQ.0 )
      $   NDIGIT = 4
-*
-*=======================================================================
-*             CODE FOR OUTPUT USING 72 COLUMNS FORMAT
-*=======================================================================
-*
+!
+!=======================================================================
+!             CODE FOR OUTPUT USING 72 COLUMNS FORMAT
+!=======================================================================
+!
       IF( IDIGIT.LT.0 ) THEN
          NDIGIT = -IDIGIT
          IF( NDIGIT.LE.4 ) THEN
@@ -108,11 +108,11 @@
                WRITE( LOUT, 9968 )K1, K1, CX( I )
    60       CONTINUE
          END IF
-*
-*=======================================================================
-*             CODE FOR OUTPUT USING 132 COLUMNS FORMAT
-*=======================================================================
-*
+!
+!=======================================================================
+!             CODE FOR OUTPUT USING 132 COLUMNS FORMAT
+!=======================================================================
+!
       ELSE
          IF( NDIGIT.LE.4 ) THEN
             DO 70 K1 = 1, N, 4
@@ -173,47 +173,47 @@
          END IF
       END IF
       WRITE( LOUT, 9994 )
-*
-*
+!
+!
 	  ENDIF
       RETURN
-*
-*=======================================================================
-*                   FORMAT FOR 72 COLUMNS
-*=======================================================================
-*
-*                 DISPLAY 4 SIGNIFICANT DIGITS
-*
+!
+!=======================================================================
+!                   FORMAT FOR 72 COLUMNS
+!=======================================================================
+!
+!                 DISPLAY 4 SIGNIFICANT DIGITS
+!
  9998 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E10.3,',',E10.3,')  ') )
  9997 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E10.3,',',E10.3,')  ') )
-*
-*                 DISPLAY 6 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 6 SIGNIFICANT DIGITS
+!
  9988 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E12.5,',',E12.5,')  ') )
  9987 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E12.5,',',E12.5,')  ') )
-*
-*                 DISPLAY 8 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 8 SIGNIFICANT DIGITS
+!
  9978 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E14.7,',',E14.7,')  ') )
  9977 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E14.7,',',E14.7,')  ') )
-*
-*                 DISPLAY 13 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 13 SIGNIFICANT DIGITS
+!
  9968 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E20.13,',',E20.13,')  ') )
-*
-*=========================================================================
-*                   FORMAT FOR 132 COLUMNS
-*=========================================================================
-*
-*                 DISPLAY 4 SIGNIFICANT DIGITS
-*
+!
+!=========================================================================
+!                   FORMAT FOR 132 COLUMNS
+!=========================================================================
+!
+!                 DISPLAY 4 SIGNIFICANT DIGITS
+!
  9958 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,4('(',E10.3,',',E10.3,')  ') )
  9957 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
@@ -222,33 +222,33 @@
      $        1P,2('(',E10.3,',',E10.3,')  ') )
  9955 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E10.3,',',E10.3,')  ') )
-*
-*                 DISPLAY 6 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 6 SIGNIFICANT DIGITS
+!
  9948 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,3('(',E12.5,',',E12.5,')  ') )
  9947 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E12.5,',',E12.5,')  ') )
  9946 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E12.5,',',E12.5,')  ') )
-*
-*                 DISPLAY 8 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 8 SIGNIFICANT DIGITS
+!
  9938 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,3('(',E14.7,',',E14.7,')  ') )
  9937 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E14.7,',',E14.7,')  ') )
  9936 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E14.7,',',E14.7,')  ') )
-*
-*                 DISPLAY 13 SIGNIFICANT DIGITS
-*
+!
+!                 DISPLAY 13 SIGNIFICANT DIGITS
+!
  9928 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,2('(',E20.13,',',E20.13,')  ') )
  9927 FORMAT( 1X, I4, ' - ', I4, ':', 1X,
      $        1P,1('(',E20.13,',',E20.13,')  ') )
-*
-*
-*
+!
+!
+!
  9994 FORMAT( 1X, ' ' )
       END
