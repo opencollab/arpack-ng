@@ -73,10 +73,10 @@
       WRITE( LOUT, FMT = 9999 )IFMT, LINE( 1: LLL )
  9999 FORMAT( / 1X, A, / 1X, A )
 !
-      IF( N.LE.0 )
+      IF( N.LE.0 )&
      $   RETURN
       NDIGIT = IDIGIT
-      IF( IDIGIT.EQ.0 )
+      IF( IDIGIT.EQ.0 )&
      $   NDIGIT = 4
 !
 !=======================================================================
