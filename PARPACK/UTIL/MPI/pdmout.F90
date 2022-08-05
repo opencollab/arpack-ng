@@ -43,7 +43,7 @@
 !     ..
 !     .. Array Arguments ..
       Double precision&
-     &                   A( LDA, * )
+                         A( LDA, * )
 !     ..
 !     .. Local Scalars ..
       CHARACTER*80       LINE
