@@ -32,7 +32,7 @@
 !
 !     ... SPECIFICATIONS FOR ARGUMENTS
       INTEGER            N, IDIGIT, LOUT
-      Complex*16
+      Complex*16&
      &                   CX( * )
       CHARACTER          IFMT*( * )
 !     ...
