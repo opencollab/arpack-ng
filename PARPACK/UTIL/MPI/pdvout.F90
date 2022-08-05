@@ -29,7 +29,13 @@
 !
 !     .. MPI VARIABLES AND FUNCTIONS ..
 !     .. Variable Declaration ..
+#ifdef HAVE_MPI_ICB
+      type(MPI_Comm) COMM
+      integer*4 MYID, IERR
+#else
       integer    COMM, MYID, IERR
+#endif
+
 !
 !     ... SPECIFICATIONS FOR ARGUMENTS
 !     ...
