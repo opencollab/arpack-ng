@@ -37,7 +37,7 @@
 !     ... SPECIFICATIONS FOR ARGUMENTS
       INTEGER            M, N, IDIGIT, LDA, LOUT
       Complex*16&
-     &                   A( LDA, * )
+                         A( LDA, * )
       CHARACTER          IFMT*( * )
 !     ...
 !     ... SPECIFICATIONS FOR LOCAL VARIABLES
@@ -257,9 +257,9 @@
 !            DISPLAY 13 SIGNIFICANT DIGIT
 !
  9971 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,2('(',D20.13,',',D20.13,&
-     &        ')  '))
+              ')  '))
  9961 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,1('(',D20.13,',',D20.13,&
-     &        ')  '))
+              ')  '))
 !
 !
 !
