@@ -74,10 +74,10 @@
  9999 FORMAT( / 1X, A, / 1X, A )
 !
       IF( N.LE.0 )&
-     $   RETURN
+         RETURN
       NDIGIT = IDIGIT
       IF( IDIGIT.EQ.0 )&
-     $   NDIGIT = 4
+         NDIGIT = 4
 !
 !=======================================================================
 !             CODE FOR OUTPUT USING 72 COLUMNS FORMAT
