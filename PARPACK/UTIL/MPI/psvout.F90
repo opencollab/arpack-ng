@@ -39,7 +39,7 @@
       INTEGER            IDIGIT, LOUT, N
 !     ..
 !     .. Array Arguments ..
-      Real
+      Real&
      &                   SX( * )
 !     ..
 !     .. Local Scalars ..
