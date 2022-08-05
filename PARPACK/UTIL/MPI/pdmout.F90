@@ -57,7 +57,7 @@
 !     ..
 !     .. Data statements ..
       DATA               ICOL( 1 ), ICOL( 2 ), ICOL( 3 ) / 'C', 'o',&
-     $                   'l' /
+                         'l' /
 !     ..
 !     .. Executable Statements ..
 !     ...
@@ -84,10 +84,10 @@
  9999 FORMAT( / 1X, A, / 1X, A )
 !
       IF( M.LE.0 .OR. N.LE.0 .OR. LDA.LE.0 )&
-     $   RETURN
+         RETURN
       NDIGIT = IDIGIT
       IF( IDIGIT.EQ.0 )&
-     $   NDIGIT = 4
+         NDIGIT = 4
 !
 !=======================================================================
 !             CODE FOR OUTPUT USING 72 COLUMNS FORMAT
