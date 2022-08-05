@@ -42,7 +42,7 @@
       INTEGER            IDIGIT, LDA, LOUT, M, N
 !     ..
 !     .. Array Arguments ..
-      Double precision
+      Double precision&
      &                   A( LDA, * )
 !     ..
 !     .. Local Scalars ..
