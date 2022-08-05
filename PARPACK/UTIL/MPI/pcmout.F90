@@ -36,7 +36,7 @@
 !
 !     ... SPECIFICATIONS FOR ARGUMENTS
       INTEGER            M, N, IDIGIT, LDA, LOUT
-      Complex
+      Complex&
      &                   A( LDA, * )
       CHARACTER          IFMT*( * )
 !     ...
@@ -256,9 +256,9 @@
 !
 !            DISPLAY 13 SIGNIFICANT DIGIT
 !
- 9971 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,2('(',E20.13,',',E20.13,
+ 9971 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,2('(',E20.13,',',E20.13,&
      &        ')  '))
- 9961 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,1('(',E20.13,',',E20.13,
+ 9961 FORMAT( 1X, ' Row', I4, ':', 1X, 1P,1('(',E20.13,',',E20.13,&
      &        ')  '))
 !
 !
