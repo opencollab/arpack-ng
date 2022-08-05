@@ -4,7 +4,7 @@ SRCS = pivout.f
 
 SSRC = psmout.f psvout.f
 DSRC = pdmout.f pdvout.f
-CSRC = pcmout.F90 pcvout.f
+CSRC = pcmout.F90 pcvout.F90
 ZSRC = pzmout.f pzvout.f
 
 noinst_LTLIBRARIES = libparpackutil.la
