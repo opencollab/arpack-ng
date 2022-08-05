@@ -39,7 +39,7 @@
       INTEGER            IDIGIT, LOUT, N
 !     ..
 !     .. Array Arguments ..
-      Double precision
+      Double precision&
      &                   SX( * )
 !     ..
 !     .. Local Scalars ..
