@@ -40,7 +40,7 @@
 !     ..
 !     .. Array Arguments ..
       Real&
-     &                   SX( * )
+                         SX( * )
 !     ..
 !     .. Local Scalars ..
       CHARACTER*80       LINE
