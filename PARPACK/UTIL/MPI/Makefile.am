@@ -1,6 +1,6 @@
 F77 = $(MPIF77)
 
-SRCS = pivout.f
+SRCS = pivout.F90
 
 SSRC = psmout.f psvout.f
 DSRC = pdmout.F90 pdvout.F90
