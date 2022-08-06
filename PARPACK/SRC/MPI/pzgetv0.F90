@@ -243,7 +243,7 @@
       iseed(2) = igen/100
       igen     = mod(igen,100)
       iseed(3) = igen/10
-      iseed(4) = mod(igen,10)
+      iseed(4) = 7
 !
 !
       if (ido .eq.  0) then
