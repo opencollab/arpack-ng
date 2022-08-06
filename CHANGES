@@ -25,6 +25,7 @@ arpack-ng - 3.9.0
 * pyarpack: fix compilation warning, test on macos and latest boost-python (1.79).
 * arpackSolver: fix error messages.
 * [BUG FIX] ILP64: use type(MPI_Comm/Status) to avoid MPI type mismatch.
+* [BUG FIX] Make sure iseed is always initialized to values allowed by lapack ?larnv.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0

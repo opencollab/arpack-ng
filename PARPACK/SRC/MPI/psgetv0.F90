@@ -188,11 +188,11 @@
 !     | Local Scalars & Arrays |
 !     %------------------------%
 !
-      logical    first, inits, orth
+      logical    first, orth
       integer    idist, iseed(4), iter, msglvl, jj
       Real&
                  rnorm0
-      save       first, iseed, inits, iter, msglvl, orth, rnorm0
+      save       first, iseed, iter, msglvl, orth, rnorm0
 !
       Real&
                  rnorm_buf
@@ -217,12 +217,6 @@
 !
       intrinsic    abs, sqrt
 !
-!     %-----------------%
-!     | Data Statements |
-!     %-----------------%
-!
-      data       inits /.true./
-!
 !     %-----------------------%
 !     | Executable Statements |
 !     %-----------------------%
@@ -233,13 +227,10 @@
 !     | random number generator           |
 !     %-----------------------------------%
 !
-      if (inits) then
-          iseed(1) = 1
-          iseed(2) = 3
-          iseed(3) = 5
-          iseed(4) = 7
-          inits = .false.
-      end if
+      iseed(1) = 1
+      iseed(2) = 3
+      iseed(3) = 5
+      iseed(4) = 7
 !
       if (ido .eq.  0) then
 !

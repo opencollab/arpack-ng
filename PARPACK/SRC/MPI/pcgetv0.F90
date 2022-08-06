@@ -187,13 +187,13 @@
 !     | Local Scalars & Arrays |
 !     %------------------------%
 !
-      logical    first, inits, orth
+      logical    first, orth
       integer    idist, iseed(4), iter, msglvl, jj, igen
       Real&
                  rnorm0
       Complex&
                  cnorm, cnorm2
-      save       first, iseed, inits, iter, msglvl, orth, rnorm0
+      save       first, iseed, iter, msglvl, orth, rnorm0
 !
       Complex&
                  cnorm_buf, buf2(1)
@@ -214,12 +214,6 @@
                  ccdotc
       external   ccdotc, pscnorm2, slapy2
 !
-!     %-----------------%
-!     | Data Statements |
-!     %-----------------%
-!
-      data       inits /.true./
-!
 !     %-----------------------%
 !     | Executable Statements |
 !     %-----------------------%
@@ -230,30 +224,27 @@
 !     | random number generator           |
 !     %-----------------------------------%
 !
-      if (inits) then
 !
-!        %-----------------------------------%
-!        | Generate a seed on each processor |
-!        | using process id (myid).          |
-!        | Note: the seed must be between 1  |
-!        | and 4095.  iseed(4) must be odd.  |
-!        %-----------------------------------%
+!     %-----------------------------------%
+!     | Generate a seed on each processor |
+!     | using process id (myid).          |
+!     | Note: the seed must be between 1  |
+!     | and 4095.  iseed(4) must be odd.  |
+!     %-----------------------------------%
 !
-         call MPI_COMM_RANK(comm, myid, ierr)
-         igen = 1000 + 2*myid + 1
-         if (igen .gt. 4095) then
-            write(0,*) 'Error in p_getv0: seed exceeds 4095!'
-         end if
-!
-         iseed(1) = igen/1000
-         igen     = mod(igen,1000)
-         iseed(2) = igen/100
-         igen     = mod(igen,100)
-         iseed(3) = igen/10
-         iseed(4) = mod(igen,10)
-!
-         inits = .false.
+      call MPI_COMM_RANK(comm, myid, ierr)
+      igen = 1000 + 2*myid + 1
+      if (igen .gt. 4095) then
+         write(0,*) 'Error in p_getv0: seed exceeds 4095!'
       end if
+!
+      iseed(1) = igen/1000
+      igen     = mod(igen,1000)
+      iseed(2) = igen/100
+      igen     = mod(igen,100)
+      iseed(3) = igen/10
+      iseed(4) = mod(igen,10)
+!
 !
       if (ido .eq.  0) then
 !
