@@ -22,7 +22,7 @@ subroutine pcnaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   complex(kind=c_float_complex),dimension(3*n),     intent(out)   :: workd
   complex(kind=c_float_complex),dimension(lworkl),  intent(out)   :: workl
   integer(kind=i_int),          value,              intent(in)    :: lworkl
-  complex(kind=c_float_complex),dimension(ncv),     intent(out)   :: rwork
+  real(kind=c_float),           dimension(ncv),     intent(out)   :: rwork
   integer(kind=i_int),                              intent(inout) :: info
 
   character(len=2):: w
@@ -66,7 +66,7 @@ subroutine pcneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   complex(kind=c_float_complex),dimension(3*n),     intent(out)   :: workd
   complex(kind=c_float_complex),dimension(lworkl),  intent(out)   :: workl
   integer(kind=i_int),          value,              intent(in)    :: lworkl
-  complex(kind=c_float_complex),dimension(ncv),     intent(out)   :: rwork
+  real(kind=c_float),           dimension(ncv),     intent(out)   :: rwork
   integer(kind=i_int),                              intent(inout) :: info
 
   ! convert parameters if needed.
