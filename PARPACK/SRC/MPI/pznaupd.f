@@ -9,14 +9,14 @@ c  Reverse communication interface for the Implicitly Restarted Arnoldi
 c  iteration. This is intended to be used to find a few eigenpairs of a
 c  complex linear operator OP with respect to a semi-inner product defined
 c  by a hermitian positive semi-definite real matrix B. B may be the identity
-c  matrix.  NOTE: if both OP and B are real, then dsaupd  or dnaupd  should
+c  matrix.  NOTE: if both OP and B are real, then dsaupd or dnaupd should
 c  be used.
 c
 c
 c  The computed approximate eigenvalues are called Ritz values and
 c  the corresponding approximate eigenvectors are called Ritz vectors.
 c
-c  pznaupd  is usually called iteratively to solve one of the
+c  pznaupd is usually called iteratively to solve one of the
 c  following problems:
 c
 c  Mode 1:  A*x = lambda*x.
@@ -54,11 +54,11 @@ c  COMM    MPI  Communicator for the processor grid.  (INPUT)
 c
 c  IDO     Integer.  (INPUT/OUTPUT)
 c          Reverse communication flag.  IDO must be zero on the first
-c          call to pznaupd .  IDO will be set internally to
+c          call to pznaupd. IDO will be set internally to
 c          indicate the type of operation to be performed.  Control is
 c          then given back to the calling routine which has the
 c          responsibility to carry out the requested operation and call
-c          pznaupd  with the result.  The operand is given in
+c          pznaupd with the result. The operand is given in
 c          WORKD(IPNTR(1)), the result must be put in WORKD(IPNTR(2)).
 c          -------------------------------------------------------------
 c          IDO =  0: first call to the reverse communication interface
@@ -108,8 +108,8 @@ c  TOL     Double precision   scalar.  (INPUT)
 c          Stopping criteria: the relative accuracy of the Ritz value
 c          is considered acceptable if BOUNDS(I) .LE. TOL*ABS(RITZ(I))
 c          where ABS(RITZ(I)) is the magnitude when RITZ(I) is complex.
-c          DEFAULT = pdlamch10 (comm, 'EPS')  (machine precision as computed
-c                    by the ScaLAPACK auxiliary subroutine pdlamch ).
+c          DEFAULT = pdlamch10(comm, 'EPS')  (machine precision as computed
+c                    by the ScaLAPACK auxiliary subroutine pdlamch10).
 c
 c  RESID   Complex*16  array of length N.  (INPUT/OUTPUT)
 c          On INPUT:
@@ -171,7 +171,7 @@ c          No longer referenced. Implicit restarting is ALWAYS used.
 c
 c          IPARAM(7) = MODE
 c          On INPUT determines what type of eigenproblem is being solved.
-c          Must be 1,2,3; See under \Description of pznaupd  for the
+c          Must be 1,2,3; See under \Description of pznaupd for the
 c          four modes available.
 c
 c          IPARAM(8) = NP
@@ -201,7 +201,7 @@ c          IPNTR(7): pointer to the (projected) ritz vector array Q
 c          IPNTR(8): pointer to the error BOUNDS array in WORKL.
 c          IPNTR(14): pointer to the NP shifts in WORKL. See Remark 5 below.
 c
-c          Note: IPNTR(9:13) is only referenced by pzneupd . See Remark 2 below.
+c          Note: IPNTR(9:13) is only referenced by pzneupd. See Remark 2 below.
 c
 c          IPNTR(9):  pointer to the NCV RITZ values of the
 c                     original system.
@@ -211,7 +211,7 @@ c          IPNTR(12): pointer to the NCV by NCV upper triangular
 c                     Schur matrix for H.
 c          IPNTR(13): pointer to the NCV by NCV matrix of eigenvectors
 c                     of the upper Hessenberg matrix H. Only referenced by
-c                     zneupd  if RVEC = .TRUE. See Remark 2 below.
+c                     zneupd if RVEC = .TRUE. See Remark 2 below.
 c          -------------------------------------------------------------
 c
 c  WORKD   Complex*16  work array of length 3*N.  (REVERSE COMMUNICATION)
@@ -272,11 +272,11 @@ c     selection of WHICH should be made with this in mind when using
 c     Mode = 3.  When operating in Mode = 3 setting WHICH = 'LM' will
 c     compute the NEV eigenvalues of the original problem that are
 c     closest to the shift SIGMA . After convergence, approximate eigenvalues
-c     of the original problem may be obtained with the ARPACK subroutine pzneupd .
+c     of the original problem may be obtained with the ARPACK subroutine pzneupd.
 c
 c  2. If a basis for the invariant subspace corresponding to the converged Ritz
-c     values is needed, the user must call pzneupd  immediately following
-c     completion of pznaupd . This is new starting with release 2 of ARPACK.
+c     values is needed, the user must call pzneupd immediately following
+c     completion of pznaupd. This is new starting with release 2 of ARPACK.
 c
 c  3. If M can be factored into a Cholesky factorization M = LL`
 c     then Mode = 2 should not be selected.  Instead one should use
@@ -312,7 +312,7 @@ c\Data Distribution Note:
 c
 c  Fortran-D syntax:
 c  ================
-c  Complex*16  resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
+c  Complex*16 resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
 c  decompose  d1(n), d2(n,ncv)
 c  align      resid(i) with d1(i)
 c  align      v(i,j)   with d2(i,j)
@@ -324,7 +324,7 @@ c  replicated workl(lworkl)
 c
 c  Cray MPP syntax:
 c  ===============
-c  Complex*16  resid(n), v(ldv,ncv), workd(n,3), workl(lworkl)
+c  Complex*16 resid(n), v(ldv,ncv), workd(n,3), workl(lworkl)
 c  shared     resid(block), v(block,:), workd(block,:)
 c  replicated workl(lworkl)
 c
@@ -355,12 +355,12 @@ c     pp 575-595, (1987).
 c
 c\Routines called:
 c     pznaup2   Parallel ARPACK routine that implements the Implicitly Restarted
-c              Arnoldi Iteration.
+c               Arnoldi Iteration.
 c     zstatn    ARPACK routine that initializes the timing variables.
-c     pivout   Parallel ARPACK utility routine that prints integers.
+c     pivout    Parallel ARPACK utility routine that prints integers.
 c     pzvout    Parallel ARPACK utility routine that prints vectors.
-c     arscnd   ARPACK utility routine for timing.
-c     pdlamch10   ScaLAPACK routine that determines machine constants.
+c     arscnd    ARPACK utility routine for timing.
+c     pdlamch10 ScaLAPACK routine that determines machine constants.
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
@@ -570,8 +570,8 @@ c        | workl(ncv*ncv+1:ncv*ncv+ncv) := the ritz values             |
 c        | workl(ncv*ncv+ncv+1:ncv*ncv+2*ncv)   := error bounds        |
 c        | workl(ncv*ncv+2*ncv+1:2*ncv*ncv+2*ncv) := rotation matrix Q |
 c        | workl(2*ncv*ncv+2*ncv+1:3*ncv*ncv+5*ncv) := workspace       |
-c        | The final workspace is needed by subroutine pzneigh  called  |
-c        | by pznaup2 . Subroutine pzneigh  calls LAPACK routines for    |
+c        | The final workspace is needed by subroutine pzneigh called  |
+c        | by pznaup2. Subroutine pzneigh calls LAPACK routines for    |
 c        | calculating eigenvalues and the last row of the eigenvector |
 c        | matrix.                                                     |
 c        %-------------------------------------------------------------%
@@ -619,7 +619,7 @@ c
 c
 c     %------------------------------------%
 c     | Exit if there was an informational |
-c     | error within pznaup2 .              |
+c     | error within pznaup2.              |
 c     %------------------------------------%
 c
       if (info .lt. 0) go to 9000

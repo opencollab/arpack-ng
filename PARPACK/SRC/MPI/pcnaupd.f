@@ -54,11 +54,11 @@ c  COMM    MPI  Communicator for the processor grid.  (INPUT)
 c
 c  IDO     Integer.  (INPUT/OUTPUT)
 c          Reverse communication flag.  IDO must be zero on the first
-c          call to pcnaupd.  IDO will be set internally to
+c          call to pcnaupd. IDO will be set internally to
 c          indicate the type of operation to be performed.  Control is
 c          then given back to the calling routine which has the
 c          responsibility to carry out the requested operation and call
-c          pcnaupd with the result.  The operand is given in
+c          pcnaupd with the result. The operand is given in
 c          WORKD(IPNTR(1)), the result must be put in WORKD(IPNTR(2)).
 c          -------------------------------------------------------------
 c          IDO =  0: first call to the reverse communication interface
@@ -312,7 +312,7 @@ c\Data Distribution Note:
 c
 c  Fortran-D syntax:
 c  ================
-c  Complex  resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
+c  Complex    resid(n), v(ldv,ncv), workd(3*n), workl(lworkl)
 c  decompose  d1(n), d2(n,ncv)
 c  align      resid(i) with d1(i)
 c  align      v(i,j)   with d2(i,j)
@@ -324,7 +324,7 @@ c  replicated workl(lworkl)
 c
 c  Cray MPP syntax:
 c  ===============
-c  Complex  resid(n), v(ldv,ncv), workd(n,3), workl(lworkl)
+c  Complex    resid(n), v(ldv,ncv), workd(n,3), workl(lworkl)
 c  shared     resid(block), v(block,:), workd(block,:)
 c  replicated workl(lworkl)
 c
@@ -354,13 +354,13 @@ c     _Real_ Matrices", Linear Algebra and its Applications, vol 88/89,
 c     pp 575-595, (1987).
 c
 c\Routines called:
-c     pcnaup2  Parallel ARPACK routine that implements the Implicitly Restarted
-c              Arnoldi Iteration.
-c     cstatn   ARPACK routine that initializes the timing variables.
-c     pivout   Parallel ARPACK utility routine that prints integers.
-c     pcvout   Parallel ARPACK utility routine that prints vectors.
-c     arscnd   ARPACK utility routine for timing.
-c     pslamch10  ScaLAPACK routine that determines machine constants.
+c     pcnaup2   Parallel ARPACK routine that implements the Implicitly Restarted
+c               Arnoldi Iteration.
+c     cstatn    ARPACK routine that initializes the timing variables.
+c     pivout    Parallel ARPACK utility routine that prints integers.
+c     pcvout    Parallel ARPACK utility routine that prints vectors.
+c     arscnd    ARPACK utility routine for timing.
+c     pslamch10 ScaLAPACK routine that determines machine constants.
 c
 c\Author
 c     Danny Sorensen               Phuong Vu
@@ -389,7 +389,7 @@ c
      &   ( comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,
      &     iparam, ipntr, workd, workl, lworkl, rwork, info )
 c
-      include   'pcontext.h'
+      include  'pcontext.h'
       include  'mpif.h'
 c
 c     %------------------%
