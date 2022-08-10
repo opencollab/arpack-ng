@@ -27,6 +27,7 @@ arpack-ng - 3.9.0
 * arpackmm: restart bug fix.
 * pyarpack: fix compilation warning, test on macos and latest boost-python (1.79).
 * arpackSolver: fix error messages.
+* [BUG FIX] Make sure iseed is always initialized to values allowed by lapack ?larnv.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0

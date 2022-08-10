@@ -157,11 +157,11 @@ c     %------------------------%
 c     | Local Scalars & Arrays |
 c     %------------------------%
 c
-      logical    first, inits, orth
+      logical    first, orth
       integer    idist, iseed(4), iter, msglvl, jj
       Real
      &           rnorm0
-      save       first, iseed, inits, iter, msglvl, orth, rnorm0
+      save       first, iseed, iter, msglvl, orth, rnorm0
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -183,12 +183,6 @@ c     %---------------------%
 c
       intrinsic    abs, sqrt
 c
-c     %-----------------%
-c     | Data Statements |
-c     %-----------------%
-c
-      data       inits /.true./
-c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
@@ -199,13 +193,10 @@ c     | Initialize the seed of the LAPACK |
 c     | random number generator           |
 c     %-----------------------------------%
 c
-      if (inits) then
-          iseed(1) = 1
-          iseed(2) = 3
-          iseed(3) = 5
-          iseed(4) = 7
-          inits = .false.
-      end if
+      iseed(1) = 1
+      iseed(2) = 3
+      iseed(3) = 5
+      iseed(4) = 7
 c
       if (ido .eq.  0) then
 c
