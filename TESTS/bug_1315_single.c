@@ -72,7 +72,7 @@ int main() {
   int i;
   for (i = 0; i < nev; ++i) {
     printf("%f\n", dr[i]);
-    if (fabs(dr[i] - (float)(1000 - i)) > 1e-2) {
+    if (fabs(dr[i] - (float)(1000 - i)) > 1e-1) { // Easy tolerance as we deal with float.
       free(dr);
       free(di);
       exit(EXIT_FAILURE);
