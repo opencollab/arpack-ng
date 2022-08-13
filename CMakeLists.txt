@@ -406,13 +406,9 @@ if (INTERFACE64)
       message(WARNING "build script does not know how to make your Fortran compiler use 64-bit integers: set it manually via FFLAGS.")
     endif ()
 
-    # Compiling with INTERFACE64 means you need to have control on integer type.
-    # If MPI is also required, then MPI types must be consistent with ILP64:
-    # to make sure of this, we must use the ISO_C_BINDING API provided by MPI.
+    # TODO: this needs full re-write of parpack to support ILP64...
     if (MPI)
-      if (NOT HAVE_MPI_ICB)
-        message(FATAL_ERROR "ILP64 support require use of MPI library which provides ISO_C_BINDING support.")
-      endif()
+      message(FATAL_ERROR "Parallel arpack does not support ILP64.")
     endif()
 else ()
     set(INTERFACE64 0)

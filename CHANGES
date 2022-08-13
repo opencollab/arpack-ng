@@ -30,6 +30,7 @@ arpack-ng - 3.9.0
 * [BUG FIX] Make sure iseed is always initialized to values allowed by lapack ?larnv.
 * [BUG FIX] According to lapack doc of ?larnv, iseed(4) must be odd.
 * [BUG FIX] Use MPI ICB types (mpi_f08) instead of integer(kind=i_int).
+* parpack: no ILP64 support.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0

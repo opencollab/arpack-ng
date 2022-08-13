@@ -190,14 +190,10 @@ AS_IF([test x"$enable_mpi" != x"no"], [
   AC_LANG_POP([Fortran])
 ])
 
-dnl Compiling with INTERFACE64 means you need to have control on integer type.
-dnl If MPI is also required, then MPI types must be consistent with ILP64:
-dnl to make sure of this, we must use the ISO_C_BINDING API provided by MPI.
+dnl TODO: this needs full re-write of parpack to support ILP64...
 if test x"$INTERFACE64" == x"1"; then
   if test x"$enable_mpi" != x"no"; then
-    if test x"$enable_mpi_icb" == x"no"; then
-      AC_MSG_ERROR([ILP64 support require use of MPI library which provides ISO_C_BINDING support])
-    fi
+    AC_MSG_ERROR([Parallel arpack does not support ILP64.])
   fi
 fi
 
