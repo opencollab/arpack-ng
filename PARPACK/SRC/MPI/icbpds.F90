@@ -4,9 +4,16 @@ subroutine pdsaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
                      iparam, ipntr, workd, workl, lworkl, info)              &
                      bind(c, name="pdsaupd_c")
   use :: iso_c_binding
+#ifdef HAVE_MPI_ICB
+  use :: mpi_f08
+#endif
   implicit none
 #include "arpackicb.h"
+#ifdef HAVE_MPI_ICB
+  type(MPI_Comm),         value,               intent(in)    :: comm
+#else
   integer(kind=i_int),    value,               intent(in)    :: comm
+#endif
   integer(kind=i_int),                         intent(inout) :: ido
   character(kind=c_char),                      intent(in)    :: bmat
   integer(kind=i_int),    value,               intent(in)    :: n
@@ -40,9 +47,16 @@ subroutine pdseupd_c(comm, rvec, howmny, select, d, z, ldz, sigma,&
                      iparam, ipntr, workd, workl, lworkl, info)   &
                      bind(c, name="pdseupd_c")
   use :: iso_c_binding
+#ifdef HAVE_MPI_ICB
+  use :: mpi_f08
+#endif
   implicit none
 #include "arpackicb.h"
+#ifdef HAVE_MPI_ICB
+  type(MPI_Comm),         value,               intent(in)    :: comm
+#else
   integer(kind=i_int),    value,               intent(in)    :: comm
+#endif
   integer(kind=i_int),    value,               intent(in)    :: rvec
   character(kind=c_char),                      intent(in)    :: howmny
   integer(kind=i_int),    dimension(ncv),      intent(in)    :: select

@@ -28,7 +28,7 @@ void diagonal_matrix_vector_product(float const* const x, float* const y) {
 
 void real_symmetric_runner() {
   a_int N = 1000;
-  a_int nev = 3;
+  a_int nev = 9;
   a_int ncv = 2 * nev + 1;
   a_int ldz = N + 1;
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
@@ -110,7 +110,7 @@ void diagonal_matrix_vector_product(std::complex<float> const* const x,
 
 void complex_symmetric_runner() {
   a_int N = 1000;
-  a_int nev = 1;
+  a_int nev = 9;
   a_int ncv = 2 * nev + 1;
   a_int ldv = N;
   a_int ldz = N + 1;
@@ -130,7 +130,7 @@ void complex_symmetric_runner() {
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
   std::vector<std::complex<float>> workl(lworkl);
 
-  std::vector<std::complex<float>> rwork(ncv);
+  std::vector<float> rwork(ncv);
   std::vector<std::complex<float>> workev(2 * ncv);
 
   a_int info = 0;

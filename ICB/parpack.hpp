@@ -111,14 +111,14 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                   std::complex<float>* resid, a_int ncv, std::complex<float>* v,
                   a_int ldv, a_int* iparam, a_int* ipntr, std::complex<float>* workd,
                   std::complex<float>* workl, a_int lworkl,
-                  std::complex<float>* rwork, a_int& info) {
+                  float* rwork, a_int& info) {
   internal::pcnaupd_c(comm, &ido, internal::convert_to_char(bmat_option), n,
                       internal::convert_to_char(which_option), nev, tol,
                       reinterpret_cast<a_fcomplex*>(resid), ncv,
                       reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
                       reinterpret_cast<a_fcomplex*>(workd),
                       reinterpret_cast<a_fcomplex*>(workl), lworkl,
-                      reinterpret_cast<a_fcomplex*>(rwork), &info);
+                      rwork, &info);
 }
 
 inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
@@ -129,7 +129,7 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   std::complex<float>* resid, a_int ncv, std::complex<float>* v,
                   a_int ldv, a_int* iparam, a_int* ipntr, std::complex<float>* workd,
                   std::complex<float>* workl, a_int lworkl,
-                  std::complex<float>* rwork, a_int& info)
+                  float* rwork, a_int& info)
 
 {
   std::complex<float> sigma2 = sigma;
@@ -144,7 +144,7 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                       reinterpret_cast<a_fcomplex*>(v), ldv, iparam, ipntr,
                       reinterpret_cast<a_fcomplex*>(workd),
                       reinterpret_cast<a_fcomplex*>(workl), lworkl,
-                      reinterpret_cast<a_fcomplex*>(rwork), &info);
+                      rwork, &info);
 }
 
 inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
@@ -152,14 +152,14 @@ inline void naupd(MPI_Fint comm, a_int& ido, bmat const bmat_option, a_int n,
                   std::complex<double>* resid, a_int ncv, std::complex<double>* v,
                   a_int ldv, a_int* iparam, a_int* ipntr, std::complex<double>* workd,
                   std::complex<double>* workl, a_int lworkl,
-                  std::complex<double>* rwork, a_int& info) {
+                  double* rwork, a_int& info) {
   internal::pznaupd_c(comm, &ido, internal::convert_to_char(bmat_option), n,
                       internal::convert_to_char(which_option), nev, tol,
                       reinterpret_cast<a_dcomplex*>(resid), ncv,
                       reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
                       reinterpret_cast<a_dcomplex*>(workd),
                       reinterpret_cast<a_dcomplex*>(workl), lworkl,
-                      reinterpret_cast<a_dcomplex*>(rwork), &info);
+                      rwork, &info);
 }
 
 inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
@@ -170,7 +170,7 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                   std::complex<double>* resid, a_int ncv, std::complex<double>* v,
                   a_int ldv, a_int* iparam, a_int* ipntr, std::complex<double>* workd,
                   std::complex<double>* workl, a_int lworkl,
-                  std::complex<double>* rwork, a_int& info) {
+                  double* rwork, a_int& info) {
   std::complex<double> sigma2 = sigma;
   internal::pzneupd_c(comm, rvec, internal::convert_to_char(howmny_option),
                       select, reinterpret_cast<a_dcomplex*>(d),
@@ -183,7 +183,7 @@ inline void neupd(MPI_Fint comm, a_int rvec, howmny const howmny_option,
                       reinterpret_cast<a_dcomplex*>(v), ldv, iparam, ipntr,
                       reinterpret_cast<a_dcomplex*>(workd),
                       reinterpret_cast<a_dcomplex*>(workl), lworkl,
-                      reinterpret_cast<a_dcomplex*>(rwork), &info);
+                      rwork, &info);
 }
 }  // namespace arpack
 #endif

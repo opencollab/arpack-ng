@@ -106,7 +106,7 @@ int zn() {
   char bmat[] = "I";
   a_int N = 1000;
   char which[] = "LM";
-  a_int nev = 1;
+  a_int nev = 3;
   double tol = 0.000001; // small tol => more stable checks after EV computation.
   a_dcomplex resid[N];
   a_int ncv = 2 * nev + 1;
@@ -130,7 +130,7 @@ int zn() {
   a_dcomplex workl[3 * (ncv * ncv) + 6 * ncv];
   for (k = 0; k < 3 * (ncv * ncv) + 6 * ncv; ++k) workl[k] = CMPLX(0., 0.);
   a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
-  a_dcomplex rwork[ncv];
+  double rwork[ncv];
   a_dcomplex workev[2 * ncv];
   a_int info = 0;
   int rank;
