@@ -170,7 +170,8 @@ jobs:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
           repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
-      - uses: actions/cache@v3
+      - name: Caching macos Cellar
+        uses: actions/cache@v3
         with:
           path: /usr/local/Cellar
           key: ${{ runner.os }}-Cellar
@@ -209,7 +210,8 @@ jobs:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
           repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
-      - uses: actions/cache@v3
+      - name: Caching macos Cellar
+        uses: actions/cache@v3
         with:
           path: /usr/local/Cellar
           key: ${{ runner.os }}-Cellar
@@ -249,7 +251,8 @@ jobs:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
           repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
-      - uses: actions/cache@v3
+      - name: Caching macos Cellar
+        uses: actions/cache@v3
         with:
           path: /usr/local/Cellar
           key: ${{ runner.os }}-Cellar
