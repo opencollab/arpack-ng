@@ -316,7 +316,7 @@ c
      &           invsub, iuptri, iwev  , j    , ldh   , ldq   ,
      &           mode  , msglvl, ritz  , wr   , k     , irz   ,
      &           ibd   , outncv, iq    , np   , numcnv, jj    ,
-     &           ishift
+     &           ishift, nglo
       Complex
      &           rnorm, temp, vl(1)
       Real
@@ -377,13 +377,16 @@ c     %-------------------------------%
 c
       ierr = 0
 c
+      nglo = n
+      call MPI_ALLREDUCE(MPI_IN_PLACE, [nglo], 1,
+     &   MPI_INTEGER, MPI_SUM, comm, ierr )
       if (nconv .le. 0) then
          ierr = -14
       else if (n .le. 0) then
          ierr = -1
       else if (nev .le. 0) then
          ierr = -2
-      else if (ncv .le. nev+1 .or.  ncv .gt. n) then
+      else if (ncv .le. nev+1 .or.  ncv .gt. nglo) then
          ierr = -3
       else if (which .ne. 'LM' .and.
      &        which .ne. 'SM' .and.
