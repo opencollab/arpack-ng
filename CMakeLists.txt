@@ -45,7 +45,7 @@ option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS an
 # paths for target_include_directories and target_link_libraries
 include(GNUInstallDirs)
 set(ARPACK_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng${ITF64SUFFIX}")
-set(ARPACK_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng${LIBSUFFIX}${ITF64SUFFIX}")
+set(ARPACK_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/arpackng${LIBSUFFIX}${ITF64SUFFIX}")
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
