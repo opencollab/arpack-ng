@@ -49,6 +49,15 @@ arpack-ng - 3.9.0
 [ Juan José García-Ripoll ]
  * Adapt the C/C++ interface to accept also MSVC's non-standard complex types.
 
+[ Juan José García Ripoll ]
+ * Propagate dependencies to CMake targets that use arpack-ng:
+   - Create CMake-generated targets and configuration files that keep track of
+     arpack's dependencies (libraries, directories) and expose them to users.
+   - Install those files under ${prefix}/lib/cmake/arpackng* so that arpack can be
+     found using 'find_package(arpackng)' from CMake files.
+   - Add code to the arpackng-config.cmake to find required dependencies when this
+     module is loaded by find_package(arpackng).
+
  -- Sylvestre Ledru <sylvestre@debian.org> Mon, 07 Dec 2020 11:37:40 +0100
 
 arpack-ng - 3.8.0
