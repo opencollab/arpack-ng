@@ -41,6 +41,12 @@ set(SYMBOLSUFFIX ""
     CACHE STRING "suffix to add to ARPACK, BLAS and LAPACK function names")
 option(INTERFACE64 "use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK")
 
+# 'make install' to the correct location, and also define
+# paths for target_include_directories and target_link_libraries
+include(GNUInstallDirs)
+set(ARPACK_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng${ITF64SUFFIX}")
+set(ARPACK_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/arpackng${LIBSUFFIX}${ITF64SUFFIX}")
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 function(prefixlist list_name prefix)
@@ -377,18 +383,37 @@ endif()
 # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
 add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB})
 
-target_link_libraries(arpack BLAS::BLAS)
-target_link_libraries(arpack LAPACK::LAPACK ${EXTRA_LDFLAGS})
+target_link_libraries(arpack
+  PUBLIC
+  $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,BLAS::BLAS>>
+  $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,LAPACK::LAPACK>>
+  $<BUILD_INTERFACE:BLAS::BLAS>
+  $<BUILD_INTERFACE:LAPACK::LAPACK>
+)
+target_link_options(arpack PUBLIC "${EXTRA_LDFLAGS}")
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX}${ITF64SUFFIX})
 set_target_properties(arpack PROPERTIES VERSION 2.1.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
+target_include_directories(arpack
+  PUBLIC
+  # Exported location of headers
+  $<INSTALL_INTERFACE:${ARPACK_INSTALL_INCLUDEDIR}>
+  # Find arpackdef.h, arpackicb.h, stat*.h, debug*.h at build time
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  # For ICB interface
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/ICB>
+)
 
 if (MPI)
     # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
     add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB})
-
-    target_link_libraries(parpack MPI::MPI_Fortran)
-    target_link_libraries(parpack arpack)
+    target_link_libraries(parpack
+      PUBLIC
+      arpack
+      $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,MPI::MPI_Fortran>>
+      $<BUILD_INTERFACE:MPI::MPI_Fortran>
+    )
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX}${ITF64SUFFIX})
     set_target_properties(parpack PROPERTIES VERSION 2.1.0)
     set_target_properties(parpack PROPERTIES SOVERSION 2)
@@ -681,9 +706,18 @@ if(ICB)
 
   if (PYTHON3)
     python_add_module(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
-    set(pyarpack_HDR ${PROJECT_SOURCE_DIR}/ICB ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK)
-    target_include_directories(pyarpack PUBLIC ${pyarpack_HDR} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
-    target_link_libraries(pyarpack BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    target_include_directories(pyarpack
+        PRIVATE
+        ${PROJECT_BINARY_DIR}
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/ICB
+        ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET
+        ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK
+        ${EIGEN3_INCLUDE_DIR}
+        ${Boost_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_DIRS})
+    target_link_libraries(pyarpack
+        BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
     install(TARGETS pyarpack
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
@@ -752,8 +786,6 @@ endif()
 ############################
 # install
 ############################
-# 'make install' to the correct location
-include(GNUInstallDirs)
 
 # Convert variable names to those expected by the .pc file.
 set(prefix ${CMAKE_INSTALL_PREFIX})
@@ -788,6 +820,7 @@ configure_file(pkg-config/arpackSolver.pc.in "${PROJECT_BINARY_DIR}/arpackSolver
 
 
 install(TARGETS arpack
+    EXPORT arpackngTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -796,14 +829,13 @@ install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
 
 if (MPI)
   install(TARGETS parpack
+      EXPORT arpackngTargets
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
-
-set(ARPACK_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/arpack-ng${ITF64SUFFIX}")
 
 if(ICB)
   install(FILES ICB/arpack.h DESTINATION "${ARPACK_INSTALL_INCLUDEDIR}")
@@ -838,11 +870,17 @@ install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${ARPACK_INSTALL_I
 configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 
+install(EXPORT arpackngTargets
+  DESTINATION "${ARPACK_INSTALL_CMAKEDIR}"
+)
 # Provide find_package for arpack-ng to users.
 configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng${LIBSUFFIX}${ITF64SUFFIX}) # find_package(arpackng)
 configure_file(cmake/arpackng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpack-ng${LIBSUFFIX}${ITF64SUFFIX})
+install(
+  FILES
+  "${PROJECT_BINARY_DIR}/arpackng-config.cmake"
+  "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arpackng${LIBSUFFIX}${ITF64SUFFIX}) # find_package(arpackng)
 
 configure_file(cmake/tstCMakeInstall.sh.in ${PROJECT_BINARY_DIR}/tstCMakeInstall.sh @ONLY)
 
