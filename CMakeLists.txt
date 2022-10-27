@@ -408,12 +408,12 @@ target_include_directories(arpack
 if (MPI)
     # use -DBUILD_SHARED_LIBS=ON|OFF to control static/shared
     add_library(parpack ${parpacksrc_STAT_SRCS} ${parpackutil_STAT_SRCS} ${parpacksrc_ICB})
- 	target_link_libraries(parpack
- 	  PUBLIC
-	  arpack
- 	  $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,MPI::MPI_Fortran>>
- 	  $<BUILD_INTERFACE:MPI::MPI_Fortran>
- 	)
+    target_link_libraries(parpack
+      PUBLIC
+      arpack
+      $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,MPI::MPI_Fortran>>
+      $<BUILD_INTERFACE:MPI::MPI_Fortran>
+    )
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack${LIBSUFFIX}${ITF64SUFFIX})
     set_target_properties(parpack PROPERTIES VERSION 2.1.0)
     set_target_properties(parpack PROPERTIES SOVERSION 2)
@@ -706,18 +706,18 @@ if(ICB)
 
   if (PYTHON3)
     python_add_module(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
- 	target_include_directories(pyarpack
- 		PRIVATE
- 		${PROJECT_BINARY_DIR}
- 		${PROJECT_SOURCE_DIR}
- 		${PROJECT_SOURCE_DIR}/ICB
- 		${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET
- 		${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK
- 		${EIGEN3_INCLUDE_DIR}
- 		${Boost_INCLUDE_DIRS}
- 		${PYTHON_INCLUDE_DIRS})
- 	target_link_libraries(pyarpack
- 		BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    target_include_directories(pyarpack
+        PRIVATE
+        ${PROJECT_BINARY_DIR}
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/ICB
+        ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET
+        ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK
+        ${EIGEN3_INCLUDE_DIR}
+        ${Boost_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_DIRS})
+    target_link_libraries(pyarpack
+        BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
     install(TARGETS pyarpack
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
@@ -829,7 +829,7 @@ install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
 
 if (MPI)
   install(TARGETS parpack
-	  EXPORT arpackngTargets
+      EXPORT arpackngTargets
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
