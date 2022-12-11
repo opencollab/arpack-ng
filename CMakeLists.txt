@@ -622,11 +622,7 @@ endif()
 ############################
 # TEST
 ############################
-if(TESTS)
-  enable_testing()
-
-  set(CMAKE_CTEST_COMMAND ctest -V)
-
+function(build_tests)  
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
   add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
@@ -783,6 +779,12 @@ if(TESTS)
       add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
     endif()
   endif()
+endfunction(build_tests)
+
+if(TESTS)
+    enable_testing()
+    set(CMAKE_CTEST_COMMAND ctest -V)   
+    build_tests()
 endif()
 
 ############################
