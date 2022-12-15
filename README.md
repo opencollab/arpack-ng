@@ -18,7 +18,7 @@ eigenvalue problems.
 <a href="https://travis-ci.org/opencollab/arpack-ng"><img src="https://travis-ci.org/opencollab/arpack-ng.svg"/></a><br/>
 [![Coverage Status](https://coveralls.io/repos/github/opencollab/arpack-ng/badge.svg?branch=master)](https://coveralls.io/github/opencollab/arpack-ng?branch=master)
 
-### Important Features
+## Important Features
 
 - Reverse Communication Interface (RCI).
 - Single and Double Precision Real Arithmetic Versions for Symmetric, Non-symmetric, Standard or Generalized Problems.
@@ -29,23 +29,23 @@ eigenvalue problems.
 - Shift-Invert strategies for all problem types, data types and precision.
 - `arpackmm`: utility to test arpack with matrix market files. Note: to run this utility, you need the eigen library (to handle RCI).
 
-### ILP64 support
+## ILP64 support
 
 - Sequential arpack supports [ILP64](https://www.intel.com/content/www/us/en/develop/documentation/onemkl-linux-developer-guide/top/linking-your-application-with-onemkl/linking-in-detail/linking-with-interface-libraries/using-the-ilp64-interface-vs-lp64-interface.html), but, parallel arpack doesn't.
-- reminder: you can NOT mix `ILP64` with `LP64`. If you compile `arpack-ng` with `ILP64` (resp. `LP64`) support, you MUST insure your BLAS/LAPACK is compliant with `ILP64` (resp. `LP64`).
+- Reminder: you can NOT mix `ILP64` with `LP64`. If you compile `arpack-ng` with `ILP64` (resp. `LP64`) support, you MUST insure your BLAS/LAPACK is compliant with `ILP64` (resp. `LP64`).
 - users: set `INTERFACE64` at configure time.
 
-### F77/F90 developers
+Note for F77/F90 developers:
 
-- all files which needs `ILP64` support must include `"arpackicb.h"`.
-- when coding, use `i_int` (defined in `arpackicb.h`) instead of `c_int`. `i_int` stands for `iso_c_binding int`: it's `#defined` to `c_int` or `c_int64_t` according to the architecture.
+- All files which needs `ILP64` support must include `"arpackicb.h"`.
+- When coding, use `i_int` (defined in `arpackicb.h`) instead of `c_int`. `i_int` stands for `iso_c_binding int`: it's `#defined` to `c_int` or `c_int64_t` according to the architecture.
 
-### C/C++ developers
+Note for C/C++ developers:
 
-- all files which needs `ILP64` support must include `"arpackdef.h"`.
-- when coding, use `a_int` (defined in `arpackdef.h`) instead of `int`. Here, `a_int` stands for "architecture int": it's `#defined` to `int` or `int64_t` according to the architecture.
+- All files which needs `ILP64` support must include `"arpackdef.h"`.
+- When coding, use `a_int` (defined in `arpackdef.h`) instead of `int`. Here, `a_int` stands for "architecture int": it's `#defined` to `int` or `int64_t` according to the architecture.
 
-example: to test arpack with sequential `ILP64` MKL assuming you use gnu compilers
+**Example**: to test arpack with sequential `ILP64` MKL assuming you use gnu compilers
 
 ```bash
 $./bootstrap
@@ -57,28 +57,42 @@ export INTERFACE64=1
 $ make all check
 ```
 
-### Python support
+To get `ISO_C_BINDING` support:
+
+```bash
+./configure --enable-icb
+cmake -D ICB=ON
+```
+
+- The install will now provide `arpack.h/hpp`, `parpack.h/hpp` and friends.
+- Examples of use can be found in `./TESTS` and` ./PARPACK/TESTS/MPI`.
+
+Those who are interested in `ISO_C_BINDING` support can checkout following links 
+for more informations.
+
+- <http://fortranwiki.org/fortran/show/ISO_C_BINDING>
+- <http://fortranwiki.org/fortran/show/Generating+C+Interfaces>
+- <https://www.roguewave.com/sites/rw/files/attachments/StandardizedMixedLanguageProgrammingforCandFortran.pdf>
+
+## Python support
 
 `pyarpack`: python support based on `Boost.Python.Numpy` exposing C++ API.
 
 Check out `./EXAMPLES/PYARPACK/README` for more details.
 
-### About the project
+## About the project
 
 This project started as a joint project between Debian, Octave and Scilab in order to provide a common and maintained version of arpack.
-
 This is now a community project maintained by a few volunteers.
-
-Indeed, no single release has been published by Rice university for the last few years and since many software (Octave, Scilab, R, Matlab...) forked it and implemented their own modifications, arpack-ng aims to tackle this by providing a common repository, maintained versions with a testsuite.
-
+Indeed, no single release has been published by Rice university for the last few years and since many software (Octave, Scilab, R, Matlab...) 
+forked it and implemented their own modifications, arpack-ng aims to tackle this by providing a common repository, maintained versions with a testsuite. 
 `arpack-ng` is replacing arpack almost everywhere.
 
-### Directory structure
+## 📁 Directory structure
 
-- You have successfully unbundled ARPACK-NG and are now in the ARPACK-NG directory that was created for you.
+- You have successfully unbundled ARPACK-NG` and are now in the ARPACK-NG directory that was created for you.
 
-- The directory SRC contains the top level routines including
-   the highest level **reverse communication interface** routines
+- The directory SRC contains the top level routines including the highest level **reverse communication interface** routines
 
   - `ssaupd`, `dsaupd`: symmetric single and double precision
   - `snaupd`, `dnaupd`: non-symmetric single and double precision
@@ -109,27 +123,31 @@ Indeed, no single release has been published by Rice university for the last few
 
 > Example programs for Parallel ARPACK may be found in the directory `PARPACK/EXAMPLES`. Look at the README file for further information.
 
-### Install
+## Install 🚀
 
-The following instructions explain how to make the ARPACK library by using autotools and cmake.
+Unlike ARPACK, ARPACK-NG is providing autotools and cmake based build system. In addition, `ARPACK-NG` also provides
+`iso_c_binding` support, which enables to call fortran subroutines natively from C or C++.
 
-First obtain the source code from github:
+First, obtain the source code 📥 from github:
 
 ```bash
 git clone https://github.com/opencollab/arpack-ng.git
 cd ./arpack-ng
 ```
 
-If you prefer the ssh, then use following to obtain the source code.
+If you prefer the ssh to obtain the source code, then use:
 
 ```bash
 git clone git@github.com:opencollab/arpack-ng.git
 cd ./arpack-ng
 ```
 
-#### Using auto-tools
+> Note, It is recommended to install `arpack` at standard location on your system by using your root privilage.
 
-Now use the following commands to auto-configure, build and install the `arpack-ng`.
+
+### Using auto-tools
+
+In the source directory, use the following commands to ◉ auto-configure, 📦 build and install the `arpack-ng`.
 
 ```bash
 sh bootstrap
@@ -139,56 +157,84 @@ make check
 make install
 ```
 
-> Note, this will install the library at standard location (which is recommmended). You may need root privilage.
+Congratulations 🎉, you have installed `arpack` lib using autotools. 
 
-> Unlike ARPACK, ARPACK-NG is providing autotools and cmake based build system and iso_c_binding support (which enables to call fortran subroutines natively from C or C++).
+You can also customize the installation of `arpack` using the autotools. For example,
 
-#### Using CMake
 
-You can install `ARPACK-NG` by using CMake. If you do not have Cmake, then please download the binary from `pip` using:
+```bash
+LIBSUFFIX="64" ./configure
+make all install
+```
+
+```bash
+INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure
+make all install
+```
+
+```bash
+LIBSUFFIX="64" INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure
+make all install
+```
+
+To enable `ISO_C_BINDING` support:
+
+```bash
+./configure --enable-icb
+```
+
+### Using cmake
+
+You can install `ARPACK-NG` by using cmake. If you do not have cmake, then please download the binary from `pip` using:
 
 ```bash
 python3 -m pip install cmake
 which cmake && cmake --version
 ```
 
-After installing CMake you should use following lines of code in the terminal:
+After installing cmake, follow the instruction given below.
 
-Note: Make sure you are in `arpack-ng` directory obtained from github.
+Caution: Make sure you are in source directory of ARPACK-NG.
 
-```fortran
-  mkdir build
-  cd build
-  cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
-  make
-  make install
+```bash
+mkdir build
+cd build
+cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
+make
+make install
 ```
 
-> Do not miss the `..` in line 3, as it denotes the location of source files.
+✨ Congratulations, you have installed `arpack` lib using cmake.
 
-> The above script will builds everything including examples and parallel support (with MPI).
+> ⚡ Do not miss the `..` in line 3, as it denotes the location of ARPACK-NG source files.
 
-### Using ARPACK-NG in Cmake project
+The above-mentioned process will build everything including the examples and 
+parallel support using MPI.
 
-You can use arpack in your CMake builds by using `ARPACK::ARPACK` target. For example,
+You can customize the build by declaring the cmake options during configuration as shown below: 
 
-```cmake
-  FIND_PACKAGE(arpack-ng)
-  ADD_EXECUTABLE(main main.f)
-  TARGET_INCLUDE_DIRECTORIES(main PUBLIC ARPACK::ARPACK)
-  TARGET_LINK_LIBRARIES(main ARPACK::ARPACK)
+```bash
+cmake -D LIBSUFFIX="64" ..
+make all install
 ```
 
-To use PARPACK in your Cmake builds, use `PARPACK::PARPACK` target:
-
-```cmake
-  FIND_PACKAGE(arpack-ng)
-  ADD_EXECUTABLE(main main.f)
-  TARGET_INCLUDE_DIRECTORIES(main PUBLIC PARPACK::PARPACK)
-  TARGET_LINK_LIBRARIES(main PARPACK::PARPACK)
+```bash
+cmake -D INTERFACE64=ON -D ITF64SUFFIX="ILP64" ..
+make all install
 ```
 
-### Extras
+```bash
+cmake -D LIBSUFFIX="64" -D INTERFACE64=ON -D ITF64SUFFIX="ILP64" ..
+make all install
+```
+
+To enable `ISO_C_BINDING` support:
+
+```bash
+cmake -D ICB=ON
+```
+
+## Extras
 
 On mac OS, with GNU compilers, you may need to customize options:
 
@@ -196,32 +242,32 @@ On mac OS, with GNU compilers, you may need to customize options:
 LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure
 ```
 
-To build with code coverage:
+You can use arpack in your CMake builds by using `ARPACK::ARPACK` target. For example,
 
-```bash
-mkdir build
-cd build
-cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
-make all check test coveralls
+```cmake
+FIND_PACKAGE(arpack-ng)
+ADD_EXECUTABLE(main main.f)
+TARGET_INCLUDE_DIRECTORIES(main PUBLIC ARPACK::ARPACK)
+TARGET_LINK_LIBRARIES(main ARPACK::ARPACK)
 ```
 
-To get `ISO_C_BINDING` support:
+To use PARPACK in your Cmake builds, use `PARPACK::PARPACK` target:
 
-```bash
-    ./configure --enable-icb
-    cmake -D ICB=ON
+```cmake
+FIND_PACKAGE(arpack-ng)
+ADD_EXECUTABLE(main main.f)
+TARGET_INCLUDE_DIRECTORIES(main PUBLIC PARPACK::PARPACK)
+TARGET_LINK_LIBRARIES(main PARPACK::PARPACK)
 ```
 
-- The install will now provide arpack.h/hpp, parpack.h/hpp and friends.
-- Examples of use can be found in ./TESTS and ./PARPACK/TESTS/MPI.
+Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_package` won't find arpack-ng cmake file).
 
-A few related links can be found here:
+How to use arpack-ng with Intel MKL:
 
-- <http://fortranwiki.org/fortran/show/ISO_C_BINDING>
-- <http://fortranwiki.org/fortran/show/Generating+C+Interfaces>
-- <https://www.roguewave.com/sites/rw/files/attachments/StandardizedMixedLanguageProgrammingforCandFortran.pdf>
+- Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel`).
+- Refers to the Intel Link Advisor: <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html>.
 
-### DOCUMENTS
+## Documentation
 
 Within DOCUMENTS directory there are three files for templates on how to invoke the computational modes of ARPACK.
 
@@ -232,37 +278,4 @@ Within DOCUMENTS directory there are three files for templates on how to invoke 
 Also look in the README.MD file for explanations concerning the
 other documents.
 
-### Custom installation examples
-
-```bash
-  LIBSUFFIX="64" ./configure; make all install
-```
-
-```bash
-  cmake -DLIBSUFFIX="64" ..; make all install
-```
-
-```bash
-    INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure; make all install
-```
-
-```bash
-    cmake -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..; make all install
-```
-
-```bash
-    LIBSUFFIX="64" INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure; make all install
-```
-
-```bash
-    cmake -DLIBSUFFIX="64" -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..; make all install
-```
-
-### Using with Intel-MKL
-
-How to use arpack-ng with Intel MKL:
-
-- Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel`).
-- Refers to the Intel Link Advisor: <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html>.
-
-### Good luck and enjoy 😀
+## Good luck and enjoy 🎊
