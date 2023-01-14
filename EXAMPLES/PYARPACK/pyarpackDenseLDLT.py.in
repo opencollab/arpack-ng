@@ -10,13 +10,13 @@ Aij = np.array([], dtype='complex128')
 for k in range(n):
     for l in range(n):
         if l == k:
-            Aij = np.append(Aij, np.complex128(np.complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         elif l == k-1:
-            Aij = np.append(Aij, np.complex128(np.complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         elif l == k+1:
-            Aij = np.append(Aij, np.complex128(np.complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         else:
-            Aij = np.append(Aij, np.complex128(np.complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for idx, val in enumerate(Aij):
     print("A[", idx, "] =", val)
 A = (Aij, False) # raw format: Aij values, row ordered (or not).
@@ -65,17 +65,17 @@ Bij = np.array([], dtype='complex64')
 for k in range(n):
     for l in range(n):
         if l == k:
-            Aij = np.append(Aij, np.complex64(np.complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(np.complex( 33.3,  33.3))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex( 33.3,  33.3))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         elif l == k-1:
-            Aij = np.append(Aij, np.complex64(np.complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(np.complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         elif l == k+1:
-            Aij = np.append(Aij, np.complex64(np.complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(np.complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         else:
-            Aij = np.append(Aij, np.complex64(np.complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(np.complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for idx, val in enumerate(Aij):
     print("A[", idx, "] =", val)
 for idx, val in enumerate(Bij):
