@@ -194,7 +194,7 @@ BOOST_PYTHON_MODULE(pyarpack) {
   doc << "   1.1. create numpy arrays specifying explicitly the type:" << std::endl;
   doc << "        >> Aij = np.array([], dtype='complex128')" << std::endl;
   doc << "   1.2. filling numpy arrays casting value on append:" << std::endl;
-  doc << "        >> Aij = np.append(Aij, np.complex128(np.complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type." << std::endl;
+  doc << "        >> Aij = np.append(Aij, np.complex128(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type." << std::endl;
   doc << "   1.3. calling the solver flavor which is consistent with the numpy array data type:" << std::endl;
   doc << "        >> arpackSlv = pyarpackSlv.complexDouble() # Caution: complexDouble <=> np.array(..., dtype='complex128')" << std::endl;
   doc << "   note: NO data type check can be done at C++ side, the pyarpack user MUST insure data consistency." << std::endl;

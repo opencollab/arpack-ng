@@ -173,16 +173,10 @@ jobs:
       - name: Check commit
         run: |
           git log -1
-      - name: Update OS
-        run: |
-          brew uninstall --ignore-dependencies gcc
-          brew update
-          softwareupdate --install --all
       - name: Install brew dependencies
         run: |
-          brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc cmake mpich
-          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+          brew reinstall gcc # brings gfortran on path
+          brew install cmake mpich
       - name: Run job
         run: |
           mkdir -p build
@@ -208,16 +202,18 @@ jobs:
       - name: Check commit
         run: |
           git log -1
-      - name: Update OS
-        run: |
-          brew uninstall --ignore-dependencies gcc
-          brew update
-          softwareupdate --install --all
       - name: Install brew dependencies
         run: |
-          brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc cmake boost-python3 eigen python3
-          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+          # Unlink and re-link to prevent errors when github mac runner images
+          # install python outside of brew, for example:
+          # https://github.com/orgs/Homebrew/discussions/3895
+          # https://github.com/actions/setup-python/issues/577
+          # https://github.com/actions/runner-images/issues/6459
+          # https://github.com/actions/runner-images/issues/6507
+          # https://github.com/actions/runner-images/issues/2322
+          brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
+          brew reinstall gcc # brings gfortran on path
+          brew install cmake eigen boost-python3 python3 
           pip3 install numpy
       - name: Run job
         run: |
@@ -244,16 +240,10 @@ jobs:
       - name: Check commit
         run: |
           git log -1
-      - name: Update OS
-        run: |
-          brew uninstall --ignore-dependencies gcc
-          brew update
-          softwareupdate --install --all
       - name: Install brew dependencies
         run: |
-          brew list --formula -1 | while read line; do brew unlink $line; done
-          brew install gcc autoconf automake libtool pkg-config mpich
-          brew list --formula -1 | while read line; do brew link --overwrite $line; done
+          brew reinstall gcc # brings gfortran on path
+          brew install autoconf automake libtool pkg-config mpich
       - name: Run job
         run: |
           ./bootstrap
