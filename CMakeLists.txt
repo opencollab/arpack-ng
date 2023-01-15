@@ -386,10 +386,10 @@ add_library(arpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_IC
 
 target_link_libraries(arpack
   PUBLIC
-  $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,BLAS::BLAS>>
   $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,LAPACK::LAPACK>>
-  $<BUILD_INTERFACE:BLAS::BLAS>
+  $<INSTALL_INTERFACE:$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,,BLAS::BLAS>>
   $<BUILD_INTERFACE:LAPACK::LAPACK>
+  $<BUILD_INTERFACE:BLAS::BLAS>
 )
 target_link_options(arpack PUBLIC "${EXTRA_LDFLAGS}")
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX}${ITF64SUFFIX})
