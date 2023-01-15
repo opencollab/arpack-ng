@@ -145,7 +145,7 @@ cd ./arpack-ng
 > Note, It is recommended to install `arpack` at standard location on your system by using your root privilage.
 
 
-### Using auto-tools
+### Using autotools
 
 In the source directory, use the following commands to ◉ auto-configure, 📦 build and install the `arpack-ng`.
 
