@@ -14,7 +14,9 @@
 #define a_uint unsigned int
 #endif
 #ifdef _MSC_VER
+#define _CRT_USE_C_COMPLEX_H
 #include <complex.h>
+#undef _CRT_USE_C_COMPLEX_H
 #define a_fcomplex _Fcomplex
 #define a_dcomplex _Dcomplex
 #ifndef CMPLXF
