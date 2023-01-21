@@ -63,7 +63,7 @@ function(examples list_name)
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
         target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-        add_test(NAME "${lwe}_ex" COMMAND ${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_test(NAME "${lwe}_ex" COMMAND ${lwe})
     endforeach()
 endfunction(examples)
 
