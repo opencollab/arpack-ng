@@ -72,7 +72,7 @@ function(pexamples list_name)
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${parpackexample_DIR}/${l} )
         target_link_libraries(${lwe} parpack arpack MPI::MPI_Fortran)
-        add_test(NAME "${lwe}_ex" COMMAND mpirun -n 2 ./${lwe})
+        add_test(NAME "${lwe}_ex" COMMAND mpirun -n 2 ./${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 endfunction(pexamples)
 
