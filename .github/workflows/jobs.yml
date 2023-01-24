@@ -269,6 +269,9 @@ jobs:
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-gcc-fortran
             mingw-w64-x86_64-openblas
+            mingw-w64-x86_64-msmpi
+      - name: Install MS-MPI (for mpiexec)
+        uses: mpi4py/setup-mpi@v1
       - name: Clone and check out repository code
         uses: actions/checkout@v2
         with:
@@ -283,4 +286,8 @@ jobs:
           mkdir -p build && cd build
           cmake -GNinja -DICB=ON -DEXAMPLES=ON -DMPI=ON ..
           cmake --build . -v
+      - name: Run tests
+        run: |
+          export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          cd build
           ctest --output-on-failure
