@@ -1,5 +1,9 @@
 arpack-ng - 3.9.0
 
+[ Fabien Péan ]
+* CI: Enable job `windows_latest_cmake` to run all tests
+* CMake: Fix BLAS and LAPACK static library order needed to consume the library on Windows with static linkage
+
 [ Zhentao Wang ]
 * [BUG FIX] parpack.h and parpack.hpp: type of rwork should be real instead of complex.
 * Allow ritz_option {"LR", "SR", "LI", "SI"} for complex eigenvalue problems in ICB.
