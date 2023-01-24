@@ -281,6 +281,6 @@ jobs:
       - name: Run job
         run: |
           mkdir -p build && cd build
-          cmake -GNinja -DICB=ON -DEXAMPLES=ON ..
+          cmake -GNinja -DICB=ON -DEXAMPLES=ON -DMPI=ON ..
           cmake --build . -v
           ctest --output-on-failure
