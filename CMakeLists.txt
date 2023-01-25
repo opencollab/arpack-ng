@@ -212,7 +212,10 @@ if (MPI)
         endif()
     endif()
 
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG} -fallow-invalid-boz")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
+    if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
+    endif()
 
     # Check if we can use ISO_C_BINDING provided by MPI.
     file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
