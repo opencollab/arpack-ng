@@ -63,7 +63,7 @@ function(examples list_name)
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
         target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
-        add_test(NAME "${lwe}_ex" COMMAND ${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_test(NAME "${lwe}_ex" COMMAND ${lwe})
     endforeach()
 endfunction(examples)
 
@@ -72,7 +72,7 @@ function(pexamples list_name)
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${parpackexample_DIR}/${l} )
         target_link_libraries(${lwe} parpack arpack MPI::MPI_Fortran)
-        add_test(NAME "${lwe}_ex" COMMAND mpirun -n 2 ./${lwe} WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_test(NAME "${lwe}_ex" COMMAND mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${lwe})
     endforeach()
 endfunction(pexamples)
 
@@ -213,6 +213,9 @@ if (MPI)
     endif()
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
+    if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
+    endif()
 
     # Check if we can use ISO_C_BINDING provided by MPI.
     file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
@@ -771,12 +774,12 @@ function(build_tests)
       add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
       target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
       target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_C)
-      add_test(icb_parpack_c_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
+      add_test(icb_parpack_c_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
 
       add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
       target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
       target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_CXX)
-      add_test(icb_parpack_cpp_tst mpirun -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
+      add_test(icb_parpack_cpp_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
     endif()
   endif()
 endfunction(build_tests)
