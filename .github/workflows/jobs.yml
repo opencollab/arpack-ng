@@ -16,12 +16,12 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
       - name: Run job
         run: |
           mkdir build
           cd build
-          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON ..
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
           make package_source
@@ -65,11 +65,11 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev automake autoconf pkg-config libtool
       - name: Run job
         run: |
           ./bootstrap
-          ./configure --enable-mpi --enable-icb
+          ./configure --enable-mpi --enable-icb --enable-icbexmm
           make all
           make check
           make distcheck
