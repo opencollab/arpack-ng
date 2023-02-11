@@ -1,45 +1,47 @@
+ -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 11 Feb 2023 13:52:57 +0100
+
 arpack-ng - 3.9.0
 
 [ Vikas Sharma ]
  * Improve README.
 
 [ Fabien Péan ]
-* CI: Enable job `windows_latest_cmake` to run all tests
-* CMake: Fix BLAS and LAPACK static library order needed to consume the library on Windows with static linkage
-* Fix using ARPACK on Windows with MSVC compiler from C++17 onwards
+ * CI: Enable job `windows_latest_cmake` to run all tests
+ * CMake: Fix BLAS and LAPACK static library order needed to consume the library on Windows with static linkage
+ * Fix using ARPACK on Windows with MSVC compiler from C++17 onwards
 
 [ Zhentao Wang ]
-* [BUG FIX] parpack.h and parpack.hpp: type of rwork should be real instead of complex.
-* Allow ritz_option {"LR", "SR", "LI", "SI"} for complex eigenvalue problems in ICB.
+ * [BUG FIX] parpack.h and parpack.hpp: type of rwork should be real instead of complex.
+ * Allow ritz_option {"LR", "SR", "LI", "SI"} for complex eigenvalue problems in ICB.
 
 [ Jose E. Roman ]
-* Avoid using isnan() in tests, since is GNU-specific
+ * Avoid using isnan() in tests, since is GNU-specific
 
 [ Tom Payerle ]
-* Change the continuation line format for stat.h, debug.h
+ * Change the continuation line format for stat.h, debug.h
 
 [ John Doe ]
-* Avoid calling [c|z]dotc for better portability on macOS
+ * Avoid calling [c|z]dotc for better portability on macOS
 
 [ Dima Pasechnik ]
-* [BUG FIX] autotools: replace obsolete AC_TRY_COMPILE macros.
-* Support for NAG's nagfor Fortran compiler
+ * [BUG FIX] autotools: replace obsolete AC_TRY_COMPILE macros.
+ * Support for NAG's nagfor Fortran compiler
 
 [ Franck Houssen ]
-* Create one .cmake file per arpack-ng flavor (32-bits, 64-bits, ILP64).
-* Test autotools pkg-config (*.pc files) with/without LIBSUFFIX/ITF64SUFFIX.
-* Test CMake find_package (*.cmake files) with/without LIBSUFFIX/ITF64SUFFIX.
-* [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
-* [BUG FIX] BLAS/LAPACK: allow suffixes in case BLAS/LAPACK can not provide ICB.
-* [BUG FIX] Compile C programs with ICB.
-* arpackmm: command line bug fix.
-* arpackmm: restart bug fix.
-* pyarpack: fix compilation warning, test on macos and latest boost-python (1.79).
-* arpackSolver: fix error messages.
-* [BUG FIX] Make sure iseed is always initialized to values allowed by lapack ?larnv.
-* [BUG FIX] According to lapack doc of ?larnv, iseed(4) must be odd.
-* [BUG FIX] Use MPI ICB types (mpi_f08) instead of integer(kind=i_int).
-* parpack: no ILP64 support.
+ * Create one .cmake file per arpack-ng flavor (32-bits, 64-bits, ILP64).
+ * Test autotools pkg-config (*.pc files) with/without LIBSUFFIX/ITF64SUFFIX.
+ * Test CMake find_package (*.cmake files) with/without LIBSUFFIX/ITF64SUFFIX.
+ * [BUG FIX] autotools: ICB must be checked first (MPI changes compilers).
+ * [BUG FIX] BLAS/LAPACK: allow suffixes in case BLAS/LAPACK can not provide ICB.
+ * [BUG FIX] Compile C programs with ICB.
+ * arpackmm: command line bug fix.
+ * arpackmm: restart bug fix.
+ * pyarpack: fix compilation warning, test on macos and latest boost-python (1.79).
+ * arpackSolver: fix error messages.
+ * [BUG FIX] Make sure iseed is always initialized to values allowed by lapack ?larnv.
+ * [BUG FIX] According to lapack doc of ?larnv, iseed(4) must be odd.
+ * [BUG FIX] Use MPI ICB types (mpi_f08) instead of integer(kind=i_int).
+ * parpack: no ILP64 support.
 
 [ Haoyang Liu ]
  * CMake: minimum required version changed to 3.0
@@ -56,8 +58,6 @@ arpack-ng - 3.9.0
 
 [ Juan José García-Ripoll ]
  * Adapt the C/C++ interface to accept also MSVC's non-standard complex types.
-
-[ Juan José García Ripoll ]
  * Propagate dependencies to CMake targets that use arpack-ng:
    - Create CMake-generated targets and configuration files that keep track of
      arpack's dependencies (libraries, directories) and expose them to users.
