@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-pkgincludedir = $(includedir)/arpack-ng@ITF64SUFFIX@
+pkgincludedir = $(includedir)/arpack@ITF64SUFFIX@
 pkginclude_HEADERS = debug.h stat.h debugF90.h statF90.h arpackdef.h
 
 AM_DISTCHECK_CONFIGURE_FLAGS =

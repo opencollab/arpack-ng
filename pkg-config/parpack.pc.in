@@ -1,7 +1,7 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@/arpack-ng@ITF64SUFFIX@
+includedir=@includedir@/arpack@ITF64SUFFIX@
 
 Name: @PACKAGE_NAME@
 Description: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems

@@ -1,3 +1,8 @@
+arpack-ng - 3.9.1
+
+[ Franck Houssen ]
+ * [BUG FIX] Fix install: headers in /path/to/local/include/arpack
+
  -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 11 Feb 2023 13:52:57 +0100
 
 arpack-ng - 3.9.0
