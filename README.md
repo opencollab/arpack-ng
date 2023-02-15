@@ -72,6 +72,8 @@ About ISO_C_BINDING support:
 - The install will now provide `arpack.h/hpp`, `parpack.h/hpp` and friends.
 - Examples of use can be found in `./TESTS` and` ./PARPACK/TESTS/MPI`.
 
+ISO_C_BINDING is a feature of modern Fortran meant to handle safely interoperability between Fortran and C (in practice, no more need to use ugly tricks to link F77 functions to C code using "underscored" symbols).
+
 Those who are interested in `ISO_C_BINDING` support can checkout following links for more informations.
 
 - <http://fortranwiki.org/fortran/show/ISO_C_BINDING>
@@ -87,7 +89,7 @@ $ cmake -D ICB=ON
 
 ## Eigen support
 
-`arpack-ng` provides C++ eigensolver based on `eigen`.
+`arpack-ng` provides C++ eigensolver based on both ISO_C_BINDING and `eigen`.
 
 Check out `./EXAMPLES/MATRIX_MARKET/README` for more details.
 
