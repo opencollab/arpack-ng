@@ -104,7 +104,7 @@ class options {
         mag = argv[a];  // small mag (likely poor perf) <=> large mag + invert
                         // (likely good perf).
         bool ok = (mag == "LM" || mag == "SM" || mag == "LR" || mag == "SR" ||
-                   mag == "LI" || mag == "SI")
+                   mag == "LA" || mag == "SA" || mag == "LI" || mag == "SI")
                       ? true
                       : false;
         if (!ok) {
@@ -388,7 +388,7 @@ class options {
             "[dz]*upd)"
          << endl;
     cout << "  --mag M:          set magnitude of eigen values to look for "
-            "(LM, SM, LR, SR, LI, SI)."
+            "(LM, SM, LR, SR, LA, SA, LI, SI)."
          << endl;
     cout << "                    default: large magnitude (LM)" << endl;
     cout << "  --shiftReal S:    real shift where sigma = S (look for lambda+S "

@@ -11,7 +11,7 @@ for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx
 do
   for genPb in "" "--genPb"
   do
-    for smallMag in "" "--mag SM --noCheck" # SM is known to be difficult to converge.
+    for smallMag in "" "LA" "--mag SM --noCheck" # SM is known to be difficult to converge.
     do
       export shiftOpt=""
       if [[ "$eigPb" == *nonSymPb* ]]; then
