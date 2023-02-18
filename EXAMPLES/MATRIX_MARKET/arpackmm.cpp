@@ -622,8 +622,6 @@ int itrSolve(options& opt, output& out, double const& slvItrILUDropTol,
   cout << endl;
   cout << "INP: create A " << readATime << " s" << endl;
 
-  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); /* Cut-off */
-
   EM B;
   if (!opt.stdPb) {
     start = chrono::high_resolution_clock::now();
@@ -710,8 +708,6 @@ int drtSolve(options& opt, output& out) {
       chrono::duration_cast<chrono::milliseconds>(stop - start).count() / 1000.;
   cout << endl;
   cout << "INP: create A " << readATime << " s" << endl;
-
-  if (opt.nbCV > A.cols()) opt.nbCV = A.cols(); /* Cut-off */
 
   EM B;
   if (!opt.stdPb) {

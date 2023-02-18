@@ -229,6 +229,7 @@ class arpackSolver {
 
     int solve(EM & A, EM const * B = nullptr) {
       stdPb = !B ? true : false;
+      if (nbCV > A.cols()) nbCV = A.cols(); // Cut-off arpack workspace dim.
 
       dumpParameters();
       if (verbose == 3) {
