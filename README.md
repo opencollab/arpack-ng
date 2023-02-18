@@ -98,7 +98,7 @@ Check out `./EXAMPLES/MATRIX_MARKET/README` for more details.
 ```bash
 $ mkdir build
 $ cd build
-$ cmake -D EXAMPLES=ON -D ICB=ON -D ICBEXMM=ON ..
+$ cmake -D EXAMPLES=ON -D ICB=ON -D EIGEN=ON ..
 $ make all check
 ```
 
@@ -114,7 +114,7 @@ Check out `./EXAMPLES/PYARPACK/README` for more details.
 ```bash
 $ mkdir build
 $ cd build
-$ cmake -D EXAMPLES=ON -D ICB=ON -D ICBEXMM=ON -D PYTHON3=ON ..
+$ cmake -D EXAMPLES=ON -D ICB=ON -D EIGEN=ON -D PYTHON3=ON ..
 $ make all check
 ```
 

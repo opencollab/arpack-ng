@@ -11,8 +11,8 @@ if ICB
 AM_DISTCHECK_CONFIGURE_FLAGS += --enable-icb
 pkginclude_HEADERS += arpackicb.h
 endif
-if ICBEXMM
-AM_DISTCHECK_CONFIGURE_FLAGS += --enable-icb-exmm
+if EIGEN
+AM_DISTCHECK_CONFIGURE_FLAGS += --enable-eigen
 endif
 
 SUBDIRS = .
