@@ -46,7 +46,7 @@ About ILP64 support:
 Note for F77/F90 developers:
 
 - All files which needs `ILP64` support must include `"arpackicb.h"`.
-- When coding, use `i_int` (defined in `arpackicb.h`) instead of `c_int`. `i_int` stands for `iso_c_binding int`: it's `#defined` to `c_int` or `c_int64_t` according to the architecture.
+- When coding, use `i_int` (defined in `arpackicb.h`) instead of `c_int`. `i_int` stands for ISO_C_BINDING integer: it's `#defined` to `c_int` or `c_int64_t` according to the architecture.
 
 Note for C/C++ developers:
 
@@ -72,13 +72,16 @@ About ISO_C_BINDING support:
 - The install will now provide `arpack.h/hpp`, `parpack.h/hpp` and friends.
 - Examples of use can be found in `./TESTS` and` ./PARPACK/TESTS/MPI`.
 
-ISO_C_BINDING is a feature of modern Fortran meant to handle safely interoperability between Fortran and C (in practice, no more need to use ugly tricks to link F77 functions to C code using "underscored" symbols).
-
-Those who are interested in `ISO_C_BINDING` support can checkout following links for more informations.
+ISO_C_BINDING is a feature of modern Fortran meant to handle safely interoperability between Fortran and C (in practice, no more need to use ugly tricks to link F77 functions to C code using "underscored" symbols). Basically, ISO_C_BINDING make sure all fortran variables are typed (which may not always be the case when using `implicit` keyword in fortran): this way, C compilers can link properly. For more informations on ISO_C_BINDING, you can checkout the following links:
 
 - <http://fortranwiki.org/fortran/show/ISO_C_BINDING>
 - <http://fortranwiki.org/fortran/show/Generating+C+Interfaces>
-- <https://www.roguewave.com/sites/rw/files/attachments/StandardizedMixedLanguageProgrammingforCandFortran.pdf>
+
+Using ICB is seamless:
+
+- Compile `arpack-ng` with ISO_C_BINDING: you'll get both old-fashion fortran symbols and new ISO_C_BINDING symbols available for linking.
+- Add `#include "arpack.h"` in your C code.
+- Replace all [sdcz][ae]upd calls by [sdcz][ae]upd_c: functions suffixed with _c are ISO_C_BINDING compliant (exposing same arguments than original fortran functions).
 
 **Example**: to test arpack with ISO_C_BINDING
 
@@ -158,7 +161,7 @@ $ make all check
 ### Getting arpack-ng
 
 Unlike ARPACK, ARPACK-NG is providing autotools and cmake based build system. In addition, `ARPACK-NG` also provides
-`iso_c_binding` support, which enables to call fortran subroutines natively from C or C++.
+ISO_C_BINDING support, which enables to call fortran subroutines natively from C or C++.
 
 First, obtain the source code 📥 from github:
 

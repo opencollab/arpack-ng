@@ -4,6 +4,7 @@ arpack-ng - 3.9.1
  * [BUG FIX] Fix install: headers in /path/to/local/include/arpack
  * arpackmm: allow for using LA/SA magnitudes.
  * Rename icbexmm option into eigen option.
+ * README: document how to use ICB.
 
  -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 11 Feb 2023 13:52:57 +0100
 
