@@ -21,7 +21,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON ..
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
           make package_source
@@ -69,7 +69,7 @@ jobs:
       - name: Run job
         run: |
           ./bootstrap
-          ./configure --enable-mpi --enable-icb --enable-icbexmm
+          ./configure --enable-mpi --enable-icb --enable-eigen
           make all
           make check
           make distcheck
@@ -129,7 +129,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DICBEXMM=ON -DPYTHON3=ON ..
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON -DPYTHON3=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
   ubuntu_latest_autotools_ilp64:

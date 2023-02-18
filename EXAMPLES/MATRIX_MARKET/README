@@ -34,6 +34,6 @@ To build this utility, you need:
 - to have installed eigen3 (to deal with the RCI).
 - to configure arpack-ng this way:
   - autotools:
-    ~arpack-ng> ./configure --enable-icb-exmm; make all check
+    ~arpack-ng> ./configure --enable-eigen; make all check
   - cmake:
-    ~arpack-ng/build> cmake -D ICBEXMM=ON ..; make all test
+    ~arpack-ng/build> cmake -D EIGEN=ON ..; make all test

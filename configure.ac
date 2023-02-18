@@ -83,13 +83,13 @@ if test x"$enable_icb" != x"no"; then
 fi
 
 dnl See if compiling matrix market example based on ICB
-AC_ARG_ENABLE([icb-exmm],
-              [AS_HELP_STRING([--enable-icb-exmm],
+AC_ARG_ENABLE([eigen],
+              [AS_HELP_STRING([--enable-eigen],
                               [matrix market example based on ISO_C_BINDING])],
               [AS_VAR_SET([enable_icb], [$enableval])],
-              [AS_VAR_SET([enable_icb_exmm], [no])])
+              [AS_VAR_SET([enable_eigen], [no])])
 
-if test x"$enable_icb_exmm" != x"no"; then
+if test x"$enable_eigen" != x"no"; then
 	PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3])
 	AC_LANG_PUSH([C++])
 	CPPFLAGS_SAVE=$CPPFLAGS
@@ -340,7 +340,7 @@ dnl Set conditional for Makefiles.
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
-AM_CONDITIONAL([ICBEXMM], [test x"$enable_icb_exmm" != x"no"])
+AM_CONDITIONAL([EIGEN], [test x"$enable_eigen" != x"no"])
 
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
 AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])

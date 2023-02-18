@@ -10,7 +10,7 @@ TESTS = arpackmm.sh
 
 arpackmm_SOURCES = arpackmm.cpp
 
-if ICBEXMM
+if EIGEN
 pkginclude_HEADERS = arpackSolver.hpp
 endif
 
