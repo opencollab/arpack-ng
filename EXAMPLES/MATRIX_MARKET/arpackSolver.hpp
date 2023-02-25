@@ -12,7 +12,7 @@
 #include <cassert>
 #include <vector>
 #include <type_traits> // is_same.
-#include <cmath> // fabs
+#include <cmath> // abs
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
@@ -679,11 +679,12 @@ class arpackSolver {
         ifs >> nDim;
         if (nDim != nbDim) {cerr << "Error: bad dim - restart KO" << endl; return 1;}
         for (a_int n = 0; rv && n < nbDim; n++) {
-          T val = {0};
+          RC val; makeConstant(val, 0.);
           ifs >> val;
-          if (fabs(val) < 1.e-6 && !allowZero) {
+          if (abs(val) < 1.e-6 && !allowZero) {
             // Do NOT let residual be zero: this stops arpack to iterate (info = -9).
-            val = 1.e-6;
+            RC epsilon; makeConstant(epsilon, 1.e-6);
+            val = epsilon;
           }
           rv[n] = val;
         }
