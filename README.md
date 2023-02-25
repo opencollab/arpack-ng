@@ -323,7 +323,7 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 
 ### FAQ
 
-- Calling arpack's aupd methods returns `info` = -9 "Starting vector is zero.": why?
+- Calling arpack's aupd methods returns `info = -9 - Starting vector is zero.`: why?
 
   Residuals are null. Try to set `resid` to small values (for instance 1.e-6) but *not exactly* zero.
   Residuals `resid = A*v - lamdba*v` target *exactly* the zero vector.
@@ -337,7 +337,7 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 - Say I have an estimate of an eigen vector, how to give this information to arpack?
 
   You need to copy this eigen vector estimate in `v` (not `resid`) and set `info` to 1 before calling aupd methods.
-  The `v` vector targets a non-null vector such that `resid = 0` that is such that `A*v = lambda*v`.
+  The `v` vector targets a non-null vector such that `resid = 0`, that is, such that `A*v = lambda*v`.
 
 ## Using MKL instead of BLAS / LAPACK
 
