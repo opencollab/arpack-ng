@@ -12,6 +12,7 @@
 #include <cassert>
 #include <vector>
 #include <type_traits> // is_same.
+#include <cmath> // fabs
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
