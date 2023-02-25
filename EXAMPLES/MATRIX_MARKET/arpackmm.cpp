@@ -48,7 +48,7 @@ class options {
 
     for (int a = 1; argv && a < argc; a++) {
       string clo = argv[a];  // Command line option.
-      if (clo == "--help") return usage(0);
+      if (clo == "--help" || clo == "-h") return usage(0);
       if (clo == "--A") {
         a++;
         if (a >= argc) {

@@ -347,13 +347,13 @@ class arpackSolver {
 
   private:
 
-    void makeZero(         float  & zero) {zero = 0.f;};
+    void makeConstant(         float  & cst,  float const & val) {cst = val;};
 
-    void makeZero(        double  & zero) {zero = 0.;};
+    void makeConstant(        double  & cst, double const & val) {cst = val;};
 
-    void makeZero(complex< float> & zero) {zero = complex<double>(0.f, 0.f);};
+    void makeConstant(complex< float> & cst,  float const & val) {cst = complex<float>(val, val);};
 
-    void makeZero(complex<double> & zero) {zero = complex<double>(0., 0.);};
+    void makeConstant(complex<double> & cst, double const & val) {cst = complex<double>(val, val);};
 
     int readMatrixMarket(string const & fileName,
                          a_uint & n, a_uint & m, vector<a_uint> & i, vector<a_uint> & j, vector<RC> & Mij) {
@@ -388,7 +388,7 @@ class arpackSolver {
         }
         else { // Body.
           a_uint k = 0, l = 0;
-          RC zero; makeZero(zero);
+          RC zero; makeConstant(zero, 0.);
           RC Mkl = zero;
           inpSS >> k >> l >> Mkl;
           if (!inpSS) {cerr << "Error: bad line (" << fileName << ", line " << l << ")" << endl; return 1;}
@@ -402,9 +402,11 @@ class arpackSolver {
       // Handle 1-based -> 0-based.
 
       nnz = i.size(); // In case nnz was not provided.
-      if (*max_element(begin(i), end(i)) == n || *max_element(begin(j), end(j)) == m) {
-        for (size_t k = 0; k < nnz; k++) i[k] -= 1;
-        for (size_t k = 0; k < nnz; k++) j[k] -= 1;
+      if (nnz > 0) {
+        if (*max_element(begin(i), end(i)) == n || *max_element(begin(j), end(j)) == m) {
+          for (size_t k = 0; k < nnz; k++) i[k] -= 1;
+          for (size_t k = 0; k < nnz; k++) j[k] -= 1;
+        }
       }
 
       return 0;
@@ -655,26 +657,45 @@ class arpackSolver {
       return rc;
     };
 
-    void restartSolve(string const & fileName,
-                      a_int const & nbDim, RC * rv, bool readNbCV) {
-      if (restartFromFile) {
-        ifstream ifs(fileName.c_str());
-        if (ifs.is_open()) {
-          a_int nbCV = 1;
-          if (readNbCV) {
-            ifs >> nbCV;
-            if (nbCV < nbDim) nbCV = nbDim; // Cut-off in case previous run used different nbDim.
+    template <typename T>
+    int saveSolve(string const & fileName,
+                  a_int const & nbDim, T * rv) {
+      ofstream ofs(fileName.c_str(), ofstream::trunc);
+      if (ofs.is_open()) {
+        ofs << nbDim << endl;
+        for (a_int n = 0; rv && n < nbDim; n++) ofs << rv[n] << endl;
+      }
+      return 0;
+    };
+
+    template <typename T>
+    int restartSolve(string const & fileName,
+                     a_int const & nbDim, T * rv,
+                     bool allowZero = true) {
+      ifstream ifs(fileName.c_str());
+      if (ifs.is_open()) {
+        a_int nDim = 0;
+        ifs >> nDim;
+        if (nDim != nbDim) {cerr << "Error: bad dim - restart KO" << endl; return 1;}
+        for (a_int n = 0; rv && n < nbDim; n++) {
+          T val = {0};
+          ifs >> val;
+          if (fabs(val) < 1.e-6 && !allowZero) {
+            // Do NOT let residual be zero: this stops arpack to iterate (info = -9).
+            val = 1.e-6;
           }
-          for (a_int n = 0; rv && n < nbDim*nbCV; n++) ifs >> rv[n];
-          if (verbose >= 1) {
-            cout << endl << "arpackSolver:" << endl;
-            cout << endl << fileName << ": restart OK" << endl;
-            if (verbose >= 2) {
-              for (a_int n = 0; rv && n < nbDim; n++) cout << rv[n] << endl;
-            }
+          rv[n] = val;
+        }
+
+        if (verbose >= 1) {
+          cout << endl << "arpackSolver:" << endl;
+          cout << endl << fileName << ": restart OK" << endl;
+          if (verbose >= 2) {
+            for (a_int n = 0; rv && n < nbDim; n++) cout << rv[n] << endl;
           }
         }
       }
+      return 0;
     };
 
     int initPointerSize(a_int & iparamSz, a_int & ipntrSz, string const & aeupd) {
@@ -707,18 +728,18 @@ class arpackSolver {
       char const * gMat = "G";
       char const * bMat = (mode == 1) ? iMat : gMat;
       a_int nbDim = A.rows();
-      RC zero; makeZero(zero);
+      RC epsilon; makeConstant(epsilon, 1.e-6);
       if (!resid) {
         resid = new RC[nbDim];
-        for (a_int n = 0; n < nbDim; n++) resid[n] = zero; // Avoid "bad" starting vector.
+        // Do NOT let residual be zero: this stops arpack to iterate (info = -9).
+        for (a_int n = 0; n < nbDim; n++) resid[n] = epsilon;
       };
-      restartSolve("arpackSolver.resid.out", nbDim, resid, false);
       a_int ldv = nbDim;
+      RC zero; makeConstant(zero, 0.);
       if (!v) {
         v = new RC[ldv*nbCV];
         for (a_int n = 0; n < ldv*nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
       };
-      restartSolve("arpackSolver.v.out", ldv, v, true);
       a_int iparamSz = 0, ipntrSz = 0;
       int rc = initPointerSize(iparamSz, ipntrSz, "aupd");
       if (rc != 0) {cerr << "Error: bad iparam/ipntr initialization for aupd" << endl; return rc;}
@@ -733,7 +754,16 @@ class arpackSolver {
       a_int lworkl = symPb ? nbCV*nbCV + 8*nbCV : 3*nbCV*nbCV + 6*nbCV;
       RC * workl = new RC[lworkl];
       a_int info = 0; // Use random initial residual vector.
-      if (restartFromFile) info = 1;
+
+      // Handling restart.
+
+      if (restartFromFile) {
+        info = 1; // Restart.
+        rc = restartSolve("arpackSolver.resid.out", nbDim, resid, false);
+        if (rc != 0) {cerr << "Error: bad restart (resid)" << endl; return rc;}
+        rc = restartSolve("arpackSolver.v.out", ldv*nbCV, v);
+        if (rc != 0) {cerr << "Error: bad restart (v)" << endl; return rc;}
+      }
 
       // Initialize solver.
 
@@ -827,9 +857,11 @@ class arpackSolver {
       rc = eupd(rvec, howmny, select, z, ldz, bMat, nbDim, which, resid, v, ldv, iparamEupd.data(), ipntrEupd.data(), workd, workl, lworkl, rwork, info);
       if (rc != 0) {cerr << "Error: bad arpack eupd" << endl; return rc;}
 
+      // Save solve (dump results to file) to allow later restart.
+
       if (dumpToFile) {
-        ofstream rfs("arpackSolver.resid.out"); for (a_int n = 0; n < nbDim; n++) rfs << resid[n] << endl;
-        ofstream vfs("arpackSolver.v.out"); vfs << nbCV << endl; for (a_int n = 0; n < ldv*nbCV; n++) vfs << v[n] << endl;
+        saveSolve("arpackSolver.resid.out", nbDim, resid);
+        saveSolve("arpackSolver.v.out", ldv*nbCV, v);
       }
 
       // Clean.

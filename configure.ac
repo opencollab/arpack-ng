@@ -82,10 +82,10 @@ if test x"$enable_icb" != x"no"; then
   AC_LANG_POP([Fortran])
 fi
 
-dnl See if compiling matrix market example based on ICB
+dnl See if compiling eigenvalue-problems solver based on ICB and eigen.
 AC_ARG_ENABLE([eigen],
               [AS_HELP_STRING([--enable-eigen],
-                              [matrix market example based on ISO_C_BINDING])],
+                              [build eigenvalue-problems solver based on ICB and eigen])],
               [AS_VAR_SET([enable_icb], [$enableval])],
               [AS_VAR_SET([enable_eigen], [no])])
 
