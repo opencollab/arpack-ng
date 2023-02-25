@@ -736,10 +736,11 @@ class arpackSolver {
         for (a_int n = 0; n < nbDim; n++) resid[n] = epsilon;
       };
       a_int ldv = nbDim;
-      RC zero; makeConstant(zero, 0.);
+      RC cst; makeConstant(cst, 10.);
+      RC v0 = cst * epsilon; // Start with something close to zero but *not* exactly zero.
       if (!v) {
         v = new RC[ldv*nbCV];
-        for (a_int n = 0; n < ldv*nbCV; n++) v[n] = zero; // Avoid "bad" starting vector.
+        for (a_int n = 0; n < ldv*nbCV; n++) v[n] = v0;
       };
       a_int iparamSz = 0, ipntrSz = 0;
       int rc = initPointerSize(iparamSz, ipntrSz, "aupd");
@@ -750,6 +751,7 @@ class arpackSolver {
       iparamAupd[3] = 1; // Block size.
       iparamAupd[4] = 0; // Number of ev found by arpack.
       iparamAupd[6] = mode;
+      RC zero; makeConstant(zero, 0.);
       vector<a_int> ipntrAupd(ipntrSz, 0);
       RC * workd = new RC[3*nbDim]; for (a_int n = 0; n < 3*nbDim; n++) workd[n] = zero; // Avoid "bad" X/Y vector.
       a_int lworkl = symPb ? nbCV*nbCV + 8*nbCV : 3*nbCV*nbCV + 6*nbCV;
