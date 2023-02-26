@@ -13,6 +13,7 @@
 #include <vector>
 #include <type_traits> // is_same.
 #include <cmath> // abs
+#include <complex>
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
