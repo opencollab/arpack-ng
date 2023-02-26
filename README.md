@@ -325,7 +325,7 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 
 - Calling arpack's aupd methods returns `info = -9 - Starting vector is zero.`: why?
 
-  Residuals are null. Try to set `resid` to small values (for instance 1.e-6) but *not exactly* zero.
+  Residuals are null. Try to set `resid` to small values (like epsilon machine magnitude) but *not exactly* zero.
   Residuals `resid = A*v - lamdba*v` target *exactly* the zero vector.
   When `resid` is close enough to zero, the iterative procedure stops.
 

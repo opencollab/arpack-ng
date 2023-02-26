@@ -14,6 +14,7 @@
 #include <type_traits> // is_same.
 #include <cmath> // abs
 #include <complex>
+#include <limits> // epsilon
 
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
@@ -247,7 +248,7 @@ class arpackSolver {
 
       // If needed, transform the initial problem into a new one that arpack can handle.
 
-      auto eps = numeric_limits<double>::epsilon();
+      auto eps = numeric_limits<FD>::epsilon();
       bool shiftReal = (fabs(sigmaReal) > eps) ? true : false;
       bool shiftImag = (fabs(sigmaImag) > eps) ? true : false;
       bool backTransform = false;
@@ -684,7 +685,8 @@ class arpackSolver {
           ifs >> val;
           if (abs(val) < 1.e-6 && !allowZero) {
             // Do NOT let residual be zero: this stops arpack to iterate (info = -9).
-            RC epsilon; makeConstant(epsilon, 1.e-6);
+            auto eps = numeric_limits<FD>::epsilon();
+            RC epsilon; makeConstant(epsilon, eps);
             val = epsilon;
           }
           rv[n] = val;
@@ -731,7 +733,8 @@ class arpackSolver {
       char const * gMat = "G";
       char const * bMat = (mode == 1) ? iMat : gMat;
       a_int nbDim = A.rows();
-      RC epsilon; makeConstant(epsilon, 1.e-6);
+      auto eps = numeric_limits<FD>::epsilon();
+      RC epsilon; makeConstant(epsilon, eps);
       if (!resid) {
         resid = new RC[nbDim];
         // Do NOT let residual be zero: this stops arpack to iterate (info = -9).
