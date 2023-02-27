@@ -556,12 +556,23 @@ ostream& operator<<(ostream& ostr, options const& opt) {
   ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol
        << ", maxIt " << opt.maxIt;
   ostr << ", " << (opt.schur ? "Schur" : "Ritz") << " vectors" << endl;
-  ostr << "OPT: slv " << opt.slv << ", slvItrPC " << opt.slvItrPC
-       << ", slvItrTol " << opt.slvItrTol;
-  ostr << ", slvItrMaxIt " << opt.slvItrMaxIt << ", slvDrtPivot "
-       << opt.slvDrtPivot;
-  ostr << ", slvDrtOffset " << opt.slvDrtOffset << ", slvDrtScale "
-       << opt.slvDrtScale << endl;
+  ostr << "OPT: slv " << opt.slv;
+  bool itrSlv = true;  // Use iterative solvers.
+  if (opt.slv.find("LU") != string::npos ||
+      opt.slv.find("QR") != string::npos ||
+      opt.slv.find("LLT") != string::npos ||
+      opt.slv.find("LDLT") != string::npos)
+    itrSlv = false;
+  if (itrSlv) {
+    ostr << ", slvItrPC " << opt.slvItrPC;
+    ostr << ", slvItrTol " << opt.slvItrTol;
+    ostr << ", slvItrMaxIt " << opt.slvItrMaxIt;
+  } else {
+    ostr << ", slvDrtPivot " << opt.slvDrtPivot;
+    ostr << ", slvDrtOffset " << opt.slvDrtOffset;
+    ostr << ", slvDrtScale " << opt.slvDrtScale;
+  }
+  ostr << endl;
   ostr << "OPT: check " << (opt.check ? "yes" : "no") << ", verbose "
        << opt.verbose << ", debug " << opt.debug;
   ostr << ", restart " << (opt.restart ? "yes" : "no") << endl;
