@@ -167,6 +167,9 @@ class options {
           return usage();
         }
       }
+      if (clo == "--schur") {
+        schur = true;
+      }
       if (clo == "--slv") {
         a++;
         if (a >= argc) {
