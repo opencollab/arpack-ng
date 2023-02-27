@@ -319,7 +319,8 @@ class options {
     // Sanity checks.
 
     if (!stdPb && fileB.empty()) {
-      cerr << "Error: generalized problem without B matrix" << endl;
+      cerr << "Error: generalized problem without B matrix"
+           << ", specify --B XX with XX being a matrix market file" << endl;
       return usage();
     }
 
@@ -847,6 +848,7 @@ int main(int argc, char** argv) {
   if (opt.dense) {
     if (itrSlv) {
       cerr << "Error: dense matrices does not support iterative solvers"
+           << ", specify --slv XX with XX being a direct solver"
            << endl;
       return 1;
     }
