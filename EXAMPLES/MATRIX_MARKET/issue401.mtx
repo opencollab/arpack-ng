@@ -1,0 +1,8 @@
+%% MatrixMarket matrix coordinate double symmetric
+% 10x10 matrix with 2 non-zero values
+%
+
+10 10 2
+
+0  1  1.
+1  0  1.
