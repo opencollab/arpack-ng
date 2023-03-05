@@ -323,6 +323,10 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 
 ### FAQ
 
+- Where can I find ARPACK user's guide?
+
+  http://li.mit.edu/Archive/Activities/Archive/CourseWork/Ju_Li/MITCourses/18.335/Doc/ARPACK/Lehoucq97.pdf
+
 - Calling arpack's aupd methods returns `info = -9 - Starting vector is zero.`: why?
 
   Residuals are null. Try to set `resid` to small values (like epsilon machine magnitude) but *not exactly* zero.
