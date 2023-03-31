@@ -427,7 +427,7 @@ set(PYINT "int32" CACHE STRING "int type to be used in python scripts") # PYINT 
 if (INTERFACE64)
     set(PYINT "int64" CACHE STRING "int type to be used in python scripts") # PYINT : int used with python.
     set(INTERFACE64 1)
-    if ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
+    if ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_Fortran_COMPILER_ID}" STREQUAL "LLVMFlang")
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fdefault-integer-8")
     elseif ("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -i8")
