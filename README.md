@@ -282,7 +282,7 @@ $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-f
 
 ### Windows support
 
-`arpack-ng` runs on windows using `mingw64`.
+`arpack-ng` can be installed on Windows as a MinGW-w64 package via various distribution, for example through [MSYS2](https://packages.msys2.org/package/mingw-w64-x86_64-arpack) with `pacman -S mingw-w64-x86_64-arpack`. It can also be built and installed through [vcpkg](https://github.com/microsoft/vcpkg) with `vcpkg install arpack-ng`.
 
 ## Using arpack-ng from your own codebase
 
