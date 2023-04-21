@@ -17,6 +17,7 @@
 #ifndef _CRT_USE_C_COMPLEX_H
 #define _CRT_USE_C_COMPLEX_H
 #include <complex.h>
+#undef I
 #undef _CRT_USE_C_COMPLEX_H
 #else
 #include <complex.h>
