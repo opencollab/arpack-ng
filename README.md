@@ -304,7 +304,7 @@ Note: make sure you have installed `pkg-config`.
 You can use arpack in your CMake builds by using `ARPACK::ARPACK` target. For example,
 
 ```cmake
-FIND_PACKAGE(arpack-ng)
+FIND_PACKAGE(arpackng)
 ADD_EXECUTABLE(main main.f)
 TARGET_INCLUDE_DIRECTORIES(main PUBLIC ARPACK::ARPACK)
 TARGET_LINK_LIBRARIES(main ARPACK::ARPACK)
@@ -313,7 +313,7 @@ TARGET_LINK_LIBRARIES(main ARPACK::ARPACK)
 To use PARPACK in your Cmake builds, use `PARPACK::PARPACK` target:
 
 ```cmake
-FIND_PACKAGE(arpack-ng)
+FIND_PACKAGE(arpackng)
 ADD_EXECUTABLE(main main.f)
 TARGET_INCLUDE_DIRECTORIES(main PUBLIC PARPACK::PARPACK)
 TARGET_LINK_LIBRARIES(main PARPACK::PARPACK)
