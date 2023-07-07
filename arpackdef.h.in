@@ -13,10 +13,11 @@
 #define a_int int
 #define a_uint unsigned int
 #endif
-#ifdef _MSC_VER
+#if !defined(__INTEL_LLVM_COMPILER) && defined(_MSC_VER)
 #ifndef _CRT_USE_C_COMPLEX_H
 #define _CRT_USE_C_COMPLEX_H
 #include <complex.h>
+#undef I
 #undef _CRT_USE_C_COMPLEX_H
 #else
 #include <complex.h>
