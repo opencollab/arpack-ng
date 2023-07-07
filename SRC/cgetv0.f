@@ -156,13 +156,13 @@ c     %------------------------%
 c     | Local Scalars & Arrays |
 c     %------------------------%
 c
-      logical    first, orth
+      logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj
       Real
      &           rnorm0
       Complex
      &           cnorm
-      save       first, iseed, iter, msglvl, orth, rnorm0
+      save       first, iseed, inits, iter, msglvl, orth, rnorm0
 c
 c     %----------------------%
 c     | External Subroutines |
@@ -180,6 +180,12 @@ c
      &           ccdotc
       external   ccdotc, scnrm2, slapy2
 c
+c     %-----------------%
+c     | Data Statements |
+c     %-----------------%
+c
+      data       inits /.true./
+c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
@@ -190,10 +196,13 @@ c     | Initialize the seed of the LAPACK |
 c     | random number generator           |
 c     %-----------------------------------%
 c
-      iseed(1) = 1
-      iseed(2) = 3
-      iseed(3) = 5
-      iseed(4) = 7
+      if (inits) then
+          iseed(1) = 1
+          iseed(2) = 3
+          iseed(3) = 5
+          iseed(4) = 7
+          inits = .false.
+      end if
 c
       if (ido .eq.  0) then
 c
