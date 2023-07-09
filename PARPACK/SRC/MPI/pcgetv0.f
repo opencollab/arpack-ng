@@ -176,13 +176,13 @@ c     %------------------------%
 c     | Local Scalars & Arrays |
 c     %------------------------%
 c
-      logical    first, orth
+      logical    first, inits, orth
       integer    idist, iseed(4), iter, msglvl, jj, myid, igen
       Real
      &           rnorm0
       Complex
      &           cnorm, cnorm2
-      save       first, iseed, iter, msglvl, orth, rnorm0
+      save       first, iseed, inits, iter, msglvl, orth, rnorm0
 c
       Complex
      &           cnorm_buf, buf2(1)
@@ -203,6 +203,12 @@ c
      &           ccdotc
       external   ccdotc, pscnorm2, slapy2
 c
+c     %-----------------%
+c     | Data Statements |
+c     %-----------------%
+c
+      data       inits /.true./
+c
 c     %-----------------------%
 c     | Executable Statements |
 c     %-----------------------%
@@ -213,26 +219,30 @@ c     | Initialize the seed of the LAPACK |
 c     | random number generator           |
 c     %-----------------------------------%
 c
+      if (inits) then
 c
-c     %-----------------------------------%
-c     | Generate a seed on each processor |
-c     | using process id (myid).          |
-c     | Note: the seed must be between 1  |
-c     | and 4095.  iseed(4) must be odd.  |
-c     %-----------------------------------%
+c        %-----------------------------------%
+c        | Generate a seed on each processor |
+c        | using process id (myid).          |
+c        | Note: the seed must be between 1  |
+c        | and 4095.  iseed(4) must be odd.  |
+c        %-----------------------------------%
 c
-      call MPI_COMM_RANK(comm, myid, ierr)
-      igen = 1000 + 2*myid + 1
-      if (igen .gt. 4095) then
-         write(0,*) 'Error in p_getv0: seed exceeds 4095!'
+         call MPI_COMM_RANK(comm, myid, ierr)
+         igen = 1000 + 2*myid + 1
+         if (igen .gt. 4095) then
+            write(0,*) 'Error in p_getv0: seed exceeds 4095!'
+         end if
+c
+         iseed(1) = igen/1000
+         igen     = mod(igen,1000)
+         iseed(2) = igen/100
+         igen     = mod(igen,100)
+         iseed(3) = igen/10
+         iseed(4) = mod(igen,10)
+c
+         inits = .false.
       end if
-c
-      iseed(1) = igen/1000
-      igen     = mod(igen,1000)
-      iseed(2) = igen/100
-      igen     = mod(igen,100)
-      iseed(3) = igen/10
-      iseed(4) = 7
 c
       if (ido .eq.  0) then
 c
