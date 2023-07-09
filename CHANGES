@@ -1,5 +1,9 @@
 arpack-ng - 3.9.1
 
+[ Szabolcs Horvát ]
+ * [BUG FIX] Ensure that LAPACK RNG state is propagated (regression in 3.9.0).
+ * [BUG FIX] Ensure that separate random seeds are used on different parallel thread in D and S versions of functions (issue from original ARPACK).
+
 [ Ruoyu Feng ]
  * ICB(arpackdef.h): distinct intel llvm compiler (icx with clang-cl) from msvc on windows
  * ICB(arpackdef.h): Undef macro I if complex.h from msvc version is loaded, which is an usual name and causes issues on arpackSolver.
