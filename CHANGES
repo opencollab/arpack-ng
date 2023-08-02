@@ -1,6 +1,7 @@
 arpack-ng - 3.9.1
 
 [ Fabien Péan ]
+ * [BUG FIX] Seeds for serial and parallel random number generator [s|d|c|z]dgetv0 are not constant anymore and change at every run.
  * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
 
 [ Szabolcs Horvát ]

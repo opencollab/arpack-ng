@@ -194,13 +194,19 @@ c
 c     %-----------------------------------%
 c     | Initialize the seed of the LAPACK |
 c     | random number generator           |
+c     | Use address of local variables to |
+c     | get a random seed each run        |
+c     | Note: seed array elements must be |
+c     | between 0 and 4095 (12-bit coded) |
+c     | iseed(4) must be odd              |
+c     | See doc of clarnv for more info   |
 c     %-----------------------------------%
 c
       if (inits) then
-          iseed(1) = 1
-          iseed(2) = 3
-          iseed(3) = 5
-          iseed(4) = 7
+          iseed(1) = mod(abs(loc(iter)),4095)
+          iseed(2) = mod(abs(loc(n)),4095)
+          iseed(3) = mod(abs(loc(rnorm)),4095)
+          iseed(4) = 1+2*mod(abs(loc(itry)),2048)
           inits = .false.
       end if
 c
