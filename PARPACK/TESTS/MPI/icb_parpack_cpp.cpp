@@ -20,9 +20,9 @@
 #include "stat_c.hpp"   // arpack statistics.
 
 template <typename Real>
-void diagonal_matrix_vector_product(const Real* x, Real* y) {
-  for (int i = 0; i < 1000; ++i) {
-    y[i] = static_cast<float>(i + 1) * x[i];
+void diagonal_matrix_vector_product(int start, int nloc, const Real* x, Real* y) {
+  for (int i = 0; i < nloc; ++i) {
+    y[i] = static_cast<Real>(start + i + 1) * x[i];
   }
 }
 
@@ -53,18 +53,27 @@ void real_symmetric_runner(double const& tol_check, arpack::which const& ritz_op
   iparam[3] = 1;      // NB, only 1 allowed
   iparam[6] = 1;      // mode
 
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
+  /// Split problem across each process/////////////////////
+  int rank, nprocs;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+  a_int N_local = N / nprocs;
+  if (rank < N % nprocs) // spread the remaining on each process
+    N_local = N_local + 1;
+  std::cout<< "rank: " << rank << ", size :" << N_local << "\n";
+  int start = rank*(N / nprocs) + std::min(rank, N % nprocs);
+  std::cout<< "rank: " <<rank<< ", start:" << start<<"\n";
+  //////////////////////////////////////////////////////////
 
   a_int info = 0, ido = 0;
   do {
-    arpack::saupd(MCW, ido, arpack::bmat::identity, N,
+    arpack::saupd(MCW, ido, arpack::bmat::identity, N_local,
                   ritz_option, nev, tol, resid.data(), ncv,
                   V.data(), ldv, iparam, ipntr, workd.data(),
                   workl.data(), lworkl, info);
 
-    diagonal_matrix_vector_product(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
+    diagonal_matrix_vector_product(start, N_local, &(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   } while  (ido == 1 || ido == -1);
 
   // check info and number of ev found by arpack.
@@ -75,7 +84,7 @@ void real_symmetric_runner(double const& tol_check, arpack::which const& ritz_op
   }
 
   arpack::seupd(MCW, rvec, arpack::howmny::ritz_vectors, select.data(),
-                d.data(), z.data(), ldz, sigma, arpack::bmat::identity, N,
+                d.data(), z.data(), ldz, sigma, arpack::bmat::identity, N_local,
                 ritz_option, nev, tol, resid.data(), ncv,
                 V.data(), ldv, iparam, ipntr, workd.data(),
                 workl.data(), lworkl, info);
@@ -94,11 +103,11 @@ void real_symmetric_runner(double const& tol_check, arpack::which const& ritz_op
 }
 
 template <typename Real>
-void diagonal_matrix_vector_product(const std::complex<Real>* x, std::complex<Real>* y) {
-  for (int i = 0; i < 1000; ++i) {
+void diagonal_matrix_vector_product(int start, int N_local, const std::complex<Real>* x, std::complex<Real>* y) {
+  for (int i = 0; i < N_local; ++i) {
     // Use complex matrix (i, -i) instead of (i, i): this way "largest_magnitude"
     // and "largest_imaginary" options produce different results that can be checked.
-    y[i] = x[i] * std::complex<Real>{Real(i + 1), -Real(i + 1)};
+    y[i] = x[i] * std::complex<Real>{Real(start + i + 1), -Real(start + i + 1)};
   }
 }
 
@@ -131,18 +140,26 @@ void complex_nonsymmetric_runner(double const& tol_check, arpack::which const& r
   iparam[3] = 1;       // NB, only 1 allowed
   iparam[6] = 1;       // mode
 
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
-
+  /// Split problem across each process/////////////////////
+  int rank, nprocs;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+  a_int N_local = N / nprocs;
+  if (rank < N % nprocs) // spread the remaining on each process
+    N_local = N_local + 1;
+  std::cout<< "rank: "<<rank<<", size :"<<N_local<<"\n";
+  int start =  rank * (N / nprocs) + std::min(rank, N % nprocs);
+  std::cout<< "rank: " << rank << ", start:" << start << "\n";
+  //////////////////////////////////////////////////////////
   a_int info = 0, ido = 0;
   do {
-    arpack::naupd(MCW, ido, arpack::bmat::identity, N,
+    arpack::naupd(MCW, ido, arpack::bmat::identity, N_local,
                   ritz_option, nev, tol, resid.data(), ncv,
                   V.data(), ldv, iparam, ipntr, workd.data(),
                   workl.data(), lworkl, rwork.data(), info);
 
-    diagonal_matrix_vector_product(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
+    diagonal_matrix_vector_product(start, N_local, &(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   } while (ido == 1 || ido == -1);
 
   // check info and number of ev found by arpack
@@ -154,7 +171,7 @@ void complex_nonsymmetric_runner(double const& tol_check, arpack::which const& r
 
   arpack::neupd(MCW, rvec, arpack::howmny::ritz_vectors, select.data(),
                 d.data(), z.data(), ldz, sigma, workev.data(),
-                arpack::bmat::identity, N, ritz_option,
+                arpack::bmat::identity, N_local, ritz_option,
                 nev, tol, resid.data(), ncv, V.data(), ldv, iparam,
                 ipntr, workd.data(), workl.data(), lworkl, rwork.data(), info);
   if (info < 0) throw std::runtime_error("Error in neupd, info " + std::to_string(info));

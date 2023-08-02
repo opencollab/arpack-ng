@@ -1,5 +1,8 @@
 arpack-ng - 3.9.1
 
+[ Fabien Péan ]
+ * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
+
 [ Szabolcs Horvát ]
  * [BUG FIX] Ensure that LAPACK RNG state is propagated (regression in 3.9.0).
  * [BUG FIX] Ensure that separate random seeds are used on different parallel thread in D and S versions of functions (issue from original ARPACK).

@@ -22,9 +22,9 @@
  * with entries 1000, 999, ... , 2, 1 on the diagonal.
  * */
 
-void dMatVec(const double* x, double* y) {
+void dMatVec(int start, int N, const double* x, double* y) {
   int i;
-  for (i = 0; i < 1000; ++i) y[i] = ((double)(i + 1)) * x[i];
+  for (i = 0; i < N; ++i) y[i] = ((double)(start + i + 1)) * x[i];
 };
 
 int ds() {
@@ -57,16 +57,24 @@ int ds() {
   char which[]  = "LM";
   char howmny[] = "A";
   
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
-  
+  /// Split problem across each process/////////////////////
+  int rank, nprocs;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+  a_int N_local = N / nprocs;
+  if (rank < N % nprocs) // spread the remaining on each process
+    N_local = N_local + 1;
+  printf("rank: %d, size: %d\n", rank, N_local);
+  int start = rank*(N / nprocs) + ((rank < N % nprocs) ? rank : N % nprocs);
+  printf("rank: %d, start: %d\n", rank, start);
+  //////////////////////////////////////////////////////////
   a_int info = 0, ido = 0;
   do {
-    pdsaupd_c(MCW, &ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam,
+    pdsaupd_c(MCW, &ido, bmat, N_local, which, nev, tol, resid, ncv, V, ldv, iparam,
               ipntr, workd, workl, lworkl, &info);
 
-    dMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
+    dMatVec(start, N_local, &(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   } while (ido == 1 || ido == -1);
 
   // check info and number of ev found by arpack.
@@ -75,7 +83,7 @@ int ds() {
     return 1;
   }
 
-  pdseupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, bmat, N, which, nev,
+  pdseupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, bmat, N_local, which, nev,
             tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, &info);
   if (info < 0) {
     printf("Error in seupd: info %d\n", info);
@@ -94,9 +102,9 @@ int ds() {
   return 0;
 }
 
-void zMatVec(const a_dcomplex* x, a_dcomplex* y) {
+void zMatVec(int start, int N, const a_dcomplex* x, a_dcomplex* y) {
   int i;
-  for (i = 0; i < 1000; ++i) y[i] = x[i] * CMPLXF(i + 1.0, i + 1.0);
+  for (i = 0; i < N; ++i) y[i] = x[i] * CMPLXF(start + i + 1.0, start + i + 1.0);
 };
 
 int zn() {
@@ -131,16 +139,24 @@ int zn() {
   char which[]  = "LM";
   char howmny[] = "A";
   
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Fint MCW = MPI_Comm_c2f(MPI_COMM_WORLD);
-
+  /// Split problem across each process/////////////////////
+  int rank, nprocs;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+  a_int N_local = N / nprocs;
+  if (rank < N % nprocs) // spread the remaining on each process
+    N_local = N_local + 1;
+  printf("rank: %d, size: %d\n", rank, N_local);
+  int start = rank*(N / nprocs) + ((rank < N % nprocs) ? rank : N % nprocs);
+  printf("rank: %d, start: %d\n", rank, start);
+  //////////////////////////////////////////////////////////
   a_int info = 0, ido = 0;
   do {
-    pznaupd_c(MCW, &ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam,
+    pznaupd_c(MCW, &ido, bmat, N_local, which, nev, tol, resid, ncv, V, ldv, iparam,
               ipntr, workd, workl, lworkl, rwork, &info);
 
-    zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
+    zMatVec(start, N_local, &(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]));
   } while (ido == 1 || ido == -1);
   
   // check info and number of ev found by arpack.
@@ -149,7 +165,7 @@ int zn() {
     return 1;
   }
 
-  pzneupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which,
+  pzneupd_c(MCW, rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N_local, which,
             nev, tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl,
             rwork, &info);
   if (info < 0) {
