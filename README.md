@@ -343,6 +343,13 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
   You need to copy this eigen vector estimate in `v` (not `resid`) and set `info` to 1 before calling aupd methods.
   The `v` vector targets a non-null vector such that `resid = 0`, that is, such that `A*v = lambda*v`.
 
+- Using PARPACK, I get incorrect eigen values.
+
+  Make sure each MPI processor handles a subpart of the eigen system (matrices) only.
+  ARPACK handles and solves the whole eigen problem (matrices) at once.
+  PARPACK doesn't: each MPI processor must handle and solve a subpart of the eigen system (matrices) only (independently from the other processors).
+  See examples for Fortran in folder `PARPACK/EXAMPLES/MPI`, and for C/C++ examples in `PARPACK/TESTS/MPI/icb_parpack_c.c` and `PARPACK/TESTS/MPI/icb_parpack_cpp.cpp`
+
 ## Using MKL instead of BLAS / LAPACK
 
 How to use arpack-ng with Intel MKL:
