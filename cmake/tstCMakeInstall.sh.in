@@ -46,10 +46,11 @@ cp "@PROJECT_SOURCE_DIR@/EXAMPLES/BAND/dnbdr3.f" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv3.f" .
 cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_c.c" .
+cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_cpp.cpp" .
 
 echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
-echo "project(tstCMakeInstall Fortran C)"                               >> CMakeLists.txt
+echo "project(tstCMakeInstall Fortran C CXX)"                           >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
@@ -71,6 +72,14 @@ echo "target_include_directories(icb_arpack_c INTERFACE LAPACK::LAPACK)" >> CMak
 echo "target_link_libraries(icb_arpack_c LAPACK::LAPACK)"                >> CMakeLists.txt
 echo "target_include_directories(icb_arpack_c INTERFACE ARPACK::ARPACK)" >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_c ARPACK::ARPACK)"                >> CMakeLists.txt
+echo ""                                                                    >> CMakeLists.txt
+echo "add_executable(icb_arpack_cpp icb_arpack_cpp.cpp)"                   >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp INTERFACE BLAS::BLAS)"     >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp BLAS::BLAS)"                    >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp INTERFACE LAPACK::LAPACK)" >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp LAPACK::LAPACK)"                >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp INTERFACE ARPACK::ARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp ARPACK::ARPACK)"                >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(pdndrv1 dnband.f pdndrv1.f)"                       >> CMakeLists.txt
 echo "target_include_directories(pdndrv1 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
@@ -103,6 +112,14 @@ echo "target_include_directories(icb_arpack_c_pkg INTERFACE LAPACK::LAPACK)"    
 echo "target_link_libraries(icb_arpack_c_pkg LAPACK::LAPACK)"                   >> CMakeLists.txt
 echo "target_include_directories(icb_arpack_c_pkg INTERFACE PkgConfig::ARPACK)" >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_c_pkg PkgConfig::ARPACK)"                >> CMakeLists.txt
+echo ""                                                                           >> CMakeLists.txt
+echo "add_executable(icb_arpack_cpp_pkg icb_arpack_cpp.cpp)"                      >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp_pkg INTERFACE BLAS::BLAS)"        >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp_pkg BLAS::BLAS)"                       >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp_pkg INTERFACE LAPACK::LAPACK)"    >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp_pkg LAPACK::LAPACK)"                   >> CMakeLists.txt
+echo "target_include_directories(icb_arpack_cpp_pkg INTERFACE PkgConfig::ARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(icb_arpack_cpp_pkg PkgConfig::ARPACK)"                >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(pdndrv3 dnband.f pdndrv3.f)"                       >> CMakeLists.txt
 echo "target_include_directories(pdndrv3 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
@@ -126,8 +143,10 @@ make all VERBOSE=1 || exit 1
 
 ./dnbdr1 || exit 1
 ./icb_arpack_c || exit 1
+./icb_arpack_cpp || exit 1
 mpirun -n 2 ./pdndrv1 || exit 1
 
 ./dnbdr3 || exit 1
 ./icb_arpack_c_pkg || exit 1
+./icb_arpack_cpp_pkg || exit 1
 mpirun -n 2 ./pdndrv3 || exit 1

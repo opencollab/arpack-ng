@@ -43,6 +43,7 @@ cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnbdr1.f" .
 cp "${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
 cp -fr "${PROJECT_SOURCE_DIR}/m4" .
 cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c" .
+cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp" .
 
 echo "AC_PREREQ([2.68])                                                       "  > configure.ac
 echo "AC_INIT([tstAutotoolsInstall], 1.0)                                     " >> configure.ac
@@ -50,6 +51,8 @@ echo "AM_INIT_AUTOMAKE([foreign])                                             " 
 echo "AC_CONFIG_MACRO_DIR([m4])                                               " >> configure.ac
 echo "                                                                        " >> configure.ac
 echo "AC_PROG_FC                                                              " >> configure.ac
+echo "AC_PROG_CC                                                              " >> configure.ac
+echo "AC_PROG_CXX                                                             " >> configure.ac
 echo "AC_PROG_MKDIR_P                                                         " >> configure.ac
 echo "AC_PROG_MAKE_SET                                                        " >> configure.ac
 echo "PKG_PROG_PKG_CONFIG                                                     " >> configure.ac
@@ -83,7 +86,7 @@ echo "ACLOCAL_AMFLAGS  = -I m4                                                  
 echo "                                                                                                     " >> Makefile.am
 echo "EXTRA_DIST = debug.h stat.h                                                                          " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
-echo "bin_PROGRAMS    = dnbdr1 pdndrv1 icb_arpack_c                                                        " >> Makefile.am
+echo "bin_PROGRAMS    = dnbdr1 pdndrv1 icb_arpack_c icb_arpack_cpp                                         " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
 echo "dnbdr1_SOURCES = dnbdr1.f dnband.f                                                                   " >> Makefile.am
 echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                                                   " >> Makefile.am
@@ -96,6 +99,10 @@ echo "                                                                          
 echo "icb_arpack_c_SOURCES = icb_arpack_c.c                                                                " >> Makefile.am
 echo "icb_arpack_c_CPPFLAGS = \$(ARPACK_CFLAGS)                                                            " >> Makefile.am
 echo "icb_arpack_c_LDADD = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                   " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "icb_arpack_cpp_SOURCES = icb_arpack_cpp.cpp                                                          " >> Makefile.am
+echo "icb_arpack_cpp_CPPFLAGS = \$(ARPACK_CFLAGS)                                                          " >> Makefile.am
+echo "icb_arpack_cpp_LDADD = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                 " >> Makefile.am
 
 # 5. Build and test this new project with configure: for this to be possible, PKG_CHECK_MODULES must work.
 
@@ -106,4 +113,5 @@ make all || exit 1
 
 ./dnbdr1 || exit 1
 ./icb_arpack_c || exit 1
+./icb_arpack_cpp || exit 1
 mpirun -n 2 ./pdndrv1 || exit 1
