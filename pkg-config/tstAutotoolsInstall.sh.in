@@ -45,6 +45,7 @@ cp -fr "${PROJECT_SOURCE_DIR}/m4" .
 cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c" .
 cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp" .
 cp "${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c" .
+cp "${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" .
 
 echo "AC_PREREQ([2.68])                                                       "  > configure.ac
 echo "AC_INIT([tstAutotoolsInstall], 1.0)                                     " >> configure.ac
@@ -75,6 +76,12 @@ echo "AC_SUBST([MPI_C_LIBS], ["\$MPILIBS \$FCLIBS"])                          " 
 echo "CC=\$MPICC                                                              " >> configure.ac
 echo "AC_LANG_POP([C])                                                        " >> configure.ac
 echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([C++])                                                     " >> configure.ac
+echo "AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))    " >> configure.ac
+echo "AC_SUBST([MPI_CXX_LIBS], ["\$MPILIBS \$FCLIBS"])                        " >> configure.ac
+echo "CXX=\$MPICXX                                                            " >> configure.ac
+echo "AC_LANG_POP([C++])                                                      " >> configure.ac
+echo "                                                                        " >> configure.ac
 echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
 echo "AC_SUBST([ARPACK_LIBS])                                                 " >> configure.ac
@@ -93,7 +100,7 @@ echo "ACLOCAL_AMFLAGS  = -I m4                                                  
 echo "                                                                                                     " >> Makefile.am
 echo "EXTRA_DIST = debug.h stat.h                                                                          " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
-echo "bin_PROGRAMS    = dnbdr1 pdndrv1 icb_arpack_c icb_arpack_cpp icb_parpack_c                           " >> Makefile.am
+echo "bin_PROGRAMS    = dnbdr1 pdndrv1 icb_arpack_c icb_arpack_cpp icb_parpack_c icb_parpack_cpp           " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
 echo "dnbdr1_SOURCES = dnbdr1.f dnband.f                                                                   " >> Makefile.am
 echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                                                   " >> Makefile.am
@@ -114,6 +121,10 @@ echo "                                                                          
 echo "icb_parpack_c_SOURCES = icb_parpack_c.c                                                              " >> Makefile.am
 echo "icb_parpack_c_CPPFLAGS = \$(AM_CPPFLAGS) \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                        " >> Makefile.am
 echo "icb_parpack_c_LDADD = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_C_LIBS)  " >> Makefile.am
+echo "                                                                                                        " >> Makefile.am
+echo "icb_parpack_cpp_SOURCES = icb_parpack_cpp.cpp                                                           " >> Makefile.am
+echo "icb_parpack_cpp_CPPFLAGS = \$(AM_CPPFLAGS) \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                         " >> Makefile.am
+echo "icb_parpack_cpp_LDADD = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_CXX_LIBS) " >> Makefile.am
 
 # 5. Build and test this new project with configure: for this to be possible, PKG_CHECK_MODULES must work.
 
@@ -128,3 +139,4 @@ make all || exit 1
 
 mpirun -n 2 ./pdndrv1 || exit 1
 mpirun -n 2 ./icb_parpack_c || exit 1
+mpirun -n 2 ./icb_parpack_cpp || exit 1
