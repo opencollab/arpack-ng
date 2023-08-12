@@ -47,6 +47,7 @@ cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/EXAMPLES/MPI/pdndrv3.f" .
 cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_cpp.cpp" .
+cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_c.c" .
 
 echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
@@ -54,7 +55,7 @@ echo "project(tstCMakeInstall Fortran C CXX)"                           >> CMake
 echo ""                                                                 >> CMakeLists.txt
 echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
-echo "find_package(MPI REQUIRED COMPONENTS Fortran)"                    >> CMakeLists.txt
+echo "find_package(MPI REQUIRED COMPONENTS Fortran C)"                  >> CMakeLists.txt
 echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
@@ -92,6 +93,18 @@ echo "target_include_directories(pdndrv1 INTERFACE ARPACK::ARPACK)"     >> CMake
 echo "target_link_libraries(pdndrv1 ARPACK::ARPACK)"                    >> CMakeLists.txt
 echo "target_include_directories(pdndrv1 INTERFACE PARPACK::PARPACK)"   >> CMakeLists.txt
 echo "target_link_libraries(pdndrv1 PARPACK::PARPACK)"                  >> CMakeLists.txt
+echo ""                                                                     >> CMakeLists.txt
+echo "add_executable(icb_parpack_c icb_parpack_c.c)"                        >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c INTERFACE BLAS::BLAS)"       >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c BLAS::BLAS)"                      >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c INTERFACE LAPACK::LAPACK)"   >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c LAPACK::LAPACK)"                  >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c INTERFACE MPI::MPI_C)"       >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c MPI::MPI_C)"                      >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c INTERFACE ARPACK::ARPACK)"   >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c ARPACK::ARPACK)"                  >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c INTERFACE PARPACK::PARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c PARPACK::PARPACK)"                >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "find_package(PkgConfig REQUIRED)"                                 >> CMakeLists.txt
 echo "pkg_check_modules(ARPACK IMPORTED_TARGET REQUIRED arpack${LIBSUFFIX}${ITF64SUFFIX})"   >> CMakeLists.txt
@@ -132,6 +145,18 @@ echo "target_include_directories(pdndrv3 INTERFACE PkgConfig::ARPACK)"  >> CMake
 echo "target_link_libraries(pdndrv3 PkgConfig::ARPACK)"                 >> CMakeLists.txt
 echo "target_include_directories(pdndrv3 INTERFACE PkgConfig::PARPACK)" >> CMakeLists.txt
 echo "target_link_libraries(pdndrv3 PkgConfig::PARPACK)"                >> CMakeLists.txt
+echo ""                                                                           >> CMakeLists.txt
+echo "add_executable(icb_parpack_c_pkg icb_parpack_c.c)"                          >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c_pkg INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c_pkg BLAS::BLAS)"                        >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c_pkg INTERFACE LAPACK::LAPACK)"     >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c_pkg LAPACK::LAPACK)"                    >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c_pkg INTERFACE MPI::MPI_C)"         >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c_pkg MPI::MPI_C)"                        >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c_pkg INTERFACE PkgConfig::ARPACK)"  >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c_pkg PkgConfig::ARPACK)"                 >> CMakeLists.txt
+echo "target_include_directories(icb_parpack_c_pkg INTERFACE PkgConfig::PARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(icb_parpack_c_pkg PkgConfig::PARPACK)"                >> CMakeLists.txt
 
 # 5. Build and test this new project with cmake: for this to be possible, find_package must work.
 
@@ -145,8 +170,10 @@ make all VERBOSE=1 || exit 1
 ./icb_arpack_c || exit 1
 ./icb_arpack_cpp || exit 1
 mpirun -n 2 ./pdndrv1 || exit 1
+mpirun -n 2 ./icb_parpack_c || exit 1
 
 ./dnbdr3 || exit 1
 ./icb_arpack_c_pkg || exit 1
 ./icb_arpack_cpp_pkg || exit 1
 mpirun -n 2 ./pdndrv3 || exit 1
+mpirun -n 2 ./icb_parpack_c_pkg || exit 1
