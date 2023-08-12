@@ -203,6 +203,8 @@ cd build
 cmake .. -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" || exit 1
 make all VERBOSE=1 || exit 1
 
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/tmp/tstCMakeInstall/local/lib"
+
 ./dnbdr1 || exit 1
 ./icb_arpack_c || exit 1
 ./icb_arpack_cpp || exit 1

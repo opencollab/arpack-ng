@@ -140,6 +140,8 @@ autoreconf --force --verbose --install
 ./configure || exit 1
 make all || exit 1
 
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/tmp/tstAutotoolsInstall/local/lib"
+
 ./dnbdr1 || exit 1
 ./icb_arpack_c || exit 1
 ./icb_arpack_cpp || exit 1
