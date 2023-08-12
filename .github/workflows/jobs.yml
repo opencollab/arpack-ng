@@ -40,7 +40,7 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
       - name: Run job
         run: |
           mkdir build
@@ -88,7 +88,7 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev automake autoconf pkg-config libtool
       - name: Run job
         run: |
           ./bootstrap
