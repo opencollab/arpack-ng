@@ -286,6 +286,10 @@ $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-f
 
 ## Using arpack-ng from your own codebase
 
+The *.pc and *.cmake files provided by `arpack-ng` are only pointing to arpack libraries.
+If you need other libraries (like MPI), you must add them alongside arpack (see CMake example below).
+Examples are provided in `tstCMakeInstall.sh` and `tstAutotoolsInstall.sh` generated after running cmake/configure.
+
 ### With autotools
 
 First, set `PKG_CONFIG_PATH` to the location in the installation directory where `arpack.pc` lies.
@@ -314,9 +318,12 @@ To use PARPACK in your Cmake builds, use `PARPACK::PARPACK` target:
 
 ```cmake
 FIND_PACKAGE(arpackng)
+FIND_PACKAGE(MPI REQUIRED COMPONENTS Fortran)
 ADD_EXECUTABLE(main main.f)
 TARGET_INCLUDE_DIRECTORIES(main PUBLIC PARPACK::PARPACK)
 TARGET_LINK_LIBRARIES(main PARPACK::PARPACK)
+TARGET_INCLUDE_DIRECTORIES(main PUBLIC MPI::MPI_Fortran)
+TARGET_LINK_LIBRARIES(main MPI::MPI_Fortran)
 ```
 
 Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_package` won't find arpack-ng cmake file).
