@@ -10,6 +10,7 @@ TESTS = arpackmm.sh issue401.sh issue215.sh
 
 arpackmm_SOURCES = arpackmm.cpp
 
+pkgincludedir = $(includedir)/arpack@ITF64SUFFIX@
 if EIGEN
 pkginclude_HEADERS = arpackSolver.hpp
 endif

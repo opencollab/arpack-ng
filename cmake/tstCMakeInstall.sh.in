@@ -17,7 +17,7 @@ export LIBSUFFIX="${1%-*}"
 echo "LIBSUFFIX: $LIBSUFFIX"
 export ITF64SUFFIX="${1#*-}"
 echo "ITF64SUFFIX: $ITF64SUFFIX"
-cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON -DICB=ON -DLIBSUFFIX="${LIBSUFFIX}" -DITF64SUFFIX="${ITF64SUFFIX}" .
+cmake -DCMAKE_INSTALL_PREFIX="${TMP_PREFIX}" -DMPI=ON -DICB=ON -DEIGEN=ON -DLIBSUFFIX="${LIBSUFFIX}" -DITF64SUFFIX="${ITF64SUFFIX}" .
 make all install
 tree "${TMP_PREFIX}"
 
@@ -49,6 +49,7 @@ cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_cpp.cpp" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" .
+cp "@PROJECT_SOURCE_DIR@/EXAMPLES/MATRIX_MARKET/arpackmm.cpp" .
 
 echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
@@ -58,6 +59,7 @@ echo "find_package(BLAS REQUIRED)"                                      >> CMake
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
 echo "find_package(MPI REQUIRED COMPONENTS Fortran C CXX)"              >> CMakeLists.txt
 echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
+echo "find_package(Eigen3 3.3 REQUIRED)"                                >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
 echo "target_include_directories(dnbdr1 INTERFACE BLAS::BLAS)"          >> CMakeLists.txt
@@ -82,6 +84,16 @@ echo "target_include_directories(icb_arpack_cpp INTERFACE LAPACK::LAPACK)" >> CM
 echo "target_link_libraries(icb_arpack_cpp LAPACK::LAPACK)"                >> CMakeLists.txt
 echo "target_include_directories(icb_arpack_cpp INTERFACE ARPACK::ARPACK)" >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_cpp ARPACK::ARPACK)"                >> CMakeLists.txt
+echo ""                                                              >> CMakeLists.txt
+echo "add_executable(arpackmm arpackmm.cpp)"                         >> CMakeLists.txt
+echo "target_include_directories(arpackmm INTERFACE BLAS::BLAS)"     >> CMakeLists.txt
+echo "target_link_libraries(arpackmm BLAS::BLAS)"                    >> CMakeLists.txt
+echo "target_include_directories(arpackmm INTERFACE LAPACK::LAPACK)" >> CMakeLists.txt
+echo "target_link_libraries(arpackmm LAPACK::LAPACK)"                >> CMakeLists.txt
+echo "target_include_directories(arpackmm INTERFACE ARPACK::ARPACK)" >> CMakeLists.txt
+echo "target_link_libraries(arpackmm ARPACK::ARPACK)"                >> CMakeLists.txt
+echo "target_include_directories(arpackmm INTERFACE Eigen3::Eigen)"  >> CMakeLists.txt
+echo "target_link_libraries(arpackmm Eigen3::Eigen)"                 >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(pdndrv1 dnband.f pdndrv1.f)"                       >> CMakeLists.txt
 echo "target_include_directories(pdndrv1 INTERFACE BLAS::BLAS)"         >> CMakeLists.txt
@@ -194,6 +206,7 @@ make all VERBOSE=1 || exit 1
 ./dnbdr1 || exit 1
 ./icb_arpack_c || exit 1
 ./icb_arpack_cpp || exit 1
+./arpackmm -h || exit 1
 mpirun -n 2 ./pdndrv1 || exit 1
 mpirun -n 2 ./icb_parpack_c || exit 1
 mpirun -n 2 ./icb_parpack_cpp || exit 1
