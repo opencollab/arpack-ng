@@ -51,7 +51,7 @@ cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" .
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/MATRIX_MARKET/arpackmm.cpp" .
 
-echo "cmake_minimum_required(VERSION 3.0)"                               > CMakeLists.txt
+echo "cmake_minimum_required(VERSION 3.5)"                               > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "project(tstCMakeInstall Fortran C CXX)"                           >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
