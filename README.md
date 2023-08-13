@@ -286,8 +286,17 @@ $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-f
 
 ## Using arpack-ng from your own codebase
 
-The *.pc and *.cmake files provided by `arpack-ng` are only pointing to arpack libraries.
+The `*.pc` and `*.cmake` files provided by `arpack-ng` are only pointing to arpack libraries.
 If you need other libraries (like MPI), you must add them alongside arpack (see CMake example below).
+
+Typically, if you need
+
+- ARPACK: at compile/link time, you'll need to provide BLAS and LAPACK.
+
+- ARPACK with eigen support (arpackSolver): at compile/link time, you'll need to provide BLAS, LAPACK and Eigen.
+
+- PARPACK: at compile/link time, you'll need to provide BLAS, LAPACK and MPI.
+
 Examples are provided in `tstCMakeInstall.sh` and `tstAutotoolsInstall.sh` generated after running cmake/configure.
 
 ### With autotools
