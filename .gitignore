@@ -17,7 +17,6 @@ libtool
 .deps/
 arpack*.pc
 parpack*.pc
-arpackSolver*.pc
 arpackdef.h
 arpackicb.h
 tstAutotoolsInstall.sh

@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 # Testing that PKG_CHECK_MODULES works.
-# Note: this script must not be added to the test suite as it will change cmake options.
+# Note: this script must not be added to the test suite as it will change configure options.
 
 echo "***************************************************************************************"
 
@@ -10,8 +10,8 @@ export TMP_DIR="/tmp/tstAutotoolsInstall"
 rm -fr "${TMP_DIR}" # Make sure we restart from scratch.
 mkdir -p "${TMP_DIR}"
 
-# 2. Rerun cmake with prefix, install arpack-ng.
-#    Note: this script must not be added to the test suite as it will change cmake options.
+# 2. Rerun autotools with prefix, install arpack-ng.
+#    Note: this script must not be added to the test suite as it will change configure options.
 
 make clean
 make distclean
@@ -22,7 +22,7 @@ export LIBSUFFIX="${1%-*}"
 echo "LIBSUFFIX: $LIBSUFFIX"
 export ITF64SUFFIX="${1#*-}"
 echo "ITF64SUFFIX: $ITF64SUFFIX"
-LIBSUFFIX="${LIBSUFFIX}" ITF64SUFFIX="${ITF64SUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi
+LIBSUFFIX="${LIBSUFFIX}" ITF64SUFFIX="${ITF64SUFFIX}" ./configure --prefix="${TMP_PREFIX}" --enable-mpi --enable-icb --enable-eigen
 make all install
 tree "${TMP_PREFIX}"
 
@@ -33,7 +33,7 @@ export PKG_CONFIG_PATH="$(find ${TMP_PREFIX} -name arpack${LIBSUFFIX}${ITF64SUFF
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH%/*}" # Same as dirname.
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
 
-# 4. Create new cmake project, in temporary directory, with files from arpack-ng.
+# 4. Create new autotools project, in temporary directory, with files from arpack-ng.
 
 mkdir -p tstAutotoolsInstall
 cd tstAutotoolsInstall
@@ -42,6 +42,11 @@ cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnband.f" .
 cp "${PROJECT_SOURCE_DIR}/EXAMPLES/BAND/dnbdr1.f" .
 cp "${PROJECT_SOURCE_DIR}/PARPACK/EXAMPLES/MPI/pdndrv1.f" .
 cp -fr "${PROJECT_SOURCE_DIR}/m4" .
+cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_c.c" .
+cp "${PROJECT_SOURCE_DIR}/TESTS/icb_arpack_cpp.cpp" .
+cp "${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_c.c" .
+cp "${PROJECT_SOURCE_DIR}/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" .
+cp "${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET/arpackmm.cpp" .
 
 echo "AC_PREREQ([2.68])                                                       "  > configure.ac
 echo "AC_INIT([tstAutotoolsInstall], 1.0)                                     " >> configure.ac
@@ -49,6 +54,8 @@ echo "AM_INIT_AUTOMAKE([foreign])                                             " 
 echo "AC_CONFIG_MACRO_DIR([m4])                                               " >> configure.ac
 echo "                                                                        " >> configure.ac
 echo "AC_PROG_FC                                                              " >> configure.ac
+echo "AC_PROG_CC                                                              " >> configure.ac
+echo "AC_PROG_CXX                                                             " >> configure.ac
 echo "AC_PROG_MKDIR_P                                                         " >> configure.ac
 echo "AC_PROG_MAKE_SET                                                        " >> configure.ac
 echo "PKG_PROG_PKG_CONFIG                                                     " >> configure.ac
@@ -63,6 +70,20 @@ echo "AC_LANG_PUSH([Fortran 77])                                              " 
 echo "AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))" >> configure.ac
 echo "F77=\$MPIF77                                                            " >> configure.ac
 echo "AC_SUBST([MPI_Fortran_LIBS])                                            " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([C])                                                       " >> configure.ac
+echo "AX_MPI([], AC_MSG_ERROR([could not compile a C MPI test program]))      " >> configure.ac
+echo "AC_SUBST([MPI_C_LIBS], ["\$MPILIBS \$FCLIBS"])                          " >> configure.ac
+echo "CC=\$MPICC                                                              " >> configure.ac
+echo "AC_LANG_POP([C])                                                        " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "AC_LANG_PUSH([C++])                                                     " >> configure.ac
+echo "AX_MPI([], AC_MSG_ERROR([could not compile a C++ MPI test program]))    " >> configure.ac
+echo "AC_SUBST([MPI_CXX_LIBS], ["\$MPILIBS \$FCLIBS"])                        " >> configure.ac
+echo "CXX=\$MPICXX                                                            " >> configure.ac
+echo "AC_LANG_POP([C++])                                                      " >> configure.ac
+echo "                                                                        " >> configure.ac
+echo "PKG_CHECK_MODULES([EIGEN3], [eigen3 >= 3.3])                            " >> configure.ac
 echo "                                                                        " >> configure.ac
 echo "PKG_CHECK_MODULES([ARPACK], [arpack${LIBSUFFIX}${ITF64SUFFIX}])         " >> configure.ac
 echo "AC_SUBST([ARPACK_CFLAGS])                                               " >> configure.ac
@@ -82,7 +103,7 @@ echo "ACLOCAL_AMFLAGS  = -I m4                                                  
 echo "                                                                                                     " >> Makefile.am
 echo "EXTRA_DIST = debug.h stat.h                                                                          " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
-echo "bin_PROGRAMS    = dnbdr1 pdndrv1                                                                     " >> Makefile.am
+echo "bin_PROGRAMS    = dnbdr1 pdndrv1 icb_arpack_c icb_arpack_cpp icb_parpack_c icb_parpack_cpp arpackmm  " >> Makefile.am
 echo "                                                                                                     " >> Makefile.am
 echo "dnbdr1_SOURCES = dnbdr1.f dnband.f                                                                   " >> Makefile.am
 echo "dnbdr1_FFLAGS  = \$(ARPACK_CFLAGS)                                                                   " >> Makefile.am
@@ -91,13 +112,41 @@ echo "                                                                          
 echo "pdndrv1_SOURCES = pdndrv1.f dnband.f                                                                 " >> Makefile.am
 echo "pdndrv1_FFLAGS  = \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                                               " >> Makefile.am
 echo "pdndrv1_LDADD   = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_Fortran_LIBS)" >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "icb_arpack_c_SOURCES = icb_arpack_c.c                                                                " >> Makefile.am
+echo "icb_arpack_c_CPPFLAGS = \$(ARPACK_CFLAGS)                                                            " >> Makefile.am
+echo "icb_arpack_c_LDADD = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                   " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "icb_arpack_cpp_SOURCES = icb_arpack_cpp.cpp                                                          " >> Makefile.am
+echo "icb_arpack_cpp_CPPFLAGS = \$(ARPACK_CFLAGS)                                                          " >> Makefile.am
+echo "icb_arpack_cpp_LDADD = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                 " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "arpackmm_SOURCES = arpackmm.cpp                                                                      " >> Makefile.am
+echo "arpackmm_CPPFLAGS = \$(ARPACK_CFLAGS) \$(EIGEN3_CFLAGS)                                              " >> Makefile.am
+echo "arpackmm_LDADD = \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS)                                       " >> Makefile.am
+echo "                                                                                                     " >> Makefile.am
+echo "icb_parpack_c_SOURCES = icb_parpack_c.c                                                              " >> Makefile.am
+echo "icb_parpack_c_CPPFLAGS = \$(AM_CPPFLAGS) \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                        " >> Makefile.am
+echo "icb_parpack_c_LDADD = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_C_LIBS)  " >> Makefile.am
+echo "                                                                                                        " >> Makefile.am
+echo "icb_parpack_cpp_SOURCES = icb_parpack_cpp.cpp                                                           " >> Makefile.am
+echo "icb_parpack_cpp_CPPFLAGS = \$(AM_CPPFLAGS) \$(PARPACK_CFLAGS) \$(ARPACK_CFLAGS)                         " >> Makefile.am
+echo "icb_parpack_cpp_LDADD = \$(PARPACK_LIBS) \$(ARPACK_LIBS) \$(LAPACK_LIBS) \$(BLAS_LIBS) \$(MPI_CXX_LIBS) " >> Makefile.am
 
-# 5. Build and test this new project with cmake: for this to be possible, PKG_CHECK_MODULES must work.
+# 5. Build and test this new project with configure: for this to be possible, PKG_CHECK_MODULES must work.
 
 autoreconf --force --verbose --install
 
-./configure
-make all
+./configure || exit 1
+make all || exit 1
 
-./dnbdr1
-mpirun -n 2 ./pdndrv1
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/tmp/tstAutotoolsInstall/local/lib"
+
+./dnbdr1 || exit 1
+./icb_arpack_c || exit 1
+./icb_arpack_cpp || exit 1
+./arpackmm -h || exit 1
+
+mpirun -n 2 ./pdndrv1 || exit 1
+mpirun -n 2 ./icb_parpack_c || exit 1
+mpirun -n 2 ./icb_parpack_cpp || exit 1
