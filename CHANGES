@@ -13,6 +13,7 @@ arpack-ng - next
 
 [ Kyle Guinn ]
  * Build PARPACK p[sd]lamch10.f with FFLAGS from ./configure instead of forcing -O0.  Build all of PARPACK with AM_FFLAGS.
+ * [BUG FIX] Don't install pkg-config files for libraries that were not built.
 
 [ Markus Mützel ]
  * CMake: Fix running CTests on Windows.
