@@ -1,5 +1,8 @@
 arpack-ng - 3.9.1
 
+[ Kyle Guinn ]
+ * [BUG FIX] Don't install pkg-config files for libraries that were not built.
+
 [ Fabien Péan ]
  * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
 

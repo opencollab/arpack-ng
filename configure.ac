@@ -347,14 +347,12 @@ AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_SUBST([PARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS $MPI_Fortran_LIBS"])
 
 AC_CONFIG_FILES([
-	arpack$LIBSUFFIX$ITF64SUFFIX.pc:pkg-config/arpack.pc.in
-	parpack$LIBSUFFIX$ITF64SUFFIX.pc:pkg-config/parpack.pc.in
+	SRC/arpack$LIBSUFFIX$ITF64SUFFIX.pc:SRC/arpack.pc.in
+	PARPACK/SRC/MPI/parpack$LIBSUFFIX$ITF64SUFFIX.pc:PARPACK/SRC/MPI/parpack.pc.in
 ], [], [LIBSUFFIX="$LIBSUFFIX"; ITF64SUFFIX="$ITF64SUFFIX"])
 
 dnl We do NOT want arpackng*.cmake files to be created: @MPI@ can not be replaced.
-AC_CONFIG_FILES([
-	tstAutotoolsInstall.sh:pkg-config/tstAutotoolsInstall.sh.in
-], [], [abs_top_builddir="$abs_top_builddir"])
+AC_CONFIG_FILES([tstAutotoolsInstall.sh], [chmod +x tstAutotoolsInstall.sh], [abs_top_builddir="$abs_top_builddir"])
 
 AC_CONFIG_FILES([
 	arpackdef.h

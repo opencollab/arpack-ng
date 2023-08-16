@@ -26,8 +26,3 @@ endif
 
 EXTRA_DIST = README.md PARPACK_CHANGES CHANGES DOCUMENTS VISUAL_STUDIO \
 detect_arpack_bug.m4 CMakeLists.txt
-
-pkgconfig_DATA = arpack@LIBSUFFIX@@ITF64SUFFIX@.pc parpack@LIBSUFFIX@@ITF64SUFFIX@.pc
-
-# Due to the LIBSUFFIX/ITF64SUFFIX, configure doesn't automatically clean this file:
-DISTCLEANFILES = arpack@LIBSUFFIX@@ITF64SUFFIX@.pc parpack@LIBSUFFIX@@ITF64SUFFIX@.pc
