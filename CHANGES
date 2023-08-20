@@ -15,6 +15,7 @@ arpack-ng - 3.9.1
  * README: Add details on Windows installation.
 
 [ Franck Houssen ]
+ * [BUG FIX] Fix pyarpack samples
  * [BUG FIX] Fix install: headers in /path/to/local/include/arpack for ICB samples
  * [BUG FIX] Fix install: headers in /path/to/local/include/arpack
  * arpackmm: allow for using LA/SA magnitudes.
