@@ -82,7 +82,7 @@ if (PYTHON3)
 
     find_package(PythonInterp 3 REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
-    find_package(Boost 1.83 COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
+    find_package(Boost 1.8 COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
 
     set(EIGEN "ON")
 endif ()
