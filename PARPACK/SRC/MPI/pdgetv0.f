@@ -178,7 +178,7 @@ c     | Local Scalars & Arrays |
 c     %------------------------%
 c
       logical    first, inits, orth
-      integer    idist, iseed(4), iter, msglvl, jj, myid, igen
+      integer    idist, iseed(4), iter, msglvl, jj, myid
       Double precision
      &           rnorm0, buf2(1)
       save       first, iseed, inits, iter, msglvl, orth, rnorm0
@@ -217,32 +217,22 @@ c     | Executable Statements |
 c     %-----------------------%
 c
 c
+      if (inits) then
+c
 c     %-----------------------------------%
 c     | Initialize the seed of the LAPACK |
 c     | random number generator           |
+c     | Note: seed array elements must be |
+c     | between 0 and 4095 (12-bit coded) |
+c     | iseed(4) must be odd              |
 c     %-----------------------------------%
 c
-      if (inits) then
-c
-c        %-----------------------------------%
-c        | Generate a seed on each processor |
-c        | using process id (myid).          |
-c        | Note: the seed must be between 1  |
-c        | and 4095.  iseed(4) must be odd.  |
-c        %-----------------------------------%
-c
          call MPI_COMM_RANK(comm, myid, ierr)
-         igen = 1000 + 2*myid + 1
-         if (igen .gt. 4095) then
-            write(0,*) 'Error in p_getv0: seed exceeds 4095!'
-         end if
 c
-         iseed(1) = igen/1000
-         igen     = mod(igen,1000)
-         iseed(2) = igen/100
-         igen     = mod(igen,100)
-         iseed(3) = igen/10
-         iseed(4) = mod(igen,10)
+         iseed(1) = 1
+         iseed(2) = 3
+         iseed(3) = 5
+         iseed(4) = 1+2*mod(myid,2048)
 c
          inits = .false.
       end if
