@@ -118,9 +118,9 @@ jobs:
       - name: Build boost-python for python3 (not provided by apt-cache)
         run : |
           sudo apt-get -y install wget
-          wget https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.gz
-          tar -xf boost_1_79_0.tar.gz
-          cd boost_1_79_0
+          wget https://sourceforge.net/projects/boost/files/boost/1.83.0/boost_1_83_0.tar.gz
+          tar -xf boost_1_83_0.tar.gz
+          cd boost_1_83_0
           ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
           sudo ./b2 toolset=gcc install
           sudo apt-get install locate
