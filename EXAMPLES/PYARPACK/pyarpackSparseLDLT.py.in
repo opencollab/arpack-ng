@@ -19,8 +19,8 @@ for k in range(n):
             Aij = np.append(Aij, np.complex128(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k-1:
             Aij = np.append(Aij, np.complex128(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-        if l == k+1:
-            Aij = np.append(Aij, np.complex128(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+        if l == k+1: # Note: matrix must be hermitian.
+            Aij = np.append(Aij, np.complex128(complex(-101.,  101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for k, l, Akl in zip(i, j, Aij):
     print("A[", k, ",", l, "] =", Akl)
 A = (n, i, j, Aij) # coo format: dimension, i 0-based indices, j 0-based indices, Aij values.
@@ -80,9 +80,9 @@ for k in range(n):
         if l == k-1:
             Aij = np.append(Aij, np.complex64(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
             Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-        if l == k+1:
-            Aij = np.append(Aij, np.complex64(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+        if l == k+1: # Note: matrix must be hermitian.
+            Aij = np.append(Aij, np.complex64(complex(-101.,  101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex( 16.6, -16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for k, l, Akl in zip(i, j, Aij):
     print("A[", k, ",", l, "] =", Akl)
 for k, l, Bkl in zip(i, j, Bij):
