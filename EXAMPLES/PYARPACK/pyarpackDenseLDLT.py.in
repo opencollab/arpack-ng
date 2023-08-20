@@ -13,8 +13,8 @@ for k in range(n):
             Aij = np.append(Aij, np.complex128(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         elif l == k-1:
             Aij = np.append(Aij, np.complex128(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-        elif l == k+1:
-            Aij = np.append(Aij, np.complex128(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+        elif l == k+1: # Note: matrix must be hermitian.
+            Aij = np.append(Aij, np.complex128(complex(-101.,  101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         else:
             Aij = np.append(Aij, np.complex128(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for idx, val in enumerate(Aij):
@@ -70,9 +70,9 @@ for k in range(n):
         elif l == k-1:
             Aij = np.append(Aij, np.complex64(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
             Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-        elif l == k+1:
-            Aij = np.append(Aij, np.complex64(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+        elif l == k+1: # Note: matrix must be hermitian.
+            Aij = np.append(Aij, np.complex64(complex(-101.,  101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Bij = np.append(Bij, np.complex64(complex( 16.6, -16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         else:
             Aij = np.append(Aij, np.complex64(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
             Bij = np.append(Bij, np.complex64(complex(   0.,    0.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
