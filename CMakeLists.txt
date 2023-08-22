@@ -95,7 +95,6 @@ if (EIGEN)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)
         set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
     endif ()
-    find_program (BASH_PROGRAM bash)
 
     # Look for headers.
     find_path(EIGEN3_ITERATIVE_SOLVER_DIR NAMES IterativeLinearSolvers PATHS ${EIGEN3_INCLUDE_DIR} PATH_SUFFIXES Eigen)
@@ -692,6 +691,8 @@ function(build_tests)
     add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
     if (EIGEN)
+      find_program (BASH_PROGRAM bash)
+
       set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
 
       add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
@@ -703,13 +704,13 @@ function(build_tests)
       configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
-      add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
+      add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu arpackmm.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.sh)
-      add_test(NAME issue401_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue401.sh)
+      add_test(NAME issue401_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu issue401.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.sh)
-      add_test(NAME issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue215.sh)
+      add_test(NAME issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu issue215.sh)
     endif()
 
     if (PYTHON3)
