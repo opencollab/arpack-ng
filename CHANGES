@@ -2,6 +2,7 @@ arpack-ng - 3.9.1
 
 [ Fabien Péan ]
  * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
+ * Update arpackmm test suite: enable solving non-symmetric tests with BiCG solver 
 
 [ Szabolcs Horvát ]
  * [BUG FIX] Ensure that LAPACK RNG state is propagated (regression in 3.9.0).
