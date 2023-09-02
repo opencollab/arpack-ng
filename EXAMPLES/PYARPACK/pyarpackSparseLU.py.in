@@ -33,8 +33,7 @@ arpackSlv.nbEV = 1
 arpackSlv.nbCV = 2*arpackSlv.nbEV + 1
 arpackSlv.mag = 'LM'
 arpackSlv.maxIt = 200
-arpackSlv.slvOffset = 0.
-arpackSlv.slvScale = 1.
+arpackSlv.slvPvtThd = 1.e-6
 arpackSlv.symPb = False
 
 # Solve eigen problem.
@@ -98,8 +97,7 @@ arpackSlv.nbEV = 2
 arpackSlv.nbCV = 2*arpackSlv.nbEV + 1
 arpackSlv.mag = 'LM'
 arpackSlv.maxIt = 200
-arpackSlv.slvOffset = 0.
-arpackSlv.slvScale = 1.
+arpackSlv.slvPvtThd = 1.e-6
 arpackSlv.sigmaReal = 1
 arpackSlv.sigmaImag = 1
 arpackSlv.symPb = False
