@@ -1,6 +1,7 @@
 arpack-ng - 3.9.1
 
 [ Fabien Péan ]
+ * pyarpack: Ensure that the matrix properties (symmetric/hermitian) fit the solver (CG/LDL) with which they are used in the tests 
  * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
 
 [ Szabolcs Horvát ]
