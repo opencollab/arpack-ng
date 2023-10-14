@@ -1,10 +1,11 @@
 arpack-ng - 3.9.1
 
 [ Fabien Péan ]
- * pyarpack: Ensure that the matrix properties (symmetric/hermitian) fit the solver (CG/LDL) with which they are used in the tests 
+ * pyarpack: Ensure that the matrix properties (symmetric/hermitian) fit the solver (CG/LDL) with which they are used in the tests
  * [BUG FIX] Tests for PARPACK with C/C++ bindings icb_parpack_c and icb_parpack_cpp are now really parallel and split the problem across MPI processes.
- * Update arpackmm test suite: enable solving non-symmetric tests with BiCG solver 
-
+ * Update arpackmm test suite: enable solving non-symmetric tests with BiCG solver
+ * README: Add details on Windows installation.
+ 
 [ Szabolcs Horvát ]
  * [BUG FIX] Ensure that LAPACK RNG state is propagated (regression in 3.9.0).
  * [BUG FIX] Ensure that separate random seeds are used on different parallel thread in D and S versions of functions (issue from original ARPACK).
@@ -12,9 +13,6 @@ arpack-ng - 3.9.1
 [ Ruoyu Feng ]
  * ICB(arpackdef.h): distinct intel llvm compiler (icx with clang-cl) from msvc on windows
  * ICB(arpackdef.h): Undef macro I if complex.h from msvc version is loaded, which is an usual name and causes issues on arpackSolver.
-
-[ Fabien Péan ]
- * README: Add details on Windows installation.
 
 [ Franck Houssen ]
  * [BUG FIX] Fix install: headers in /path/to/local/include/arpack for ICB samples
@@ -25,7 +23,7 @@ arpack-ng - 3.9.1
  * [BUG FIX] arpackmm: fix restart.
  * README: document where to find arpack user's guide.
 
- -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 11 Feb 2023 13:52:57 +0100
+ -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 14 Oct 2023 13:37:37 +0200
 
 arpack-ng - 3.9.0
 
