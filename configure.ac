@@ -1,5 +1,5 @@
 AC_PREREQ(2.67)
-AC_INIT([ARPACK-NG],[3.9.0],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
+AC_INIT([ARPACK-NG],[3.9.1],[https://github.com/opencollab/arpack-ng/issues/],[arpack-ng],[https://github.com/opencollab/arpack-ng/])
 AC_CONFIG_SRCDIR([SRC/version.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -357,6 +357,8 @@ AC_CONFIG_FILES([tstAutotoolsInstall.sh], [chmod +x tstAutotoolsInstall.sh], [ab
 AC_CONFIG_FILES([
 	arpackdef.h
 	arpackicb.h
+	cmake/arpackng-config-version.cmake
+	cmake/arpackng-config.cmake
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile

@@ -51,7 +51,7 @@ do
                       export extraGenPb="$shiftOpt" # Force shift if genPb.
                     fi
 
-                    if [[ "$slv" == *CG* ]]; then
+                    if [[ "$slv" == *" CG "* ]]; then
                       if [[ "$eigPb" == *nonSymPb* ]]; then
                         continue # Skip CG that could fail (CG is meant to deal with sym matrices).
                       fi

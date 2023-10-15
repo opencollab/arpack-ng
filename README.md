@@ -370,7 +370,7 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 
 How to use arpack-ng with Intel MKL:
 
-- Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel`).
+- Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel10_64lp` for lp64, `BLA_VENDOR=Intel10_64ilp` for ilp64).
 - Refers to the Intel Link Advisor: <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html>.
 
 ## Good luck and enjoy 🎊

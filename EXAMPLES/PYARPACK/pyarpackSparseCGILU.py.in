@@ -18,9 +18,9 @@ for k in range(n):
         if l == k:
             Aij = np.append(Aij, np.complex128(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k-1:
-            Aij = np.append(Aij, np.complex128(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex(-100., -100.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k+1:
-            Aij = np.append(Aij, np.complex128(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex128(complex( -100.,  100.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for k, l, Akl in zip(i, j, Aij):
     print("A[", k, ",", l, "] =", Akl)
 A = (n, i, j, Aij) # coo format: dimension, i 0-based indices, j 0-based indices, Aij values.
@@ -69,7 +69,6 @@ n = 8
 i = np.array([], dtype='@PYINT@')
 j = np.array([], dtype='@PYINT@')
 Aij = np.array([], dtype='complex64')
-Bij = np.array([], dtype='complex64')
 for k in range(n):
     for l in [k-1, k, k+1]:
         if l < 0 or l > n-1:
@@ -78,19 +77,13 @@ for k in range(n):
         j = np.append(j, np.@PYINT@(l+1)) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k:
             Aij = np.append(Aij, np.complex64(complex( 200.,  200.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(complex( 33.3,  33.3))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k-1:
-            Aij = np.append(Aij, np.complex64(complex(-101., -101.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex(-100., -100.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
         if l == k+1:
-            Aij = np.append(Aij, np.complex64(complex( -99.,  -99.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
-            Bij = np.append(Bij, np.complex64(complex( 16.6,  16.6))) # Casting value on append is MANDATORY or C++ won't get the expected type.
+            Aij = np.append(Aij, np.complex64(complex( -100.,  100.))) # Casting value on append is MANDATORY or C++ won't get the expected type.
 for k, l, Akl in zip(i, j, Aij):
     print("A[", k, ",", l, "] =", Akl)
-for k, l, Bkl in zip(i, j, Bij):
-    print("B[", k, ",", l, "] =", Bkl)
 A = (n, i, j, Aij) # coo format: dimension, i 1-based indices, j 1-based indices, Aij values.
-B = (n, i, j, Bij) # coo format: dimension, i 1-based indices, j 1-based indices, Bij values.
 
 # Get and tune arpack solver.
 
@@ -111,9 +104,9 @@ arpackSlv.symPb = False
 
 # Solve eigen problem.
 
-rc = arpackSlv.solve(A, B)
+rc = arpackSlv.solve(A)
 assert rc == 0, "bad solve"
-rc = arpackSlv.checkEigVec(A, B, 1.)
+rc = arpackSlv.checkEigVec(A)
 assert rc == 0, "bad checkEigVec"
 
 # Print out results (mode selected, eigen vectors, eigen values, ...).
