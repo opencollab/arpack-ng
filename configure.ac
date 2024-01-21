@@ -342,7 +342,7 @@ AM_CONDITIONAL([BLACS], [false])
 AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([EIGEN], [test x"$enable_eigen" != x"no"])
 
-m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], [${libdir}/pkgconfig])])
+m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR], [AC_SUBST([pkgconfigdir], ['${libdir}/pkgconfig'])])
 AC_SUBST([ARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS"])
 AC_SUBST([PARPACK_PC_LIBS_PRIVATE], ["$LAPACK_LIBS $BLAS_LIBS $MPI_Fortran_LIBS"])
 
