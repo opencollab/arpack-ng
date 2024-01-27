@@ -1,8 +1,6 @@
 AUTOMAKE_OPTIONS = subdir-objects # Needed as debug/stat* are not in current directory.
 
 F77 = $(MPIF77)
-FFLAGS_SAV = @FFLAGS@
-FFLAGS =
 
 PSRC = pcontext.f
 SSRC = psnaitr.f psnapps.f psnaup2.f psnaupd.f psneigh.f psneupd.f psngets.f \
