@@ -39,3 +39,8 @@ if ICB
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
 endif
+
+pkgconfig_DATA = parpack@LIBSUFFIX@@ITF64SUFFIX@.pc
+
+# Due to the LIBSUFFIX/ITF64SUFFIX, configure doesn't automatically clean this file:
+DISTCLEANFILES = parpack@LIBSUFFIX@@ITF64SUFFIX@.pc
