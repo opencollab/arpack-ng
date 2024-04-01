@@ -42,6 +42,27 @@ About ILP64 support:
 - Sequential arpack supports [ILP64](https://www.intel.com/content/www/us/en/develop/documentation/onemkl-linux-developer-guide/top/linking-your-application-with-onemkl/linking-in-detail/linking-with-interface-libraries/using-the-ilp64-interface-vs-lp64-interface.html), but, parallel arpack doesn't.
 - Reminder: you can NOT mix `ILP64` with `LP64`. If you compile `arpack-ng` with `ILP64` (resp. `LP64`) support, you MUST insure your BLAS/LAPACK is compliant with `ILP64` (resp. `LP64`).
 - Set `INTERFACE64` at configure time.
+- As this can not be automated, you need to make sure that the BLAS/LAPACK libraries you pass to `arpack-ng`:
+  - Are built with ILP64 support.
+    In case these ILP64 BLAS/LAPACK libraries have a non-usual name, you must specify them like so:
+    ```
+        >> ./configure --with-blas=openblas64_ ...
+    ```
+  - Do export ILP64-flavored symbols. In case these symbols have a non-usual name, you must:
+    - Check for ILP64 symbols exported by the ILP64 BLAS/LAPACK libraries:
+      ```
+         >> nm /path/to/libopenblas64_.so | grep scopy64_
+            0000000000000000 T scopy64_
+      ```
+    - Specify them to `arpack-ng` using `SYMBOLSUFFIX`:
+      ```
+         >> SYMBOLSUFFIX=64_ ./configure ...
+            ...
+            Configuration summary for ARPACK-NG
+            ...
+            FFLAGS              :  -fdefault-integer-8 -Dscopy=scopy64_ ...
+      ```
+      FFLAGS used by `arpack-ng` (built from `SYMBOLSUFFIX` - reported in configure log) *must* redirect the usual symbols to the non-usual ones exported by the ILP64 BLAS/LAPACK libraries: this check is the responsability of the user.
 
 Note for F77/F90 developers:
 

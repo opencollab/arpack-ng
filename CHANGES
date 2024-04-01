@@ -28,6 +28,9 @@ arpack-ng - 3.9.1
 
  -- Franck Houssen <fghoussen@users.noreply.github.com> Sat, 14 Oct 2023 13:37:37 +0200
 
+[ Franck Houssen ]
+ * Add documentation on ILP64.
+
 arpack-ng - 3.9.0
 
 [ Vikas Sharma ]
