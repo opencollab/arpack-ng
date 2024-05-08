@@ -211,6 +211,8 @@ jobs:
           # https://github.com/actions/runner-images/issues/6459
           # https://github.com/actions/runner-images/issues/6507
           # https://github.com/actions/runner-images/issues/2322
+          python3 -m venv ./venv
+          source ./venv/bin/activate
           brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
           brew reinstall gcc # brings gfortran on path
           brew install cmake eigen boost-python3 python3 
