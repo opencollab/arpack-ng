@@ -387,11 +387,11 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
   PARPACK doesn't: each MPI processor must handle and solve a subpart of the eigen system (matrices) only (independently from the other processors).
   See examples for Fortran in folder `PARPACK/EXAMPLES/MPI`, and for C/C++ examples in `PARPACK/TESTS/MPI/icb_parpack_c.c` and `PARPACK/TESTS/MPI/icb_parpack_cpp.cpp`
 
-## Using MKL instead of BLAS / LAPACK
+## Using MKL (also known as Intel oneAPI or oneMKL) instead of BLAS / LAPACK
 
 How to use arpack-ng with Intel MKL:
 
 - Let autotools/cmake find MKL for you based on pkg-config files (setting `PKG_CONFIG_PATH`) or cmake options (`BLA_VENDOR=Intel10_64lp` for lp64, `BLA_VENDOR=Intel10_64ilp` for ilp64).
-- Refers to the Intel Link Advisor: <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html>.
+- Refers to the Intel Link Advisor: <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html>. Whatever build system you use, you must make sure (e.g. with `make VERBOSE=1`) in the very end that the compile/link options used by the compiler/linker are _exactly_ what Intel libraries expect.
 
 ## Good luck and enjoy 🎊
