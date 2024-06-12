@@ -1,0 +1,68 @@
+name: arch-emu
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency: ci-arch-emu-${{ github.ref }}
+
+jobs:
+
+  alpine:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        # Use emulated shell as default
+        shell: alpine.sh {0}
+
+    strategy:
+      # Allow other runners in the matrix to continue if some fail
+      fail-fast: false
+
+      matrix:
+        # For available CPU architectures, see:
+        # https://github.com/marketplace/actions/setup-alpine-linux-environment
+        arch: [x86, aarch64, armv7, ppc64le, riscv64, s390x]
+
+    name: alpine (${{ matrix.arch }})
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: install dependencies
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: ${{ matrix.arch }}
+          packages: >
+            bash
+            build-base
+            cmake
+            gfortran
+            eigen-dev
+            lapack-dev
+
+      - name: configure
+        run: |
+          echo "gcc --version"
+          gcc --version
+          echo "gcc -dumpmachine"
+          gcc -dumpmachine
+          mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
+          cmake \
+            -DEXAMPLES=ON \
+            -DMPI=OFF \
+            -DICB=ON \
+            -DEIGEN=ON \
+            ..
+
+      - name: build
+        run: |
+          cd ${GITHUB_WORKSPACE}/build
+          cmake --build .
+
+      - name: test
+        run: |
+          cd ${GITHUB_WORKSPACE}/build
+          ctest . || ctest . --rerun-failed --output-on-failure
