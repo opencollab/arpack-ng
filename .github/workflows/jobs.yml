@@ -251,6 +251,16 @@ jobs:
           make check
   windows_latest_cmake:
     runs-on: windows-latest
+    name: MinGW-w64 ${{ matrix.msystem }} INTERFACE64=${{ matrix.int64 }}/MPI=${{ matrix.mpi }}
+    strategy:
+      fail-fast: false
+      matrix:
+        msystem: [UCRT64, CLANG64]
+        int64: [ON, OFF]
+        mpi: [ON, OFF]
+        exclude:
+          - int64: ON
+            mpi: ON
     defaults:
       run:
         # Use MSYS2 as default shell
@@ -260,15 +270,27 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          msystem: MINGW64
+          msystem: ${{ matrix.msystem }}
           install: >-
             base-devel
             git
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-gcc-fortran
-            mingw-w64-x86_64-openblas
-            mingw-w64-x86_64-msmpi
+          pacboy: >-
+            cmake:p
+            ninja:p
+            cc:p
+            fc:p
+      - name: Install OpenBLAS and MS-MPI from MSYS2
+        run: |
+          if [[ ${{ matrix.int64 }} != ON ]]; then
+            pacboy -S openblas:p --noconfirm
+          else
+            pacboy -S openblas64:p --noconfirm
+          fi
+          if [[ ${{ matrix.mpi }} = ON ]]; then
+            # This installs only the link library.
+            # The actual library will be installed in the next step.
+            pacboy -S msmpi:p --noconfirm
+          fi
       - name: Install MS-MPI (for mpiexec)
         uses: mpi4py/setup-mpi@v1
       - name: Clone and check out repository code
@@ -283,10 +305,26 @@ jobs:
       - name: Run job
         run: |
           mkdir -p build && cd build
-          cmake -GNinja -DICB=ON -DEXAMPLES=ON -DMPI=ON ..
+          echo "::group::Configure"
+          if [[ ${{ matrix.int64 }} == ON ]]; then
+            _blas_lib_flag="-DBLAS_LIBRARIES=openblas_64"
+          fi
+          cmake \
+            -GNinja \
+            -DICB=ON \
+            -DEXAMPLES=ON \
+            -DMPI=${{ matrix.mpi }} \
+            -DINTERFACE64=${{ matrix.int64 }} \
+            ${_blas_lib_flag} \
+            ..
+          echo "::endgroup::"
+          echo "::group::Build"
           cmake --build . -v
+          echo "::endgroup::"
       - name: Run tests
         run: |
-          export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          if [[ ${{ matrix.mpi }} == ON ]]; then
+            export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          fi
           cd build
           ctest --output-on-failure
