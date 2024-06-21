@@ -324,10 +324,29 @@ jobs:
           cmake --build . -v
           echo "::endgroup::"
       - name: Run tests
+        id: run-ctest
         run: |
           if [[ ${{ matrix.mpi }} == ON ]]; then
             export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
           fi
           export PATH="${GITHUB_WORKSPACE}/build":$PATH # add libarpack.dll to msys2 path for tests that run in different directory
           cd build
-          ctest --output-on-failure
+          ctest
+      - name: Re-run tests
+        if: always() && (steps.run-ctest.outcome == 'failure')
+        timeout-minutes: 60
+        run: |
+          if [[ ${{ matrix.mpi }} == ON ]]; then
+            export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          fi
+          export PATH="${GITHUB_WORKSPACE}/build":$PATH # add libarpack.dll to msys2 path for tests that run in different directory
+          cd build
+          echo "::group::Re-run ctest"
+          ctest --rerun-failed --output-on-failure || true
+          echo "::endgroup::"
+          echo "::group::Log from these tests"
+          [ ! -f Testing/Temporary/LastTest.log ] || cat Testing/Temporary/LastTest.log
+          echo "::endgroup::"
+          echo "::group::Content of arpackmm.run.log"
+          [ ! -f EXAMPLES/MATRIX_MARKET/arpackmm.run.log ] || cat EXAMPLES/MATRIX_MARKET/arpackmm.run.log
+          echo "::endgroup::"
