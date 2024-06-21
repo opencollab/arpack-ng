@@ -279,6 +279,7 @@ jobs:
             ninja:p
             cc:p
             fc:p
+            eigen3:p
       - name: Install OpenBLAS and MS-MPI from MSYS2
         run: |
           if [[ ${{ matrix.int64 }} != ON ]]; then
@@ -312,6 +313,7 @@ jobs:
           cmake \
             -GNinja \
             -DICB=ON \
+            -DEIGEN=ON \
             -DEXAMPLES=ON \
             -DMPI=${{ matrix.mpi }} \
             -DINTERFACE64=${{ matrix.int64 }} \
@@ -326,5 +328,6 @@ jobs:
           if [[ ${{ matrix.mpi }} == ON ]]; then
             export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
           fi
+          export PATH="${GITHUB_WORKSPACE}/build":$PATH # add libarpack.dll to msys2 path for tests that run in different directory
           cd build
           ctest --output-on-failure
