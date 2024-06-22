@@ -711,6 +711,11 @@ function(build_tests)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.sh)
       add_test(NAME issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue215.sh)
+      if (WIN32 AND BUILD_SHARED_LIBS)
+        set_tests_properties(arpackmm_tst issue401_tst issue215_tst
+          PROPERTIES
+          ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:arpack>")
+      endif()
     endif()
 
     if (PYTHON3)
