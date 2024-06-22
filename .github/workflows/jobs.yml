@@ -187,7 +187,7 @@ jobs:
           export CFLAGS="-Qunused-arguments"
           export CXX=mpic++ # Uses clang++.
           export CXXFLAGS="-Qunused-arguments"
-          LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_cmake_python:
@@ -224,7 +224,7 @@ jobs:
           export CFLAGS="-Qunused-arguments"
           export CXX=clang++
           export CXXFLAGS="-Qunused-arguments"
-          LIBS="-framework Accelerate" cmake -DBLA_VENDOR=Generic -DEXAMPLES=ON -DICB=ON -DPYTHON3=ON ..
+          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DPYTHON3=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_autotools:
