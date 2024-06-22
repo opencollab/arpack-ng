@@ -213,13 +213,9 @@ jobs:
           # https://github.com/actions/runner-images/issues/2322
           brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
           brew reinstall gcc # brings gfortran on path
-          brew install cmake eigen boost-python3 python3 
-          python3 -m venv ./venv
-          source ./venv/bin/activate
-          pip3 install numpy
+          brew install cmake eigen boost-python3 python3 numpy
       - name: Run job
         run: |
-          source ./venv/bin/activate
           mkdir -p build
           cd build
           export FC=gfortran
