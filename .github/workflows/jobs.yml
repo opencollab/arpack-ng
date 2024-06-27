@@ -176,7 +176,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew reinstall gcc # brings gfortran on path
-          brew install cmake mpich
+          brew install cmake mpich eigen
       - name: Run job
         run: |
           mkdir -p build
@@ -187,7 +187,7 @@ jobs:
           export CFLAGS="-Qunused-arguments"
           export CXX=mpic++ # Uses clang++.
           export CXXFLAGS="-Qunused-arguments"
-          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DMPI=ON ..
+          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DEIGEN=ON -DMPI=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_cmake_python:
@@ -224,7 +224,7 @@ jobs:
           export CFLAGS="-Qunused-arguments"
           export CXX=clang++
           export CXXFLAGS="-Qunused-arguments"
-          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DPYTHON3=ON ..
+          cmake -DBLA_VENDOR=Apple -DEXAMPLES=ON -DICB=ON -DEIGEN=ON -DPYTHON3=ON ..
           make all
           CTEST_OUTPUT_ON_FAILURE=1 make test
   macos_latest_autotools:
@@ -242,11 +242,12 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew reinstall gcc # brings gfortran on path
-          brew install autoconf automake libtool pkg-config mpich
+          brew install autoconf automake libtool pkg-config mpich eigen
       - name: Run job
         run: |
           ./bootstrap
-          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" ./configure --enable-icb --enable-mpi
+          LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-ff2c -fno-second-underscore" \
+            ./configure --enable-icb --enable-eigen --enable-mpi
           make all
           make check
   windows_latest_cmake:
