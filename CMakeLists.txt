@@ -626,7 +626,19 @@ endif()
 ############################
 # TEST
 ############################
-function(build_tests)  
+
+function(add_test_with_working_dir test_name)
+  # Add test which sets a current working directory that doesn't contain the
+  # libarpack library.
+  add_test(NAME ${test_name} ${ARGN})
+  if (WIN32 AND BUILD_SHARED_LIBS)
+    set_tests_properties(${test_name}
+      PROPERTIES
+      ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:arpack>")
+  endif()
+endfunction()
+
+function(build_tests)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
   add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
@@ -704,13 +716,19 @@ function(build_tests)
       configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
-      add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu arpackmm.sh)
+      add_test_with_working_dir(arpackmm_tst
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${BASH_PROGRAM} -eu arpackmm.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.sh)
-      add_test(NAME issue401_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu issue401.sh)
+      add_test_with_working_dir(issue401_tst
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${BASH_PROGRAM} -eu issue401.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.sh)
-      add_test(NAME issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} -eu issue215.sh)
+      add_test_with_working_dir(issue215_tst
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${BASH_PROGRAM} -eu issue215.sh)
     endif()
 
     if (PYTHON3)
@@ -795,7 +813,7 @@ endfunction(build_tests)
 
 if(TESTS)
     enable_testing()
-    set(CMAKE_CTEST_COMMAND ctest -V)   
+    set(CMAKE_CTEST_COMMAND ctest -V)
     build_tests()
 endif()
 
