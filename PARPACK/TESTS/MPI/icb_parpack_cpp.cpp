@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 #include "parpack.hpp"
