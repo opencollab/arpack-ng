@@ -1,3 +1,6 @@
+#include <iostream>
+#include <exception>
+#include <sstream>
 #include <chrono>
 
 #include "arpackSolver.hpp"
@@ -9,8 +12,8 @@ using namespace std;
 class options {
  public:
   options() {
-    fileA = "A.mtx";
-    fileB = "N.A.";  // Not available.
+    fileA = "";
+    fileB = "";
     dense = false;
     denseRR = true;
     nbEV = 1;
@@ -44,27 +47,39 @@ class options {
   };
 
   int readCmdLine(int argc, char** argv) {
+    // Convert command line to stream.
+
+    stringstream ssIP; // Independent parameters.
+    for (int a = 1; argv && a < argc; a++) {
+      ssIP << argv[a] << " ";
+    }
+
     // Check for command line independent parameters.
 
-    for (int a = 1; argv && a < argc; a++) {
-      string clo = argv[a];  // Command line option.
-      if (clo == "--help" || clo == "-h") return usage(0);
+    string clo;  // Command line option.
+    while (ssIP >> clo) {
+      if (clo == "--help" || clo == "-h") return usage();
+      if (clo.find("--") == std::string::npos) {
+        cerr << "Error: bad " << clo << " - bad argument" << endl;
+        return usage();
+      }
+
       if (clo == "--A") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        fileA = argv[a];
+        fileA = clo;
       }
       if (clo == "--dense") {
         dense = true;
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        string rr(argv[a]);
+        string rr = clo;
         if (rr != "true" && rr != "false") {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
           return usage();
@@ -72,12 +87,12 @@ class options {
         denseRR = (rr == "true") ? true : false;
       }
       if (clo == "--nbEV") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream nEV(argv[a]);
+        stringstream nEV(clo);
         nEV >> nbEV;
         if (!nEV) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -87,7 +102,6 @@ class options {
       }
       if (clo == "--genPb") {
         stdPb = false;
-        fileB = "B.mtx";
       }
       if (clo == "--nonSymPb") symPb = false;
       if (clo == "--cpxPb") {
@@ -96,12 +110,12 @@ class options {
       }
       if (clo == "--simplePrec") simplePrec = true;
       if (clo == "--mag") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        mag = argv[a];  // small mag (likely poor perf) <=> large mag + invert
+        mag = clo;  // small mag (likely poor perf) <=> large mag + invert
                         // (likely good perf).
         bool ok = (mag == "LM" || mag == "SM" || mag == "LR" || mag == "SR" ||
                    mag == "LA" || mag == "SA" || mag == "LI" || mag == "SI")
@@ -114,12 +128,12 @@ class options {
       }
       if (clo == "--shiftReal") {
         shiftReal = true;
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream s(argv[a]);
+        stringstream s(clo);
         s >> sigmaReal;
         if (!s) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -128,12 +142,12 @@ class options {
       }
       if (clo == "--shiftImag") {
         shiftImag = true;
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream s(argv[a]);
+        stringstream s(clo);
         s >> sigmaImag;
         if (!s) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -142,12 +156,12 @@ class options {
       }
       if (clo == "--invert") invert = true;
       if (clo == "--tol") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream t(argv[a]);
+        stringstream t(clo);
         t >> tol;
         if (!t) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -155,12 +169,12 @@ class options {
         }
       }
       if (clo == "--maxIt") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream mi(argv[a]);
+        stringstream mi(clo);
         mi >> maxIt;
         if (!mi) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -171,20 +185,20 @@ class options {
         schur = true;
       }
       if (clo == "--slv") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        slv = argv[a];
+        slv = clo;
       }
       if (clo == "--slvItrTol") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream t(argv[a]);
+        stringstream t(clo);
         double tol = 0.;
         t >> slvItrTol;
         if (!t) {
@@ -193,12 +207,12 @@ class options {
         }
       }
       if (clo == "--slvItrMaxIt") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream mi(argv[a]);
+        stringstream mi(clo);
         int maxIt = 0;
         mi >> slvItrMaxIt;
         if (!mi) {
@@ -207,12 +221,12 @@ class options {
         }
       }
       if (clo == "--slvItrPC") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream pc(argv[a]);
+        stringstream pc(clo);
         pc >> slvItrPC;
         if (!pc) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -220,12 +234,12 @@ class options {
         }
       }
       if (clo == "--slvDrtPivot") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream pv(argv[a]);
+        stringstream pv(clo);
         pv >> slvDrtPivot;
         if (!pv) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -233,12 +247,12 @@ class options {
         }
       }
       if (clo == "--slvDrtOffset") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream of(argv[a]);
+        stringstream of(clo);
         of >> slvDrtOffset;
         if (!of) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -246,12 +260,12 @@ class options {
         }
       }
       if (clo == "--slvDrtScale") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream sc(argv[a]);
+        stringstream sc(clo);
         sc >> slvDrtScale;
         if (!sc) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -260,12 +274,12 @@ class options {
       }
       if (clo == "--noCheck") check = false;
       if (clo == "--verbose") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream vb(argv[a]);
+        stringstream vb(clo);
         vb >> verbose;
         if (!vb) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -273,12 +287,12 @@ class options {
         }
       }
       if (clo == "--debug") {
-        a++;
-        if (a >= argc) {
+        ssIP >> clo;
+        if (!ssIP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream dbg(argv[a]);
+        stringstream dbg(clo);
         dbg >> debug;
         if (!dbg) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -290,19 +304,29 @@ class options {
                 debug, debug, debug, debug, debug);
       }
       if (clo == "--restart") restart = true;
+
+      // Skip dependent parameters.
+      if (clo == "--nbCV") { ssIP >> clo; continue; }
+      if (clo == "--B") { ssIP >> clo; continue; }
+    }
+
+    // Convert command line to stream.
+
+    stringstream ssDP; // Dependent parameters.
+    for (int a = 1; argv && a < argc; a++) {
+      ssDP << argv[a] << " ";
     }
 
     // Check for command line dependent parameters.
 
-    for (int a = 1; argv && a < argc; a++) {
-      string clo = argv[a];  // Command line option.
+    while (ssDP >> clo) {
       if (clo == "--nbCV") {
-        a++;
-        if (a >= argc) {
+        ssDP >> clo;
+        if (!ssDP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        stringstream nCV(argv[a]);
+        stringstream nCV(clo);
         nCV >> nbCV;
         if (!nCV) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -310,27 +334,19 @@ class options {
         }
       }
       if (clo == "--B") {
-        a++;
-        if (a >= argc) {
+        ssDP >> clo;
+        if (!ssDP) {
           cerr << "Error: bad " << clo << " - need argument" << endl;
           return usage();
         }
-        fileB = argv[a];
+        fileB = clo;
       }
-    }
-
-    // Sanity checks.
-
-    if (!stdPb && fileB.empty()) {
-      cerr << "Error: generalized problem without B matrix"
-           << ", specify --B XX with XX being a matrix market file" << endl;
-      return usage();
     }
 
     return 0;
   };
 
-  int usage(int rc = 1) {
+  int usage() {
     cout << "Usage: running arpack with matrix market files to check for eigen "
             "values/vectors."
          << endl;
@@ -501,8 +517,7 @@ class options {
             "computed during a previous run."
          << endl;
     cout << "                    default: false" << endl;
-    if (rc == 0) exit(0);
-    return rc;
+    return 1;
   };
 
   friend ostream& operator<<(ostream& ostr, options const& opt);
@@ -539,7 +554,8 @@ class options {
 };
 
 ostream& operator<<(ostream& ostr, options const& opt) {
-  ostr << "OPT: A " << opt.fileA << ", B " << opt.fileB;
+  ostr << "OPT: A " << opt.fileA;
+  if (!opt.fileB.empty()) ostr << ", B " << opt.fileB;
   if (opt.dense && opt.denseRR)
     ostr << ", dense yes (RR true)";
   else if (opt.dense && !opt.denseRR)
@@ -833,7 +849,7 @@ int itrSolve(options& opt, output& out) {
   return rc;
 }
 
-int main(int argc, char** argv) {
+int run(int argc, char** argv) {
   // Check for options.
 
   options opt;
@@ -985,6 +1001,17 @@ int main(int argc, char** argv) {
        << nrstrt << endl;
 
   return 0;
+}
+
+int main(int argc, char** argv) {
+  int rc = 1;
+  try {
+    rc = run(argc, argv);
+  }
+  catch (exception& e) {
+    cout << "Error - exception:" << e.what() << endl;
+  }
+  return rc;
 }
 
 // Local Variables:

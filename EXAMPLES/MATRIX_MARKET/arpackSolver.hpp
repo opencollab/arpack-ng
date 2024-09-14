@@ -176,6 +176,7 @@ class arpackSolver {
     int createMatrix(string const & fileName, Eigen::SparseMatrix<RC> & M) {
       // Read matrix from file.
 
+      if (fileName.empty()) { cerr << "Error: matrix file missing" << endl; return 1; }
       a_uint n = 0, m = 0;
       vector<a_uint> i, j;
       vector<RC> Mij;
