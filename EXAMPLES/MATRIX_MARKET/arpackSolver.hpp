@@ -256,7 +256,8 @@ class arpackSolver {
       mode = 0;
       if (stdPb) {
         mode = 1;
-        if (shiftReal && !shiftImag) {
+        // CAUTION: back transform must be done only if mode = 1.
+        if (shiftReal || shiftImag) {
           EM I(A.rows(), A.cols());
           I.setIdentity();
           RC sigma; makeSigma(sigma);
@@ -265,6 +266,7 @@ class arpackSolver {
         }
       }
       else {
+        // CAUTION: back transform must NOT be done if mode > 1.
         mode = 2;
         if (shiftReal || shiftImag) mode = 3;
       }
