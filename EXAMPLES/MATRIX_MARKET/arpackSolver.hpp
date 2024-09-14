@@ -670,6 +670,7 @@ class arpackSolver {
       if (ofs.is_open()) {
         ofs << nbDim << endl;
         for (a_int n = 0; rv && n < nbDim; n++) ofs << rv[n] << endl;
+        ofs.close(); // Make sure the file is written.
       }
       return 0;
     };
