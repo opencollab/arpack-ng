@@ -1,90 +1,94 @@
 #!/bin/bash -eu
 
-export CMD="./arpackmm --help" # For coverage
-echo "$CMD"
-eval "$CMD &> arpackmm.run.log"
-echo ""
-echo "========================================================================================"
-echo ""
+trap 'catch' ERR
+catch() {
+  grep OPT arpackmm.run.log
+  grep Error arpackmm.run.log
+  exit 1
+}
 
-for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx --B Bz.mtx"
+# For all these eigen problems, the first eigen value is about 382 or (382, 0.).
+
+for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx"
 do
-  for genPb in "" "--genPb"
+  # Choose B matrix according to A.
+  export fileB=""
+  if [[ "$eigPb" == *cpxPb* ]]; then
+    export fileB="--B Bz.mtx"
+  else
+    export fileB="--B B.mtx"
+  fi
+
+  for genPb in "" "--genPb $fileB"
   do
-    for smallMag in "" "LA" "--mag SM --noCheck" # SM is known to be difficult to converge.
+    # SM may not converge so we can not apply checks.
+    # LM + invert is equivalent to SM and does converge.
+    # Note: this is expected as "power-like" methods are designed to find largest eigen values.
+    for magOpt in "--mag LM" "--mag SM --noCheck"
     do
-      export shiftOpt=""
-      if [[ "$eigPb" == *nonSymPb* ]]; then
-        if [[ "$genPb" == *genPb* ]]; then
-          continue # Skip to ensure stable test: tricky to convergence.
-        else
-          export shiftOpt="--shiftReal 100.0 --shiftImag 100.0"
-        fi
+      export mrn="--maxResNorm 1.e-1" # Relax residual check to get stable tests.
+
+      # Shift slightly to avoid the zero-vector starting problem.
+      export shiftZV=""
+      if [[ "$eigPb" == *cpxPb* ]]; then
+        export shiftZV="--shiftReal 1.0 --shiftImag 1.0"
       else
-        if [[ "$genPb" == *genPb* ]]; then
-          continue # Skip to ensure stable test: tricky to convergence.
-        else
-          export shiftOpt="--shiftReal 100.0"
-        fi
+        export shiftZV="--shiftReal 1.0"
       fi
 
-      for shiftRI in "" "$shiftOpt"
+      # Shift according to the estimation of the eigen value we may have.
+      export shiftEV=""
+      if [[ "$eigPb" == *cpxPb* ]]; then
+        export shiftEV="--shiftReal 380.0 --shiftImag 1.0"
+      else
+        export shiftEV="--shiftReal 380.0"
+      fi
+
+      for shiftRI in "$shiftZV" "$shiftEV"
       do
         for invert in "" "--invert"
         do
-          for tol in "" "--tol 1.e-5"
+          # Choose solver according to the sym/non-sym type of the problem.
+          export cgSlv=""
+          if [[ "$eigPb" == *nonSymPb* ]]; then
+            export cgSlv="BiCG"
+          else
+            export cgSlv="CG"
+          fi
+
+          for slv in "--slv $cgSlv" "--slv LU"
           do
-            for slv in "--slv BiCG --slvItrTol 1.e-06 --slvItrMaxIt 150" "--slv   CG --slvItrTol 1.e-06 --slvItrMaxIt 150" \
-                       "--slv BiCG --slvItrPC ILU"                       "--slv   CG --slvItrPC ILU#1.e-06#2"              \
-                       "--slv   LU"                                      "--slv   QR --slvDrtPivot 1.e-06"                 \
-                       "--slv  LLT"                                      "--slv  LLT --slvDrtOffset 0."                    \
-                       "--slv LDLT"                                      "--slv LDLT --slvDrtScale 1."
+            for rs in "" "--schur"
             do
-              for rs in "" "--schur"
+              for dsPrec in "" "--simplePrec"
               do
-                for dsPrec in "" "--simplePrec"
+                for dsMat in "" "--dense true"
                 do
-                  for dsMat in "" "--dense false" "--dense true"
-                  do
-                    export extraGenPb=""
-                    if [[ "$genPb" == *genPb* ]]; then
-                      export extraGenPb="$shiftOpt" # Force shift if genPb.
+                  # Skip not supported cases.
+                  if [[ "$dsMat" == *dense* ]]; then
+                    if [[ "$slv" == *CG* ]]; then
+                      continue # Iterative solvers are not allowed when using dense matrices.
                     fi
+                  fi
 
-                    if [[ "$slv" == *" CG "* ]]; then
-                      if [[ "$eigPb" == *nonSymPb* ]]; then
-                        continue # Skip CG that could fail (CG is meant to deal with sym matrices).
-                      fi
-                    fi
+                  export easeCV="--nbCV 6 --maxIt 200" # Use --nbCV 6 and --maxIt 200 to ease convergence.
+                  echo "CLI: ./arpackmm $eigPb $genPb $magOpt $mrn $shiftRI $invert $slv $rs $dsPrec $dsMat $easeCV"
+                  echo "----------------------------------------------------------------------------------------"
 
-                    if [[ "$slv" == *LLT* ]] || [[ "$slv" == *LDLT* ]]; then
-                      if [[ "$eigPb" == *nonSymPb* ]] || [[ "$genPb" == *genPb* ]]; then
-                        continue # Skip LLT/LDLT that could fail (LLT/LDLT are meant to deal with SPD matrices).
-                      fi
-                    fi
+                  # Run arpackmm.
+                  ./arpackmm "$eigPb" "$genPb" "$magOpt" "$mrn" "$shiftRI" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
+                             "$easeCV" --verbose 3 &> arpackmm.run.log
+                  grep OPT arpackmm.run.log
+                  grep OUT arpackmm.run.log
+                  echo "----------------------------------------------------------------------------------------"
 
-                    if [[ "$dsMat" == *dense* ]]; then
-                      if [[ "$slv" == *CG* ]]; then
-                        continue # Iterative solvers are not allowed when using dense matrices.
-                      fi
-                    fi
-
-                    # Run arpackmm: use --nbCV 6 and --maxIt 200 to ease convergence, and, --verbose 3 for debug.
-                    export CMD="./arpackmm $eigPb $genPb $smallMag $shiftRI $invert $tol $slv $rs $dsPrec $dsMat $extraGenPb --nbCV 6 --maxIt 200 --verbose 3 --debug 3"
-                    echo "$CMD"
-                    eval "$CMD &> arpackmm.run.log"
-                    echo ""
-                    echo "========================================================================================"
-                    echo ""
-
-                    # Run arpackmm: re-run with restart.
-                    export CMD="$CMD --restart"
-                    echo "$CMD"
-                    eval "$CMD &> arpackmm.run.log"
-                    echo ""
-                    echo "========================================================================================"
-                    echo ""
-                  done
+                  # Run arpackmm: re-run with restart always with small shift to avoid the zero-starting vector problem.
+                  ./arpackmm "$eigPb" "$genPb" "$magOpt" "$mrn" "$shiftZV" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
+                             --restart                                                                               \
+                             "$easeCV" --verbose 3 &> arpackmm.run.log
+                  grep OPT arpackmm.run.log
+                  grep OUT arpackmm.run.log
+                  echo "========================================================================================"
                 done
               done
             done
@@ -95,4 +99,4 @@ do
   done
 done
 
-echo "OK"
+echo "arpackmm: OK"

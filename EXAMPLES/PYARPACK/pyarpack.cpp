@@ -29,8 +29,9 @@ void exportArpackSparseItr(bp::scope& pySlv, std::string const& dtype) {
           .def("checkEigVec",
                &pyarpackSparseItrSolver<RC, FD, EM, SLV>::checkEigVec,
                (bp::arg("A"), bp::arg("B") = bp::tuple(),
-                bp::arg("diffTol") = 1.e-3),
-               "check eigen vectors accuracy where A and B must be sparse and "
+                bp::arg("maxResNorm") = 1.e-3),
+               "check eigen vectors accuracy (according to max allowed residual norm) "
+               "where A and B must be sparse and "
                "provided in coo format: (dimension, row-indice array, "
                "column-indice array, matrice-value array) tuple")
               ARPACKSOLVERMEMBER(pyarpackSparseItrSolver)
@@ -69,8 +70,9 @@ void exportArpackSparseDrt(bp::scope& pySlv, std::string const& dtype) {
           .def("checkEigVec",
                &pyarpackSparseDrtSolver<RC, FD, EM, SLV>::checkEigVec,
                (bp::arg("A"), bp::arg("B") = bp::tuple(),
-                bp::arg("diffTol") = 1.e-3),
-               "check eigen vectors accuracy where A and B must be sparse and "
+                bp::arg("maxResNorm") = 1.e-3),
+               "check eigen vectors accuracy (according to max allowed residual norm) "
+               "where A and B must be sparse and "
                "provided in coo format: (dimension, row-indice array, "
                "column-indice array, matrice-value array) tuple")
               ARPACKSOLVERMEMBER(pyarpackSparseDrtSolver)
@@ -103,8 +105,9 @@ void exportArpackDenseDrt(bp::scope& pySlv, std::string const& dtype) {
           .def("checkEigVec",
                &pyarpackDenseDrtSolver<RC, FD, EM, SLV>::checkEigVec,
                (bp::arg("A"), bp::arg("B") = bp::tuple(),
-                bp::arg("diffTol") = 1.e-3),
-               "check eigen vectors accuracy where A and B must be dense and "
+                bp::arg("maxResNorm") = 1.e-3),
+               "check eigen vectors accuracy (according to max allowed residual norm) "
+               "where A and B must be dense and "
                "provided in raw format: (n-squared matrice-value array, row or "
                "column ordered boolean)")
               ARPACKSOLVERMEMBER(pyarpackDenseDrtSolver)

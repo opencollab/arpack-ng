@@ -297,10 +297,7 @@ class arpackSolver {
       return 0;
     };
 
-    int checkEigVec(EM const & A, EM const * B = nullptr, double const * diffTol = nullptr) {
-      stdPb = !B ? true : false;
-      double dTol = !diffTol ? sqrt(tol) : *diffTol;
-
+    int checkEigVec(EM const & A, EM const * B = nullptr, double const maxResNorm = 1.e-3) const {
       // Check eigen vectors.
 
       string rs = schur ? "Schur" : "Ritz";
@@ -325,23 +322,25 @@ class arpackSolver {
         EigVecZ left = A.template cast<complex<double>>() * V;
         EigVecZ right = stdPb ? V : B->template cast<complex<double>>() * V;
         right *= lambda;
-        EigVecZ diff = left - right;
-        if (diff.norm() > dTol) {
-          cerr << endl << "Error: bad vector " << setw(3) << i << " (norm " << V.norm() << "):" << endl;
+        EigVecZ residual = left - right;
+        if (residual.norm() > maxResNorm) {
+          cerr << endl << "Error: bad eigen value " << i << " (norm " << std::norm(lambda) << "):" << endl;
+          cerr << endl << lambda << endl;
+          cerr << endl << "Error: bad eigen vector " << i << " (norm " << V.norm() << "):" << endl;
           cerr << endl << V << endl;
-          cerr << endl << "Error: left side (A*V - norm " << left.norm() << "):" << endl;
+          cerr << endl << "Error: left side (A*V has norm " << left.norm() << "):" << endl;
           cerr << endl << left << endl;
-          cerr << endl << "Error: right side (lambda*" << (stdPb ? "" : "B*") << "V - norm " << right.norm() << "):" << endl;
+          cerr << endl << "Error: right side (lambda*" << (stdPb ? "" : "B*") << "V has norm " << right.norm() << "):" << endl;
           cerr << endl << right << endl;
-          cerr << endl << "Error: diff (norm " << diff.norm() << ", tol " << dTol << "):" << endl;
-          cerr << endl << diff << endl;
+          cerr << endl << "Error: residual (norm " << residual.norm() << ", maxResNorm " << maxResNorm << "):" << endl;
+          cerr << endl << residual << endl;
           return 1;
         }
         else {
           if (verbose >= 1) {
             cout << endl << "arpackSolver:" << endl;
             cout << endl << rs << " value/vector " << setw(3) << i << ": check OK";
-            cout << ", diff (norm " << diff.norm() << ", tol " << dTol << ")" << endl;
+            cout << ", residual (norm " << residual.norm() << ", maxResNorm " << maxResNorm << ")" << endl;
           }
         }
       }

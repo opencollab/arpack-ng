@@ -44,7 +44,7 @@ class pyarpackSparseDrtSolver: public arpackDrtSolver<RC, FD, EM, SLV> {
       return arpackDrtSolver<RC, FD, EM, SLV>::solve(M, (stdPb ? NULL : &N));
     };
 
-    int checkEigVec(bp::tuple const & A, bp::tuple const B = bp::tuple(), double const diffTol = 1.e-3) {
+    int checkEigVec(bp::tuple const & A, bp::tuple const B = bp::tuple(), double const maxResNorm = 1.e-3) {
       ARPACKSOLVERDEBUGSTAT();
       EM M;
       int rc = pyarpackServices<RC, EM>::buildSparseMatrice(A, M, debug, "A");
@@ -55,7 +55,7 @@ class pyarpackSparseDrtSolver: public arpackDrtSolver<RC, FD, EM, SLV> {
         rc = pyarpackServices<RC, EM>::buildSparseMatrice(B, N, debug, "B");
         if (rc != 0) {pyarpackThrowError("build matrice from B KO"); return rc;}
       }
-      return arpackDrtSolver<RC, FD, EM, SLV>::checkEigVec(M, (stdPb ? NULL : &N), &diffTol);
+      return arpackDrtSolver<RC, FD, EM, SLV>::checkEigVec(M, (stdPb ? NULL : &N), maxResNorm);
     };
 
   // Public members.
@@ -101,7 +101,7 @@ class pyarpackDenseDrtSolver: public arpackDrtSolver<RC, FD, EM, SLV> {
       return arpackDrtSolver<RC, FD, EM, SLV>::solve(M, (stdPb ? NULL : &N));
     };
 
-    int checkEigVec(bp::tuple const & A, bp::tuple const B = bp::tuple(), double const diffTol = 1.e-3) {
+    int checkEigVec(bp::tuple const & A, bp::tuple const B = bp::tuple(), double const maxResNorm = 1.e-3) {
       ARPACKSOLVERDEBUGSTAT();
       EM M;
       int rc = pyarpackServices<RC, EM>::buildDenseMatrice(A, M, debug, "A");
@@ -112,7 +112,7 @@ class pyarpackDenseDrtSolver: public arpackDrtSolver<RC, FD, EM, SLV> {
         rc = pyarpackServices<RC, EM>::buildDenseMatrice(B, N, debug, "B");
         if (rc != 0) {pyarpackThrowError("build matrice from B KO"); return rc;}
       }
-      return arpackDrtSolver<RC, FD, EM, SLV>::checkEigVec(M, (stdPb ? NULL : &N), &diffTol);
+      return arpackDrtSolver<RC, FD, EM, SLV>::checkEigVec(M, (stdPb ? NULL : &N), maxResNorm);
     };
 
   // Public members.

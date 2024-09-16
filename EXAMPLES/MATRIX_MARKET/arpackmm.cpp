@@ -31,6 +31,7 @@ class options {
     invert =
         false;  // Eigen value invertion: look for 1./lambda instead of lambda.
     tol = 1.e-06;
+    maxResNorm = 1.e-3;
     maxIt = 100;
     schur = false;  // Compute Ritz vectors.
     slv = "BiCG";
@@ -168,6 +169,19 @@ class options {
           return usage();
         }
       }
+      if (clo == "--maxResNorm") {
+        ssIP >> clo;
+        if (!ssIP) {
+          cerr << "Error: bad " << clo << " - need argument" << endl;
+          return usage();
+        }
+        stringstream mrn(clo);
+        mrn >> maxResNorm;
+        if (!mrn) {
+          cerr << "Error: bad " << clo << " - bad argument" << endl;
+          return usage();
+        }
+      }
       if (clo == "--maxIt") {
         ssIP >> clo;
         if (!ssIP) {
@@ -199,7 +213,6 @@ class options {
           return usage();
         }
         stringstream t(clo);
-        double tol = 0.;
         t >> slvItrTol;
         if (!t) {
           cerr << "Error: bad " << clo << " - bad argument" << endl;
@@ -425,6 +438,8 @@ class options {
     cout << "                    default: no invert" << endl;
     cout << "  --tol T:          tolerance T." << endl;
     cout << "                    default: 1.e-06" << endl;
+    cout << "  --maxResNorm R:   maximum residual norm R." << endl;
+    cout << "                    default: 1.e-3" << endl;
     cout << "  --maxIt M:        maximum iterations M." << endl;
     cout << "                    default: 100" << endl;
     cout << "  --schur:          compute Schur vectors." << endl;
@@ -538,6 +553,7 @@ class options {
                                 // lambda+sigma instead of lambda.
   bool invert;  // Eigen value invertion: look for 1./lambda instead of lambda.
   double tol;
+  double maxResNorm;
   int maxIt;
   bool schur;
   string slv;
@@ -573,7 +589,7 @@ ostream& operator<<(ostream& ostr, options const& opt) {
   ostr << ", shiftImag " << (opt.shiftImag ? "yes" : "no") << ", sigmaImag "
        << opt.sigmaImag;
   ostr << ", invert " << (opt.invert ? "yes" : "no") << ", tol " << opt.tol
-       << ", maxIt " << opt.maxIt;
+       << ", maxResNorm " << opt.maxResNorm << ", maxIt " << opt.maxIt;
   ostr << ", " << (opt.schur ? "Schur" : "Ritz") << " vectors" << endl;
   ostr << "OPT: slv " << opt.slv;
   bool itrSlv = true;  // Use iterative solvers.
@@ -686,7 +702,7 @@ int itrSolve(options& opt, output& out, double const& slvItrILUDropTol,
     return rc;
   }
   if (opt.check) {
-    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B);
+    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B, opt.maxResNorm);
     if (rc != 0) {
       cerr << "Error: check KO" << endl;
       return rc;
@@ -773,7 +789,7 @@ int drtSolve(options& opt, output& out) {
     return rc;
   }
   if (opt.check) {
-    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B);
+    rc = as.checkEigVec(A, opt.stdPb ? nullptr : &B, opt.maxResNorm);
     if (rc != 0) {
       cerr << "Error: check KO" << endl;
       return rc;
