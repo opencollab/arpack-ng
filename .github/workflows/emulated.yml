@@ -1,4 +1,4 @@
-name: arch-emu
+name: arpack-ng-emu
 on:
   workflow_dispatch:
   push:
@@ -110,4 +110,4 @@ jobs:
       - name: test
         run: |
           cd ${GITHUB_WORKSPACE}/build
-          ctest . || ctest . --rerun-failed --output-on-failure
+          CTEST_OUTPUT_ON_FAILURE=1 make all test

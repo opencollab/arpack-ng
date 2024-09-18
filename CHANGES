@@ -1,3 +1,8 @@
+[ Franck Houssen ]
+ * [BUG FIX] Fix arpack solver to handle real and imag shifts.
+ * [BUG FIX] Make sure the restart file of the arpack solver i written.
+ * [BUG FIX] Change arpack solver API.
+
 [ Henri Menke ]
  * [BUG FIX] Add missing stdexcept header
 
