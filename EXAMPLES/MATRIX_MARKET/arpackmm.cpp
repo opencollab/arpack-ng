@@ -101,9 +101,6 @@ class options {
         }
         nbCV = 2 * nbEV + 1;
       }
-      if (clo == "--genPb") {
-        stdPb = false;
-      }
       if (clo == "--nonSymPb") symPb = false;
       if (clo == "--cpxPb") {
         symPb = false;
@@ -353,6 +350,7 @@ class options {
           return usage();
         }
         fileB = clo;
+        stdPb = false; // Generalized problem.
       }
     }
 
@@ -404,8 +402,6 @@ class options {
     cout << "                    default: 1" << endl;
     cout << "  --nbCV:           number of columns of the matrix V." << endl;
     cout << "                    default: 2*nbEV+1" << endl;
-    cout << "  --genPb:          generalized problem." << endl;
-    cout << "                    default: standard problem" << endl;
     cout << "  --nonSymPb:       non symmetric problem (<=> use dn[ae]upd)."
          << endl;
     cout << "                    default: symmetric problem (<=> use ds[ae]upd)"

@@ -9,17 +9,17 @@ catch() {
 
 # For all these eigen problems, the first eigen value is about 382 or (382, 0.).
 
-for eigPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx"
+for stdPb in "--A As.mtx" "--nonSymPb --A An.mtx" "--nonSymPb --cpxPb --A Az.mtx"
 do
   # Choose B matrix according to A.
   export fileB=""
-  if [[ "$eigPb" == *cpxPb* ]]; then
+  if [[ "$stdPb" == *cpxPb* ]]; then
     export fileB="--B Bz.mtx"
   else
     export fileB="--B B.mtx"
   fi
 
-  for genPb in "" "--genPb $fileB"
+  for genPb in "" "$fileB"
   do
     # SM may not converge so we can not apply checks.
     # LM + invert is equivalent to SM and does converge.
@@ -30,7 +30,7 @@ do
 
       # Shift slightly to avoid the zero-vector starting problem.
       export shiftZV=""
-      if [[ "$eigPb" == *cpxPb* ]]; then
+      if [[ "$stdPb" == *cpxPb* ]]; then
         export shiftZV="--shiftReal 1.0 --shiftImag 1.0"
       else
         export shiftZV="--shiftReal 1.0"
@@ -38,7 +38,7 @@ do
 
       # Shift according to the estimation of the eigen value we may have.
       export shiftEV=""
-      if [[ "$eigPb" == *cpxPb* ]]; then
+      if [[ "$stdPb" == *cpxPb* ]]; then
         export shiftEV="--shiftReal 380.0 --shiftImag 1.0"
       else
         export shiftEV="--shiftReal 380.0"
@@ -50,7 +50,7 @@ do
         do
           # Choose solver according to the sym/non-sym type of the problem.
           export cgSlv=""
-          if [[ "$eigPb" == *nonSymPb* ]]; then
+          if [[ "$stdPb" == *nonSymPb* ]]; then
             export cgSlv="BiCG"
           else
             export cgSlv="CG"
@@ -72,18 +72,18 @@ do
                   fi
 
                   export easeCV="--nbCV 6 --maxIt 200" # Use --nbCV 6 and --maxIt 200 to ease convergence.
-                  echo "CLI: ./arpackmm $eigPb $genPb $magOpt $mrn $shiftRI $invert $slv $rs $dsPrec $dsMat $easeCV"
+                  echo "CLI: ./arpackmm $stdPb $genPb $magOpt $mrn $shiftRI $invert $slv $rs $dsPrec $dsMat $easeCV"
                   echo "----------------------------------------------------------------------------------------"
 
                   # Run arpackmm.
-                  ./arpackmm "$eigPb" "$genPb" "$magOpt" "$mrn" "$shiftRI" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
+                  ./arpackmm "$stdPb" "$genPb" "$magOpt" "$mrn" "$shiftRI" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
                              "$easeCV" --verbose 3 &> arpackmm.run.log
                   grep OPT arpackmm.run.log
                   grep OUT arpackmm.run.log
                   echo "----------------------------------------------------------------------------------------"
 
                   # Run arpackmm: re-run with restart always with small shift to avoid the zero-starting vector problem.
-                  ./arpackmm "$eigPb" "$genPb" "$magOpt" "$mrn" "$shiftZV" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
+                  ./arpackmm "$stdPb" "$genPb" "$magOpt" "$mrn" "$shiftZV" "$invert" "$slv" "$rs" "$dsPrec" "$dsMat" \
                              --restart                                                                               \
                              "$easeCV" --verbose 3 &> arpackmm.run.log
                   grep OPT arpackmm.run.log
