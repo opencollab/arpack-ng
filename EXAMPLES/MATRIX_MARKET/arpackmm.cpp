@@ -2,6 +2,8 @@
 #include <exception>
 #include <sstream>
 #include <chrono>
+#include <vector>
+#include <tuple>
 
 #include "arpackSolver.hpp"
 #include "debug_c.hpp"
@@ -625,6 +627,7 @@ class output {
   int nbIt;        // Arpack number of iterations.
   double imsTime;  // Init mode solver time.
   double rciTime;  // Reverse communication interface time.
+  vector<tuple<double, double>> res; // Results: eigen values and associated residual.
 };
 
 template <typename RC, typename FD, typename EM, typename SLV>
@@ -712,6 +715,11 @@ int itrSolve(options& opt, output& out, double const& slvItrILUDropTol,
   out.nbIt = as.nbIt;
   out.imsTime = as.imsTime;
   out.rciTime = as.rciTime;
+  for (auto idx = 0; idx < as.val.size(); idx++) {
+    double val = norm(as.val[idx]);
+    double res = as.computeResidualNorm(idx, A, opt.stdPb ? nullptr : &B);
+    out.res.push_back(tuple{val, res});
+  }
 
   return 0;
 }
@@ -799,6 +807,11 @@ int drtSolve(options& opt, output& out) {
   out.nbIt = as.nbIt;
   out.imsTime = as.imsTime;
   out.rciTime = as.rciTime;
+  for (auto idx = 0; idx < as.val.size(); idx++) {
+    double val = norm(as.val[idx]);
+    double res = as.computeResidualNorm(idx, A, opt.stdPb ? nullptr : &B);
+    out.res.push_back(tuple{val, res});
+  }
 
   return 0;
 }
@@ -1011,6 +1024,16 @@ int run(int argc, char** argv) {
        << nitref << endl;
   cout << "STAT: total number of restart steps                               "
        << nrstrt << endl;
+
+  // Output eigen values and residuals.
+
+  cout << endl;
+  for (auto idx = 0; idx < out.res.size(); idx++) {
+    tuple res = out.res[idx];
+    cout << "RES: eigen value " << idx << ": " << get<0>(res);
+    cout << " (residual norm " << get<1>(res) << ")";
+    cout << endl;
+  }
 
   return 0;
 }
