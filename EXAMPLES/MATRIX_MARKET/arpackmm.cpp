@@ -1030,7 +1030,7 @@ int run(int argc, char** argv) {
   cout << endl;
   for (auto idx = 0; idx < out.res.size(); idx++) {
     tuple<double, double> res = out.res[idx];
-    cout << "RES: eigen value " << idx << ": " << get<0>(res);
+    cout << "RES: eigen value " << idx << ": norm " << get<0>(res);
     cout << " (residual norm " << get<1>(res) << ")";
     cout << endl;
   }
