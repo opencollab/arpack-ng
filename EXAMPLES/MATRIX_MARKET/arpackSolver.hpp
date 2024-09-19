@@ -319,33 +319,39 @@ class arpackSolver {
           }
         }
 
-        EigVecZ left = A.template cast<complex<double>>() * V;
-        EigVecZ right = stdPb ? V : B->template cast<complex<double>>() * V;
-        right *= lambda;
-        EigVecZ residual = left - right;
-        if (residual.norm() > maxResNorm) {
-          cerr << endl << "Error: bad eigen value " << i << " (norm " << std::norm(lambda) << "):" << endl;
-          cerr << endl << lambda << endl;
-          cerr << endl << "Error: bad eigen vector " << i << " (norm " << V.norm() << "):" << endl;
-          cerr << endl << V << endl;
-          cerr << endl << "Error: left side (A*V has norm " << left.norm() << "):" << endl;
-          cerr << endl << left << endl;
-          cerr << endl << "Error: right side (lambda*" << (stdPb ? "" : "B*") << "V has norm " << right.norm() << "):" << endl;
-          cerr << endl << right << endl;
-          cerr << endl << "Error: residual (norm " << residual.norm() << ", maxResNorm " << maxResNorm << "):" << endl;
-          cerr << endl << residual << endl;
+        double resNorm = computeResidualNorm(i, A, B);
+        if (resNorm > maxResNorm) {
+          cout << endl << "arpackSolver:" << endl;
+          cout << endl << rs << " value/vector " << setw(3) << i << ": check KO";
+          cout << ", residual (norm " << resNorm << ", maxResNorm " << maxResNorm << ")" << endl;
           return 1;
         }
         else {
           if (verbose >= 1) {
             cout << endl << "arpackSolver:" << endl;
             cout << endl << rs << " value/vector " << setw(3) << i << ": check OK";
-            cout << ", residual (norm " << residual.norm() << ", maxResNorm " << maxResNorm << ")" << endl;
+            cout << ", residual (norm " << resNorm << ", maxResNorm " << maxResNorm << ")" << endl;
           }
         }
       }
 
       return 0;
+    };
+
+    double computeResidualNorm(size_t const & idx, EM const & A, EM const * B = nullptr) const {
+      // Check eigen value index.
+      if (idx >= val.size()) return -1.; // Error.
+      if (idx >= vec.size()) return -1.; // Error.
+
+      // Compute residual norm.
+      EigVecZ V = vec[idx];
+      complex<double> lambda = val[idx];
+      EigVecZ left = A.template cast<complex<double>>() * V;
+      EigVecZ right = stdPb ? V : B->template cast<complex<double>>() * V;
+      right *= lambda;
+      EigVecZ residual = left - right;
+
+      return residual.norm();
     };
 
   // Private methods.
@@ -374,7 +380,7 @@ class arpackSolver {
         string inpLine; getline(inp, inpLine); l++;
         while (isspace(*inpLine.begin())) inpLine.erase(inpLine.begin()); // Suppress leading white spaces.
         if (inpLine.length() == 0) continue; // Empty line.
-        if (inpLine[0] == '%') continue; // Comments skipped, begin reading.
+        if (inpLine[0] == '%' || inpLine[0] == '#') continue; // Comments skipped, begin reading.
 
         // Read matrix market file.
 
@@ -384,7 +390,13 @@ class arpackSolver {
           if (!inpSS) {cerr << "Error: bad header (n, m)" << endl; return 1;}
           if (nnz == 0) {
             inpSS >> nnz;
-            if (inpSS) { // OK, (optional) nnz has been provided.
+            if (inpSS && nnz > 0) { // OK, (optional) nnz has been provided.
+              i.reserve(nnz);
+              j.reserve(nnz);
+              Mij.reserve(nnz);
+            }
+            else {
+              nnz = n*m;
               i.reserve(nnz);
               j.reserve(nnz);
               Mij.reserve(nnz);
@@ -406,12 +418,20 @@ class arpackSolver {
 
       // Handle 1-based -> 0-based.
 
-      nnz = i.size(); // In case nnz was not provided.
-      if (nnz > 0) {
-        if (*max_element(begin(i), end(i)) == n || *max_element(begin(j), end(j)) == m) {
-          for (size_t k = 0; k < nnz; k++) i[k] -= 1;
-          for (size_t k = 0; k < nnz; k++) j[k] -= 1;
+      if (!i.empty() && !j.empty()) {
+        if (*max_element(begin(i), end(i)) == n && *max_element(begin(j), end(j)) == m) {
+          for (size_t k = 0; k < i.size(); k++) { if (i[k] > 0) i[k] -= 1; }
+          for (size_t k = 0; k < j.size(); k++) { if (j[k] > 0) j[k] -= 1; }
         }
+      }
+
+      // Checking indices.
+
+      for (size_t k = 0; k < i.size(); k++) {
+        if (i[k] >= n) {cerr << "Error: bad index (" << fileName << ", i " << i[k] << ")" << endl; return 1;};
+      }
+      for (size_t k = 0; k < j.size(); k++) {
+        if (j[k] >= m) {cerr << "Error: bad index (" << fileName << ", j " << j[k] << ")" << endl; return 1;};
       }
 
       return 0;
