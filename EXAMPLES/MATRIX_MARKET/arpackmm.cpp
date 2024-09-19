@@ -718,7 +718,7 @@ int itrSolve(options& opt, output& out, double const& slvItrILUDropTol,
   for (auto idx = 0; idx < as.val.size(); idx++) {
     double val = norm(as.val[idx]);
     double res = as.computeResidualNorm(idx, A, opt.stdPb ? nullptr : &B);
-    out.res.push_back(tuple{val, res});
+    out.res.push_back(tuple<double, double>{val, res});
   }
 
   return 0;
@@ -810,7 +810,7 @@ int drtSolve(options& opt, output& out) {
   for (auto idx = 0; idx < as.val.size(); idx++) {
     double val = norm(as.val[idx]);
     double res = as.computeResidualNorm(idx, A, opt.stdPb ? nullptr : &B);
-    out.res.push_back(tuple{val, res});
+    out.res.push_back(tuple<double, double>{val, res});
   }
 
   return 0;
@@ -1029,7 +1029,7 @@ int run(int argc, char** argv) {
 
   cout << endl;
   for (auto idx = 0; idx < out.res.size(); idx++) {
-    tuple res = out.res[idx];
+    tuple<double, double> res = out.res[idx];
     cout << "RES: eigen value " << idx << ": " << get<0>(res);
     cout << " (residual norm " << get<1>(res) << ")";
     cout << endl;
