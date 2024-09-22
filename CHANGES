@@ -9,6 +9,9 @@
 [ Kyle Guinn ]
  * Build PARPACK p[sd]lamch10.f with FFLAGS from ./configure instead of forcing -O0.  Build all of PARPACK with AM_FFLAGS.
 
+[ Markus Mützel ]
+ * CMake: Fix running CTests on Windows.
+
 arpack-ng - 3.9.1
 
 [ Fabien Péan ]
