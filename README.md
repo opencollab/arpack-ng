@@ -93,7 +93,7 @@ About ISO_C_BINDING support:
 - The install will now provide `arpack.h/hpp`, `parpack.h/hpp` and friends.
 - Examples of use can be found in `./TESTS` and` ./PARPACK/TESTS/MPI`.
 
-ISO_C_BINDING is a feature of modern Fortran meant to handle safely interoperability between Fortran and C (in practice, no more need to use ugly tricks to link F77 functions to C code using "underscored" symbols). Basically, ISO_C_BINDING make sure all fortran variables are typed (which may not always be the case when using `implicit` keyword in fortran): this way, C compilers can link properly. For more informations on ISO_C_BINDING, you can checkout the following links:
+ISO_C_BINDING is a feature of modern Fortran meant to handle safely interoperability between Fortran and C (in practice, no more need to use ugly tricks to link F77 functions to C code using "underscored" symbols). Basically, ISO_C_BINDING make sure all fortran variables are typed (which may not always be the case when using `implicit` keyword in fortran): this way, C compilers can link properly. For more information on ISO_C_BINDING, you can checkout the following links:
 
 - <http://fortranwiki.org/fortran/show/ISO_C_BINDING>
 - <http://fortranwiki.org/fortran/show/Generating+C+Interfaces>
@@ -356,7 +356,7 @@ TARGET_INCLUDE_DIRECTORIES(main PUBLIC MPI::MPI_Fortran)
 TARGET_LINK_LIBRARIES(main MPI::MPI_Fortran)
 ```
 
-Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_package` won't find arpack-ng cmake file).
+Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otherwise, `find_package` won't find arpack-ng cmake file).
 
 ### FAQ
 
@@ -373,7 +373,7 @@ Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otheriwse, `find_pac
 - Say I have an estimate of an eigen value, how to give this information to arpack?
 
   You need to shift of an amount of about this estimate of `lambda`. Grep `backTransform` in `arpackSolver.hpp` to see an example.
-  For more informations, checkout "NUMERICAL METHODS FOR LARGE EIGENVALUE PROBLEMS" by Yousef Saad: https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf (paragraph 4.1.2. and section 4.1.).
+  For more information, checkout "NUMERICAL METHODS FOR LARGE EIGENVALUE PROBLEMS" by Yousef Saad: https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf (paragraph 4.1.2. and section 4.1.).
 
 - Say I have an estimate of an eigen vector, how to give this information to arpack?
 

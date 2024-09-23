@@ -238,7 +238,7 @@ arpack-ng - 3.5.0
  * Improve cmake build system: disable C++ detection, set default build type.
 
  [ Marco Atzeri]
- * Use AC_PROG_FC instead of AC_PROG_F77 for proper inizialization
+ * Use AC_PROG_FC instead of AC_PROG_F77 for proper initialization
    for the usage of AC_FC_LINE_LENGTH. Noted on Cygwin.
 
  [ Denis Davydov ]
