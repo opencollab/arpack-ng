@@ -330,7 +330,6 @@ jobs:
           if [[ ${{ matrix.mpi }} == ON ]]; then
             export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
           fi
-          export PATH="${GITHUB_WORKSPACE}/build":$PATH # add libarpack.dll to msys2 path for tests that run in different directory
           cd build
           ctest
       - name: Re-run tests
@@ -340,7 +339,6 @@ jobs:
           if [[ ${{ matrix.mpi }} == ON ]]; then
             export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
           fi
-          export PATH="${GITHUB_WORKSPACE}/build":$PATH # add libarpack.dll to msys2 path for tests that run in different directory
           cd build
           echo "::group::Re-run ctest"
           ctest --rerun-failed --output-on-failure || true

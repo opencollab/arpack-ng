@@ -626,7 +626,23 @@ endif()
 ############################
 # TEST
 ############################
-function(build_tests)  
+
+function(add_test_with_rpath test_name)
+  # Add test which sets a current working directory that doesn't contain the
+  # libarpack library.
+  # Windows doesn't have a mechanism similar to RPATH on Linux or macOS.
+  # On Windows, if a test is running in a working directory that doesn't contain
+  # the ARPACK (and PARPACK) libraries, the path to these libraries has to be
+  # added to the PATH environment variable.
+  add_test(NAME ${test_name} ${ARGN})
+  if (WIN32 AND BUILD_SHARED_LIBS)
+    set_tests_properties(${test_name}
+      PROPERTIES
+      ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:arpack>")
+  endif()
+endfunction()
+
+function(build_tests)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TESTS)
 
   add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
@@ -704,13 +720,13 @@ function(build_tests)
       configure_file(EXAMPLES/MATRIX_MARKET/B.mtx  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/B.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Bz.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Bz.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/arpackmm.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arpackmm.sh)
-      add_test(NAME arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
+      add_test_with_rpath(arpackmm_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} arpackmm.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue401.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue401.sh)
-      add_test(NAME issue401_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue401.sh)
+      add_test_with_rpath(issue401_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue401.sh)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/issue215.sh ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue215.sh)
-      add_test(NAME issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue215.sh)
+      add_test_with_rpath(issue215_tst WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COMMAND ${BASH_PROGRAM} issue215.sh)
     endif()
 
     if (PYTHON3)
@@ -795,7 +811,7 @@ endfunction(build_tests)
 
 if(TESTS)
     enable_testing()
-    set(CMAKE_CTEST_COMMAND ctest -V)   
+    set(CMAKE_CTEST_COMMAND ctest -V)
     build_tests()
 endif()
 
