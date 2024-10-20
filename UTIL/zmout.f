@@ -31,8 +31,8 @@
 *     ...
 *     ... SPECIFICATIONS FOR LOCAL VARIABLES
       INTEGER            I, J, NDIGIT, K1, K2, LLL
-      CHARACTER*1        ICOL( 3 )
-      CHARACTER*80       LINE
+      CHARACTER          ICOL( 3 )
+      CHARACTER          LINE*80
 *     ...
 *     ... SPECIFICATIONS INTRINSICS
       INTRINSIC          MIN

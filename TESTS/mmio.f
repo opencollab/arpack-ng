@@ -755,7 +755,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       integer pos, len
       character*(*) string
 
-      character*26 lcase, ucase
+      character     lcase*26, ucase*26
       save lcase,ucase
       data lcase/'abcdefghijklmnopqrstuvwxyz'/
       data ucase/'ABCDEFGHIJKLMNOPQRSTUVWXYZ'/

@@ -33,7 +33,7 @@
 *     ...
 *     ... SPECIFICATIONS FOR LOCAL VARIABLES
       INTEGER            I, NDIGIT, K1, K2, LLL
-      CHARACTER*80       LINE
+      CHARACTER          LINE*80
 *     ...
 *     ... FIRST EXECUTABLE STATEMENT
 *
