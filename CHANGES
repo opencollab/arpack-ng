@@ -1,3 +1,5 @@
+arpack-ng - next
+
 [ Franck Houssen ]
  * [BUG FIX] Fix arpack solver to handle real and imag shifts.
  * [BUG FIX] Make sure the restart file of the arpack solver i written.
@@ -11,6 +13,11 @@
 
 [ Markus Mützel ]
  * CMake: Fix running CTests on Windows.
+
+[ Szabolcs Horvát ]
+ * fix obsolescent character length warnings
+
+ -- TODO <TODO@users.noreply.github.com> DATE
 
 arpack-ng - 3.9.1
 
