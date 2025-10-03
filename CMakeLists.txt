@@ -134,6 +134,9 @@ if (EIGEN)
         message(FATAL_ERROR "-- Eigen/Cholesky header not found.")
     endif ()
 
+    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
     set(ICB "ON")
 endif ()
 
