@@ -1,5 +1,8 @@
 arpack-ng - next
 
+[ Theodore Chang ]
+ * CMake: Improve dependency linking, bump up minimum C++ standard version.
+
 [ Franck Houssen ]
  * [BUG FIX] Fix arpack solver to handle real and imag shifts.
  * [BUG FIX] Make sure the restart file of the arpack solver i written.
