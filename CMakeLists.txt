@@ -76,10 +76,13 @@ function(pexamples list_name)
     endforeach()
 endfunction(pexamples)
 
-if (PYTHON3)
-    enable_language(C CXX) # Boost requirement.
-    set(CMAKE_CXX_STANDARD 14) # Boost requirement.
+if (PYTHON3 OR EIGEN OR ICB)
+    enable_language(C CXX)
+    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
 
+if (PYTHON3)
     find_package(PythonInterp 3 REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
     find_package(Boost 1.78 COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
@@ -134,18 +137,11 @@ if (EIGEN)
         message(FATAL_ERROR "-- Eigen/Cholesky header not found.")
     endif ()
 
-    set(CMAKE_CXX_STANDARD 14)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
     set(ICB "ON")
 endif ()
 
 # Enable language(s) before any find_package (in particular before MPI find_package).
 if (ICB)
-    enable_language(C CXX) # For testing binding with c/c++.
-
-    set(CMAKE_CXX_STANDARD 11) # OK, since cmake-3.1 only.
-
     file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
          "
           PROGRAM PROG_ICB
