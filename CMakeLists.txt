@@ -77,7 +77,7 @@ function(pexamples list_name)
 endfunction(pexamples)
 
 if (PYTHON3 OR EIGEN OR ICB)
-    enable_language(C CXX)
+    enable_language(CXX)
     set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
