@@ -62,7 +62,7 @@ function(examples list_name)
     foreach(l ${${list_name}})
         get_filename_component(lwe ${l} NAME_WE)
         add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
-        target_link_libraries(${lwe} arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+        target_link_libraries(${lwe} arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
         add_test(NAME "${lwe}_ex" COMMAND ${lwe})
     endforeach()
 endfunction(examples)
@@ -76,10 +76,13 @@ function(pexamples list_name)
     endforeach()
 endfunction(pexamples)
 
-if (PYTHON3)
-    enable_language(C CXX) # Boost requirement.
-    set(CMAKE_CXX_STANDARD 14) # Boost requirement.
+if (PYTHON3 OR EIGEN OR ICB)
+    enable_language(CXX)
+    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
 
+if (PYTHON3)
     find_package(PythonInterp 3 REQUIRED)
     find_package(PythonLibs 3 REQUIRED)
     find_package(Boost 1.78 COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
@@ -139,10 +142,6 @@ endif ()
 
 # Enable language(s) before any find_package (in particular before MPI find_package).
 if (ICB)
-    enable_language(C CXX) # For testing binding with c/c++.
-
-    set(CMAKE_CXX_STANDARD 11) # OK, since cmake-3.1 only.
-
     file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/PROG_ICB.f90
          "
           PROGRAM PROG_ICB
@@ -301,6 +300,8 @@ if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMake
         set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
     endif()
 endif()
+
+set(LAPACK_BLAS_LIBS LAPACK::LAPACK BLAS::BLAS)
 
 # As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
 
@@ -647,7 +648,7 @@ function(build_tests)
 
   add_executable(dnsimp_test TESTS/dnsimp.f TESTS/mmio.f TESTS/debug.h)
   set_target_properties( dnsimp_test PROPERTIES OUTPUT_NAME  dnsimp )
-  target_link_libraries(dnsimp_test arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(dnsimp_test arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_custom_command(TARGET dnsimp_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TESTS/testA.mtx testA.mtx
   )
@@ -656,40 +657,40 @@ function(build_tests)
   if (ICB)
       add_executable(bug_1315_single TESTS/bug_1315_single.c)
       target_include_directories(bug_1315_single PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
-      target_link_libraries(bug_1315_single arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      target_link_libraries(bug_1315_single arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
       add_test(bug_1315_single_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_single)
 
       add_executable(bug_1315_double TESTS/bug_1315_double.c)
       target_include_directories(bug_1315_double PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
-      target_link_libraries(bug_1315_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      target_link_libraries(bug_1315_double arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
       add_test(bug_1315_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1315_double)
   endif()
 
   add_executable(bug_1323 TESTS/bug_1323.f)
-  target_link_libraries(bug_1323 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(bug_1323 arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_1323_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_1323)
 
   add_executable(bug_58_double TESTS/bug_58_double.f)
-  target_link_libraries(bug_58_double arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(bug_58_double arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_58_double_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_58_double)
 
   add_executable(bug_79_double_complex TESTS/bug_79_double_complex.f)
-  target_link_libraries(bug_79_double_complex arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(bug_79_double_complex arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_79_double_complex_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_79_double_complex)
 
   add_executable(bug_142 TESTS/bug_142.f)
-  target_link_libraries(bug_142 arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(bug_142 arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_142_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142)
 
   add_executable(bug_142_gen TESTS/bug_142_gen.f)
-  target_link_libraries(bug_142_gen arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+  target_link_libraries(bug_142_gen arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 
   if(MPI)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
     add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
-    target_link_libraries(issue46 parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    target_link_libraries(issue46 parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(issue46_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
   endif()
 
@@ -698,12 +699,12 @@ function(build_tests)
 
     add_executable(icb_arpack_c TESTS/icb_arpack_c.c)
     target_include_directories(icb_arpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
-    target_link_libraries(icb_arpack_c arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    target_link_libraries(icb_arpack_c arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(icb_arpack_c_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_c)
 
     add_executable(icb_arpack_cpp TESTS/icb_arpack_cpp.cpp)
     target_include_directories(icb_arpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.hpp
-    target_link_libraries(icb_arpack_cpp arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+    target_link_libraries(icb_arpack_cpp arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
     if (EIGEN)
@@ -713,7 +714,7 @@ function(build_tests)
 
       add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
       target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
-      target_link_libraries(arpackmm arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS})
+      target_link_libraries(arpackmm arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
       configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
@@ -742,7 +743,7 @@ function(build_tests)
           ${Boost_INCLUDE_DIRS}
           ${PYTHON_INCLUDE_DIRS})
       target_link_libraries(pyarpack
-          BLAS::BLAS LAPACK::LAPACK ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+          ${LAPACK_BLAS_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
       install(TARGETS pyarpack
               ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
               LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
@@ -798,12 +799,12 @@ function(build_tests)
 
       add_executable(icb_parpack_c PARPACK/TESTS/MPI/icb_parpack_c.c)
       target_include_directories(icb_parpack_c PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
-      target_link_libraries(icb_parpack_c parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_C)
+      target_link_libraries(icb_parpack_c parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS} MPI::MPI_C)
       add_test(icb_parpack_c_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_c)
 
       add_executable(icb_parpack_cpp PARPACK/TESTS/MPI/icb_parpack_cpp.cpp)
       target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
-      target_link_libraries(icb_parpack_cpp parpack arpack BLAS::BLAS LAPACK::LAPACK ${EXTRA_LDFLAGS} MPI::MPI_CXX)
+      target_link_libraries(icb_parpack_cpp parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS} MPI::MPI_CXX)
       add_test(icb_parpack_cpp_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
     endif()
   endif()
