@@ -824,7 +824,7 @@ endif()
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix \${prefix})
 set(libdir ${CMAKE_INSTALL_FULL_LIBDIR})
-set(includedir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
+set(includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${arpack_ng_VERSION})
 set(PACKAGE_URL "https://github.com/opencollab/arpack-ng/")
@@ -847,15 +847,15 @@ foreach(lib ${LAPACK_LIBRARIES} ${MPI_Fortran_LIBRARIES})
 endforeach()
 string(REPLACE ";" " " PARPACK_PC_LIBS_PRIVATE "${PARPACK_PC_LIBS_PRIVATE}")
 
-configure_file(pkg-config/arpack.pc.in "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
-configure_file(pkg-config/parpack.pc.in "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
+configure_file(SRC/arpack.pc.in "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
+configure_file(PARPACK/SRC/MPI/parpack.pc.in "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc" @ONLY)
 
 install(TARGETS arpack
     EXPORT arpackngTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES "${PROJECT_BINARY_DIR}/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
+install(FILES "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (MPI)
@@ -864,7 +864,7 @@ if (MPI)
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(FILES "${PROJECT_BINARY_DIR}/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
+  install(FILES "${PROJECT_BINARY_DIR}/PARPACK/SRC/MPI/parpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
       DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif ()
 
@@ -897,8 +897,10 @@ endif()
 configure_file(arpackdef.h.in "${PROJECT_BINARY_DIR}/arpackdef.h" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/arpackdef.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
 
-configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+if(ICB)
+  configure_file(arpackicb.h.in "${PROJECT_BINARY_DIR}/arpackicb.h" @ONLY)
+  install(FILES "${PROJECT_BINARY_DIR}/arpackicb.h" DESTINATION ${ARPACK_INSTALL_INCLUDEDIR})
+endif()
 
 install(EXPORT arpackngTargets
   DESTINATION "${ARPACK_INSTALL_CMAKEDIR}"
