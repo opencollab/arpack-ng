@@ -406,7 +406,7 @@ c
          if (msglvl .gt. 1) then
             call pivout (comm, logfil, 1, [j], ndigit,
      &                  '_naitr: generating Arnoldi vector number')
-            call pdvout (comm, logfil, 1, [rnorm], ndigit,
+            call psvout (comm, logfil, 1, [rnorm], ndigit,
      &                  '_naitr: B-norm of the current residual is')
          end if
 c
