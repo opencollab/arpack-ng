@@ -2,7 +2,7 @@ arpack-ng - next
 
 [ Evan Biederstedt ]
 * Fix warnings for "Warning: Obsolescent feature: Old-style character length at (1)", compiled with `gfortran-16  -fpic  -g -O2 -Wall -pedantic -mtune=native`
-* Changed github workflows for Mac OS to use 'brew install open-mpi', as `mpich` fails. 
+* Changed GitHub CI workflows for Mac OS to use 'brew install open-mpi', as `mpich` fails. 
 
 [ Theodore Chang ]
  * CMake: Improve dependency linking, bump up minimum C++ standard version.
