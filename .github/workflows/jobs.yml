@@ -176,7 +176,7 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew reinstall gcc # brings gfortran on path
-          brew install cmake mpich eigen
+          brew install cmake open-mpi eigen
       - name: Run job
         run: |
           mkdir -p build
