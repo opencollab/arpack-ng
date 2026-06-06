@@ -641,7 +641,7 @@ c
       integer indx(*)
       integer jndx(*)
       integer i, rows, cols, nnz, nnzreq, ounit
-      character*(*)rep,field,symm
+      character  rep*(*),field*(*),symm*(*)
 c
 c Test input qualifiers:
 c
@@ -753,7 +753,7 @@ c Convert uppercase letters to lowercase letters in string with
 c starting position pos and length len.
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       integer pos, len
-      character*(*) string
+      character string*(*)
 
       character     lcase*26, ucase*26
       save lcase,ucase
@@ -780,8 +780,8 @@ c
 c 30-Oct-96   Bug fix: fixed non-ansi zero stringlength
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       integer slen, start, next, begin, space, wlen
-      character*(*) word
-      character*(*) string
+      character  word*(*)
+      character  string*(*)
 
       begin = start
       do 5 i=start,slen
@@ -809,7 +809,7 @@ c     Countwd counts the number of words in string starting
 c     at position start.  On return, count is the number of words.
 c 30-Oct-96   Routine added
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      character*(*) string
+      character string*(*)
       integer slen, start, next, wordlength, count
       character tmp2*2
 

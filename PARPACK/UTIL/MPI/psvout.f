@@ -30,7 +30,7 @@
 *     ...
 *     ... SPECIFICATIONS FOR LOCAL VARIABLES
 *     .. Scalar Arguments ..
-      CHARACTER*( * )    IFMT
+      CHARACTER          IFMT*( * )
       INTEGER            IDIGIT, LOUT, N
 *     ..
 *     .. Array Arguments ..
