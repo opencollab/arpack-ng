@@ -331,7 +331,7 @@ c
          call dlabad( unfl, ovfl )
          ulp = pdlamch10( comm, 'precision' )
          smlnum = unfl*( n / ulp )
-         first = .false.
+         aitr_first = .false.
       end if
 c
       if (ido .eq. 0) then
