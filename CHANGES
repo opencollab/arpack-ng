@@ -21,6 +21,7 @@ arpack-ng - next
 
 [ Markus Mützel ]
  * CMake: Fix running CTests on Windows.
+ * Use GNU Fortran ABI in CI tests on macOS.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
