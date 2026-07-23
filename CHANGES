@@ -29,6 +29,7 @@ arpack-ng - next
  * Document which CMake modules are used.
  * [BUG FIX] Check for correct MPI CMake target in config file for static ARPACK libraries.
  * [BUG FIX] Fix building with non-empty `SYMBOLSUFFIX`.
+ * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
