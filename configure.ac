@@ -8,6 +8,7 @@ AM_MAINTAINER_MODE
 
 dnl Checks for standard programs.
 dnl Autoconf was designed with the fundamental fact that compiler (= language support) is NOT an option.
+AC_PROG_F77
 AC_PROG_FC
 AC_PROG_CC
 AC_PROG_CXX
@@ -127,25 +128,42 @@ fi
 
 dnl See if compiling parpack
 AC_ARG_ENABLE([mpi],
-	[AS_HELP_STRING(
-		[--enable-mpi],
-		[build parallel version of arpack with MPI])],
-	[],
-	[AS_VAR_SET([enable_mpi], [no])])
+  [AS_HELP_STRING(
+    [--enable-mpi=PREFIX],
+    [build parallel version of arpack with MPI])],
+  [AS_IF([test x"$enableval" != x"yes"],
+    [AS_VAR_SET([mpi_prefix], [$enableval])])],
+  [AS_VAR_SET([enable_mpi], [no])])
+
 AS_IF([test x"$enable_mpi" != x"no"], [
-	FCFLAGS_SAVE=$FCFLAGS
-	FCFLAGS=""
-	FFLAGS_SAVE=$FFLAGS
-	FFLAGS=""
+  AC_ARG_WITH([mpi-includedir],
+    [AS_HELP_STRING([--with-mpi-includedir=INCDIR],
+      [directory with headers for MPI])],
+    [MPI_CPPFLAGS="-I$withval"],
+    [AS_IF([test x"$mpi_prefix" != x""],
+      [MPI_CPPFLAGS="-I$mpi_prefix/include"])
+    ])
 
-	AC_LANG_PUSH([Fortran 77])
-	AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
-	AC_SUBST([MPI_Fortran_LIBS], [$MPILIBS])
-	F77=$MPIF77
-	AC_LANG_POP([Fortran 77])
+  AC_ARG_WITH([mpi-libdir],
+    [AS_HELP_STRING([--with-mpi-libdir=LIBDIR],
+      [linker flags for the MPI library])],
+    [MPI_LDFLAGS="-L$withval"],
+    [AS_IF([test x"$mpi_prefix" != x""],
+      [MPI_LDFLAGS="-L$mpi_prefix/lib"])
+    ])
 
-	FCFLAGS=$FCFLAGS_SAVE
-	FFLAGS=$FFLAGS_SAVE
+  FCFLAGS_SAVE=$FCFLAGS
+  FCFLAGS="$FCFLAGS $MPI_CPPFLAGS"
+  FFLAGS_SAVE=$FFLAGS
+  FFLAGS="$FFLAGS $MPI_CPPFLAGS"
+  LDFLAGS_SAVE=$LDFLAGS
+  LDFLAGS="$LDFLAGS $MPI_LDFLAGS"
+
+  AC_LANG_PUSH([Fortran 77])
+  AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
+  AC_LANG_POP([Fortran 77])
+  MPILIBS="$MPI_LDFLAGS $MPILIBS"
+  F77=$MPIF77
 
   dnl Check if we can use ISO_C_BINDING provided by MPI.
   AC_LANG_PUSH([Fortran 77])
@@ -164,8 +182,7 @@ AS_IF([test x"$enable_mpi" != x"no"], [
                  ],
                  [
                   AC_MSG_RESULT([yes])
-                  FCFLAGS=$FCFLAGS" -DHAVE_MPI_ICB"
-                  FFLAGS=$FFLAGS" -DHAVE_MPI_ICB"
+                  MPI_CPPFLAGS=$MPI_CPPFLAGS" -DHAVE_MPI_ICB"
                   AS_VAR_SET([enable_mpi_icb], [yes])
                  ],
                  [
@@ -175,6 +192,10 @@ AS_IF([test x"$enable_mpi" != x"no"], [
                  ]
                 )
   AC_LANG_POP([Fortran 77])
+
+  FCFLAGS=$FCFLAGS_SAVE
+  FFLAGS=$FFLAGS_SAVE
+  LDFLAGS=$LDFLAGS_SAVE
 
   dnl As MPI can be used with or without ISO_C_BINDING (#ifdef), we need to preprocess code before compiling.
   AC_LANG_PUSH([Fortran 77])
@@ -200,9 +221,13 @@ fi
 if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
     FCFLAGS_SAVE=$FCFLAGS
-    FCFLAGS=""
+    FCFLAGS="$MPI_CPPFLAGS $FCFLAGS"
     FFLAGS_SAVE=$FFLAGS
-    FFLAGS=""
+    FFLAGS="$MPI_CPPFLAGS $FFLAGS"
+    CPPFLAGS_SAVE=$CPPFLAGS
+    CPPFLAGS="$MPI_CPPFLAGS $CPPFLAGS"
+    LDFLAGS_SAVE=$LDFLAGS
+    LDFLAGS="$MPI_LDFLAGS $LDFLAGS"
 
     AC_LANG_PUSH([Fortran])
     AX_MPI([], AC_MSG_ERROR([could not compile a Fortran MPI test program]))
@@ -242,6 +267,8 @@ if test x"$enable_icb" != x"no"; then
 
     FCFLAGS=$FCFLAGS_SAVE
     FFLAGS=$FFLAGS_SAVE
+    CPPFLAGS=$CPPFLAGS_SAVE
+    LDFLAGS=$LDFLAGS_SAVE
   fi
   AX_CXX_COMPILE_STDCXX(11)
 else
@@ -284,6 +311,12 @@ else
   dnl Needed for BLAS check and for tests (even when suffix is empty)
   CPPFLAGS="$CPPFLAGS -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff"
 fi
+
+dnl Should the MPI preprocessor flags be exported (AC_SUBST) instead
+dnl and only be used in the build rules of PARPACK?
+FFLAGS="$MPI_CPPFLAGS $FFLAGS"
+FCFLAGS="$MPI_CPPFLAGS $FCFLAGS"
+CPPFLAGS="$MPI_CPPFLAGS $CPPFLAGS"
 
 dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
 
@@ -410,6 +443,7 @@ CFLAGS              : $CFLAGS
 CXX                 : $CXX
 CXXFLAGS            : $CXXFLAGS
 CPPFLAGS            : $CPPFLAGS
+MPI_CPPFLAGS        : $MPI_CPPFLAGS
 MPI_Fortran_LIBS    : $MPI_Fortran_LIBS
 MPI_C_LIBS          : $MPI_C_LIBS
 MPI_CXX_LIBS        : $MPI_CXX_LIBS
