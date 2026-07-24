@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -165,7 +165,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -194,7 +194,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -231,7 +231,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
@@ -296,7 +296,7 @@ jobs:
       - name: Install MS-MPI (for mpiexec)
         uses: mpi4py/setup-mpi@v1
       - name: Clone and check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
