@@ -21,6 +21,7 @@ arpack-ng - next
 
 [ Markus Mützel ]
  * CMake: Fix running CTests on Windows.
+ * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
