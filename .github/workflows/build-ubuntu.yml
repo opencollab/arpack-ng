@@ -1,0 +1,163 @@
+name: build-ubuntu
+on: [push, pull_request]
+jobs:
+  ubuntu_latest_cmake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON ..
+          make all
+          CTEST_OUTPUT_ON_FAILURE=1 make test
+          make package_source
+  ubuntu_latest_cmake_install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          bash ./tstCMakeInstall.sh
+          bash ./tstCMakeInstall.sh 64-
+          bash ./tstCMakeInstall.sh   -ILP64
+          bash ./tstCMakeInstall.sh 64-ILP64
+  ubuntu_latest_autotools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev automake autoconf pkg-config libtool
+      - name: Run job
+        run: |
+          ./bootstrap
+          ./configure --enable-mpi --enable-icb --enable-eigen
+          make all
+          make check
+          make distcheck
+  ubuntu_latest_autotools_install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev automake autoconf pkg-config libtool
+      - name: Run job
+        run: |
+          ./bootstrap
+          ./configure
+          bash ./tstAutotoolsInstall.sh
+          bash ./tstAutotoolsInstall.sh 64-
+          bash ./tstAutotoolsInstall.sh   -ILP64
+          bash ./tstAutotoolsInstall.sh 64-ILP64
+  ubuntu_latest_cmake_python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev cmake libeigen3-dev
+      - name: Install python dependencies
+        run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
+      - name: Build boost-python for python3 (not provided by apt-cache)
+        run : |
+          sudo apt-get -y install wget
+          wget https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.gz
+          tar -xf boost_1_79_0.tar.gz
+          cd boost_1_79_0
+          ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
+          sudo ./b2 toolset=gcc install
+          sudo apt-get install locate
+          sudo updatedb
+      - name: Run job
+        run: |
+          mkdir build
+          cd build
+          cmake -DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON -DPYTHON3=ON ..
+          make all
+          CTEST_OUTPUT_ON_FAILURE=1 make test
+  ubuntu_latest_autotools_ilp64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Update OS
+        run: sudo apt-get update
+      - name: Install apt-get dependencies
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev automake autoconf pkg-config libtool libeigen3-dev
+      - name: Install Intel MKL (ILP64 blas/lapack)
+        run: echo yes | sudo apt-get -y install intel-mkl libmkl-dev
+      - name: Run job
+        run: |
+          ./bootstrap
+          ./configure --enable-icb --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
+          make all
+          make check
+        env:
+          FFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
+          FCFLAGS: "-DMKL_ILP64 -I/usr/include/mkl"
+          LIBS: "-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl"
+          INTERFACE64: "1"
