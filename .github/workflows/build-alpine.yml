@@ -1,4 +1,4 @@
-name: arpack-ng-emu
+name: build-alpine
 on:
   workflow_dispatch:
   push:
@@ -9,7 +9,8 @@ concurrency: ci-arch-emu-${{ github.ref }}
 jobs:
 
   alpine:
-    runs-on: ubuntu-latest
+    # Run armv7 on aarch64 runners
+    runs-on: ${{ matrix.arch == 'armv7' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
 
     defaults:
       run:
@@ -23,11 +24,15 @@ jobs:
       matrix:
         # For available CPU architectures, see:
         # https://github.com/marketplace/actions/setup-alpine-linux-environment
-        arch: [x86, aarch64, armv7, ppc64le, riscv64, s390x]
+        arch: [x86, armv7, loongarch64]
 
     name: alpine (${{ matrix.arch }})
 
     steps:
+      - name: get CPU information (host)
+        shell: bash
+        run: lscpu
+
       - name: checkout repository
         uses: actions/checkout@v7
 
@@ -35,6 +40,9 @@ jobs:
         uses: jirutka/setup-alpine@v1
         with:
           arch: ${{ matrix.arch }}
+          apk-tools-url: ${{ matrix.arch == 'armv7'
+              && 'https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v2.14.7/aarch64/apk.static#!sha256!27a975638ddc95a411c9f17c63383e335da9edf6bb7de2281d950c291a11f878'
+              || 'https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v2.14.7/x86_64/apk.static#!sha256!bdd044e0fd6cc388c5e571e1093efa5f35f7767cc5aa338b0a2576a429009a62' }}
           packages: >
             bash
             build-base
@@ -43,6 +51,15 @@ jobs:
             gfortran
             eigen-dev
             lapack-dev
+            lscpu
+
+      - name: disable QEMU emulation
+        if: matrix.arch == 'armv7'
+        shell: bash
+        run: sudo update-binfmts --disable qemu-arm
+
+      - name: get CPU information (emulated)
+        run: lscpu
 
       - name: prepare ccache
         # create key with human readable timestamp
@@ -64,8 +81,6 @@ jobs:
             ccache:alpine:${{ matrix.arch }}
 
       - name: configure ccache
-        env:
-          CCACHE_MAX: ${{ matrix.ccache-max }}
         run: |
           test -d ~/.ccache || mkdir ~/.ccache
           echo "max_size = 20M" >> ~/.ccache/ccache.conf
@@ -110,4 +125,4 @@ jobs:
       - name: test
         run: |
           cd ${GITHUB_WORKSPACE}/build
-          CTEST_OUTPUT_ON_FAILURE=1 make all test
+          CTEST_OUTPUT_ON_FAILURE=1 ctest .
