@@ -1,0 +1,219 @@
+name: cross-build-ubuntu
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency: ci-cross-build-ubuntu-${{ github.ref }}
+
+jobs:
+
+  cross-build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Allow other runners in the matrix to continue if some fail
+      fail-fast: false
+
+      matrix:
+        # List of architectures that are supported by Ubuntu:
+        # https://canonical-ubuntu-packaging-guide.readthedocs-hosted.com/en/latest/reference/architectures/
+        arch: [armhf, ppc64el, s390x, riscv64]
+        include:
+          - arch: armhf
+            target-triple: arm-linux-gnueabihf
+            os: ubuntu-24.04-arm
+            ccache-max: 1G
+            qemu-user:
+          - arch: ppc64el
+            target-triple: powerpc64le-linux-gnu
+            os: ubuntu-24.04-arm
+            ccache-max: 1G
+            qemu-user: qemu-ppc64le
+          - arch: s390x
+            target-triple: s390x-linux-gnu
+            os: ubuntu-24.04
+            ccache-max: 1G
+            qemu-user: qemu-s390x
+          - arch: riscv64
+            target-triple: riscv64-linux-gnu
+            os: ubuntu-24.04-arm
+            ccache-max: 1.4G
+            qemu-user: qemu-riscv64
+
+    name: cross ${{ matrix.arch }}
+
+    env:
+      CC: ${{ matrix.target-triple }}-gcc
+      CXX: ${{ matrix.target-triple }}-g++
+      FC: ${{ matrix.target-triple }}-gfortran
+
+    steps:
+      - name: get CPU information
+        run: lscpu
+
+      - name: checkout repository
+        uses: actions/checkout@v7
+
+      - name: install toolchain for ${{ matrix.arch }}
+        run: |
+          sudo apt -qq update
+          sudo apt install -y \
+            g++-${{ matrix.target-triple }} \
+            gfortran-${{ matrix.target-triple }} \
+            cmake \
+            ccache \
+            ${{ matrix.arch == 'armhf' && ' ' || 'qemu-user-binfmt' }}
+
+      - name: add repositories for ${{ matrix.arch }} packages
+        # deb822-style format:
+        # https://manpages.ubuntu.com/manpages/noble/man5/sources.list.5.html
+        run: |
+          sudo dpkg --add-architecture ${{ matrix.arch }}
+          case ${{ matrix.os }} in
+            "ubuntu-24.04-arm")
+              sudo bash -c 'cat - >/etc/apt/sources.list.d/ubuntu.sources' <<-EOF
+          Types: deb
+          URIs: http://ports.ubuntu.com/ubuntu-ports/
+          Suites: noble noble-updates noble-backports
+          Components: main restricted universe multiverse
+          Architectures: arm64 ${{ matrix.arch }}
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          Types: deb
+          URIs: http://security.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-security
+          Components: main restricted universe multiverse
+          Architectures: arm64 ${{ matrix.arch }}
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          EOF
+              ;;
+            "ubuntu-24.04")
+              sudo bash -c 'cat - >/etc/apt/sources.list.d/ubuntu.sources' <<-EOF
+          Types: deb
+          URIs: http://archive.ubuntu.com/ubuntu/
+          Suites: noble noble-updates noble-backports
+          Components: main restricted universe multiverse
+          Architectures: amd64
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          Types: deb
+          URIs: http://security.ubuntu.com/ubuntu/
+          Suites: noble-security
+          Components: main restricted universe multiverse
+          Architectures: amd64
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          Types: deb
+          URIs: http://ports.ubuntu.com/ubuntu-ports/
+          Suites: noble noble-updates noble-backports
+          Components: main restricted universe multiverse
+          Architectures: ${{ matrix.arch }}
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          Types: deb
+          URIs: http://security.ports.ubuntu.com/ubuntu-ports/
+          Suites: noble-security
+          Components: main restricted universe multiverse
+          Architectures: ${{ matrix.arch }}
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          
+          EOF
+              ;;
+          esac
+          sudo apt update
+
+      - name: install dependencies for ${{ matrix.arch }}
+        run: |
+          sudo apt install -y \
+            openmpi-bin:${{ matrix.arch }} \
+            libblas-dev:${{ matrix.arch }} \
+            liblapack-dev:${{ matrix.arch }} \
+            libeigen3-dev:${{ matrix.arch }}
+          # Trying to install libopenmpi-dev for the cross-environment causes
+          # apt to complain about missing .mod file dependencies.  Those .mod
+          # files are already installed with the cross-compiler.  Ignore those
+          # bogus dependency errors and install the package manually.
+          apt-get download libopenmpi-dev:${{ matrix.arch }}
+          sudo dpkg -i --force-depends libopenmpi-dev_*_${{ matrix.arch }}.deb
+
+      - name: prepare ccache
+        # create key with human readable timestamp
+        # used in action/cache/restore and action/cache/save steps
+        id: ccache-prepare
+        run: |
+          echo "key=ccache:cross:${{ matrix.os }}:${{ matrix.arch }}:${{ github.ref }}:$(date +"%Y-%m-%d_%H-%M-%S"):${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: restore ccache
+        # setup the github cache used to maintain the ccache from one job to the next
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/.ccache
+          key: ${{ steps.ccache-prepare.outputs.key }}
+          restore-keys: |
+            ccache:cross:${{ matrix.os }}:${{ matrix.arch }}:${{ github.ref }}
+            ccache:cross:${{ matrix.os }}:${{ matrix.arch }}:refs/heads/default
+
+      - name: configure ccache
+        env:
+          CCACHE_MAX: ${{ matrix.ccache-max }}
+        run: |
+          test -d ~/.ccache || mkdir ~/.ccache
+          echo "max_size = $CCACHE_MAX" >> ~/.ccache/ccache.conf
+          echo "compression = true" >> ~/.ccache/ccache.conf
+          ccache -s
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+
+      - name: configure
+        run: |
+          echo $PATH
+          echo which ccache
+          which ccache
+          echo which $CC
+          which $CC
+          echo $CC --version
+          $CC --version
+          echo which $CXX
+          which $CXX
+          echo $CXX --version
+          $CXX --version
+          echo which $FC
+          which $FC
+          echo $FC --version
+          $FC --version
+          mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
+          echo "::group::Configure with CMake"
+          cmake \
+            -DEXAMPLES=ON \
+            -DMPI=OFF \
+            -DICB=ON \
+            -DEIGEN=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER="ccache" \
+            -DCMAKE_CXX_COMPILER_LAUNCHER="ccache" \
+            -DBLA_VENDOR="Generic" \
+            ..
+          echo "::endgroup::"
+
+      - name: build
+        run: |
+          cd ${GITHUB_WORKSPACE}/build
+          cmake --build .
+
+      - name: ccache status
+        continue-on-error: true
+        run: ccache -s
+
+      - name: save ccache
+        # Save the cache after we are done (successfully) building
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.ccache
+          key: ${{ steps.ccache-prepare.outputs.key }}
+
+      - name: test
+        env:
+          driver: ${{ matrix.qemu-user }}
+        run: |
+          cd ${GITHUB_WORKSPACE}/build
+          CTEST_OUTPUT_ON_FAILURE=1 ctest .
