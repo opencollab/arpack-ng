@@ -1,0 +1,102 @@
+name: build-macos
+on: [push, pull_request]
+jobs:
+
+  macos_latest_cmake:
+    runs-on: macos-latest
+    name: macOS CMake ${{ matrix.python }} Python
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: without
+          - python: with
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Install brew dependencies
+        run: |
+          if [ "${{ matrix.python }}" == "with" ]; then
+              # Unlink and re-link to prevent errors when github mac runner images
+              # install python outside of brew, for example:
+              # https://github.com/orgs/Homebrew/discussions/3895
+              # https://github.com/actions/setup-python/issues/577
+              # https://github.com/actions/runner-images/issues/6459
+              # https://github.com/actions/runner-images/issues/6507
+              # https://github.com/actions/runner-images/issues/2322
+              brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
+          fi
+          brew reinstall gcc # brings gfortran on path
+          brew install cmake open-mpi eigen veclibfort $([ "${{ matrix.python }}" == "with" ] && echo "boost-python3 python3 numpy" || echo " ")
+      - name: Setup environment
+        run: |
+          if [ "${{ matrix.python }}" == "without" ]; then
+            # use MPI compiler wrappers
+            echo "FC=mpif90" >> $GITHUB_ENV
+            echo "CC=mpicc" >> $GITHUB_ENV
+            echo "CXX=mpic++" >> $GITHUB_ENV
+          else
+            # use compiler drivers directly
+            echo "FC=gfortran" >> $GITHUB_ENV
+            echo "CC=clang" >> $GITHUB_ENV
+            echo "CXX=clang++" >> $GITHUB_ENV
+          fi
+      - name: Configure
+        run: |
+          mkdir -p build
+          cd build
+          export CFLAGS="-Qunused-arguments"
+          export CXXFLAGS="-Qunused-arguments"
+          export VECLIBFORT_PREFIX=$(brew --prefix veclibfort)
+          cmake \
+            -DBLAS_LIBRARIES="${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib" \
+            -DLAPACK_LIBRARIES="${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib" \
+            -DEXAMPLES=ON -DICB=ON -DEIGEN=ON -DMPI=ON \
+            $([ "${{ matrix.python }}" == "with" ] && echo "-DPYTHON3=ON" || echo "") \
+            ..
+      - name: Build
+        run: |
+          cd build
+          make all
+      - name: Run tests
+        run: |
+          cd build
+          CTEST_OUTPUT_ON_FAILURE=1 make test
+
+  macos_latest_autotools:
+    runs-on: macos-latest
+    name: macOS autotools
+    steps:
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Install brew dependencies
+        run: |
+          brew reinstall gcc # brings gfortran on path
+          brew install autoconf automake libtool pkgconfig open-mpi eigen veclibfort
+      - name: Configure
+        run: |
+          ./bootstrap
+          export VECLIBFORT_PREFIX=$(brew --prefix veclibfort)
+          BLAS_LIBS="-L${VECLIBFORT_PREFIX}/lib -lvecLibFort" \
+          LAPACK_LIBS="-L${VECLIBFORT_PREFIX}/lib -lvecLibFort" \
+            ./configure --enable-icb --enable-eigen --enable-mpi
+      - name: Build
+        run: |
+          make all
+      - name: Run checks
+        run: |
+          make check

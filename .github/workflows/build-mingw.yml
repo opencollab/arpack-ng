@@ -1,0 +1,102 @@
+name: build-mingw
+on: [push, pull_request]
+jobs:
+  windows_latest_cmake:
+    runs-on: windows-latest
+    name: MinGW-w64 ${{ matrix.msystem }} INTERFACE64=${{ matrix.int64 }}/MPI=${{ matrix.mpi }}
+    strategy:
+      fail-fast: false
+      matrix:
+        msystem: [UCRT64, CLANG64]
+        int64: [ON, OFF]
+        mpi: [ON, OFF]
+        exclude:
+          - int64: ON
+            mpi: ON
+    defaults:
+      run:
+        # Use MSYS2 as default shell
+        shell: msys2 {0}
+    steps:
+      - name: Install MSYS2 build environment
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.msystem }}
+          install: >-
+            base-devel
+            git
+          pacboy: >-
+            cmake:p
+            ninja:p
+            cc:p
+            fc:p
+            eigen3:p
+      - name: Install OpenBLAS and MS-MPI from MSYS2
+        run: |
+          if [[ ${{ matrix.int64 }} != ON ]]; then
+            pacboy -S openblas:p --noconfirm
+          else
+            pacboy -S openblas64:p --noconfirm
+          fi
+          if [[ ${{ matrix.mpi }} = ON ]]; then
+            # This installs only the link library.
+            # The actual library will be installed in the next step.
+            pacboy -S msmpi:p --noconfirm
+          fi
+      - name: Install MS-MPI (for mpiexec)
+        uses: mpi4py/setup-mpi@v1
+      - name: Clone and check out repository code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}} # Branch where changes are implemented.
+          repository: ${{github.event.pull_request.head.repo.full_name}} # Repo where changes are implemented.
+      - name: Check commit
+        run: |
+          git log -1
+      - name: Run job
+        run: |
+          mkdir -p build && cd build
+          echo "::group::Configure"
+          if [[ ${{ matrix.int64 }} == ON ]]; then
+            _blas_lib_flag="-DBLAS_LIBRARIES=openblas_64"
+          fi
+          cmake \
+            -GNinja \
+            -DICB=ON \
+            -DEIGEN=ON \
+            -DEXAMPLES=ON \
+            -DMPI=${{ matrix.mpi }} \
+            -DINTERFACE64=${{ matrix.int64 }} \
+            ${_blas_lib_flag} \
+            ..
+          echo "::endgroup::"
+          echo "::group::Build"
+          cmake --build . -v
+          echo "::endgroup::"
+      - name: Run tests
+        id: run-ctest
+        run: |
+          if [[ ${{ matrix.mpi }} == ON ]]; then
+            export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          fi
+          cd build
+          ctest
+      - name: Re-run tests
+        if: always() && (steps.run-ctest.outcome == 'failure')
+        timeout-minutes: 60
+        run: |
+          if [[ ${{ matrix.mpi }} == ON ]]; then
+            export PATH="/c/Program Files/Microsoft MPI/Bin":$PATH # add mpiexec to msys2 path
+          fi
+          cd build
+          echo "::group::Re-run ctest"
+          ctest --rerun-failed --output-on-failure || true
+          echo "::endgroup::"
+          echo "::group::Log from these tests"
+          [ ! -f Testing/Temporary/LastTest.log ] || cat Testing/Temporary/LastTest.log
+          echo "::endgroup::"
+          echo "::group::Content of arpackmm.run.log"
+          [ ! -f EXAMPLES/MATRIX_MARKET/arpackmm.run.log ] || cat EXAMPLES/MATRIX_MARKET/arpackmm.run.log
+          echo "::endgroup::"
