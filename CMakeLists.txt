@@ -860,7 +860,7 @@ install(FILES "${PROJECT_BINARY_DIR}/SRC/arpack${LIBSUFFIX}${ITF64SUFFIX}.pc"
 
 if (MPI)
   install(TARGETS parpack
-      EXPORT arpackngTargets
+      EXPORT parpackngTargets
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -905,6 +905,11 @@ endif()
 install(EXPORT arpackngTargets
   DESTINATION "${ARPACK_INSTALL_CMAKEDIR}"
 )
+if (MPI)
+  install(EXPORT parpackngTargets
+    DESTINATION "${ARPACK_INSTALL_CMAKEDIR}"
+  )
+endif()
 # Provide find_package for arpack-ng to users.
 configure_file(cmake/arpackng-config.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config.cmake" @ONLY)
 configure_file(cmake/arpackng-config-version.cmake.in "${PROJECT_BINARY_DIR}/arpackng-config-version.cmake" @ONLY)
