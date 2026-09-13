@@ -13,11 +13,8 @@ AC_PROG_CC
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
 
-dnl Check for BLAS libraries
-AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
-
-dnl Check for LAPACK libraries
-AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
+dnl Detect Fortran name mangling rules early on
+AC_F77_WRAPPERS
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
 if test x"$INTERFACE64" = x"1"; then
@@ -334,6 +331,12 @@ if test x"$SYMBOLSUFFIX" != x""; then
   dnl Needed for BLAS check and for tests (even when suffix is empty)
   CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dcheev=$cheevsuff"
 fi
+
+dnl Check for BLAS libraries (with symbol suffix as appropriate)
+AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
+
+dnl Check for LAPACK libraries (with symbol suffix as appropriate)
+AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 dnl Set conditional for Makefiles.
 
