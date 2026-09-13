@@ -88,23 +88,44 @@ jobs:
 
   ubuntu_latest_autotools:
     runs-on: ubuntu-latest
-    name: Ubuntu autotools ${{ matrix.tests }} tests ${{ matrix.install }} install using ${{ matrix.blas }}
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - tests: with
+          - name: Ubuntu autotools with MPI running tests
+            tests: with
             install: without
             blas: BLAS
             configure-flags: --enable-mpi --enable-icb --enable-eigen
-          - tests: without
+          - name: Ubuntu autotools different integer sizes with installation
+            tests: without
             install: with
             blas: BLAS
             configure-flags:
-          - tests: with
+          - name: Ubuntu autotools using MKL
+            tests: with
             install: without
             blas: MKL
             configure-flags: --enable-icb --with-blas=mkl_gf_ilp64 --with-lapack=mkl_gf_ilp64
+          - name: Ubuntu autotools with non-default MPI prefix
+            tests: with
+            install: without
+            blas: BLAS
+            configure-flags: >-
+              --enable-mpi=${GITHUB_WORKSPACE}/openmpi
+              --enable-icb --enable-eigen
+            mpi-location: non-default
+          - name: Ubuntu autotools with non-default MPI directories
+            tests: with
+            install: without
+            blas: BLAS
+            configure-flags: >-
+              --enable-mpi
+              --with-mpi-includedir=${GITHUB_WORKSPACE}/openmpi/include
+              --with-mpi-libdir=${GITHUB_WORKSPACE}/openmpi/lib
+              --enable-icb --enable-eigen
+            mpi-location: non-default
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v7
@@ -120,7 +141,12 @@ jobs:
       - name: Install apt-get dependencies
         run: |
           sudo apt-get install -y \
-            gfortran gcc g++ openmpi-bin libopenmpi-dev \
+            gfortran gcc g++ \
+            $([ "${{ matrix.mpi-location }}" == "non-default" ] \
+              && echo "libevent-dev libpmix-dev libucx-dev zlib1g-dev libhwloc-dev \
+                       pkgconf libibverbs-dev libfabric-dev libnuma-dev \
+                       libpsm-infinipath1-dev libpsm2-dev flex" \
+              || echo "openmpi-bin libopenmpi-dev") \
             $([ "${{ matrix.blas }}" != "BLAS" ] || echo "libblas-dev liblapack-dev") \
             libeigen3-dev automake autoconf pkg-config libtool
           if [ "${{ matrix.blas }}" == "MKL" ]; then
@@ -135,6 +161,54 @@ jobs:
           echo "FCFLAGS=-DMKL_ILP64 -I/usr/include/mkl" >> $GITHUB_ENV
           echo "LIBS=-Wl,--no-as-needed -L/usr/lib/x86_64-linux-gnu -lmkl_sequential -lmkl_core -lpthread -lm -ldl" >> $GITHUB_ENV
           echo "INTERFACE64=1" >> $GITHUB_ENV
+      - name: Restore OpenMPI from cache
+        if: ${{ matrix.mpi-location == 'non-default' }}
+        id: openmpi-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/openmpi
+          key: openmpi:ubuntu
+      - name: Build and install OpenMPI at non-default prefix
+        if: ${{ matrix.mpi-location == 'non-default' && steps.openmpi-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "::group::Download release tarball"
+          curl -o openmpi-5.0.10.tar.bz2 https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.10.tar.bz2
+          echo "::endgroup::"
+          echo "::group::Unpack release tarball"
+          tar -xf openmpi-5.0.10.tar.bz2
+          echo "::endgroup::"
+          echo "::group::Configure OpenMPI"
+          mkdir -p openmpi-5.0.10/.build
+          cd openmpi-5.0.10/.build
+          ../configure \
+            --with-pmix=external \
+            --with-libevent=external \
+            --with-hwloc=external \
+            --disable-silent-rules \
+            --enable-ipv6 \
+            --with-devel-headers \
+            --with-slurm \
+            --with-sge \
+            --without-tm \
+            --prefix=${GITHUB_WORKSPACE}/openmpi
+          echo "::endgroup::"
+          echo "::group::Build OpenMPI"
+          make all -j$(nproc)
+          echo "::endgroup::"
+          echo "::group::Install OpenMPI"
+          make install
+          echo "::endgroup::"
+      - name: Setup environment for OpenMPI at non-default prefix
+        if: ${{ matrix.mpi-location == 'non-default' }}
+        run: |
+          # Prepend path to compiler wrappers
+          echo "${GITHUB_WORKSPACE}/openmpi/bin" >> "$GITHUB_PATH"
+      - name: Store OpenMPI in cache
+        if: ${{ matrix.mpi-location == 'non-default' && steps.openmpi-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/openmpi
+          key: ${{ steps.openmpi-cache.outputs.cache-primary-key }}
       - name: Configure
         run: |
           ./bootstrap
