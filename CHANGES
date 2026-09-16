@@ -26,6 +26,7 @@ arpack-ng - next
  * [BUG FIX] Do not install (incomplete) CMake config files when building with Makefile rules.
  * CMake: Make it easier for distributors to split arpack and parpack into separate packages.
  * CMake: The minimum required version of CMake is now 3.19.
+ * Document which CMake modules are used.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings

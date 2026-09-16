@@ -222,30 +222,57 @@ Congratulations 🎉, you have installed `arpack` lib using autotools (caution: 
 
 The above-mentioned process will build everything including the examples and parallel support using MPI.
 
-### Using cmake
+### Using CMake
 
-You can install `ARPACK-NG` by using cmake. If you do not have cmake, then please download the binary from `pip` using:
+You can build and install `ARPACK-NG` using CMake. If you do not have CMake, please install it from your distribution or download the binaries from `pip` using:
 
 ```bash
 $ python3 -m pip install cmake
 $ which cmake && cmake --version
 ```
 
-After installing cmake, follow the instruction given below.
+After installing CMake, use the following commands to configure, build, and
+install ARPACK-NG. These commands configure ARPACK-NG including the examples
+and parallel support using MPI.
 
 Caution: Make sure you are in source directory of ARPACK-NG.
 
 ```bash
 $ mkdir build
 $ cd build
-$ cmake -D EXAMPLES=ON -D MPI=ON -D BUILD_SHARED_LIBS=ON ..
-$ make
-$ sudo make install
+$ cmake -DEXAMPLES=ON -DMPI=ON -DBUILD_SHARED_LIBS=ON ..
+$ cmake --build .
+$ cmake --install .
 ```
+Note: Depending on the
+[installation prefix](https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html)
+and the configuration of your system, you might need elevated privileges to
+install on your system. Use, e.g., `sudo cmake --install .` if the installation
+prefix requires that you elevate privileges for write access.
 
-✨ Congratulations, you have installed `arpack` lib using cmake (caution: you need `sudo` to install in your system).
+#### Finding dependencies
 
-The above-mentioned process will build everything including the examples and parallel support using MPI.
+ARPACK-NG uses the following CMake modules to locate dependencies.
+You might need to use additional configuration flags to help these modules find
+the respective dependencies (especially if they are not from your distribution
+or if they are installed at a non-default prefix).
+Please, read the documentation of the respective CMake modules for more
+information about these additional flags:
+* [`FindBLAS`](https://cmake.org/cmake/help/latest/module/FindBLAS.html)
+* [`FindLAPACK`](https://cmake.org/cmake/help/latest/module/FindLAPACK.html)
+* [`FindMPI`](https://cmake.org/cmake/help/latest/module/FindMPI.html) (for PARPACK)
+* [`FindPython`](https://cmake.org/cmake/help/latest/module/FindPython.html) (for Python3 bindings)
+* [`FindBoost`](https://cmake.org/cmake/help/latest/module/FindBoost.html) (for Python3 bindings)
+
+Additionally, ARPACK-NG optionally (with `-DEIGEN=ON`) links to the header-only
+Eigen3 library (version 3.3 or newer). If enabled, that library is located using
+[`find_package`](https://cmake.org/cmake/help/latest/command/find_package.html).
+If that fails, the pkg-config file of Eigen3 is used as a source for any
+potentially required flags via
+[`pkg_check_modules`](https://cmake.org/cmake/help/latest/module/FindPkgConfig.html#command:pkg_check_modules).
+The documentation of these commands and potentially the documentation of your
+version of Eigen3 might give additional information if Eigen3 is not correctly
+detected for you.
 
 ### Customize build / install
 
