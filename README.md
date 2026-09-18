@@ -222,16 +222,16 @@ Congratulations 🎉, you have installed `arpack` lib using autotools (caution: 
 
 The above-mentioned process will build everything including the examples and parallel support using MPI.
 
-### Using cmake
+### Using CMake
 
-You can install `ARPACK-NG` by using cmake. If you do not have cmake, then please download the binary from `pip` using:
+You can build and install `ARPACK-NG` using CMake. If you do not have CMake, please install it from your distribution or download the binaries from `pip` using:
 
 ```bash
 $ python3 -m pip install cmake
 $ which cmake && cmake --version
 ```
 
-After installing cmake, follow the instruction given below.
+After installing CMake, follow the instructions given below.
 
 Caution: Make sure you are in source directory of ARPACK-NG.
 
@@ -243,7 +243,18 @@ $ make
 $ sudo make install
 ```
 
-✨ Congratulations, you have installed `arpack` lib using cmake (caution: you need `sudo` to install in your system).
+ARPACK-NG uses the following CMake modules to locate dependencies.
+You might need to use additional configuration flags to help these modules find the respective dependencies (especially if they are not from your distribution or if they are installed at a non-default prefix).
+Please, read the documentation of the respective CMake modules for more information about these additional flags:
+* [FindBLAS](https://cmake.org/cmake/help/latest/module/FindBLAS.html)
+* [FindLAPACK](https://cmake.org/cmake/help/latest/module/FindLAPACK.html)
+* [FindMPI](https://cmake.org/cmake/help/latest/module/FindMPI.html) (for PARPACK)
+* [FindPythonInterp](https://cmake.org/cmake/help/latest/module/FindPythonInterp.html) (for Python3 bindings)
+* [FindPythonLibs](https://cmake.org/cmake/help/latest/module/FindPythonLibs.html) (for Python3 bindings)
+* [FindBoost](https://cmake.org/cmake/help/latest/module/FindBoost.html) (for Python3 bindings)
+
+✨ Congratulations, you have installed `arpack` lib using CMake.
+(Caution: You might need `sudo` to install on your system.)
 
 The above-mentioned process will build everything including the examples and parallel support using MPI.
 
