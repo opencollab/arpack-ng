@@ -357,8 +357,6 @@ AC_CONFIG_FILES([tstAutotoolsInstall.sh], [chmod +x tstAutotoolsInstall.sh], [ab
 AC_CONFIG_FILES([
 	arpackdef.h
 	arpackicb.h
-	cmake/arpackng-config-version.cmake
-	cmake/arpackng-config.cmake
 	Makefile
 	ICB/Makefile
 	UTIL/Makefile

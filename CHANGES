@@ -23,6 +23,7 @@ arpack-ng - next
  * CMake: Fix running CTests on Windows.
  * Use GNU Fortran ABI in CI tests on macOS.
  * Initialize machine dependent constants only once in `PDNAITR`.
+ * [BUG FIX] Do not install (incomplete) CMake config files when building with Makefile rules.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
