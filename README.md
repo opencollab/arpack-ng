@@ -274,6 +274,13 @@ The documentation of these commands and potentially the documentation of your
 version of Eigen3 might give additional information if Eigen3 is not correctly
 detected for you.
 
+If any dependency is not found by CMake (using `find_package`), e.g., because
+it is installed at a non-default prefix, the following configuration arguments
+might be useful, too:
+* [`CMAKE_MODULE_PATH`](https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html)
+* [`CMAKE_PREFIX_PATH`](https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html)
+* [`<PackageName>_ROOT`](https://cmake.org/cmake/help/latest/variable/PackageName_ROOT.html)
+
 ### Customize build / install
 
 You can also customize the installation of `arpack` using the autotools.
