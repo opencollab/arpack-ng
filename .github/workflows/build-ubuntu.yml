@@ -57,23 +57,19 @@ jobs:
       - name: Build and install
         if: matrix.install == 'with'
         run: |
-          cd build
-          bash ./tstCMakeInstall.sh
+          bash ./build/tstCMakeInstall.sh
       - name: Build and install '64-'
         if: matrix.install == 'with'
         run: |
-          cd build
-          bash ./tstCMakeInstall.sh 64-
+          bash ./build/tstCMakeInstall.sh 64-
       - name: Build and install '-ILP64'
         if: matrix.install == 'with'
         run: |
-          cd build
-          bash ./tstCMakeInstall.sh   -ILP64
+          bash ./build/tstCMakeInstall.sh   -ILP64
       - name: Build and install '64-ILP64'
         if: matrix.install == 'with'
         run: |
-          cd build
-          bash ./tstCMakeInstall.sh 64-ILP64
+          bash ./build/tstCMakeInstall.sh 64-ILP64
       - name: Build
         if: matrix.tests == 'with'
         run: |
