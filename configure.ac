@@ -295,11 +295,11 @@ if test x"$SYMBOLSUFFIX" != x""; then
                                               AC_MSG_WARN([configure does not know how to enable your Fortran compiler's preprocessor: set it manually via FFLAGS.])))
   AC_LANG_POP([Fortran 77])
 
-  BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs"
+  BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs getrf getrs gttrf gttrs pttrf pttrs"
   BLASFUNS2="dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap"
   BLASFUNS3="dotc geru unm2r"
   BLASFUNS4="COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV"
-  BLASFUNS5="scnrm2 dznrm2 csscal zdscal"
+  BLASFUNS5="scnrm2 dznrm2 csscal zdscal LSAME"
 
   FUNS1="$BLASFUNS1 $BLASFUNS2"
   for f in $FUNS1
@@ -320,7 +320,7 @@ if test x"$SYMBOLSUFFIX" != x""; then
 
   for f in $BLASFUNS5
   do
-    FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX -D$f=$f$SYMBOLSUFFIX"
+    FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX"
   done
 
   dnl Both a lowercase and uppercase variable are needed
