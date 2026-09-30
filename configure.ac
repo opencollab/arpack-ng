@@ -271,15 +271,18 @@ else
     done
   fi
 
-  dnl Both a lowercase and uppercase variable are needed
-  dnl since the macro changes the case of the whole expression
+  dnl The symbols need to be replaced with Fortran name mangling.
   symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupdsuff)
-  AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupdsuff)
-  AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupdsuff)
-  AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupdsuff)
-  dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CPPFLAGS="$CPPFLAGS -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff"
+  AC_F77_FUNC(snaupd, snaupd_mangled)
+  AC_F77_FUNC(sneupd, sneupd_mangled)
+  AC_F77_FUNC(dnaupd, dnaupd_mangled)
+  AC_F77_FUNC(dneupd, dneupd_mangled)
+  AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupd_suffix)
+  AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupd_suffix)
+  AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupd_suffix)
+  AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupd_suffix)
+  dnl This does not seem to be used anywhere. Can it be removed?
+  CPPFLAGS="$CPPFLAGS -D$snaupd_mangled=$snaupd_suffix -D$sneupd_mangled=$sneupd_suffix -D$dnaupd_mangled=$dnaupd_suffix -D$dneupd_mangled=$dneupd_suffix"
 fi
 
 dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
@@ -323,13 +326,15 @@ if test x"$SYMBOLSUFFIX" != x""; then
     FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX"
   done
 
-  dnl Both a lowercase and uppercase variable are needed
-  dnl since the macro changes the case of the whole expression
+  dnl The symbols need to be replaced with Fortran name mangling.
   symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemmsuff)
-  AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
-  dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dcheev=$cheevsuff"
+  AC_F77_FUNC(sgemm, sgemm_mangled)
+  AC_F77_FUNC(cheev, cheev_mangled)
+  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemm_suffix)
+  AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheev_suffix)
+  dnl This is only needed for AX_BLAS and AX_LAPACK.
+  dnl Consider restoring the previous CPPFLAGS afterwards.
+  CPPFLAGS="$CPPFLAGS -D$sgemm_mangled=$sgemm_suffix -D$cheev_mangled=$cheev_suffix"
 fi
 
 dnl Check for BLAS libraries (with symbol suffix as appropriate)

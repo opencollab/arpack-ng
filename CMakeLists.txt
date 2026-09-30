@@ -184,7 +184,6 @@ else()
 
         set(CFUNS snaupd sneupd dnaupd dneupd)
         foreach (f IN LISTS CFUNS)
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
             list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
         endforeach ()
 
@@ -338,7 +337,6 @@ if (SYMBOLSUFFIX)
 
     set(CFUNS sgemm cheev)
     foreach (f IN LISTS CFUNS)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D${f}=${f}${SYMBOLSUFFIX}")
         list(APPEND CFUNS_SUFFIXED ${f}${SYMBOLSUFFIX})
     endforeach ()
 
