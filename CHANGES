@@ -25,6 +25,7 @@ arpack-ng - next
  * Initialize machine dependent constants only once in `PDNAITR`.
  * [BUG FIX] Do not install (incomplete) CMake config files when building with Makefile rules.
  * CMake: Make it easier for distributors to split arpack and parpack into separate packages.
+ * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
