@@ -92,10 +92,12 @@ endif ()
 
 if (EIGEN)
     find_package(Eigen3 3.3 QUIET)
-    if (NOT EIGEN3_FOUND) # If not found, piggy-back pkg-config files.
+    if (NOT TARGET Eigen3::Eigen)
+        # If not found, piggy-back pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
         find_package(PkgConfig REQUIRED)
-        pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)
+        pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3 IMPORTED_TARGET)
+        add_library(Eigen3::Eigen ALIAS PkgConfig::EIGEN3)
         set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
     endif ()
 
@@ -713,8 +715,8 @@ function(build_tests)
       set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
 
       add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
-      target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
-      target_link_libraries(arpackmm arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+      target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
+      target_link_libraries(arpackmm arpack Eigen3::Eigen ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
       configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
@@ -739,11 +741,10 @@ function(build_tests)
           ${PROJECT_SOURCE_DIR}/ICB
           ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET
           ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK
-          ${EIGEN3_INCLUDE_DIR}
           ${Boost_INCLUDE_DIRS}
           ${PYTHON_INCLUDE_DIRS})
       target_link_libraries(pyarpack
-          ${LAPACK_BLAS_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+          Eigen3::Eigen ${LAPACK_BLAS_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
       install(TARGETS pyarpack
               ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
               LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
