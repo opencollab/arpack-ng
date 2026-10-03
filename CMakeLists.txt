@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.19)
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
    set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
@@ -16,13 +16,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # set C99 standard
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
-
-# Adopted from https://github.com/feymark/arpack.git
-
-if (POLICY CMP0042)
-  # enable MACOSX_RPATH by default
-  cmake_policy (SET CMP0042 NEW)
-endif ()
 
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static libraries" ON)
 option(MPI "Enable parallel support" OFF)
@@ -83,19 +76,35 @@ if (PYTHON3 OR EIGEN OR ICB)
 endif ()
 
 if (PYTHON3)
-    find_package(PythonInterp 3 REQUIRED)
-    find_package(PythonLibs 3 REQUIRED)
+    find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
     find_package(Boost 1.78 COMPONENTS python${BOOST_PYTHON_LIBSUFFIX} numpy${BOOST_PYTHON_LIBSUFFIX} REQUIRED)
 
     set(EIGEN "ON")
 endif ()
 
 if (EIGEN)
-    find_package(Eigen3 3.3 QUIET)
-    if (NOT EIGEN3_FOUND) # If not found, piggy-back pkg-config files.
+    # ARPACK-ng requires Eigen3 3.3 or newer.
+    # Older versions of Eigen3 (e.g., 3.4.0) used a SameMajorVersion rule
+    # that rejects a version range spanning multiple major versions. Newer
+    # versions (e.g., 5.0.1) would require that maximum version in the range.
+    # There is no way to satisfy that with one call to `find_package(Eigen ...).
+    # Instead check for the package without version limitation and check the
+    # version explicitly later.
+    find_package(Eigen3 QUIET)
+    if (TARGET Eigen3::Eigen)
+        if (Eigen3_VERSION AND Eigen3_VERSION VERSION_LESS 3.3)
+          message(FATAL_ERROR "Eigen3 must be at least version 3.3.")
+        endif()
+        if (NOT EIGEN3_INCLUDE_DIR)
+            # Newer versions of Eigen3 do not import this variable
+            get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        endif ()
+    else ()
+        # If not found via CMake Config file or module, try pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
         find_package(PkgConfig REQUIRED)
-        pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)
+        pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3 IMPORTED_TARGET)
+        add_library(Eigen3::Eigen ALIAS PkgConfig::EIGEN3)
         set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
     endif ()
 
@@ -203,13 +212,6 @@ if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
         include(FindMPI)
         find_package(MPI REQUIRED COMPONENTS Fortran)
-
-        # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
-        if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
-        endif()
     endif()
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
@@ -250,23 +252,11 @@ if (MPI)
         if (NOT TARGET MPI::MPI_C) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
             find_package(MPI REQUIRED COMPONENTS C)
-
-            if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-                add_library(MPI::MPI_C INTERFACE IMPORTED)
-                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
-                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
-            endif()
         endif()
 
         if (NOT TARGET MPI::MPI_CXX) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
             find_package(MPI REQUIRED COMPONENTS CXX)
-
-            if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-                add_library(MPI::MPI_CXX INTERFACE IMPORTED)
-                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
-                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
-            endif()
         endif()
 
         include(CheckSymbolExists)
@@ -281,24 +271,12 @@ endif()
 
 if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
     find_package(BLAS REQUIRED)
-
-    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
-    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(BLAS::BLAS INTERFACE IMPORTED)
-        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
-    endif()
 endif()
 
 # Find LAPACK
 
 if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
     find_package(LAPACK REQUIRED)
-
-    # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
-    if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
-        set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
-    endif()
 endif()
 
 set(LAPACK_BLAS_LIBS LAPACK::LAPACK BLAS::BLAS)
@@ -713,8 +691,8 @@ function(build_tests)
       set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/EXAMPLES/MATRIX_MARKET)
 
       add_executable(arpackmm EXAMPLES/MATRIX_MARKET/arpackmm.cpp)
-      target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB ${EIGEN3_INCLUDE_DIR}) # Get arpack.h + eigen
-      target_link_libraries(arpackmm arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+      target_include_directories(arpackmm PUBLIC ${PROJECT_SOURCE_DIR}/ICB) # Get arpack.h
+      target_link_libraries(arpackmm arpack Eigen3::Eigen ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
       configure_file(EXAMPLES/MATRIX_MARKET/As.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/As.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/An.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/An.mtx)
       configure_file(EXAMPLES/MATRIX_MARKET/Az.mtx ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Az.mtx)
@@ -731,7 +709,7 @@ function(build_tests)
     endif()
 
     if (PYTHON3)
-      python_add_module(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
+      Python_add_library(pyarpack ${arpackutil_STAT_SRCS} ${arpacksrc_STAT_SRCS} ${arpacksrc_ICB} ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpack.cpp)
       target_include_directories(pyarpack
           PRIVATE
           ${PROJECT_BINARY_DIR}
@@ -739,58 +717,56 @@ function(build_tests)
           ${PROJECT_SOURCE_DIR}/ICB
           ${PROJECT_SOURCE_DIR}/EXAMPLES/MATRIX_MARKET
           ${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK
-          ${EIGEN3_INCLUDE_DIR}
-          ${Boost_INCLUDE_DIRS}
-          ${PYTHON_INCLUDE_DIRS})
-      target_link_libraries(pyarpack
-          ${LAPACK_BLAS_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+          ${Boost_INCLUDE_DIRS})
+      target_link_libraries(pyarpack PRIVATE
+          Eigen3::Eigen ${LAPACK_BLAS_LIBS} ${Boost_LIBRARIES})
       install(TARGETS pyarpack
               ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack
               LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/pyarpack)
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGDiag.py" @ONLY)
-      add_test(NAME pyarpackSparseBiCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGDiag.py)
+      add_test(NAME pyarpackSparseBiCGDiag_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseBiCGDiag.py)
       set_tests_properties(pyarpackSparseBiCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseBiCGILU.py.in"  "${CMAKE_BINARY_DIR}/pyarpackSparseBiCGILU.py" @ONLY)
-      add_test(NAME pyarpackSparseBiCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseBiCGILU.py)
+      add_test(NAME pyarpackSparseBiCGILU_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseBiCGILU.py)
       set_tests_properties(pyarpackSparseBiCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGDiag.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGDiag.py" @ONLY)
-      add_test(NAME pyarpackSparseCGDiag_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGDiag.py)
+      add_test(NAME pyarpackSparseCGDiag_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseCGDiag.py)
       set_tests_properties(pyarpackSparseCGDiag_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseCGILU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseCGILU.py" @ONLY)
-      add_test(NAME pyarpackSparseCGILU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseCGILU.py)
+      add_test(NAME pyarpackSparseCGILU_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseCGILU.py)
       set_tests_properties(pyarpackSparseCGILU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLLT.py" @ONLY)
-      add_test(NAME pyarpackSparseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLLT.py)
+      add_test(NAME pyarpackSparseLLT_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseLLT.py)
       set_tests_properties(pyarpackSparseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLDLT.py" @ONLY)
-      add_test(NAME pyarpackSparseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLDLT.py)
+      add_test(NAME pyarpackSparseLDLT_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseLDLT.py)
       set_tests_properties(pyarpackSparseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseLU.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseLU.py" @ONLY)
-      add_test(NAME pyarpackSparseLU_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseLU.py)
+      add_test(NAME pyarpackSparseLU_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseLU.py)
       set_tests_properties(pyarpackSparseLU_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackSparseQR.py.in" "${CMAKE_BINARY_DIR}/pyarpackSparseQR.py" @ONLY)
-      add_test(NAME pyarpackSparseQR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackSparseQR.py)
+      add_test(NAME pyarpackSparseQR_tst COMMAND ${Python_EXECUTABLE} pyarpackSparseQR.py)
       set_tests_properties(pyarpackSparseQR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLLT.py" @ONLY)
-      add_test(NAME pyarpackDenseLLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLLT.py)
+      add_test(NAME pyarpackDenseLLT_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseLLT.py)
       set_tests_properties(pyarpackDenseLLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLDLT.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLDLT.py" @ONLY)
-      add_test(NAME pyarpackDenseLDLT_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLDLT.py)
+      add_test(NAME pyarpackDenseLDLT_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseLDLT.py)
       set_tests_properties(pyarpackDenseLDLT_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLURR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLURR.py" @ONLY)
-      add_test(NAME pyarpackDenseLURR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLURR.py)
+      add_test(NAME pyarpackDenseLURR_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseLURR.py)
       set_tests_properties(pyarpackDenseLURR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRRR.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRRR.py" @ONLY)
-      add_test(NAME pyarpackDenseQRRR_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRRR.py)
+      add_test(NAME pyarpackDenseQRRR_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseQRRR.py)
       set_tests_properties(pyarpackDenseQRRR_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseLUPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseLUPP.py" @ONLY)
-      add_test(NAME pyarpackDenseLUPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseLUPP.py)
+      add_test(NAME pyarpackDenseLUPP_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseLUPP.py)
       set_tests_properties(pyarpackDenseLUPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackDenseQRPP.py.in" "${CMAKE_BINARY_DIR}/pyarpackDenseQRPP.py" @ONLY)
-      add_test(NAME pyarpackDenseQRPP_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackDenseQRPP.py)
+      add_test(NAME pyarpackDenseQRPP_tst COMMAND ${Python_EXECUTABLE} pyarpackDenseQRPP.py)
       set_tests_properties(pyarpackDenseQRPP_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
       configure_file("${PROJECT_SOURCE_DIR}/EXAMPLES/PYARPACK/pyarpackRestart.py.in" "${CMAKE_BINARY_DIR}/pyarpackRestart.py" @ONLY)
-      add_test(NAME pyarpackRestart_tst COMMAND ${PYTHON_EXECUTABLE} pyarpackRestart.py)
+      add_test(NAME pyarpackRestart_tst COMMAND ${Python_EXECUTABLE} pyarpackRestart.py)
       set_tests_properties(pyarpackRestart_tst PROPERTIES ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR}/lib:$ENV{PYTHONPATH})
     endif()
 
@@ -993,7 +969,7 @@ if (EIGEN)
     libsummary("EIGEN3" "${EIGEN3_INCLUDE_DIR}" "")
 endif()
 if (PYTHON3)
-  libsummary("PYTHON" "${PYTHON_INCLUDE_DIRS}" "${PYTHON_LIBRARIES}")
-  message("      -- exe:     ${PYTHON_EXECUTABLE}")
+  libsummary("PYTHON" "${Python_INCLUDE_DIRS}" "${Python_LIBRARIES}")
+  message("      -- exe:     ${Python_EXECUTABLE}")
   libsummary("BOOST" "${Boost_INCLUDE_DIRS}" "${Boost_LIBRARIES}")
 endif()
