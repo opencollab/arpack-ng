@@ -17,13 +17,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-# Adopted from https://github.com/feymark/arpack.git
-
-if (POLICY CMP0042)
-  # enable MACOSX_RPATH by default
-  cmake_policy (SET CMP0042 NEW)
-endif ()
-
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static libraries" ON)
 option(MPI "Enable parallel support" OFF)
 option(ICB "Enable support for *[ae]upd_c with ISO_C_BINDING" OFF)
@@ -219,13 +212,6 @@ if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
         include(FindMPI)
         find_package(MPI REQUIRED COMPONENTS Fortran)
-
-        # MPI::MPI_* target was already created at this point by FindMPI.cmake if cmake version >= 3.9
-        if (NOT TARGET MPI::MPI_Fortran) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-            add_library(MPI::MPI_Fortran INTERFACE IMPORTED)
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_Fortran_INCLUDE_DIRS}")
-            set_target_properties(MPI::MPI_Fortran PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_Fortran_LIBRARIES}")
-        endif()
     endif()
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
@@ -266,23 +252,11 @@ if (MPI)
         if (NOT TARGET MPI::MPI_C) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
             find_package(MPI REQUIRED COMPONENTS C)
-
-            if (NOT TARGET MPI::MPI_C) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-                add_library(MPI::MPI_C INTERFACE IMPORTED)
-                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_C_INCLUDE_DIRS}")
-                set_target_properties(MPI::MPI_C PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_C_LIBRARIES}")
-            endif()
         endif()
 
         if (NOT TARGET MPI::MPI_CXX) # Search only if not already found by upper CMakeLists.txt
             include(FindMPI)
             find_package(MPI REQUIRED COMPONENTS CXX)
-
-            if (NOT TARGET MPI::MPI_CXX) # Create target "at hand" to ensure compatibility if cmake version < 3.9
-                add_library(MPI::MPI_CXX INTERFACE IMPORTED)
-                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MPI_CXX_INCLUDE_DIRS}")
-                set_target_properties(MPI::MPI_CXX PROPERTIES INTERFACE_LINK_LIBRARIES      "${MPI_CXX_LIBRARIES}")
-            endif()
         endif()
 
         include(CheckSymbolExists)
@@ -297,24 +271,12 @@ endif()
 
 if (NOT TARGET BLAS::BLAS) # Search only if not already found by upper CMakeLists.txt
     find_package(BLAS REQUIRED)
-
-    # BLAS::BLAS target was already created at this point by FindBLAS.cmake if cmake version >= 3.18
-    if (NOT TARGET BLAS::BLAS) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(BLAS::BLAS INTERFACE IMPORTED)
-        set_target_properties(BLAS::BLAS PROPERTIES INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES}")
-    endif()
 endif()
 
 # Find LAPACK
 
 if (NOT TARGET LAPACK::LAPACK) # Search only if not already found by upper CMakeLists.txt
     find_package(LAPACK REQUIRED)
-
-    # LAPACK::LAPACK target was already created at this point by FindLAPACK.cmake if cmake version >= 3.18
-    if (NOT TARGET LAPACK::LAPACK) # Create target "at hand" to ensure compatibility if cmake version < 3.18
-        add_library(LAPACK::LAPACK INTERFACE IMPORTED)
-        set_target_properties(LAPACK::LAPACK PROPERTIES INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
-    endif()
 endif()
 
 set(LAPACK_BLAS_LIBS LAPACK::LAPACK BLAS::BLAS)
