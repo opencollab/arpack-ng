@@ -56,7 +56,7 @@ cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/PARPACK/TESTS/MPI/icb_parpack_cpp.cpp" .
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/MATRIX_MARKET/arpackmm.cpp" .
 
-echo "cmake_minimum_required(VERSION 3.5)"                               > CMakeLists.txt
+echo "cmake_minimum_required(VERSION 3.19)"                              > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "project(tstCMakeInstall Fortran C CXX)"                           >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
@@ -66,11 +66,15 @@ echo "find_package(BLAS REQUIRED)"                                      >> CMake
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
 echo "find_package(MPI REQUIRED COMPONENTS Fortran C CXX)"              >> CMakeLists.txt
 echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
-echo "find_package(Eigen3 3.3 QUIET)"                                   >> CMakeLists.txt
-echo "if (NOT EIGEN3_FOUND) # piggy-back pkg-config files."             >> CMakeLists.txt
+echo "find_package(Eigen3 QUIET)"                                       >> CMakeLists.txt
+echo "if (TARGET Eigen3::Eigen)"                                        >> CMakeLists.txt
+echo "  if (Eigen3_VERSION AND Eigen3_VERSION VERSION_LESS 3.3)"        >> CMakeLists.txt
+echo '    message(FATAL_ERROR "Eigen3 must be at least version 3.3.")'  >> CMakeLists.txt
+echo "  endif()"                                                        >> CMakeLists.txt
+echo "else ()"                                                          >> CMakeLists.txt
 echo "  find_package(PkgConfig REQUIRED)"                               >> CMakeLists.txt
-echo "  pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)"                 >> CMakeLists.txt
-echo '  set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})'                 >> CMakeLists.txt
+echo "  pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3 IMPORTED_TARGET)" >> CMakeLists.txt
+echo "  add_library(Eigen3::Eigen ALIAS PkgConfig::EIGEN3)"             >> CMakeLists.txt
 echo "endif ()"                                                         >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
@@ -87,12 +91,12 @@ echo "add_executable(icb_arpack_cpp icb_arpack_cpp.cpp)"                >> CMake
 echo "target_link_libraries(icb_arpack_cpp BLAS::BLAS)"                 >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_cpp LAPACK::LAPACK)"             >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_cpp ARPACK::ARPACK)"             >> CMakeLists.txt
-echo ""                                                                   >> CMakeLists.txt
-echo "add_executable(arpackmm arpackmm.cpp)"                              >> CMakeLists.txt
-echo "target_link_libraries(arpackmm BLAS::BLAS)"                         >> CMakeLists.txt
-echo "target_link_libraries(arpackmm LAPACK::LAPACK)"                     >> CMakeLists.txt
-echo "target_link_libraries(arpackmm ARPACK::ARPACK)"                     >> CMakeLists.txt
-echo 'target_include_directories(arpackmm PRIVATE ${EIGEN3_INCLUDE_DIR})' >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(arpackmm arpackmm.cpp)"                            >> CMakeLists.txt
+echo "target_link_libraries(arpackmm BLAS::BLAS)"                       >> CMakeLists.txt
+echo "target_link_libraries(arpackmm LAPACK::LAPACK)"                   >> CMakeLists.txt
+echo "target_link_libraries(arpackmm ARPACK::ARPACK)"                   >> CMakeLists.txt
+echo "target_link_libraries(arpackmm Eigen3::Eigen)"                    >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(pdndrv1 dnband.f pdndrv1.f)"                       >> CMakeLists.txt
 echo "target_link_libraries(pdndrv1 BLAS::BLAS)"                        >> CMakeLists.txt
@@ -214,7 +218,7 @@ cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_c.c" .
 cp "@PROJECT_SOURCE_DIR@/TESTS/icb_arpack_cpp.cpp" .
 cp "@PROJECT_SOURCE_DIR@/EXAMPLES/MATRIX_MARKET/arpackmm.cpp" .
 
-echo "cmake_minimum_required(VERSION 3.5)"                               > CMakeLists.txt
+echo "cmake_minimum_required(VERSION 3.19)"                              > CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "project(tstCMakeInstall Fortran C CXX)"                           >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
@@ -223,11 +227,15 @@ echo ""                                                                 >> CMake
 echo "find_package(BLAS REQUIRED)"                                      >> CMakeLists.txt
 echo "find_package(LAPACK REQUIRED)"                                    >> CMakeLists.txt
 echo "find_package(arpackng REQUIRED)"                                  >> CMakeLists.txt
-echo "find_package(Eigen3 3.3 QUIET)"                                   >> CMakeLists.txt
-echo "if (NOT EIGEN3_FOUND) # piggy-back pkg-config files."             >> CMakeLists.txt
+echo "find_package(Eigen3 QUIET)"                                       >> CMakeLists.txt
+echo "if (TARGET Eigen3::Eigen)"                                        >> CMakeLists.txt
+echo "  if (Eigen3_VERSION AND Eigen3_VERSION VERSION_LESS 3.3)"        >> CMakeLists.txt
+echo '    message(FATAL_ERROR "Eigen3 must be at least version 3.3.")'  >> CMakeLists.txt
+echo "  endif()"                                                        >> CMakeLists.txt
+echo "else ()"                                                          >> CMakeLists.txt
 echo "  find_package(PkgConfig REQUIRED)"                               >> CMakeLists.txt
-echo "  pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3)"                 >> CMakeLists.txt
-echo '  set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})'                 >> CMakeLists.txt
+echo "  pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3 IMPORTED_TARGET)" >> CMakeLists.txt
+echo "  add_library(Eigen3::Eigen ALIAS PkgConfig::EIGEN3)"             >> CMakeLists.txt
 echo "endif ()"                                                         >> CMakeLists.txt
 echo ""                                                                 >> CMakeLists.txt
 echo "add_executable(dnbdr1 dnband.f dnbdr1.f)"                         >> CMakeLists.txt
@@ -244,12 +252,12 @@ echo "add_executable(icb_arpack_cpp icb_arpack_cpp.cpp)"                >> CMake
 echo "target_link_libraries(icb_arpack_cpp BLAS::BLAS)"                 >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_cpp LAPACK::LAPACK)"             >> CMakeLists.txt
 echo "target_link_libraries(icb_arpack_cpp ARPACK::ARPACK)"             >> CMakeLists.txt
-echo ""                                                                   >> CMakeLists.txt
-echo "add_executable(arpackmm arpackmm.cpp)"                              >> CMakeLists.txt
-echo "target_link_libraries(arpackmm BLAS::BLAS)"                         >> CMakeLists.txt
-echo "target_link_libraries(arpackmm LAPACK::LAPACK)"                     >> CMakeLists.txt
-echo "target_link_libraries(arpackmm ARPACK::ARPACK)"                     >> CMakeLists.txt
-echo 'target_include_directories(arpackmm PRIVATE ${EIGEN3_INCLUDE_DIR})' >> CMakeLists.txt
+echo ""                                                                 >> CMakeLists.txt
+echo "add_executable(arpackmm arpackmm.cpp)"                            >> CMakeLists.txt
+echo "target_link_libraries(arpackmm BLAS::BLAS)"                       >> CMakeLists.txt
+echo "target_link_libraries(arpackmm LAPACK::LAPACK)"                   >> CMakeLists.txt
+echo "target_link_libraries(arpackmm ARPACK::ARPACK)"                   >> CMakeLists.txt
+echo "target_link_libraries(arpackmm Eigen3::Eigen)"                    >> CMakeLists.txt
 
 # 6.3 Build this new project with cmake: for this to be possible, find_package must work.
 
@@ -263,5 +271,5 @@ echo "::group::Build test project with removed PARPACK import target file"
 cmake --build . -v || exit 1
 echo "::endgroup::"
 
-# 6.3 Restore PARPACK CMake import target file
+# 6.4 Restore PARPACK CMake import target file
 mv /tmp/tstCMakeInstall/local/lib/cmake/arpackng${LIBSUFFIX}${ITF64SUFFIX}/parpackngTargets.cmake{.orig,}
