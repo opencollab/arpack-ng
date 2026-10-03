@@ -91,9 +91,24 @@ if (PYTHON3)
 endif ()
 
 if (EIGEN)
-    find_package(Eigen3 3.3 QUIET)
-    if (NOT TARGET Eigen3::Eigen)
-        # If not found, piggy-back pkg-config files.
+    # ARPACK-ng requires Eigen3 3.3 or newer.
+    # Older versions of Eigen3 (e.g., 3.4.0) used a SameMajorVersion rule
+    # that rejects a version range spanning multiple major versions. Newer
+    # versions (e.g., 5.0.1) would require that maximum version in the range.
+    # There is no way to satisfy that with one call to `find_package(Eigen ...).
+    # Instead check for the package without version limitation and check the
+    # version explicitly later.
+    find_package(Eigen3 QUIET)
+    if (TARGET Eigen3::Eigen)
+        if (Eigen3_VERSION AND Eigen3_VERSION VERSION_LESS 3.3)
+          message(FATAL_ERROR "Eigen3 must be at least version 3.3.")
+        endif()
+        if (NOT EIGEN3_INCLUDE_DIR)
+            # Newer versions of Eigen3 do not import this variable
+            get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        endif ()
+    else ()
+        # If not found via CMake Config file or module, try pkg-config files.
         message(WARNING "CMake didn't find the Eigen3 package. Try to look for pkg-config file...")
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(EIGEN3 REQUIRED eigen3>=3.3 IMPORTED_TARGET)
