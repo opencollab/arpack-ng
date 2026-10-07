@@ -4,13 +4,18 @@ jobs:
 
   macos_latest_cmake:
     runs-on: macos-latest
-    name: macOS CMake ${{ matrix.python }} Python
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - python: without
-          - python: with
+          - name: macOS CMake without Python
+            python: without
+          - name: macOS CMake with Python
+            python: with
+          - name: macOS CMake with SYMBOLSUFFIX
+            python: without
+            symbolsuffix: '_64'
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v7
@@ -34,10 +39,12 @@ jobs:
               brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
           fi
           brew reinstall gcc # brings gfortran on path
-          brew install cmake open-mpi eigen veclibfort $([ "${{ matrix.python }}" == "with" ] && echo "boost-python3 python3 numpy" || echo " ")
+          brew install cmake eigen \
+            $([ x"${{ matrix.symbolsuffix }}" == x"_64" ] && echo "openblas64" || echo "open-mpi veclibfort") \
+            $([ "${{ matrix.python }}" == "with" ] && echo "boost-python3 python3 numpy" || echo " ")
       - name: Setup environment
         run: |
-          if [ "${{ matrix.python }}" == "without" ]; then
+          if [ "${{ matrix.python }}" == "without" && x"${{ matrix.symbolsuffix }}" != x"_64"]; then
             # use MPI compiler wrappers
             echo "FC=mpif90" >> $GITHUB_ENV
             echo "CC=mpicc" >> $GITHUB_ENV
@@ -54,11 +61,22 @@ jobs:
           cd build
           export CFLAGS="-Qunused-arguments"
           export CXXFLAGS="-Qunused-arguments"
-          export VECLIBFORT_PREFIX=$(brew --prefix veclibfort)
+          declare -a _extra_config
+          if [ x"${{ matrix.symbolsuffix }}" == x"_64" ]; then
+            export OPENBLAS64_PREFIX="$(brew --prefix openblas64)"
+            _extra_config+=("-DBLAS_LIBRARIES=${OPENBLAS64_PREFIX}/lib/libopenblas64_.dylib"
+                            "-DLAPACK_LIBRARIES=${OPENBLAS64_PREFIX}/lib/libopenblas64_.dylib"
+                            "-DSYMBOLSUFFIX=_64"
+                            "-DINTERFACE64=1")
+          else
+            export VECLIBFORT_PREFIX="$(brew --prefix veclibfort)"
+            _extra_config+=("-DBLAS_LIBRARIES=${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib"
+                            "-DLAPACK_LIBRARIES=${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib"
+                            "-DMPI=ON")
+          fi
           cmake \
-            -DBLAS_LIBRARIES="${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib" \
-            -DLAPACK_LIBRARIES="${VECLIBFORT_PREFIX}/lib/libvecLibFort.dylib" \
-            -DEXAMPLES=ON -DICB=ON -DEIGEN=ON -DMPI=ON \
+            "${_extra_config[@]}" \
+            -DEXAMPLES=ON -DICB=ON -DEIGEN=ON \
             $([ "${{ matrix.python }}" == "with" ] && echo "-DPYTHON3=ON" || echo "") \
             ..
       - name: Build
@@ -72,7 +90,14 @@ jobs:
 
   macos_latest_autotools:
     runs-on: macos-latest
-    name: macOS autotools
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS autotools
+          - name: macOS autotools with SYMBOLSUFFIX
+            symbolsuffix: '_64'
     steps:
       - name: Clone and check out repository code
         uses: actions/checkout@v7
@@ -86,14 +111,31 @@ jobs:
       - name: Install brew dependencies
         run: |
           brew reinstall gcc # brings gfortran on path
-          brew install autoconf automake libtool pkgconfig open-mpi eigen veclibfort
+          brew install autoconf automake libtool pkgconfig eigen \
+            $([ x"${{ matrix.symbolsuffix }}" == x"_64" ] && echo "openblas64" || echo "open-mpi veclibfort")
       - name: Configure
         run: |
           ./bootstrap
-          export VECLIBFORT_PREFIX=$(brew --prefix veclibfort)
-          BLAS_LIBS="-L${VECLIBFORT_PREFIX}/lib -lvecLibFort" \
-          LAPACK_LIBS="-L${VECLIBFORT_PREFIX}/lib -lvecLibFort" \
-            ./configure --enable-icb --enable-eigen --enable-mpi
+          declare -a _extra_config
+          if [ x"${{ matrix.symbolsuffix }}" == x"_64" ]; then
+            export OPENBLAS64_PREFIX="$(brew --prefix openblas64)"
+            _extra_config+=("--with-blas=-L${OPENBLAS64_PREFIX}/lib -lopenblas64_"
+                            "--with-lapack=-L${OPENBLAS64_PREFIX}/lib -lopenblas64_"
+                            "SYMBOLSUFFIX=_64"
+                            "INTERFACE64=1")
+            # The line length of fixed-format source files might be exceeded
+            # after preprocessing with the additional suffix.
+            # Make gfortran more lenient when it comes to long lines.
+            _extra_config+=("FFLAGS=-ffixed-line-length-none")
+          else
+            export VECLIBFORT_PREFIX="$(brew --prefix veclibfort)"
+            _extra_config+=("--with-blas=-L${VECLIBFORT_PREFIX}/lib -lvecLibFort"
+                            "--with-lapack=-L${VECLIBFORT_PREFIX}/lib -lvecLibFort"
+                            "--enable-mpi")
+          fi
+          ./configure \
+            "${_extra_config[@]}" \
+            --enable-icb --enable-eigen
       - name: Build
         run: |
           make all

@@ -13,11 +13,8 @@ AC_PROG_CC
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG
 
-dnl Check for BLAS libraries
-AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
-
-dnl Check for LAPACK libraries
-AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
+dnl Detect Fortran name mangling rules early on
+AC_F77_WRAPPERS
 
 AC_ARG_VAR(INTERFACE64, [set to 1 to use the 64-bit integer interface (ILP64) for ARPACK, BLAS and LAPACK])
 if test x"$INTERFACE64" = x"1"; then
@@ -274,15 +271,18 @@ else
     done
   fi
 
-  dnl Both a lowercase and uppercase variable are needed
-  dnl since the macro changes the case of the whole expression
+  dnl The symbols need to be replaced with Fortran name mangling.
   symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupdsuff)
-  AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupdsuff)
-  AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupdsuff)
-  AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupdsuff)
-  dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CPPFLAGS="$CPPFLAGS -Dsnaupd=$snaupdsuff -Dsneupd=$sneupdsuff -Ddnaupd=$dnaupdsuff -Ddneupd=$dneupdsuff"
+  AC_F77_FUNC(snaupd, snaupd_mangled)
+  AC_F77_FUNC(sneupd, sneupd_mangled)
+  AC_F77_FUNC(dnaupd, dnaupd_mangled)
+  AC_F77_FUNC(dneupd, dneupd_mangled)
+  AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupd_suffix)
+  AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupd_suffix)
+  AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupd_suffix)
+  AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupd_suffix)
+  dnl This does not seem to be used anywhere. Can it be removed?
+  CPPFLAGS="$CPPFLAGS -D$snaupd_mangled=$snaupd_suffix -D$sneupd_mangled=$sneupd_suffix -D$dnaupd_mangled=$dnaupd_suffix -D$dneupd_mangled=$dneupd_suffix"
 fi
 
 dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
@@ -298,11 +298,11 @@ if test x"$SYMBOLSUFFIX" != x""; then
                                               AC_MSG_WARN([configure does not know how to enable your Fortran compiler's preprocessor: set it manually via FFLAGS.])))
   AC_LANG_POP([Fortran 77])
 
-  BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs gttrf gttrs pttrf pttrs"
+  BLASFUNS1="axpy copy gemv geqr2 lacpy lae2 lahqr lanhs larnv lartg lascl laset lasrt scal trevc trmm trsen gbmv gbtrf gbtrs getrf getrs gttrf gttrs pttrf pttrs"
   BLASFUNS2="dot ger labad laev2 lamch lanst lanv2 lapy2 larf larfg lasr nrm2 orm2r rot steqr swap"
   BLASFUNS3="dotc geru unm2r"
   BLASFUNS4="COPY LABAD LAMCH LANHS LANV2 LARFG ROT GEMV"
-  BLASFUNS5="scnrm2 dznrm2 csscal zdscal"
+  BLASFUNS5="scnrm2 dznrm2 csscal zdscal LSAME"
 
   FUNS1="$BLASFUNS1 $BLASFUNS2"
   for f in $FUNS1
@@ -323,17 +323,25 @@ if test x"$SYMBOLSUFFIX" != x""; then
 
   for f in $BLASFUNS5
   do
-    FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX -D$f=$f$SYMBOLSUFFIX"
+    FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX"
   done
 
-  dnl Both a lowercase and uppercase variable are needed
-  dnl since the macro changes the case of the whole expression
+  dnl The symbols need to be replaced with Fortran name mangling.
   symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemmsuff)
-  AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheevsuff)
-  dnl Needed for BLAS check and for tests (even when suffix is empty)
-  CPPFLAGS="$CPPFLAGS -Dsgemm=$sgemmsuff -Dcheev=$cheevsuff"
+  AC_F77_FUNC(sgemm, sgemm_mangled)
+  AC_F77_FUNC(cheev, cheev_mangled)
+  AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemm_suffix)
+  AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheev_suffix)
+  dnl This is only needed for AX_BLAS and AX_LAPACK.
+  dnl Consider restoring the previous CPPFLAGS afterwards.
+  CPPFLAGS="$CPPFLAGS -D$sgemm_mangled=$sgemm_suffix -D$cheev_mangled=$cheev_suffix"
 fi
+
+dnl Check for BLAS libraries (with symbol suffix as appropriate)
+AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
+
+dnl Check for LAPACK libraries (with symbol suffix as appropriate)
+AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
 dnl Set conditional for Makefiles.
 
