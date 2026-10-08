@@ -3,14 +3,12 @@
 # To use arpack from CMake, use ARPACK::ARPACK target:
 #   find_package(arpackng)
 #   add_executable(main main.f)
-#   target_include_directories(main INTERFACE ARPACK::ARPACK)
-#   target_link_libraries(main ARPACK::ARPACK)
+#   target_link_libraries(main PRIVATE ARPACK::ARPACK)
 #
 # To use parpack from CMake, use PARPACK::PARPACK target:
 #   find_package(arpackng)
 #   add_executable(main main.f)
-#   target_include_directories(main INTERFACE PARPACK::PARPACK)
-#   target_link_libraries(main PARPACK::PARPACK)
+#   target_link_libraries(main PRIVATE PARPACK::PARPACK)
 
 if (NOT @BUILD_SHARED_LIBS@)
 	include(CMakeFindDependencyMacro)
