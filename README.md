@@ -235,7 +235,7 @@ After installing CMake, use the following commands to configure, build, and
 install ARPACK-NG. These commands configure ARPACK-NG including the examples
 and parallel support using MPI.
 
-Caution: Make sure you are in source directory of ARPACK-NG.
+Caution: Make sure you are in the source directory of ARPACK-NG.
 
 ```bash
 $ mkdir build
@@ -343,7 +343,7 @@ $ LIBS="-framework Accelerate" FFLAGS="-ff2c -fno-second-underscore" FCFLAGS="-f
 
 ### Windows support
 
-`arpack-ng` can be installed on Windows as a MinGW-w64 package via various distribution, for example through [MSYS2](https://packages.msys2.org/package/mingw-w64-x86_64-arpack) with `pacman -S mingw-w64-x86_64-arpack`. It can also be built and installed through [vcpkg](https://github.com/microsoft/vcpkg) with `vcpkg install arpack-ng`.
+`arpack-ng` can be installed on Windows as a MinGW-w64 package via various distributions, for example through [MSYS2](https://packages.msys2.org/package/mingw-w64-x86_64-arpack) with `pacman -S mingw-w64-x86_64-arpack`. It can also be built and installed through [vcpkg](https://github.com/microsoft/vcpkg) with `vcpkg install arpack-ng`.
 
 ## Using arpack-ng from your own codebase
 
@@ -375,28 +375,28 @@ Note: make sure you have installed `pkg-config`.
 
 ### With CMake
 
-You can use arpack in your CMake builds by using `ARPACK::ARPACK` target. For example,
+You can use ARPACK in your CMake builds by using the `ARPACK::ARPACK` target.
+For example:
 
 ```cmake
-FIND_PACKAGE(arpackng)
-ADD_EXECUTABLE(main main.f)
-TARGET_INCLUDE_DIRECTORIES(main PUBLIC ARPACK::ARPACK)
-TARGET_LINK_LIBRARIES(main ARPACK::ARPACK)
+find_package(arpackng)
+add_executable(main main.f)
+target_link_libraries(main PRIVATE ARPACK::ARPACK)
 ```
 
-To use PARPACK in your Cmake builds, use `PARPACK::PARPACK` target:
+To use PARPACK in your CMake builds, use the `PARPACK::PARPACK` target:
 
 ```cmake
-FIND_PACKAGE(arpackng)
-FIND_PACKAGE(MPI REQUIRED COMPONENTS Fortran)
-ADD_EXECUTABLE(main main.f)
-TARGET_INCLUDE_DIRECTORIES(main PUBLIC PARPACK::PARPACK)
-TARGET_LINK_LIBRARIES(main PARPACK::PARPACK)
-TARGET_INCLUDE_DIRECTORIES(main PUBLIC MPI::MPI_Fortran)
-TARGET_LINK_LIBRARIES(main MPI::MPI_Fortran)
+find_package(arpackng)
+add_executable(main main.f)
+target_link_libraries(main PRIVATE PARPACK::PARPACK)
+# In case you are using MPI in your Fortran project:
+target_link_libraries(main PRIVATE MPI::MPI_Fortran)
 ```
 
-Note: Make sure to update `CMAKE_MODULE_PATH` env variable (otherwise, `find_package` won't find arpack-ng cmake file).
+Note: You might need to update the `CMAKE_MODULE_PATH` configuration argument
+(or environment variable) if ARPACK-NG is installed at a non-default prefix.
+(Otherwise, `find_package` might not find the ARPACK-NG CMake config files.)
 
 ### FAQ
 
