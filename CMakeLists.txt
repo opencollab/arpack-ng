@@ -664,6 +664,10 @@ function(build_tests)
   target_link_libraries(bug_142_gen arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_142_gen_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_142_gen)
 
+  add_executable(bug_499 TESTS/bug_499.f)
+  target_link_libraries(bug_499 arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+  add_test(bug_499_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_499)
+
   if(MPI)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
