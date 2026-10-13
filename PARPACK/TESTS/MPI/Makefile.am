@@ -5,7 +5,7 @@ LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la 
 LOG_COMPILER = mpirun
 LOG_FLAGS = -n 2
 
-SISS = issue46
+SISS = issue46 parpack_bug_499
 
 check_PROGRAMS = $(SISS)
 if ICB
@@ -16,6 +16,8 @@ endif
 EXTRA_DIST = debug.h stat.h
 
 issue46_SOURCES= issue46.f
+
+parpack_bug_499_SOURCES = bug_499.f
 
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c
