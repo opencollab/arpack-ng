@@ -32,6 +32,9 @@ arpack-ng - next
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
 
+[ vera-rubin ]
+ * [BUG FIX] ssaupd: 'BE' could return Ritz values from one end of the spectrum only (restore np in ssaup2 as dsaup2 does).
+
  -- TODO <TODO@users.noreply.github.com> DATE
 
 arpack-ng - 3.9.1
