@@ -674,6 +674,10 @@ function(build_tests)
     add_executable(issue46 PARPACK/TESTS/MPI/issue46.f)
     target_link_libraries(issue46 parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(issue46_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/issue46)
+
+    add_executable(parpack_bug_499 PARPACK/TESTS/MPI/bug_499.f)
+    target_link_libraries(parpack_bug_499 parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+    add_test(parpack_bug_499_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parpack_bug_499)
   endif()
 
   if(ICB)
