@@ -25,12 +25,18 @@ subroutine dnaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: dlamch
   
   do i =1,2
       w(i:i) = which(i)
   end do
 
-  call dnaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = dlamch('EpsMach')
+
+  call dnaupd(ido, bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine dnaupd_c
 
@@ -75,6 +81,8 @@ subroutine dneupd_c(rvec, howmny, select,                        &
   integer :: idx
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: dlamch
 
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -90,8 +98,12 @@ subroutine dneupd_c(rvec, howmny, select,                        &
 
   ! call arpack.
 
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = dlamch('EpsMach')
+
   call dneupd(rv, howmny, slt,                             &
               dr, di, z, ldz, sigmar, sigmai, workev,      &
-              bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+              bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine dneupd_c

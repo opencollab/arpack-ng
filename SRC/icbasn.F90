@@ -25,12 +25,18 @@ subroutine snaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   
   character(len=2):: w
   integer         :: i
+  real(kind=c_float) :: tol_f
+  real(kind=c_float), external :: slamch
   
   do i =1,2
       w(i:i) = which(i)
   end do
 
-  call snaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = slamch('EpsMach')
+
+  call snaupd(ido, bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine snaupd_c
 
@@ -75,6 +81,8 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   integer :: idx
   character(len=2):: w
   integer         :: i
+  real(kind=c_float) :: tol_f
+  real(kind=c_float), external :: slamch
   
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -89,8 +97,12 @@ subroutine sneupd_c(rvec, howmny, select,                        &
   end do
   ! call arpack.
 
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = slamch('EpsMach')
+
   call sneupd(rv, howmny, slt,                             &
               dr, di, z, ldz, sigmar, sigmai, workev,      &
-              bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+              bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine sneupd_c

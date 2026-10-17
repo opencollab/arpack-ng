@@ -691,6 +691,10 @@ function(build_tests)
     target_link_libraries(icb_arpack_cpp arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(icb_arpack_cpp_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_arpack_cpp)
 
+    add_executable(icb_default_tol TESTS/icb_default_tol.c)
+    target_link_libraries(icb_default_tol arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+    add_test(icb_default_tol_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_default_tol)
+
     if (EIGEN)
       find_program (BASH_PROGRAM bash)
 

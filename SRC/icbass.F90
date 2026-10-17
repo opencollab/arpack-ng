@@ -25,12 +25,18 @@ subroutine ssaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   
   character(len=2):: w
   integer         :: i
+  real(kind=c_float) :: tol_f
+  real(kind=c_float), external :: slamch
   
   do i =1,2
       w(i:i) = which(i)
   end do
   
-  call ssaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = slamch('EpsMach')
+
+  call ssaupd(ido, bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine ssaupd_c
 
@@ -71,6 +77,8 @@ subroutine sseupd_c(rvec, howmny, select, d, z, ldz, sigma,      &
   integer :: idx
   character(len=2):: w
   integer         :: i
+  real(kind=c_float) :: tol_f
+  real(kind=c_float), external :: slamch
 
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -86,7 +94,11 @@ subroutine sseupd_c(rvec, howmny, select, d, z, ldz, sigma,      &
 
   ! call arpack.
 
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = slamch('EpsMach')
+
   call sseupd(rv, howmny, slt, d, z, ldz, sigma,           &
-              bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+              bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, info)
 end subroutine sseupd_c
