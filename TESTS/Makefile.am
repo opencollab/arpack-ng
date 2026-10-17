@@ -4,6 +4,7 @@ check_PROGRAMS = dnsimp bug_1323 bug_58_double bug_79_double_complex bug_142 bug
 if ICB
 check_PROGRAMS += icb_arpack_c
 check_PROGRAMS += icb_arpack_cpp
+check_PROGRAMS += icb_default_tol
 check_PROGRAMS += bug_1315_single
 check_PROGRAMS += bug_1315_double
 endif
@@ -32,6 +33,9 @@ icb_arpack_c_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
 icb_arpack_cpp_SOURCES = icb_arpack_cpp.cpp
 icb_arpack_cpp_LDADD = $(top_builddir)/SRC/libarpack$(LIBSUFFIX)$(ITF64SUFFIX).la
 icb_arpack_cpp_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
+
+icb_default_tol_SOURCES = icb_default_tol.c
+icb_default_tol_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
 
 bug_1315_single_SOURCES = bug_1315_single.c
 bug_1315_double_SOURCES = bug_1315_double.c

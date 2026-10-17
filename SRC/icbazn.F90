@@ -26,12 +26,18 @@ subroutine znaupd_c(ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: dlamch
   
   do i =1,2
       w(i:i) = which(i)
   end do
   
-  call znaupd(ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = dlamch('EpsMach')
+
+  call znaupd(ido, bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
               iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine znaupd_c
 
@@ -74,6 +80,8 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   integer :: idx
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: dlamch
 
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -88,7 +96,11 @@ subroutine zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev,  &
   end do
   ! call arpack.
 
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = dlamch('EpsMach')
+
   call zneupd(rv, howmny, slt, d, z, ldz, sigma, workev,     &
-              bmat, n, w, nev, tol, resid, ncv, v, ldv,  &
+              bmat, n, w, nev, tol_f, resid, ncv, v, ldv,  &
               iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine zneupd_c
