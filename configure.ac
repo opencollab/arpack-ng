@@ -328,6 +328,9 @@ if test x"$SYMBOLSUFFIX" != x""; then
     FFLAGS="$FFLAGS -D$f=$f$SYMBOLSUFFIX"
   done
 
+  dnl ICB wrappers also call SLAMCH and DLAMCH from .F90 sources.
+  FCFLAGS="$FCFLAGS -Dslamch=slamch$SYMBOLSUFFIX -Ddlamch=dlamch$SYMBOLSUFFIX"
+
   dnl The symbols need to be replaced with Fortran name mangling.
   symbolsuffix=$SYMBOLSUFFIX
   AC_F77_FUNC(sgemm, sgemm_mangled)
