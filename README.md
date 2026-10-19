@@ -283,7 +283,10 @@ might be useful, too:
 
 ### Customize build / install
 
-You can also customize the installation of `arpack` using the autotools.
+With either build system (autotools or CMake), you can use configuration
+arguments to customize ARPACK-NG.
+
+#### autotools
 
 To customize the install directories:
 
@@ -305,7 +308,42 @@ To enable ISO_C_BINDING support:
 $ ./configure --enable-icb
 ```
 
-You can customize the build by declaring the cmake options during configuration.
+To enable building PARPACK:
+
+```
+$ ./configure --enable-mpi
+```
+
+If the used MPI implementation is installed at a non-default prefix, it is
+possible to specify a different prefix (for the `include` and `lib` folders)
+and change the `PATH` environment variable for the corresponding compiler
+wrappers (set the respective paths according to your layout):
+
+```
+MPI_PREFIX=/path/to/mpi/include/and/lib/folder
+MPI_HOME=/path/to/bin/folder/with/compiler/wrappers
+PATH=${MPI_HOME}:${PATH}
+./configure --enable-mpi=${MPI_PREFIX}
+```
+
+If the folder layout of your MPI installation differs from that, or you would
+like to keep the `PATH` environment variable clean, these more specific
+configuration flag can be used (set the respective paths and wrapper names
+accordingly):
+
+```
+MPI_PREFIX=/path/to/mpi/include/and/lib/folder
+MPI_HOME=/path/to/bin/folder/with/compiler/wrappers
+./configure \
+  --enable-mpi \
+  --with-mpi-includedir=${MPI_PREFIX}/include \
+  --with-mpi-libdir=${MPI_PREFIX}/lib64 \
+  MPIFC=${MPI_HOME}/mpif90 \
+  MPIF77=${MPI_HOME}/mpif77 \
+  MPICC=${MPI_HOME}/mpicc
+```
+
+#### CMake
 
 To customize the install directories:
 
@@ -325,6 +363,12 @@ To enable ISO_C_BINDING support:
 
 ```bash
 $ cmake -D ICB=ON
+```
+
+To enable building PARPACK:
+
+```bash
+$ cmake -D MPI=ON
 ```
 
 ## Supported Operating Systems:
