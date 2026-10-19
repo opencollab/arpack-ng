@@ -37,6 +37,7 @@ arpack-ng - next
 [ vera-rubin ]
  * [BUG FIX] ssaupd/pssaupd/pdsaupd: 'BE' could return Ritz values from one end of the spectrum only (restore np in ssaup2, pssaup2 and pdsaup2 as dsaup2 does).
  * [BUG FIX] ICB: use machine precision for nonpositive tolerances on every sequential AUPD and EUPD call.
+ * [BUG FIX] PARPACK ICB: use machine precision for nonpositive tolerances on every parallel AUPD and EUPD call.
 
  -- TODO <TODO@users.noreply.github.com> DATE
 

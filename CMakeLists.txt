@@ -792,6 +792,11 @@ function(build_tests)
       target_include_directories(icb_parpack_cpp PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_CXX) # Get parpack.hpp mpi.h
       target_link_libraries(icb_parpack_cpp parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS} MPI::MPI_CXX)
       add_test(icb_parpack_cpp_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_cpp)
+
+      add_executable(icb_parpack_default_tol PARPACK/TESTS/MPI/icb_parpack_default_tol.c)
+      target_include_directories(icb_parpack_default_tol PUBLIC ${PROJECT_SOURCE_DIR}/ICB MPI::MPI_C) # Get parpack.h mpi.h
+      target_link_libraries(icb_parpack_default_tol parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS} MPI::MPI_C)
+      add_test(icb_parpack_default_tol_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/icb_parpack_default_tol)
     endif()
   endif()
 endfunction(build_tests)
