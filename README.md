@@ -288,30 +288,31 @@ arguments to customize ARPACK-NG.
 
 #### autotools
 
-To customize the install directories:
+To append a suffix to the built libraries:
 
 ```bash
-$ LIBSUFFIX="64" ./configure
-$ make all install
+LIBSUFFIX="64" ./configure
+make all install
 ```
 
-To enable ILP64 support:
+To enable ILP64 support (and append a suffix to libraries and subfolders for
+installed headers and libraries):
 
 ```bash
-$ INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure
-$ make all install
+INTERFACE64="1" ITF64SUFFIX="ILP64" ./configure
+make all install
 ```
 
 To enable ISO_C_BINDING support:
 
 ```bash
-$ ./configure --enable-icb
+./configure --enable-icb
 ```
 
 To enable building PARPACK:
 
 ```
-$ ./configure --enable-mpi
+./configure --enable-mpi
 ```
 
 If the used MPI implementation is installed at a non-default prefix, it is
@@ -345,30 +346,29 @@ MPI_HOME=/path/to/bin/folder/with/compiler/wrappers
 
 #### CMake
 
-To customize the install directories:
+To append a suffix to the built libraries:
 
 ```bash
-$ cmake -D LIBSUFFIX="64" ..
-$ make all install
+cmake -DLIBSUFFIX="64" ..
 ```
 
-To enable ILP64 support:
+To enable ILP64 support (and append a suffix to libraries and subfolders for
+installed headers and libraries):
 
 ```bash
-$ cmake -D INTERFACE64=ON -D ITF64SUFFIX="ILP64" ..
-$ make all install
+cmake -DINTERFACE64=ON -DITF64SUFFIX="ILP64" ..
 ```
 
 To enable ISO_C_BINDING support:
 
 ```bash
-$ cmake -D ICB=ON
+cmake -DICB=ON ..
 ```
 
 To enable building PARPACK:
 
 ```bash
-$ cmake -D MPI=ON
+cmake -DMPI=ON ..
 ```
 
 ## Supported Operating Systems:
