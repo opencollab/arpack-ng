@@ -34,12 +34,18 @@ subroutine pznaupd_c(comm, ido, bmat, n, which, nev, tol, resid, ncv, v, ldv,&
   
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: pdlamch10
   
   do i =1,2
       w(i:i) = which(i)
   end do
   
-  call pznaupd(comm, ido, bmat, n, w, nev, tol, resid, ncv, v, ldv,&
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = pdlamch10(comm, 'EpsMach')
+
+  call pznaupd(comm, ido, bmat, n, w, nev, tol_f, resid, ncv, v, ldv,&
                iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine pznaupd_c
 
@@ -90,6 +96,8 @@ subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
   integer :: idx
   character(len=2):: w
   integer         :: i
+  real(kind=c_double) :: tol_f
+  real(kind=c_double), external :: pdlamch10
   
   rv = .false.
   if (rvec .ne. 0) rv = .true.
@@ -105,7 +113,11 @@ subroutine pzneupd_c(comm, rvec, howmny, select, d, z, ldz, sigma, workev,&
 
   ! call arpack.
 
+  ! TOL is passed by value, so apply the default on every call.
+  tol_f = tol
+  if (tol_f .le. 0) tol_f = pdlamch10(comm, 'EpsMach')
+
   call pzneupd(comm, rv, howmny, slt, d, z, ldz, sigma, workev,&
-               bmat, n, w, nev, tol, resid, ncv, v, ldv,   &
+               bmat, n, w, nev, tol_f, resid, ncv, v, ldv,   &
                iparam, ipntr, workd, workl, lworkl, rwork, info)
 end subroutine pzneupd_c
