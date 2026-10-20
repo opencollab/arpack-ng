@@ -215,6 +215,10 @@ if test x"$INTERFACE64" = x"1"; then
   fi
 fi
 
+dnl Pre-processor flags for MPI
+AC_SUBST([MPI_CPPFLAGS], [$MPI_CPPFLAGS])
+
+dnl Check whether building ISO C bindings
 if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
     FCFLAGS_SAVE=$FCFLAGS
@@ -298,12 +302,6 @@ else
     done
   fi
 fi
-
-dnl Should the MPI preprocessor flags be exported (AC_SUBST) instead
-dnl and only be used in the build rules of PARPACK?
-FFLAGS="$MPI_CPPFLAGS $FFLAGS"
-FCFLAGS="$MPI_CPPFLAGS $FCFLAGS"
-CPPFLAGS="$MPI_CPPFLAGS $CPPFLAGS"
 
 dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
 

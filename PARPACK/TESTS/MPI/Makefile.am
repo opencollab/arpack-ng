@@ -22,11 +22,11 @@ parpack_bug_499_SOURCES = bug_499.f
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c
 icb_parpack_c_LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(MPI_C_LIBS)
-icb_parpack_c_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
+icb_parpack_c_CPPFLAGS = $(AM_CPPFLAGS) $(MPI_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
 
 icb_parpack_cpp_SOURCES = icb_parpack_cpp.cpp
 icb_parpack_cpp_LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(MPI_CXX_LIBS)
-icb_parpack_cpp_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
+icb_parpack_cpp_CPPFLAGS = $(AM_CPPFLAGS) $(MPI_CPPFLAGS) -I$(top_builddir) -I$(top_srcdir)/ICB
 endif
 
 TESTS = $(check_PROGRAMS)

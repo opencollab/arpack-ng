@@ -35,9 +35,10 @@ libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = \
 	$(top_builddir)/SRC/libarpack@LIBSUFFIX@@ITF64SUFFIX@.la \
 	$(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = $(MPI_LDFLAGS) -no-undefined -version-info 3:0:1
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) $(MPI_CPPFLAGS)
 if ICB
 libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
-libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)
+libparpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS += -I$(top_builddir)
 endif
 
 pkgconfig_DATA = parpack@LIBSUFFIX@@ITF64SUFFIX@.pc
