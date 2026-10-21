@@ -215,6 +215,10 @@ if test x"$INTERFACE64" = x"1"; then
   fi
 fi
 
+dnl Pre-processor flags for MPI
+AC_SUBST([MPI_CPPFLAGS], [$MPI_CPPFLAGS])
+
+dnl Check whether building ISO C bindings
 if test x"$enable_icb" != x"no"; then
   if test x"$enable_mpi" != x"no"; then
     FCFLAGS_SAVE=$FCFLAGS
@@ -297,28 +301,7 @@ else
       FFLAGS="$FFLAGS -Dc$f=c$f$SYMBOLSUFFIX -Dz$f=z$f$SYMBOLSUFFIX"
     done
   fi
-
-  dnl The symbols need to be replaced with Fortran name mangling.
-  dnl FIXME: These symbols are not used in C or C++ code in this project.
-  dnl        Remove these replacements (after making sure there is no other
-  dnl        reason to keep them.)
-  symbolsuffix=$SYMBOLSUFFIX
-  AC_F77_FUNC(snaupd, snaupd_mangled)
-  AC_F77_FUNC(sneupd, sneupd_mangled)
-  AC_F77_FUNC(dnaupd, dnaupd_mangled)
-  AC_F77_FUNC(dneupd, dneupd_mangled)
-  AC_F77_FUNC(snaupd$SYMBOLSUFFIX, snaupd_suffix)
-  AC_F77_FUNC(sneupd$SYMBOLSUFFIX, sneupd_suffix)
-  AC_F77_FUNC(dnaupd$SYMBOLSUFFIX, dnaupd_suffix)
-  AC_F77_FUNC(dneupd$SYMBOLSUFFIX, dneupd_suffix)
-  CPPFLAGS="$CPPFLAGS -D$snaupd_mangled=$snaupd_suffix -D$sneupd_mangled=$sneupd_suffix -D$dnaupd_mangled=$dnaupd_suffix -D$dneupd_mangled=$dneupd_suffix"
 fi
-
-dnl Should the MPI preprocessor flags be exported (AC_SUBST) instead
-dnl and only be used in the build rules of PARPACK?
-FFLAGS="$MPI_CPPFLAGS $FFLAGS"
-FCFLAGS="$MPI_CPPFLAGS $FCFLAGS"
-CPPFLAGS="$MPI_CPPFLAGS $CPPFLAGS"
 
 dnl As BLAS/LAPACK does not provide ICB, we may have to deal with symbols the old-fashion-boring-cumbersome-fortran/C way...
 
@@ -370,8 +353,7 @@ if test x"$SYMBOLSUFFIX" != x""; then
   AC_F77_FUNC(cheev, cheev_mangled)
   AC_F77_FUNC(sgemm$SYMBOLSUFFIX, sgemm_suffix)
   AC_F77_FUNC(cheev$SYMBOLSUFFIX, cheev_suffix)
-  dnl FIXME: This is only needed for AX_BLAS and AX_LAPACK.
-  dnl        Consider restoring the previous CPPFLAGS afterwards.
+  CPPFLAGS_SAVE="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS -D$sgemm_mangled=$sgemm_suffix -D$cheev_mangled=$cheev_suffix"
 fi
 
@@ -380,6 +362,11 @@ AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 
 dnl Check for LAPACK libraries (with symbol suffix as appropriate)
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
+
+dnl Restore CPPFLAGS after checking for BLAS and LAPACK libraries
+if test x"$SYMBOLSUFFIX" != x""; then
+  CPPFLAGS="$CPPFLAGS_SAVE"
+fi
 
 dnl Set conditional for Makefiles.
 
