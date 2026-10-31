@@ -666,6 +666,10 @@ function(build_tests)
   target_link_libraries(bug_499 arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
   add_test(bug_499_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bug_499)
 
+  add_executable(default_tol TESTS/default_tol.f)
+  target_link_libraries(default_tol arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+  add_test(default_tol_tst ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/default_tol)
+
   if(MPI)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/PARPACK/TESTS/MPI)
 
@@ -676,6 +680,10 @@ function(build_tests)
     add_executable(parpack_bug_499 PARPACK/TESTS/MPI/bug_499.f)
     target_link_libraries(parpack_bug_499 parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(parpack_bug_499_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parpack_bug_499)
+
+    add_executable(parpack_default_tol PARPACK/TESTS/MPI/parpack_default_tol.f)
+    target_link_libraries(parpack_default_tol parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+    add_test(parpack_default_tol_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parpack_default_tol)
   endif()
 
   if(ICB)
