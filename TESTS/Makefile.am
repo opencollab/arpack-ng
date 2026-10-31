@@ -1,6 +1,6 @@
 LDADD=$(top_builddir)/SRC/libarpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
 
-check_PROGRAMS = dnsimp bug_1323 bug_58_double bug_79_double_complex bug_142 bug_142_gen bug_499
+check_PROGRAMS = dnsimp bug_1323 bug_58_double bug_79_double_complex bug_142 bug_142_gen bug_499 default_tol
 if ICB
 check_PROGRAMS += icb_arpack_c
 check_PROGRAMS += icb_arpack_cpp
@@ -24,6 +24,8 @@ bug_142_SOURCES = bug_142.f
 bug_142_gen_SOURCES = bug_142_gen.f
 
 bug_499_SOURCES = bug_499.f
+
+default_tol_SOURCES = default_tol.f
 
 if ICB
 icb_arpack_c_SOURCES = icb_arpack_c.c
