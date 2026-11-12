@@ -116,8 +116,8 @@ jobs:
               MPICC=gcc
               MPICXX=g++
               MPI_CPPFLAGS="$(mpifort -showme:compile)"
-              MPI_LDFLAGS="$(echo "$(mpifort -showme:link)" | sed -E 's/(^|[[:space:]])-l[^[:space:]]*//g' | xargs)"
-              MPILIBS="$(echo "$(mpifort -showme:link)" | tr ' ' '\n' | sed -n '/^-l/p' | xargs)"
+              MPI_LDFLAGS="$(echo "$(mpicc -showme:link) $(mpicxx -showme:link) $(mpifort -showme:link)" | sed -E 's/(^|[[:space:]])-l[^[:space:]]*//g' | xargs)"
+              MPILIBS="$(echo "$(mpicc -showme:link) $(mpicxx -showme:link) $(mpifort -showme:link)" | tr ' ' '\n' | sed -n '/^-l/p' | xargs)"
           - name: Ubuntu autotools using MKL
             tests: with
             install: without
