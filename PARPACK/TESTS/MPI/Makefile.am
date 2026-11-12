@@ -1,5 +1,5 @@
 F77 = $(MPIF77)
-LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS)
+LDADD = $(top_builddir)/PARPACK/SRC/MPI/libparpack$(LIBSUFFIX)$(ITF64SUFFIX).la $(LAPACK_LIBS) $(BLAS_LIBS) $(MPI_Fortran_LIBS)
 
 # Run MPI tests with "mpirun -n 2"
 LOG_COMPILER = mpirun
