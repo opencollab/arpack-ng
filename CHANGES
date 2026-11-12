@@ -32,6 +32,7 @@ arpack-ng - next
  * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
  * CMake: Fix include directories for tests of PARPACK with ICB.
  * Add CI coverage for building PARPACK without MPI compiler wrappers.
+ * autotools: Explicitly link to MPI libraries when checking for `MPI_Comm_c2f` function during configuration.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
