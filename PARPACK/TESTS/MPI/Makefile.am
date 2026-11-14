@@ -8,6 +8,9 @@ LOG_FLAGS = -n 2
 SISS = issue46 parpack_bug_499 parpack_default_tol
 
 check_PROGRAMS = $(SISS)
+if SCALAPACK
+check_PROGRAMS += parpack_scalapack
+endif
 if ICB
 check_PROGRAMS += icb_parpack_c
 check_PROGRAMS += icb_parpack_cpp
@@ -21,6 +24,12 @@ issue46_SOURCES= issue46.f
 parpack_bug_499_SOURCES = bug_499.f
 
 parpack_default_tol_SOURCES = parpack_default_tol.f
+
+if SCALAPACK
+parpack_scalapack_SOURCES = parpack_scalapack.f
+# ScaLAPACK first on purpose: see parpack_scalapack.f.
+parpack_scalapack_LDADD = $(SCALAPACK_LIBS) $(LDADD)
+endif
 
 if ICB
 icb_parpack_c_SOURCES = icb_parpack_c.c

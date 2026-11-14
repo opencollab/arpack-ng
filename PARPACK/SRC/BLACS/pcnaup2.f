@@ -254,10 +254,10 @@ c     | External functions |
 c     %--------------------%
 c
       Complex
-     &           ccdotc
+     &           ccdotc10
       Real
      &           pscnorm2, pslamch, slapy2
-      external   ccdotc, pscnorm2, pslamch, slapy2
+      external   ccdotc10, pscnorm2, pslamch, slapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -767,7 +767,7 @@ c
          end if
 c
          if (bmat .eq. 'G') then
-            cmpnorm = ccdotc (n, resid, 1, workd, 1)
+            cmpnorm = ccdotc10 (n, resid, 1, workd, 1)
             call cgsum2d( comm, 'All', ' ', 1, 1, cmpnorm, 1, -1, -1 )
             rnorm = sqrt(slapy2(real(cmpnorm),aimag(cmpnorm)))
          else if (bmat .eq. 'I') then

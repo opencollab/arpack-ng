@@ -197,8 +197,8 @@ c
       Real
      &           pscnorm2, slapy2
       Complex
-     &           ccdotc
-      external   ccdotc, pscnorm2, slapy2
+     &           ccdotc10
+      external   ccdotc10, pscnorm2, slapy2
 c
 c     %-----------------%
 c     | Data Statements |
@@ -335,7 +335,7 @@ c
 c
       first = .FALSE.
       if (bmat .eq. 'G') then
-          cnorm = ccdotc (n, resid, 1, workd, 1)
+          cnorm = ccdotc10 (n, resid, 1, workd, 1)
           call cgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
           rnorm0 = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
@@ -394,7 +394,7 @@ c
       end if
 c
       if (bmat .eq. 'G') then
-         cnorm = ccdotc (n, resid, 1, workd, 1)
+         cnorm = ccdotc10 (n, resid, 1, workd, 1)
          call cgsum2d( comm, 'All', ' ', 1, 1, cnorm, 1, -1, -1 )
          rnorm = sqrt(slapy2(real (cnorm),aimag(cnorm)))
       else if (bmat .eq. 'I') then
