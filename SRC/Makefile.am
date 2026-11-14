@@ -9,10 +9,10 @@ DSRC = dnaitr.f dnapps.f dnaup2.f dnaupd.f dnconv.f dneigh.f dneupd.f dngets.f d
        dgetv0.f dsortc.f dsortr.f dsesrt.f dstqrb.f
 
 CSRC = cnaitr.f cnapps.f cnaup2.f cnaupd.f cneigh.f cneupd.f cngets.f cstatn.f \
-       cgetv0.f csortc.f ccdotc.f
+       cgetv0.f csortc.f ccdotc10.f
 
 ZSRC = znaitr.f znapps.f znaup2.f znaupd.f zneigh.f zneupd.f zngets.f zstatn.f \
-       zgetv0.f zsortc.f zzdotc.f
+       zgetv0.f zsortc.f zzdotc10.f
 
 if ICB
 SSRC += icbass.F90 icbasn.F90
@@ -28,7 +28,7 @@ libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES = $(SSRC) $(DSRC) $(CSRC) $(ZSRC)
 libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/dbgini.f
 libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_SOURCES += $(top_builddir)/staini.f
 libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD = $(top_builddir)/UTIL/libarpackutil.la $(LAPACK_LIBS) $(BLAS_LIBS)
-libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = -no-undefined -version-info 3:0:1
+libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LDFLAGS = -no-undefined -version-info 4:0:2
 if ICB
 libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_LIBADD += $(top_builddir)/ICB/libdbgicb.la $(top_builddir)/ICB/libstaicb.la
 libarpack@LIBSUFFIX@@ITF64SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)

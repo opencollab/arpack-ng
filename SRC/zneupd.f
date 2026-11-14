@@ -325,8 +325,8 @@ c
       external   dznrm2, dlamch, dlapy2
 c
       Complex*16
-     &           zzdotc
-      external   zzdotc
+     &           zzdotc10
+      external   zzdotc10
 c
 c     %-----------------------%
 c     | Executable Statements |
@@ -731,7 +731,7 @@ c                 | upper triangular, thus the length of the |
 c                 | inner product can be set to j.           |
 c                 %------------------------------------------%
 c
-                  workev(j) = zzdotc(j, workl(ihbds), 1,
+                  workev(j) = zzdotc10(j, workl(ihbds), 1,
      &                        workl(invsub+(j-1)*ldq), 1)
  40         continue
 c

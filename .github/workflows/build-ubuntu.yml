@@ -31,7 +31,7 @@ jobs:
       - name: Update OS
         run: sudo apt-get update
       - name: Install apt-get dependencies
-        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
+        run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libscalapack-openmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
       - name: Install python dependencies
         if: matrix.python == 'with'
         run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
@@ -51,7 +51,7 @@ jobs:
           mkdir build
           cd build
           cmake \
-            $([ "${{ matrix.tests }}" == "with" ] && echo "-DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON" || echo "") \
+            $([ "${{ matrix.tests }}" == "with" ] && echo "-DEXAMPLES=ON -DMPI=ON -DSCALAPACK=ON -DICB=ON -DEIGEN=ON" || echo "") \
             $([ "${{ matrix.python }}" == "with" ] && echo "-DPYTHON3=ON" || echo "") \
             ..
       - name: Build and install
@@ -97,7 +97,7 @@ jobs:
             tests: with
             install: without
             blas: BLAS
-            configure-flags: --enable-mpi --enable-icb --enable-eigen
+            configure-flags: --enable-mpi --with-scalapack=-lscalapack-openmpi --enable-icb --enable-eigen
           - name: Ubuntu autotools different integer sizes with installation
             tests: without
             install: with
@@ -146,7 +146,7 @@ jobs:
               && echo "libevent-dev libpmix-dev libucx-dev zlib1g-dev libhwloc-dev \
                        pkgconf libibverbs-dev libfabric-dev libnuma-dev \
                        libpsm-infinipath1-dev libpsm2-dev flex" \
-              || echo "openmpi-bin libopenmpi-dev") \
+              || echo "openmpi-bin libopenmpi-dev libscalapack-openmpi-dev") \
             $([ "${{ matrix.blas }}" != "BLAS" ] || echo "libblas-dev liblapack-dev") \
             libeigen3-dev automake autoconf pkg-config libtool
           if [ "${{ matrix.blas }}" == "MKL" ]; then

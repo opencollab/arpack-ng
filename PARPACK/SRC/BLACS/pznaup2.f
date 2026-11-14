@@ -254,10 +254,10 @@ c     | External functions |
 c     %--------------------%
 c
       Complex*16
-     &           zzdotc
+     &           zzdotc10
       Double precision
      &           pdznorm2, pdlamch, dlapy2
-      external   zzdotc, pdznorm2, pdlamch, dlapy2
+      external   zzdotc10, pdznorm2, pdlamch, dlapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -767,7 +767,7 @@ c
          end if
 c
          if (bmat .eq. 'G') then
-            cmpnorm = zzdotc (n, resid, 1, workd, 1)
+            cmpnorm = zzdotc10 (n, resid, 1, workd, 1)
             call zgsum2d( comm, 'All', ' ', 1, 1, cmpnorm, 1, -1, -1 )
             rnorm = sqrt(dlapy2(dble(cmpnorm),dimag(cmpnorm)))
          else if (bmat .eq. 'I') then

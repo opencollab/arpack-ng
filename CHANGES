@@ -31,6 +31,10 @@ arpack-ng - next
  * [BUG FIX] Fix building with non-empty `SYMBOLSUFFIX`.
  * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
 
+[ Mohamed Amine Zghal ]
+ * [BUG FIX] Rename zzdotc to zzdotc10 and ccdotc to ccdotc10 to avoid symbol collision with ScaLAPACK.
+ * Add PARPACK test and example linked with ScaLAPACK, covering the pdlamch10/pslamch10 (#21) and zzdotc10/ccdotc10 (#505) renames (CMake: -DSCALAPACK=ON, autotools: --with-scalapack).
+
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
 

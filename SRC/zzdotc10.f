@@ -1,13 +1,13 @@
-      complex function ccdotc(n,zx,incx,zy,incy)
+      double complex function zzdotc10(n,zx,incx,zy,incy)
 c
 c     forms the dot product of a vector.
 c     jack dongarra, 3/11/78.
 c     modified 12/3/93, array(1) declarations changed to array(*)
 c
-      complex zx(*),zy(*),ztemp
+      double complex zx(*),zy(*),ztemp
       integer i,incx,incy,ix,iy,n
       ztemp = (0.0d0,0.0d0)
-      ccdotc = (0.0d0,0.0d0)
+      zzdotc10 = (0.0d0,0.0d0)
       if(n.le.0)return
       if(incx.eq.1.and.incy.eq.1)go to 20
 c
@@ -23,7 +23,7 @@ c
         ix = ix + incx
         iy = iy + incy
    10 continue
-      ccdotc = ztemp
+      zzdotc10 = ztemp
       return
 c
 c        code for both increments equal to 1
@@ -31,6 +31,6 @@ c
    20 do 30 i = 1,n
         ztemp = ztemp + conjg(zx(i))*zy(i)
    30 continue
-      ccdotc = ztemp
+      zzdotc10 = ztemp
       return
       end

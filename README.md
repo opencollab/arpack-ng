@@ -344,6 +344,16 @@ MPI_HOME=/path/to/bin/folder/with/compiler/wrappers
   MPICC=${MPI_HOME}/mpicc
 ```
 
+To also build the PARPACK test and example that use ScaLAPACK
+(`PARPACK/TESTS/MPI/parpack_scalapack.f`,
+`PARPACK/EXAMPLES/MPI/pzscalapack.f`):
+
+```bash
+./configure --enable-mpi --with-scalapack
+# or with explicit libraries (default: -lscalapack):
+./configure --enable-mpi --with-scalapack=-lscalapack-openmpi
+```
+
 #### CMake
 
 To append a suffix to the built libraries:
@@ -369,6 +379,16 @@ To enable building PARPACK:
 
 ```bash
 cmake -DMPI=ON ..
+```
+
+To also build the PARPACK test and example that use ScaLAPACK
+(`PARPACK/TESTS/MPI/parpack_scalapack.f`,
+`PARPACK/EXAMPLES/MPI/pzscalapack.f`):
+
+```bash
+cmake -DMPI=ON -DSCALAPACK=ON ..
+# or with explicit libraries:
+cmake -DMPI=ON -DSCALAPACK=ON -DSCALAPACK_LIBRARIES=-lscalapack-openmpi ..
 ```
 
 ## Supported Operating Systems:
