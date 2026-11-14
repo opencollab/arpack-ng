@@ -381,9 +381,35 @@ AX_BLAS([], [AC_MSG_ERROR([cannot find BLAS libraries])])
 dnl Check for LAPACK libraries (with symbol suffix as appropriate)
 AX_LAPACK([], [AC_MSG_ERROR([cannot find LAPACK libraries])])
 
+dnl ScaLAPACK is only used by a test and an example: PARPACK itself does not need it.
+AC_ARG_WITH([scalapack],
+  [AS_HELP_STRING([--with-scalapack@<:@=LIBS@:>@],
+    [build PARPACK test and example linked with ScaLAPACK (requires --enable-mpi).
+     LIBS defaults to -lscalapack.])],
+  [], [with_scalapack=no])
+AS_IF([test x"$with_scalapack" != x"no"], [
+  AS_IF([test x"$enable_mpi" = x"no"],
+    [AC_MSG_ERROR([--with-scalapack requires --enable-mpi])])
+  AS_IF([test x"$with_scalapack" = x"yes"],
+    [SCALAPACK_LIBS="-lscalapack"],
+    [SCALAPACK_LIBS="$with_scalapack"])
+  AC_LANG_PUSH([Fortran 77])
+  LIBS_SAVE=$LIBS
+  LIBS="$SCALAPACK_LIBS $LAPACK_LIBS $BLAS_LIBS $LIBS"
+  AC_MSG_CHECKING([for ScaLAPACK (pzdotc) with $SCALAPACK_LIBS])
+  AC_LINK_IFELSE([AC_LANG_CALL([], [pzdotc])],
+    [AC_MSG_RESULT([yes])],
+    [AC_MSG_RESULT([no])
+     AC_MSG_ERROR([cannot link with ScaLAPACK: set the libraries with --with-scalapack=LIBS])])
+  LIBS=$LIBS_SAVE
+  AC_LANG_POP([Fortran 77])
+])
+AC_SUBST([SCALAPACK_LIBS])
+
 dnl Set conditional for Makefiles.
 
 AM_CONDITIONAL([MPI], [test x"$enable_mpi" != x"no"])
+AM_CONDITIONAL([SCALAPACK], [test x"$with_scalapack" != x"no"])
 AM_CONDITIONAL([BLACS], [false])
 AM_CONDITIONAL([ICB], [test x"$enable_icb" != x"no"])
 AM_CONDITIONAL([EIGEN], [test x"$enable_eigen" != x"no"])
@@ -443,6 +469,7 @@ Configuration summary for $PACKAGE_STRING
 --------------------------------------------------
 Installation prefix : $prefix
 MPI enabled         : $enable_mpi (ICB provided $enable_mpi_icb)
+ScaLAPACK           : $with_scalapack
 ICB enabled         : $enable_icb
 INTERFACE64         : $INTERFACE64
 F77                 : $F77

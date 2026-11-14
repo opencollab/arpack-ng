@@ -19,6 +19,9 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static libraries" ON)
 option(MPI "Enable parallel support" OFF)
+option(SCALAPACK "Build PARPACK test and example linked with ScaLAPACK (requires MPI)" OFF)
+set(SCALAPACK_LIBRARIES ""
+    CACHE STRING "ScaLAPACK libraries to link with (default: found with find_package(scalapack))")
 option(ICB "Enable support for *[ae]upd_c with ISO_C_BINDING" OFF)
 option(EIGEN "Enable support for eigenvalue-problems solver based on ICB and eigen" OFF)
 option(PYTHON3 "Enable python3 support" OFF)
@@ -207,6 +210,10 @@ endif ()
 
 # Find MPI
 
+if (SCALAPACK AND NOT MPI)
+    message(FATAL_ERROR "SCALAPACK requires MPI=ON.")
+endif()
+
 if (MPI)
     if (NOT TARGET MPI::MPI_Fortran) # Search only if not already found by upper CMakeLists.txt
         include(FindMPI)
@@ -214,6 +221,17 @@ if (MPI)
     endif()
 
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
+
+    # ScaLAPACK is only used by a test and an example: PARPACK itself does not need it.
+    if (SCALAPACK)
+        if (SCALAPACK_LIBRARIES)
+            set(SCALAPACK_LINK_LIBRARIES ${SCALAPACK_LIBRARIES})
+        else()
+            find_package(scalapack CONFIG REQUIRED)
+            set(SCALAPACK_LINK_LIBRARIES scalapack)
+        endif()
+    endif()
+
     if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
         set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
     endif()
@@ -374,7 +392,7 @@ target_link_libraries(arpack
 )
 target_link_options(arpack PUBLIC "${EXTRA_LDFLAGS}")
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack${LIBSUFFIX}${ITF64SUFFIX})
-set_target_properties(arpack PROPERTIES VERSION 2.1.0)
+set_target_properties(arpack PROPERTIES VERSION 2.2.0)
 set_target_properties(arpack PROPERTIES SOVERSION 2)
 target_include_directories(arpack
   PUBLIC
@@ -596,6 +614,12 @@ if (EXAMPLES)
             pzndrv1.f)
 
         pexamples(pexamples_STAT_SRCS)
+
+        if (SCALAPACK)
+            set(pexamples_SCALAPACK_SRCS pzscalapack.f)
+            pexamples(pexamples_SCALAPACK_SRCS)
+            target_link_libraries(pzscalapack ${SCALAPACK_LINK_LIBRARIES} MPI::MPI_Fortran)
+        endif()
     endif()
 endif()
 
@@ -684,6 +708,13 @@ function(build_tests)
     add_executable(parpack_default_tol PARPACK/TESTS/MPI/parpack_default_tol.f)
     target_link_libraries(parpack_default_tol parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
     add_test(parpack_default_tol_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parpack_default_tol)
+
+    if (SCALAPACK)
+      add_executable(parpack_scalapack PARPACK/TESTS/MPI/parpack_scalapack.f)
+      # ScaLAPACK first on purpose: see PARPACK/TESTS/MPI/parpack_scalapack.f.
+      target_link_libraries(parpack_scalapack ${SCALAPACK_LINK_LIBRARIES} parpack arpack ${LAPACK_BLAS_LIBS} ${EXTRA_LDFLAGS})
+      add_test(parpack_scalapack_tst mpiexec -n 2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parpack_scalapack)
+    endif()
   endif()
 
   if(ICB)
@@ -957,6 +988,7 @@ endfunction(cprsummary)
 message("-- Configuration summary for arpack-ng-${arpack_ng_VERSION}:")
 message("   -- prefix: ${CMAKE_INSTALL_PREFIX}")
 message("   -- MPI: ${MPI} (ICB provided ${HAVE_MPI_ICB})")
+message("   -- SCALAPACK: ${SCALAPACK}")
 message("   -- ICB: ${ICB}")
 message("   -- INTERFACE64: ${INTERFACE64}")
 cprsummary("FC" "${CMAKE_Fortran_COMPILER}"
@@ -985,6 +1017,9 @@ if (MPI)
         libsummary("MPICC" "${MPI_C_INCLUDE_DIRS}" "${MPI_C_LIBRARIES}")
         libsummary("MPICXX" "${MPI_CXX_INCLUDE_DIRS}" "${MPI_CXX_LIBRARIES}")
     endif()
+endif()
+if (SCALAPACK)
+    libsummary("SCALAPACK" "" "${SCALAPACK_LINK_LIBRARIES}")
 endif()
 libsummary("BLAS" "" "${BLAS_LIBRARIES}")
 libsummary("LAPACK" "" "${LAPACK_LIBRARIES}")
