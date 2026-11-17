@@ -4,18 +4,21 @@ jobs:
 
   ubuntu_latest_cmake:
     runs-on: ubuntu-latest
-    name: Ubuntu CMake ${{ matrix.tests }} tests ${{ matrix.install }} install ${{ matrix.python }} Python
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - tests: with
+          - name: Ubuntu CMake running tests
+            tests: with
             install: without
             python: without
-          - tests: without
+          - name: Ubuntu CMake different integer sizes with installation
+            tests: without
             install: with
             python: without
-          - tests: with
+          - name: Ubuntu CMake with Python bindings
+            tests: with
             install: without
             python: with
     steps:
