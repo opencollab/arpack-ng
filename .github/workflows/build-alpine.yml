@@ -10,7 +10,9 @@ jobs:
 
   alpine:
     # Run armv7 on aarch64 runners
-    runs-on: ${{ matrix.arch == 'armv7' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    # `sudo` in Ubuntu 26.04 is incompatible with jirutka/setup-alpine@v1.
+    # See: https://github.com/jirutka/setup-alpine/issues/39
+    runs-on: ${{ matrix.arch == 'armv7' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
 
     defaults:
       run:

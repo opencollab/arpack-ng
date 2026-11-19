@@ -31,6 +31,7 @@ arpack-ng - next
  * [BUG FIX] Fix building with non-empty `SYMBOLSUFFIX`.
  * autotools: Improve support for an implementation of MPI that is installed at a non-default prefix.
  * CMake: Fix include directories for tests of PARPACK with ICB.
+ * Work around an incompatibility with `sudo-rs` by pinning the Alpine Linux CI to an Ubuntu 24.04 image.
 
 [ Szabolcs Horvát ]
  * fix obsolescent character length warnings
