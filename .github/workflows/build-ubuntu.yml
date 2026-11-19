@@ -93,16 +93,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Ubuntu autotools with MPI running tests
-            tests: with
-            install: without
-            blas: BLAS
-            configure-flags: --enable-mpi --enable-icb --enable-eigen
           - name: Ubuntu autotools different integer sizes with installation
             tests: without
             install: with
             blas: BLAS
             configure-flags:
+          - name: Ubuntu autotools with MPI (using compiler wrappers)
+            tests: with
+            install: without
+            blas: BLAS
+            configure-flags: --enable-mpi --enable-icb --enable-eigen
+          - name: Ubuntu autotools with MPI (no compiler wrappers)
+            tests: with
+            install: without
+            blas: BLAS
+            configure-flags: >-
+              --enable-mpi
+              --enable-icb
+              --enable-eigen
+              MPIFC=gfortran
+              MPIF77=gfortran
+              MPICC=gcc
+              MPICXX=g++
+              MPI_CPPFLAGS="$(mpifort -showme:compile)"
+              MPI_LDFLAGS="$(echo "$(mpicc -showme:link) $(mpicxx -showme:link) $(mpifort -showme:link)" | sed -E 's/(^|[[:space:]])-l[^[:space:]]*//g' | xargs)"
+              MPILIBS="$(echo "$(mpicc -showme:link) $(mpicxx -showme:link) $(mpifort -showme:link)" | tr ' ' '\n' | sed -n '/^-l/p' | xargs)"
           - name: Ubuntu autotools using MKL
             tests: with
             install: without

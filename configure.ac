@@ -245,6 +245,8 @@ if test x"$enable_icb" != x"no"; then
     CXX=$MPICXX
     AC_LANG_POP([C++])
 
+    LIBS_SAVE=$LIBS
+    LIBS="$MPILIBS $LIBS"
     AC_LANG_PUSH([C])
     AC_MSG_CHECKING([for MPI_Comm_c2f function])
     AC_LINK_IFELSE(
@@ -261,6 +263,7 @@ if test x"$enable_icb" != x"no"; then
                    ]
                   )
     AC_LANG_POP([C])
+    LIBS=$LIBS_SAVE
 
     FCFLAGS=$FCFLAGS_SAVE
     FFLAGS=$FFLAGS_SAVE
