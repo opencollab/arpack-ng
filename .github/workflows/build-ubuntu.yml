@@ -4,18 +4,21 @@ jobs:
 
   ubuntu_latest_cmake:
     runs-on: ubuntu-latest
-    name: Ubuntu CMake ${{ matrix.tests }} tests ${{ matrix.install }} install ${{ matrix.python }} Python
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - tests: with
+          - name: Ubuntu CMake running tests
+            tests: with
             install: without
             python: without
-          - tests: without
+          - name: Ubuntu CMake different integer sizes with installation
+            tests: without
             install: with
             python: without
-          - tests: with
+          - name: Ubuntu CMake with Python bindings
+            tests: with
             install: without
             python: with
     steps:
@@ -32,27 +35,16 @@ jobs:
         run: sudo apt-get update
       - name: Install apt-get dependencies
         run: sudo apt-get install -y gfortran gcc g++ openmpi-bin libopenmpi-dev libblas-dev liblapack-dev libeigen3-dev cmake
-      - name: Install python dependencies
+      - name: Install Python dependencies
         if: matrix.python == 'with'
-        run: sudo apt-get -y install python3-minimal python3-pip python3-numpy
-      - name: Build boost-python for python3 (not provided by apt-cache)
-        if: matrix.python == 'with'
-        run : |
-          sudo apt-get -y install wget
-          wget https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.gz
-          tar -xf boost_1_79_0.tar.gz
-          cd boost_1_79_0
-          ./bootstrap.sh --with-libraries=python --with-python=/usr/bin/python3 --with-toolset=gcc
-          sudo ./b2 toolset=gcc install
-          sudo apt-get install locate
-          sudo updatedb
+        run: sudo apt-get -y install python3-numpy libboost-python-dev libboost-numpy-dev
       - name: Configure
         run: |
           mkdir build
           cd build
           cmake \
             $([ "${{ matrix.tests }}" == "with" ] && echo "-DEXAMPLES=ON -DMPI=ON -DICB=ON -DEIGEN=ON" || echo "") \
-            $([ "${{ matrix.python }}" == "with" ] && echo "-DPYTHON3=ON" || echo "") \
+            $([ "${{ matrix.python }}" == "with" ] && echo "-DPYTHON3=ON -DBoost_PYTHON_VERSION_MAJOR=3" || echo "") \
             ..
       - name: Build and install
         if: matrix.install == 'with'
