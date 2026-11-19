@@ -9,6 +9,9 @@ CNDRV = pcndrv1
 ZNDRV = pzndrv1
 
 check_PROGRAMS = $(SNDRV) $(DNDRV) $(SSDRV) $(DSDRV) $(CNDRV) $(ZNDRV)
+if SCALAPACK
+check_PROGRAMS += pzscalapack
+endif
 
 # Run MPI tests with "mpirun -n 2"
 LOG_COMPILER = mpirun
@@ -37,3 +40,9 @@ pcndrv1_SOURCES = pcndrv1.f
 
 # Complex problem using double complex
 pzndrv1_SOURCES = pzndrv1.f
+
+# Complex problem using double complex with a ScaLAPACK distributed matrix
+if SCALAPACK
+pzscalapack_SOURCES = pzscalapack.f
+pzscalapack_LDADD = $(SCALAPACK_LIBS) $(LDADD)
+endif

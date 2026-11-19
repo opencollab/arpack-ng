@@ -257,10 +257,10 @@ c     | External functions |
 c     %--------------------%
 c
       Complex*16
-     &           zzdotc
+     &           zzdotc10
       Double precision
      &           pdznorm2, pdlamch10, dlapy2
-      external   zzdotc, pdznorm2, pdlamch10, dlapy2
+      external   zzdotc10, pdznorm2, pdlamch10, dlapy2
 c
 c     %---------------------%
 c     | Intrinsic Functions |
@@ -770,7 +770,7 @@ c
          end if
 c
          if (bmat .eq. 'G') then
-            cmpnorm_buf = zzdotc (n, resid, 1, workd, 1)
+            cmpnorm_buf = zzdotc10 (n, resid, 1, workd, 1)
             call MPI_ALLREDUCE( [cmpnorm_buf], buf2, 1,
      &               MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr )
             cmpnorm = buf2(1)
